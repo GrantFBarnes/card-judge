@@ -11,6 +11,7 @@ func main() {
 	http.HandleFunc("/", home)
 	http.HandleFunc("/headers", headers)
 	http.HandleFunc("/ping", ping)
+	http.HandleFunc("/cards/judge", getCardsJudge)
 
 	port := ":8090"
 	fmt.Printf("running at http://localhost%s\n", port)
@@ -37,4 +38,16 @@ func ping(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	fmt.Fprintf(w, "successfully connected to database\n")
+}
+
+func getCardsJudge(w http.ResponseWriter, req *http.Request) {
+	dbcs := database.GetDatabaseConnectionString()
+	cards, err := database.GetJudgeCards(dbcs)
+	if err != nil {
+		fmt.Fprintf(w, "failed to connect to database\n")
+		return
+	}
+	for _, c := range cards {
+		fmt.Fprintf(w, "%s\n", c.Text)
+	}
 }
