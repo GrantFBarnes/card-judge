@@ -1,0 +1,14 @@
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Text</th>
+    <th>Date Added</th>
+  </tr>
+  {{ range .}}
+  <tr>
+    <td>{{ .Id }}</td>
+    <td>{{ .Text }}</td>
+    <td>{{ .DateAdded }}</td>
+  </tr>
+  {{end}}
+</table>
