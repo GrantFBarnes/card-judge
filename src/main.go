@@ -20,7 +20,13 @@ func main() {
 }
 
 func home(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "home\n")
+	tmpl, err := template.ParseFiles("templates/pages/home.html", "templates/base.html")
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", nil)
 }
 
 func headers(w http.ResponseWriter, req *http.Request) {
