@@ -1,4 +1,12 @@
 {{define "body"}}
 <h1>Card Judge</h1>
+{{if .LoggedIn}}
+<p>Hello {{ .PlayerName }}</p>
+{{else}}
+<button hx-post="/api/login" hx-trigger="click" hx-swap="outerHTML">
+  Login
+</button>
+<br />
+{{end}}
 <button onclick="window.location.href='/lobby/join'">Join Lobby</button>
 {{end}}

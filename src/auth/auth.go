@@ -47,6 +47,7 @@ func SetPlayerName(w http.ResponseWriter, playerName string) error {
 		Name:    cookieName,
 		Value:   tokenString,
 		Expires: expiration,
+		Path:    "/",
 	}
 	http.SetCookie(w, &cookie)
 	return nil
