@@ -2,41 +2,82 @@ package auth
 
 import (
 	"errors"
+	"net/http"
 	"os"
+	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
 )
 
-var secret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
+const cookieName string = "CARD-JUDGE-JWT-TOKEN"
+const claimKey string = "playerName"
 
-func GetTokenString(playerName string) (string, error) {
+var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
+
+func GetPlayerName(r *http.Request) (string, error) {
+	cookieValue := ""
+	for _, c := range r.Cookies() {
+		if c.Name != cookieName {
+			continue
+		}
+		cookieValue = c.Value
+		break
+	}
+
+	if cookieValue == "" {
+		return "", errors.New("cookie not found")
+	}
+
+	claimValue, err := getTokenClaimValue(cookieValue)
+	if err != nil {
+		return "", err
+	}
+
+	return claimValue, nil
+}
+
+func SetPlayerName(w http.ResponseWriter, playerName string) error {
+	tokenString, err := getTokenString(playerName)
+	if err != nil {
+		return err
+	}
+
+	expiration := time.Now().Add(time.Hour * 12)
+	cookie := http.Cookie{
+		Name:    cookieName,
+		Value:   tokenString,
+		Expires: expiration,
+	}
+	http.SetCookie(w, &cookie)
+	return nil
+}
+
+func getTokenString(playerName string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"playerName": playerName,
+		claimKey: playerName,
 	})
-	tokenString, err := token.SignedString(secret)
+	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return "", err
 	}
 	return tokenString, nil
 }
 
-func GetTokenClaims(tokenString string) (map[string]string, error) {
+func getTokenClaimValue(tokenString string) (string, error) {
 	verified, err := getToken(tokenString)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if claims, ok := verified.Claims.(jwt.MapClaims); ok {
-		var result = make(map[string]string)
-		result["playerName"] = claims["playerName"].(string)
-		return result, nil
+		return claims[claimKey].(string), nil
 	} else {
-		return nil, errors.New("could not get claims")
+		return "", errors.New("could not get claims")
 	}
 }
 
 func getToken(tokenString string) (*jwt.Token, error) {
 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
+		return jwtSecret, nil
 	})
 }
