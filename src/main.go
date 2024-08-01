@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", home)
-	http.HandleFunc("/headers", headers)
-	http.HandleFunc("/ping", ping)
-	http.HandleFunc("/cards", getCards)
+	http.HandleFunc("GET /", home)
+	http.HandleFunc("GET /headers", headers)
+	http.HandleFunc("GET /ping", ping)
+	http.HandleFunc("GET /cards", getCards)
 
 	port := ":8090"
 	fmt.Printf("running at http://localhost%s\n", port)
