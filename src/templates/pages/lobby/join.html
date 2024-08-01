@@ -6,7 +6,7 @@
     <th>Name</th>
     <th>Security</th>
   </tr>
-  {{ range .}}
+  {{ range .Lobbies}}
   <tr>
     <td>{{ .DateAdded.Format "2006-01-02" }}</td>
     <td>{{ .Name }}</td>

@@ -12,6 +12,16 @@
     ></script>
   </head>
   <body>
+    <div style="float: right">
+      {{if .LoggedIn}}
+      <p>Playing as: {{ .PlayerName }}</p>
+      {{else}}
+      <button hx-post="/api/login" hx-trigger="click" hx-swap="outerHTML">
+        Login
+      </button>
+      <br />
+      {{end}}
+    </div>
     {{template "body" .}}
   </body>
 </html>
