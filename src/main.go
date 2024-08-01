@@ -49,11 +49,11 @@ func getCards(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/cards.html")
+	tmpl, err := template.ParseFiles("templates/cards.html", "templates/base.html")
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
 		return
 	}
 
-	tmpl.Execute(w, cards)
+	tmpl.ExecuteTemplate(w, "base", cards)
 }
