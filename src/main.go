@@ -10,6 +10,7 @@ import (
 
 func main() {
 	http.HandleFunc("GET /", home)
+	http.HandleFunc("GET /lobby/join", lobbyJoin)
 	http.HandleFunc("GET /headers", headers)
 	http.HandleFunc("GET /ping", ping)
 	http.HandleFunc("GET /cards", getCards)
@@ -27,6 +28,23 @@ func home(w http.ResponseWriter, req *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "base", nil)
+}
+
+func lobbyJoin(w http.ResponseWriter, req *http.Request) {
+	dbcs := database.GetDatabaseConnectionString()
+	lobbies, err := database.GetLobbies(dbcs)
+	if err != nil {
+		fmt.Fprintf(w, "failed to connect to database\n")
+		return
+	}
+
+	tmpl, err := template.ParseFiles("templates/pages/lobby/join.html", "templates/base.html")
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", lobbies)
 }
 
 func headers(w http.ResponseWriter, req *http.Request) {

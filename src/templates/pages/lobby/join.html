@@ -1,0 +1,17 @@
+{{define "body"}}
+<h3>Choose a Lobby to Join</h3>
+<table>
+  <tr>
+    <th>Date Added</th>
+    <th>Name</th>
+    <th>Security</th>
+  </tr>
+  {{ range .}}
+  <tr>
+    <td>{{ .DateAdded.Format "2006-01-02" }}</td>
+    <td>{{ .Name }}</td>
+    <td>{{ if .Password.Valid }} Protected &#128274; {{else}} Open {{end}}</td>
+  </tr>
+  {{end}}
+</table>
+{{end}}

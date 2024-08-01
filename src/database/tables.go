@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ type Lobby struct {
 	DateModified time.Time
 
 	Name     string
-	Password string
+	Password sql.NullString
 }
 
 type Deck struct {
@@ -29,7 +30,7 @@ type Deck struct {
 	DateModified time.Time
 
 	Name     string
-	Password string
+	Password sql.NullString
 }
 
 type Card struct {
