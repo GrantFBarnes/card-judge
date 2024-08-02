@@ -7,15 +7,27 @@
     {{.PlayerName}}
   </div>
   {{else}}
+  <style>
+    dialog {
+      width: calc(100% - 50px);
+      height: calc(100% - 50px);
+    }
+  </style>
   <dialog id="login-dialog" open="true">
-    <form hx-post="/api/login" hx-swap="outerHTML" hx-target="#login">
-      <label for="playerName">Player Name:</label>
+    <form
+      hx-post="/api/login"
+      hx-swap="outerHTML"
+      hx-target="#login"
+      style="text-align: center"
+    >
+      <p>You must provide your name to play the game.</p>
       <input
         type="text"
         id="playerName"
         name="playerName"
-        maxlength="255"
-        required
+        maxlength="25"
+        placeholder="Enter Player Name"
+        required="true"
       />
       <br />
       <br />
