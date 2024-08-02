@@ -16,5 +16,5 @@ func PostLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(fmt.Sprintf("Hello %s", playerName)))
+	w.Write([]byte(fmt.Sprintf("Welcome %s!", playerName)))
 }
