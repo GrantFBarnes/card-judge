@@ -22,7 +22,13 @@
       <dialog id="login-modal">
         <form hx-post="/api/login" hx-swap="outerHTML">
           <label for="playerName">Player Name:</label>
-          <input type="text" id="playerName" maxlength="255" required />
+          <input
+            type="text"
+            id="playerName"
+            name="playerName"
+            maxlength="255"
+            required
+          />
           <br />
           <br />
           <input type="submit" value="Login" />
