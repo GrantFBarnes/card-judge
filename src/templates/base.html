@@ -12,36 +12,7 @@
     ></script>
   </head>
   <body>
-    <div style="float: right">
-      {{if .LoggedIn}}
-      <p>Playing as: {{ .PlayerName }}</p>
-      {{else}}
-      <button onclick="document.getElementById('login-modal').showModal()">
-        Login
-      </button>
-      <dialog id="login-modal">
-        <form hx-post="/api/login" hx-swap="outerHTML">
-          <label for="playerName">Player Name:</label>
-          <input
-            type="text"
-            id="playerName"
-            name="playerName"
-            maxlength="255"
-            required
-          />
-          <br />
-          <br />
-          <input type="submit" value="Login" />
-        </form>
-        <br />
-        <button onclick="document.getElementById('login-modal').close()">
-          Close
-        </button>
-      </dialog>
-      <br />
-      {{end}}
-    </div>
-    {{template "body" .}}
+    {{template "login" .}} {{template "body" .}}
   </body>
 </html>
 {{end}}

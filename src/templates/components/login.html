@@ -1,0 +1,27 @@
+{{define "login"}}
+<div id="login">
+  {{if .LoggedIn}}
+  <div style="float: right; text-align: right">
+    Playing as:
+    <br />
+    {{.PlayerName}}
+  </div>
+  {{else}}
+  <dialog id="login-dialog" open="true">
+    <form hx-post="/api/login" hx-swap="outerHTML" hx-target="#login">
+      <label for="playerName">Player Name:</label>
+      <input
+        type="text"
+        id="playerName"
+        name="playerName"
+        maxlength="255"
+        required
+      />
+      <br />
+      <br />
+      <input type="submit" value="Login" />
+    </form>
+  </dialog>
+  {{end}}
+</div>
+{{end}}

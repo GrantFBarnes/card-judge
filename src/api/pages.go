@@ -9,13 +9,17 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-func PageHome(w http.ResponseWriter, req *http.Request) {
-	type PageDataHome struct {
-		LoggedIn   bool
-		PlayerName string
-	}
+type PageDataHome struct {
+	LoggedIn   bool
+	PlayerName string
+}
 
-	tmpl, err := template.ParseFiles("templates/pages/home.html", "templates/base.html")
+func PageHome(w http.ResponseWriter, req *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/home.html",
+		"templates/components/login.html",
+		"templates/base.html",
+	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
 		return
@@ -29,14 +33,18 @@ func PageHome(w http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func PageLobbyJoin(w http.ResponseWriter, req *http.Request) {
-	type PageDataLobbyJoin struct {
-		LoggedIn   bool
-		PlayerName string
-		Lobbies    []database.Lobby
-	}
+type PageDataLobbyJoin struct {
+	LoggedIn   bool
+	PlayerName string
+	Lobbies    []database.Lobby
+}
 
-	tmpl, err := template.ParseFiles("templates/pages/lobby/join.html", "templates/base.html")
+func PageLobbyJoin(w http.ResponseWriter, req *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/lobby/join.html",
+		"templates/components/login.html",
+		"templates/base.html",
+	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
 		return
@@ -58,14 +66,18 @@ func PageLobbyJoin(w http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func PageCardList(w http.ResponseWriter, req *http.Request) {
-	type PageDataCardList struct {
-		LoggedIn   bool
-		PlayerName string
-		Cards      []database.Card
-	}
+type PageDataCardList struct {
+	LoggedIn   bool
+	PlayerName string
+	Cards      []database.Card
+}
 
-	tmpl, err := template.ParseFiles("templates/cards.html", "templates/base.html")
+func PageCardList(w http.ResponseWriter, req *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/cards.html",
+		"templates/components/login.html",
+		"templates/base.html",
+	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
 		return
