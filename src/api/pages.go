@@ -38,8 +38,8 @@ type PageDataHome struct {
 
 func PageHome(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
-		"templates/pages/home.html",
 		"templates/pages/base.html",
+		"templates/pages/body/home.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -57,8 +57,8 @@ type PageDataLogin struct {
 
 func PageLogin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
-		"templates/pages/login.html",
 		"templates/pages/base.html",
+		"templates/pages/body/login.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -77,8 +77,8 @@ type PageDataLobbyJoin struct {
 
 func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
-		"templates/pages/lobby/join.html",
 		"templates/pages/base.html",
+		"templates/pages/body/lobby-join.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -105,8 +105,8 @@ type PageDataCardList struct {
 
 func PageCardList(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
-		"templates/cards.html",
 		"templates/pages/base.html",
+		"templates/pages/body/cards.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
