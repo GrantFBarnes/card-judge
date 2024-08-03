@@ -5,12 +5,27 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/grantfbarnes/card-judge/auth"
 	"github.com/grantfbarnes/card-judge/database"
 )
 
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("LOG %s - %s %s %s\n", r.RemoteAddr, r.Proto, r.Method, r.URL)
+		_, err := auth.GetPlayerName(r)
+		loggedIn := err == nil
+
+		if r.URL.Path == "/login" {
+			if loggedIn {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+				return
+			}
+		} else {
+			if !loggedIn {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }
