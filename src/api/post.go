@@ -6,10 +6,10 @@ import (
 	"github.com/grantfbarnes/card-judge/auth"
 )
 
-func PostLogin(w http.ResponseWriter, req *http.Request) {
-	req.ParseForm()
+func PostLogin(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 	var playerName string
-	for key, val := range req.Form {
+	for key, val := range r.Form {
 		if key != "playerName" {
 			continue
 		}
@@ -30,5 +30,5 @@ func PostLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	w.Header().Add("HX-Redirect", auth.GetRedirectURL(req))
+	w.Header().Add("HX-Redirect", auth.GetRedirectURL(r))
 }

@@ -36,7 +36,7 @@ type PageDataHome struct {
 	PageTitle string
 }
 
-func PageHome(w http.ResponseWriter, req *http.Request) {
+func PageHome(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/home.html",
 		"templates/base.html",
@@ -51,7 +51,7 @@ func PageHome(w http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func PageLogin(w http.ResponseWriter, req *http.Request) {
+func PageLogin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/login.html",
 		"templates/base.html",
@@ -69,7 +69,7 @@ type PageDataLobbyJoin struct {
 	Lobbies   []database.Lobby
 }
 
-func PageLobbyJoin(w http.ResponseWriter, req *http.Request) {
+func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/lobby/join.html",
 		"templates/base.html",
@@ -97,7 +97,7 @@ type PageDataCardList struct {
 	Cards     []database.Card
 }
 
-func PageCardList(w http.ResponseWriter, req *http.Request) {
+func PageCardList(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/cards.html",
 		"templates/base.html",
