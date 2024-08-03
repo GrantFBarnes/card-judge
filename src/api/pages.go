@@ -51,6 +51,10 @@ func PageHome(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type PageDataLogin struct {
+	PageTitle string
+}
+
 func PageLogin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/login.html",
@@ -61,7 +65,9 @@ func PageLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", nil)
+	tmpl.ExecuteTemplate(w, "base", PageDataLogin{
+		PageTitle: "Card Judge - Login",
+	})
 }
 
 type PageDataLobbyJoin struct {
@@ -87,7 +93,7 @@ func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "base", PageDataLobbyJoin{
-		PageTitle: "Card Judge - Home",
+		PageTitle: "Card Judge - Join Lobby",
 		Lobbies:   lobbies,
 	})
 }
@@ -115,7 +121,7 @@ func PageCardList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "base", PageDataCardList{
-		PageTitle: "Card Judge - Home",
+		PageTitle: "Card Judge - Cards",
 		Cards:     cards,
 	})
 }
