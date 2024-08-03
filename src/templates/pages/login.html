@@ -1,0 +1,17 @@
+{{define "body"}}
+<form hx-post="/api/login" style="text-align: center">
+  <p>You must provide your name to play the game.</p>
+  <input
+    type="text"
+    id="playerName"
+    name="playerName"
+    maxlength="25"
+    placeholder="Enter Player Name"
+    required="true"
+    autofocus="true"
+  />
+  <br />
+  <br />
+  <input type="submit" value="Submit" />
+</form>
+{{end}}

@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-	"html/template"
 	"net/http"
 
 	"github.com/grantfbarnes/card-judge/auth"
@@ -32,16 +30,5 @@ func PostLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/login.html",
-	)
-	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "login", PageDataHome{
-		LoggedIn:   true,
-		PlayerName: playerName,
-	})
+	w.Header().Add("HX-Redirect", "/")
 }

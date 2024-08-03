@@ -9,6 +9,7 @@ import (
 
 func main() {
 	http.HandleFunc("GET /", api.PageHome)
+	http.HandleFunc("GET /login", api.PageLogin)
 	http.HandleFunc("GET /lobby/join", api.PageLobbyJoin)
 	http.HandleFunc("GET /cards", api.PageCardList)
 
