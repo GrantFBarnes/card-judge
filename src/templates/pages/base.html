@@ -10,9 +10,26 @@
       integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/"
       crossorigin="anonymous"
     ></script>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      #topbar {
+        color: white;
+        background-color: #333;
+        height: 3em;
+        overflow: hidden;
+      }
+
+      #body {
+        margin: 8px;
+      }
+    </style>
   </head>
   <body>
-    <div>{{template "body" .}}</div>
+    <div id="topbar">{{template "topbar" .}}</div>
+    <div id="body">{{template "body" .}}</div>
   </body>
 </html>
 {{end}}

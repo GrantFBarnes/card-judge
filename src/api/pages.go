@@ -32,25 +32,6 @@ func Middleware(next http.Handler) http.Handler {
 	})
 }
 
-type PageDataHome struct {
-	PageTitle string
-}
-
-func PageHome(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/home.html",
-	)
-	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "base", PageDataHome{
-		PageTitle: "Card Judge - Home",
-	})
-}
-
 type PageDataLogin struct {
 	PageTitle string
 }
@@ -58,6 +39,7 @@ type PageDataLogin struct {
 func PageLogin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
+		"templates/pages/topbar/login.html",
 		"templates/pages/body/login.html",
 	)
 	if err != nil {
@@ -70,14 +52,41 @@ func PageLogin(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type PageDataHome struct {
+	PageTitle  string
+	PlayerName string
+}
+
+func PageHome(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/topbar/base.html",
+		"templates/pages/body/home.html",
+	)
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	// playerName will be defined because of middleware check
+	playerName, _ := auth.GetPlayerName(r)
+
+	tmpl.ExecuteTemplate(w, "base", PageDataHome{
+		PageTitle:  "Card Judge - Home",
+		PlayerName: playerName,
+	})
+}
+
 type PageDataLobbyJoin struct {
-	PageTitle string
-	Lobbies   []database.Lobby
+	PageTitle  string
+	PlayerName string
+	Lobbies    []database.Lobby
 }
 
 func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
+		"templates/pages/topbar/base.html",
 		"templates/pages/body/lobby-join.html",
 	)
 	if err != nil {
@@ -92,20 +101,26 @@ func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// playerName will be defined because of middleware check
+	playerName, _ := auth.GetPlayerName(r)
+
 	tmpl.ExecuteTemplate(w, "base", PageDataLobbyJoin{
-		PageTitle: "Card Judge - Join Lobby",
-		Lobbies:   lobbies,
+		PageTitle:  "Card Judge - Join Lobby",
+		PlayerName: playerName,
+		Lobbies:    lobbies,
 	})
 }
 
 type PageDataCardList struct {
-	PageTitle string
-	Cards     []database.Card
+	PageTitle  string
+	PlayerName string
+	Cards      []database.Card
 }
 
 func PageCardList(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
+		"templates/pages/topbar/base.html",
 		"templates/pages/body/cards.html",
 	)
 	if err != nil {
@@ -120,8 +135,12 @@ func PageCardList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// playerName will be defined because of middleware check
+	playerName, _ := auth.GetPlayerName(r)
+
 	tmpl.ExecuteTemplate(w, "base", PageDataCardList{
-		PageTitle: "Card Judge - Cards",
-		Cards:     cards,
+		PageTitle:  "Card Judge - Cards",
+		PlayerName: playerName,
+		Cards:      cards,
 	})
 }
