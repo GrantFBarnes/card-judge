@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	http.HandleFunc("GET /", api.PageHome)
-	http.HandleFunc("GET /login", api.PageLogin)
-	http.HandleFunc("GET /lobby/join", api.PageLobbyJoin)
-	http.HandleFunc("GET /cards", api.PageCardList)
+	http.Handle("GET /", api.Middleware(http.HandlerFunc(api.PageHome)))
+	http.Handle("GET /login", api.Middleware(http.HandlerFunc(api.PageLogin)))
+	http.Handle("GET /lobby/join", api.Middleware(http.HandlerFunc(api.PageLobbyJoin)))
+	http.Handle("GET /cards", api.Middleware(http.HandlerFunc(api.PageCardList)))
 
 	http.HandleFunc("POST /api/login", api.PostLogin)
 
