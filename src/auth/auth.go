@@ -9,15 +9,48 @@ import (
 	jwt "github.com/golang-jwt/jwt/v5"
 )
 
-const cookieName string = "CARD-JUDGE-JWT-TOKEN"
+const cookieNamePlayerToken string = "CARD-JUDGE-PLAYER-TOKEN"
+const cookieNameRedirectURL string = "CARD-JUDGE-REDIRECT-URL"
 const claimKey string = "playerName"
 
 var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
 
+func GetRedirectURL(r *http.Request) string {
+	redirectPath := "/"
+	for _, c := range r.Cookies() {
+		if c.Name != cookieNameRedirectURL {
+			continue
+		}
+		redirectPath = c.Value
+		break
+	}
+	return redirectPath
+}
+
+func SetRedirectURL(w http.ResponseWriter, url string) {
+	cookie := http.Cookie{
+		Name:    cookieNameRedirectURL,
+		Value:   url,
+		Path:    "/",
+		Expires: time.Now().Add(time.Hour * 12),
+	}
+	http.SetCookie(w, &cookie)
+}
+
+func RemoveRedirectURL(w http.ResponseWriter) {
+	cookie := http.Cookie{
+		Name:    cookieNameRedirectURL,
+		Value:   "",
+		Path:    "/",
+		Expires: time.Unix(0, 0),
+	}
+	http.SetCookie(w, &cookie)
+}
+
 func GetPlayerName(r *http.Request) (string, error) {
 	cookieValue := ""
 	for _, c := range r.Cookies() {
-		if c.Name != cookieName {
+		if c.Name != cookieNamePlayerToken {
 			continue
 		}
 		cookieValue = c.Value
@@ -42,12 +75,11 @@ func SetPlayerName(w http.ResponseWriter, playerName string) error {
 		return err
 	}
 
-	expiration := time.Now().Add(time.Hour * 12)
 	cookie := http.Cookie{
-		Name:    cookieName,
+		Name:    cookieNamePlayerToken,
 		Value:   tokenString,
-		Expires: expiration,
 		Path:    "/",
+		Expires: time.Now().Add(time.Hour * 12),
 	}
 	http.SetCookie(w, &cookie)
 	return nil
