@@ -1,9 +1,15 @@
 {{define "topbar"}}
 <style>
-  #name-div {
+  #topbar-title {
+    text-align: left;
+    padding: 10px;
+  }
+
+  #topbar-player-name {
     text-align: right;
     padding: 10px;
   }
 </style>
-<div id="name-div">Playing as: {{.PlayerName}}</div>
+<div id="topbar-title">Card Judge</div>
+<div id="topbar-player-name">Playing as: {{.PlayerName}}</div>
 {{end}}
