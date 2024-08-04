@@ -38,12 +38,7 @@ func SetRedirectURL(w http.ResponseWriter, url string) {
 }
 
 func RemoveRedirectURL(w http.ResponseWriter) {
-	cookie := http.Cookie{
-		Name:    cookieNameRedirectURL,
-		Value:   "",
-		Path:    "/",
-		Expires: time.Unix(0, 0),
-	}
+	cookie := getRemovalCookie(cookieNameRedirectURL)
 	http.SetCookie(w, &cookie)
 }
 
@@ -86,13 +81,17 @@ func SetPlayerName(w http.ResponseWriter, playerName string) error {
 }
 
 func RemovePlayerName(w http.ResponseWriter) {
-	cookie := http.Cookie{
-		Name:    cookieNamePlayerToken,
+	cookie := getRemovalCookie(cookieNamePlayerToken)
+	http.SetCookie(w, &cookie)
+}
+
+func getRemovalCookie(cookieName string) http.Cookie {
+	return http.Cookie{
+		Name:    cookieName,
 		Value:   "",
 		Path:    "/",
 		Expires: time.Unix(0, 0),
 	}
-	http.SetCookie(w, &cookie)
 }
 
 func getTokenString(playerName string) (string, error) {
