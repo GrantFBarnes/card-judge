@@ -85,6 +85,16 @@ func SetPlayerName(w http.ResponseWriter, playerName string) error {
 	return nil
 }
 
+func RemovePlayerName(w http.ResponseWriter) {
+	cookie := http.Cookie{
+		Name:    cookieNamePlayerToken,
+		Value:   "",
+		Path:    "/",
+		Expires: time.Unix(0, 0),
+	}
+	http.SetCookie(w, &cookie)
+}
+
 func getTokenString(playerName string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		claimKey: playerName,

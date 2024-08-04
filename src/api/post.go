@@ -23,6 +23,11 @@ func PostPlayerUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("HX-Refresh", "true")
 }
 
+func PostPlayerLogout(w http.ResponseWriter, r *http.Request) {
+	auth.RemovePlayerName(w)
+	w.Header().Add("HX-Refresh", "true")
+}
+
 func setPlayerName(w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
