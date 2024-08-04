@@ -19,26 +19,35 @@
   >
     &#128393;
   </span>
-  <dialog id="update-player-dialog">
-    <form hx-post="/api/player/update" style="text-align: center">
-      <p>You are currently playing as: {{.PlayerName}}</p>
-      <input
-        type="text"
-        id="playerName"
-        name="playerName"
-        maxlength="25"
-        placeholder="Enter Updated Player Name"
-        required="true"
-        autofocus="true"
-      />
-      <br />
-      <br />
-      <input type="submit" value="Update" />
-      <button hx-post="/api/player/logout">Logout</button>
-      <button onclick="document.getElementById('update-player-dialog').close()">
-        Cancel
-      </button>
-    </form>
-  </dialog>
 </div>
+<dialog id="update-player-dialog" style="text-align: center">
+  <p>You are currently playing as: {{.PlayerName}}</p>
+  <form hx-post="/api/player/update">
+    <input
+      type="text"
+      id="playerName"
+      name="playerName"
+      maxlength="25"
+      placeholder="Enter Updated Player Name"
+      required="true"
+      autofocus="true"
+    />
+    <br />
+    <br />
+    <input type="submit" value="Update" />
+    <button onclick="document.getElementById('update-player-dialog').close()">
+      Cancel
+    </button>
+  </form>
+  <br />
+  <details>
+    <summary style="cursor: pointer">Logout</summary>
+    <button
+      hx-post="/api/player/logout"
+      hx-confirm="Are you sure you want to logout?"
+    >
+      Logout
+    </button>
+  </details>
+</dialog>
 {{end}}
