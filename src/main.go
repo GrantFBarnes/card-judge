@@ -13,7 +13,8 @@ func main() {
 	http.Handle("GET /lobby/join", api.Middleware(http.HandlerFunc(api.PageLobbyJoin)))
 	http.Handle("GET /cards", api.Middleware(http.HandlerFunc(api.PageCardList)))
 
-	http.HandleFunc("POST /api/login", api.PostLogin)
+	http.HandleFunc("POST /api/player/login", api.PostPlayerLogin)
+	http.HandleFunc("POST /api/player/update", api.PostPlayerUpdate)
 
 	port := ":8090"
 	fmt.Printf("running at http://localhost%s\n", port)

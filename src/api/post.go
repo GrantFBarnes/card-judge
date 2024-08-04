@@ -1,13 +1,36 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/grantfbarnes/card-judge/auth"
 )
 
-func PostLogin(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+func PostPlayerLogin(w http.ResponseWriter, r *http.Request) {
+	err := setPlayerName(w, r)
+	if err != nil {
+		return
+	}
+	w.Header().Add("HX-Redirect", auth.GetRedirectURL(r))
+}
+
+func PostPlayerUpdate(w http.ResponseWriter, r *http.Request) {
+	err := setPlayerName(w, r)
+	if err != nil {
+		return
+	}
+	w.Header().Add("HX-Refresh", "true")
+}
+
+func setPlayerName(w http.ResponseWriter, r *http.Request) error {
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to parse form"))
+		return err
+	}
+
 	var playerName string
 	for key, val := range r.Form {
 		if key != "playerName" {
@@ -20,15 +43,15 @@ func PostLogin(w http.ResponseWriter, r *http.Request) {
 	if playerName == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("no name found"))
-		return
+		return errors.New("no name found")
 	}
 
-	err := auth.SetPlayerName(w, playerName)
+	err = auth.SetPlayerName(w, playerName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to set cookie"))
-		return
+		return errors.New("failed to set cookie")
 	}
 
-	w.Header().Add("HX-Redirect", auth.GetRedirectURL(r))
+	return nil
 }

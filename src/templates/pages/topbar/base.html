@@ -11,5 +11,33 @@
   }
 </style>
 <div id="topbar-title">Card Judge</div>
-<div id="topbar-player-name">Playing as: {{.PlayerName}}</div>
+<div id="topbar-player-name">
+  Playing as: {{.PlayerName}}
+  <span
+    onclick="document.getElementById('update-player-dialog').showModal()"
+    style="cursor: pointer"
+  >
+    &#128393;
+  </span>
+  <dialog id="update-player-dialog">
+    <form hx-post="/api/player/update" style="text-align: center">
+      <p>You are currently playing as: {{.PlayerName}}</p>
+      <input
+        type="text"
+        id="playerName"
+        name="playerName"
+        maxlength="25"
+        placeholder="Enter Updated Player Name"
+        required="true"
+        autofocus="true"
+      />
+      <br />
+      <br />
+      <input type="submit" value="Update" />
+      <button onclick="document.getElementById('update-player-dialog').close()">
+        Cancel
+      </button>
+    </form>
+  </dialog>
+</div>
 {{end}}
