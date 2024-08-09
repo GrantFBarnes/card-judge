@@ -4,14 +4,17 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 const cookieNamePlayerToken string = "CARD-JUDGE-PLAYER-TOKEN"
+const cookieNameAccessToken string = "CARD-JUDGE-ACCESS-TOKEN"
 const cookieNameRedirectURL string = "CARD-JUDGE-REDIRECT-URL"
-const claimKey string = "playerName"
+const claimKey string = "value"
 
 var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
 
@@ -85,6 +88,89 @@ func RemovePlayerName(w http.ResponseWriter) {
 	http.SetCookie(w, &cookie)
 }
 
+func HasAccess(r *http.Request, id uuid.UUID) bool {
+	accessIds, err := GetAccessIds(r)
+	if err != nil {
+		return false
+	}
+
+	for _, v := range accessIds {
+		if v == id {
+			return true
+		}
+	}
+
+	return false
+}
+
+func GetAccessIds(r *http.Request) ([]uuid.UUID, error) {
+	cookieValue := ""
+	for _, c := range r.Cookies() {
+		if c.Name != cookieNameAccessToken {
+			continue
+		}
+		cookieValue = c.Value
+		break
+	}
+
+	if cookieValue == "" {
+		return nil, errors.New("cookie not found")
+	}
+
+	claimValue, err := getTokenClaimValue(cookieValue)
+	if err != nil {
+		return nil, err
+	}
+
+	accessStrings := strings.Split(claimValue, " ")
+
+	accessIds := accessToUuid(accessStrings)
+
+	return accessIds, nil
+}
+
+func SetAccessIds(w http.ResponseWriter, accessIds []uuid.UUID) error {
+	accessStrings := accessToString(accessIds)
+	tokenString, err := getTokenString(strings.Join(accessStrings, " "))
+	if err != nil {
+		return err
+	}
+
+	cookie := http.Cookie{
+		Name:    cookieNameAccessToken,
+		Value:   tokenString,
+		Path:    "/",
+		Expires: time.Now().Add(time.Hour * 12),
+	}
+	http.SetCookie(w, &cookie)
+	return nil
+}
+
+func RemoveAccess(w http.ResponseWriter) {
+	cookie := getRemovalCookie(cookieNameAccessToken)
+	http.SetCookie(w, &cookie)
+}
+
+func accessToUuid(accessStrings []string) []uuid.UUID {
+	accessIds := make([]uuid.UUID, len(accessStrings))
+	for i := range accessStrings {
+		id, err := uuid.Parse(accessStrings[i])
+		if err != nil {
+			continue
+		}
+		accessIds[i] = id
+	}
+	return accessIds
+}
+
+func accessToString(accessIds []uuid.UUID) []string {
+	accessStrings := make([]string, len(accessIds))
+	for i := range accessIds {
+		accessStrings[i] = accessIds[i].String()
+	}
+	return accessStrings
+}
+
 func getRemovalCookie(cookieName string) http.Cookie {
 	return http.Cookie{
 		Name:    cookieName,
@@ -94,9 +180,9 @@ func getRemovalCookie(cookieName string) http.Cookie {
 	}
 }
 
-func getTokenString(playerName string) (string, error) {
+func getTokenString(tokenStringValue string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		claimKey: playerName,
+		claimKey: tokenStringValue,
 	})
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
