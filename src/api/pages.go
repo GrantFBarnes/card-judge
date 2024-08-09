@@ -149,6 +149,7 @@ func PageDecks(w http.ResponseWriter, r *http.Request) {
 type PageDataCards struct {
 	PageTitle  string
 	PlayerName string
+	Deck       database.Deck
 	Cards      []database.Card
 }
 
@@ -171,6 +172,12 @@ func PageCards(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
+	deck, err := database.GetDeck(dbcs, deckId)
+	if err != nil {
+		fmt.Fprintf(w, "failed to get deck\n")
+		return
+	}
+
 	cards, err := database.GetCards(dbcs, deckId)
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
@@ -183,6 +190,7 @@ func PageCards(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "base", PageDataCards{
 		PageTitle:  "Card Judge - Cards",
 		PlayerName: playerName,
+		Deck:       deck,
 		Cards:      cards,
 	})
 }
