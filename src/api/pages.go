@@ -188,10 +188,15 @@ func PageCards(w http.ResponseWriter, r *http.Request) {
 	// playerName will be defined because of middleware check
 	playerName, _ := auth.GetPlayerName(r)
 
+	hasAccess := true
+	if deck.Password.Valid {
+		hasAccess = auth.HasAccess(r, deck.Id)
+	}
+
 	tmpl.ExecuteTemplate(w, "base", PageDataCards{
 		PageTitle:  "Card Judge - Cards",
 		PlayerName: playerName,
-		HasAccess:  auth.HasAccess(r, deck.Id),
+		HasAccess:  hasAccess,
 		Deck:       deck,
 		Cards:      cards,
 	})
