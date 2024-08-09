@@ -2,11 +2,13 @@
 <table>
   <tr>
     <th>Date Added</th>
+    <th>Type</th>
     <th>Text</th>
   </tr>
   {{range .Cards}}
   <tr>
     <td>{{.DateAdded.Format "2006-01-02"}}</td>
+    <td>{{.Type}}</td>
     <td>{{.Text}}</td>
   </tr>
   {{end}}

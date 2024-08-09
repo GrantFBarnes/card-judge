@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/auth"
 	"github.com/grantfbarnes/card-judge/database"
 )
@@ -162,8 +163,15 @@ func PageCards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	deckIdString := r.PathValue("deckid")
+	deckId, err := uuid.Parse(deckIdString)
+	if err != nil {
+		fmt.Fprintf(w, "deck id invalid\n")
+		return
+	}
+
 	dbcs := database.GetDatabaseConnectionString()
-	cards, err := database.GetJudgeCards(dbcs)
+	cards, err := database.GetCards(dbcs, deckId)
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return
