@@ -149,6 +149,7 @@ func PageDecks(w http.ResponseWriter, r *http.Request) {
 type PageDataCards struct {
 	PageTitle  string
 	PlayerName string
+	HasAccess  bool
 	Deck       database.Deck
 	Cards      []database.Card
 }
@@ -190,6 +191,7 @@ func PageCards(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "base", PageDataCards{
 		PageTitle:  "Card Judge - Cards",
 		PlayerName: playerName,
+		HasAccess:  auth.HasAccess(r, deck.Id),
 		Deck:       deck,
 		Cards:      cards,
 	})

@@ -1,17 +1,38 @@
 {{define "body"}}
-<h3>Cards in Deck: {{.Deck.Name}}</h3>
-<table>
-  <tr>
-    <th>Date Added</th>
-    <th>Type</th>
-    <th>Text</th>
-  </tr>
-  {{range .Cards}}
-  <tr>
-    <td>{{.DateAdded.Format "2006-01-02"}}</td>
-    <td>{{.Type}}</td>
-    <td>{{.Text}}</td>
-  </tr>
+<div>
+  {{if .HasAccess}}
+  <h3>Cards in Deck: {{.Deck.Name}}</h3>
+  <table>
+    <tr>
+      <th>Date Added</th>
+      <th>Type</th>
+      <th>Text</th>
+    </tr>
+    {{range .Cards}}
+    <tr>
+      <td>{{.DateAdded.Format "2006-01-02"}}</td>
+      <td>{{.Type}}</td>
+      <td>{{.Text}}</td>
+    </tr>
+    {{end}}
+  </table>
+  {{else}}
+  <form hx-post="/api/access/deck/{{.Deck.Id}}" style="text-align: center">
+    <h3>Deck: {{.Deck.Name}}</h3>
+    <p>You must provide the password to see cards.</p>
+    <input
+      type="text"
+      id="password"
+      name="password"
+      maxlength="255"
+      placeholder="Enter Deck Password"
+      required="true"
+      autofocus="true"
+    />
+    <br />
+    <br />
+    <input type="submit" value="Submit" />
+  </form>
   {{end}}
-</table>
+</div>
 {{end}}

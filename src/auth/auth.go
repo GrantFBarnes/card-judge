@@ -89,7 +89,7 @@ func RemovePlayerName(w http.ResponseWriter) {
 }
 
 func HasAccess(r *http.Request, id uuid.UUID) bool {
-	accessIds, err := GetAccessIds(r)
+	accessIds, err := getAccessIds(r)
 	if err != nil {
 		return false
 	}
@@ -103,7 +103,28 @@ func HasAccess(r *http.Request, id uuid.UUID) bool {
 	return false
 }
 
-func GetAccessIds(r *http.Request) ([]uuid.UUID, error) {
+func AddAccessId(w http.ResponseWriter, r *http.Request, accessId uuid.UUID) error {
+	accessIds, err := getAccessIds(r)
+	if err != nil {
+		return err
+	}
+
+	alreadyAdded := false
+	for _, v := range accessIds {
+		if v == accessId {
+			alreadyAdded = true
+			break
+		}
+	}
+
+	if !alreadyAdded {
+		accessIds = append(accessIds, accessId)
+	}
+
+	return SetAccessIds(w, accessIds)
+}
+
+func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
 	cookieValue := ""
 	for _, c := range r.Cookies() {
 		if c.Name != cookieNameAccessToken {
@@ -113,8 +134,9 @@ func GetAccessIds(r *http.Request) ([]uuid.UUID, error) {
 		break
 	}
 
+	var accessIds = make([]uuid.UUID, 0)
 	if cookieValue == "" {
-		return nil, errors.New("cookie not found")
+		return accessIds, nil
 	}
 
 	claimValue, err := getTokenClaimValue(cookieValue)
@@ -124,7 +146,7 @@ func GetAccessIds(r *http.Request) ([]uuid.UUID, error) {
 
 	accessStrings := strings.Split(claimValue, " ")
 
-	accessIds := accessToUuid(accessStrings)
+	accessIds = accessToUuid(accessStrings)
 
 	return accessIds, nil
 }

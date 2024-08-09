@@ -14,6 +14,7 @@ func main() {
 	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(api.PageDecks)))
 	http.Handle("GET /cards/{deckid}", api.Middleware(http.HandlerFunc(api.PageCards)))
 
+	http.HandleFunc("POST /api/access/deck/{deckid}", api.PostAccessDeck)
 	http.HandleFunc("POST /api/player/login", api.PostPlayerLogin)
 	http.HandleFunc("POST /api/player/update", api.PostPlayerUpdate)
 	http.HandleFunc("POST /api/player/logout", api.PostPlayerLogout)
