@@ -9,6 +9,55 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
+func PostAccessLobby(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyid")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to get lobby id"))
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	lobby, err := database.GetLobby(dbcs, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to get lobby"))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to parse form"))
+		return
+	}
+
+	var password string
+	for key, val := range r.Form {
+		if key != "password" {
+			continue
+		}
+		password = val[0]
+		break
+	}
+
+	if lobby.Password.String != password {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("password not valid"))
+		return
+	}
+
+	err = auth.AddAccessId(w, r, lobby.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to set cookie"))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+}
+
 func PostAccessDeck(w http.ResponseWriter, r *http.Request) {
 	deckIdString := r.PathValue("deckid")
 	deckId, err := uuid.Parse(deckIdString)

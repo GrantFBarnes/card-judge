@@ -1,0 +1,24 @@
+{{define "body"}}
+<div>
+  {{if .HasAccess}}
+  <h3>Lobby: {{.Lobby.Name}}</h3>
+  {{else}}
+  <form hx-post="/api/access/lobby/{{.Lobby.Id}}" style="text-align: center">
+    <h3>Lobby: {{.Lobby.Name}}</h3>
+    <p>You must provide the password to join lobby.</p>
+    <input
+      type="text"
+      id="password"
+      name="password"
+      maxlength="255"
+      placeholder="Enter Lobby Password"
+      required="true"
+      autofocus="true"
+    />
+    <br />
+    <br />
+    <input type="submit" value="Submit" />
+  </form>
+  {{end}}
+</div>
+{{end}}

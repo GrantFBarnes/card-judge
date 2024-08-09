@@ -112,6 +112,54 @@ func PageLobbies(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type PageDataGame struct {
+	PageTitle  string
+	PlayerName string
+	HasAccess  bool
+	Lobby      database.Lobby
+}
+
+func PageGame(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/topbar/base.html",
+		"templates/pages/body/game.html",
+	)
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	lobbyIdString := r.PathValue("lobbyid")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		fmt.Fprintf(w, "lobby id invalid\n")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	lobby, err := database.GetLobby(dbcs, lobbyId)
+	if err != nil {
+		fmt.Fprintf(w, "failed to get lobby\n")
+		return
+	}
+
+	// playerName will be defined because of middleware check
+	playerName, _ := auth.GetPlayerName(r)
+
+	hasAccess := true
+	if lobby.Password.Valid {
+		hasAccess = auth.HasAccess(r, lobby.Id)
+	}
+
+	tmpl.ExecuteTemplate(w, "base", PageDataGame{
+		PageTitle:  "Card Judge - Game",
+		PlayerName: playerName,
+		HasAccess:  hasAccess,
+		Lobby:      lobby,
+	})
+}
+
 type PageDataDecks struct {
 	PageTitle  string
 	PlayerName string
