@@ -77,17 +77,17 @@ func PageHome(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type PageDataLobbyJoin struct {
+type PageDataLobbies struct {
 	PageTitle  string
 	PlayerName string
 	Lobbies    []database.Lobby
 }
 
-func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
+func PageLobbies(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
-		"templates/pages/body/lobby-join.html",
+		"templates/pages/body/lobbies.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -104,20 +104,54 @@ func PageLobbyJoin(w http.ResponseWriter, r *http.Request) {
 	// playerName will be defined because of middleware check
 	playerName, _ := auth.GetPlayerName(r)
 
-	tmpl.ExecuteTemplate(w, "base", PageDataLobbyJoin{
-		PageTitle:  "Card Judge - Join Lobby",
+	tmpl.ExecuteTemplate(w, "base", PageDataLobbies{
+		PageTitle:  "Card Judge - Lobbies",
 		PlayerName: playerName,
 		Lobbies:    lobbies,
 	})
 }
 
-type PageDataCardList struct {
+type PageDataDecks struct {
+	PageTitle  string
+	PlayerName string
+	Decks      []database.Deck
+}
+
+func PageDecks(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/topbar/base.html",
+		"templates/pages/body/decks.html",
+	)
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	decks, err := database.GetDecks(dbcs)
+	if err != nil {
+		fmt.Fprintf(w, "failed to connect to database\n")
+		return
+	}
+
+	// playerName will be defined because of middleware check
+	playerName, _ := auth.GetPlayerName(r)
+
+	tmpl.ExecuteTemplate(w, "base", PageDataDecks{
+		PageTitle:  "Card Judge - Decks",
+		PlayerName: playerName,
+		Decks:      decks,
+	})
+}
+
+type PageDataCards struct {
 	PageTitle  string
 	PlayerName string
 	Cards      []database.Card
 }
 
-func PageCardList(w http.ResponseWriter, r *http.Request) {
+func PageCards(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
@@ -138,7 +172,7 @@ func PageCardList(w http.ResponseWriter, r *http.Request) {
 	// playerName will be defined because of middleware check
 	playerName, _ := auth.GetPlayerName(r)
 
-	tmpl.ExecuteTemplate(w, "base", PageDataCardList{
+	tmpl.ExecuteTemplate(w, "base", PageDataCards{
 		PageTitle:  "Card Judge - Cards",
 		PlayerName: playerName,
 		Cards:      cards,

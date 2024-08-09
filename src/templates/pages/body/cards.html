@@ -1,15 +1,13 @@
 {{define "body"}}
 <table>
   <tr>
-    <th>ID</th>
-    <th>Text</th>
     <th>Date Added</th>
+    <th>Text</th>
   </tr>
-  {{ range .Cards}}
+  {{range .Cards}}
   <tr>
-    <td>{{ .Id }}</td>
-    <td>{{ .Text }}</td>
-    <td>{{ .DateAdded }}</td>
+    <td>{{.DateAdded.Format "2006-01-02"}}</td>
+    <td>{{.Text}}</td>
   </tr>
   {{end}}
 </table>

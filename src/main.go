@@ -10,8 +10,9 @@ import (
 func main() {
 	http.Handle("GET /", api.Middleware(http.HandlerFunc(api.PageHome)))
 	http.Handle("GET /login", api.Middleware(http.HandlerFunc(api.PageLogin)))
-	http.Handle("GET /lobby/join", api.Middleware(http.HandlerFunc(api.PageLobbyJoin)))
-	http.Handle("GET /cards", api.Middleware(http.HandlerFunc(api.PageCardList)))
+	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(api.PageLobbies)))
+	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(api.PageDecks)))
+	http.Handle("GET /cards", api.Middleware(http.HandlerFunc(api.PageCards)))
 
 	http.HandleFunc("POST /api/player/login", api.PostPlayerLogin)
 	http.HandleFunc("POST /api/player/update", api.PostPlayerUpdate)
