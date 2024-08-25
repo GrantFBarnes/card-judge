@@ -204,7 +204,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.GetCards(dbcs, deckId)
+	cards, err := database.GetCardsInDeck(dbcs, deckId)
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return

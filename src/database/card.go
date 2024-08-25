@@ -17,14 +17,14 @@ type Card struct {
 	Text   string
 }
 
-func GetCards(dbcs string, deckId uuid.UUID) ([]Card, error) {
+func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	selectStatment, err := db.Prepare(`
+	statment, err := db.Prepare(`
 		SELECT ID
 			 , DATE_ADDED
 			 , DATE_MODIFIED
@@ -36,9 +36,9 @@ func GetCards(dbcs string, deckId uuid.UUID) ([]Card, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer selectStatment.Close()
+	defer statment.Close()
 
-	rows, err := selectStatment.Query(deckId)
+	rows, err := statment.Query(deckId)
 	if err != nil {
 		return nil, err
 	}
@@ -57,4 +57,127 @@ func GetCards(dbcs string, deckId uuid.UUID) ([]Card, error) {
 		result = append(result, card)
 	}
 	return result, nil
+}
+
+func GetCard(dbcs string, id uuid.UUID) (Card, error) {
+	var card Card
+
+	db, err := sql.Open("mysql", dbcs)
+	if err != nil {
+		return card, err
+	}
+	defer db.Close()
+
+	statment, err := db.Prepare(`
+		SELECT ID
+			 , DATE_ADDED
+			 , DATE_MODIFIED
+			 , DECK_ID
+			 , TYPE
+			 , TEXT
+	 	FROM CARD 
+		WHERE ID = ?
+	`)
+	if err != nil {
+		return card, err
+	}
+	defer statment.Close()
+
+	rows, err := statment.Query(id)
+	if err != nil {
+		return card, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&card.Id,
+			&card.DateAdded,
+			&card.DateModified,
+			&card.DeckId,
+			&card.Type,
+			&card.Text); err != nil {
+			return card, err
+		}
+	}
+
+	return card, nil
+}
+
+func CreateCard(dbcs string, deckId uuid.UUID, cardType string, text string) (uuid.UUID, error) {
+	id, err := uuid.NewUUID()
+	if err != nil {
+		return id, err
+	}
+
+	db, err := sql.Open("mysql", dbcs)
+	if err != nil {
+		return id, err
+	}
+	defer db.Close()
+
+	statment, err := db.Prepare(`
+		INSERT INTO CARD (ID, DECK_ID, TYPE, TEXT)
+		VALUES (?, ?, ?, ?)
+	`)
+	if err != nil {
+		return id, err
+	}
+	defer statment.Close()
+
+	_, err = statment.Exec(id, deckId, cardType, text)
+	if err != nil {
+		return id, err
+	}
+
+	return id, nil
+}
+
+func UpdateCard(dbcs string, id uuid.UUID, cardType string, text string) error {
+	db, err := sql.Open("mysql", dbcs)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	statment, err := db.Prepare(`
+		UPDATE CARD
+		SET TYPE = ?,
+			TEXT = ?
+		WHERE ID = ?
+	`)
+	if err != nil {
+		return err
+	}
+	defer statment.Close()
+
+	_, err = statment.Exec(cardType, text, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteCard(dbcs string, id uuid.UUID) error {
+	db, err := sql.Open("mysql", dbcs)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	statment, err := db.Prepare(`
+		DELETE FROM CARD
+		WHERE ID = ?
+	`)
+	if err != nil {
+		return err
+	}
+	defer statment.Close()
+
+	_, err = statment.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
