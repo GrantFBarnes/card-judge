@@ -11,7 +11,7 @@ func main() {
 	http.Handle("GET /", api.Middleware(http.HandlerFunc(api.PageHome)))
 	http.Handle("GET /login", api.Middleware(http.HandlerFunc(api.PageLogin)))
 	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(api.PageLobbies)))
-	http.Handle("GET /game/{lobbyid}", api.Middleware(http.HandlerFunc(api.PageGame)))
+	http.Handle("GET /lobby/{lobbyid}", api.Middleware(http.HandlerFunc(api.PageLobby)))
 	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(api.PageDecks)))
 	http.Handle("GET /deck/{deckid}", api.Middleware(http.HandlerFunc(api.PageDeck)))
 

@@ -193,5 +193,5 @@ func PostLobbyCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("HX-Redirect", "/game/"+id.String())
+	w.Header().Add("HX-Redirect", "/lobby/"+id.String())
 }

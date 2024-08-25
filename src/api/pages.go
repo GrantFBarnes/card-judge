@@ -112,18 +112,18 @@ func PageLobbies(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type PageDataGame struct {
+type PageDataLobby struct {
 	PageTitle  string
 	PlayerName string
 	HasAccess  bool
 	Lobby      database.Lobby
 }
 
-func PageGame(w http.ResponseWriter, r *http.Request) {
+func PageLobby(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
-		"templates/pages/body/game.html",
+		"templates/pages/body/lobby.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -152,8 +152,8 @@ func PageGame(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasAccess(r, lobby.Id)
 	}
 
-	tmpl.ExecuteTemplate(w, "base", PageDataGame{
-		PageTitle:  "Card Judge - Game",
+	tmpl.ExecuteTemplate(w, "base", PageDataLobby{
+		PageTitle:  "Card Judge - Lobby",
 		PlayerName: playerName,
 		HasAccess:  hasAccess,
 		Lobby:      lobby,
