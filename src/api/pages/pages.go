@@ -1,4 +1,4 @@
-package api
+package apiPages
 
 import (
 	"fmt"
@@ -10,34 +10,11 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-func Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := auth.GetPlayerName(r)
-		loggedIn := err == nil
-
-		if r.URL.Path == "/login" {
-			if loggedIn {
-				http.Redirect(w, r, auth.GetRedirectURL(r), http.StatusSeeOther)
-				return
-			}
-		} else {
-			if !loggedIn {
-				auth.SetRedirectURL(w, r.URL.Path)
-				http.Redirect(w, r, "/login", http.StatusSeeOther)
-				return
-			}
-			auth.RemoveRedirectURL(w)
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-type PageDataLogin struct {
+type LoginData struct {
 	PageTitle string
 }
 
-func PageLogin(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/login.html",
@@ -48,17 +25,17 @@ func PageLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", PageDataLogin{
+	tmpl.ExecuteTemplate(w, "base", LoginData{
 		PageTitle: "Card Judge - Login",
 	})
 }
 
-type PageDataHome struct {
+type HomeData struct {
 	PageTitle  string
 	PlayerName string
 }
 
-func PageHome(w http.ResponseWriter, r *http.Request) {
+func Home(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
@@ -72,19 +49,19 @@ func PageHome(w http.ResponseWriter, r *http.Request) {
 	// playerName will be defined because of middleware check
 	playerName, _ := auth.GetPlayerName(r)
 
-	tmpl.ExecuteTemplate(w, "base", PageDataHome{
+	tmpl.ExecuteTemplate(w, "base", HomeData{
 		PageTitle:  "Card Judge - Home",
 		PlayerName: playerName,
 	})
 }
 
-type PageDataLobbies struct {
+type LobbiesData struct {
 	PageTitle  string
 	PlayerName string
 	Lobbies    []database.Lobby
 }
 
-func PageLobbies(w http.ResponseWriter, r *http.Request) {
+func Lobbies(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
@@ -105,21 +82,21 @@ func PageLobbies(w http.ResponseWriter, r *http.Request) {
 	// playerName will be defined because of middleware check
 	playerName, _ := auth.GetPlayerName(r)
 
-	tmpl.ExecuteTemplate(w, "base", PageDataLobbies{
+	tmpl.ExecuteTemplate(w, "base", LobbiesData{
 		PageTitle:  "Card Judge - Lobbies",
 		PlayerName: playerName,
 		Lobbies:    lobbies,
 	})
 }
 
-type PageDataLobby struct {
+type LobbyData struct {
 	PageTitle  string
 	PlayerName string
 	HasAccess  bool
 	Lobby      database.Lobby
 }
 
-func PageLobby(w http.ResponseWriter, r *http.Request) {
+func Lobby(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
@@ -152,7 +129,7 @@ func PageLobby(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasAccess(r, lobby.Id)
 	}
 
-	tmpl.ExecuteTemplate(w, "base", PageDataLobby{
+	tmpl.ExecuteTemplate(w, "base", LobbyData{
 		PageTitle:  "Card Judge - Lobby",
 		PlayerName: playerName,
 		HasAccess:  hasAccess,
@@ -160,13 +137,13 @@ func PageLobby(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type PageDataDecks struct {
+type DecksData struct {
 	PageTitle  string
 	PlayerName string
 	Decks      []database.Deck
 }
 
-func PageDecks(w http.ResponseWriter, r *http.Request) {
+func Decks(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
@@ -187,14 +164,14 @@ func PageDecks(w http.ResponseWriter, r *http.Request) {
 	// playerName will be defined because of middleware check
 	playerName, _ := auth.GetPlayerName(r)
 
-	tmpl.ExecuteTemplate(w, "base", PageDataDecks{
+	tmpl.ExecuteTemplate(w, "base", DecksData{
 		PageTitle:  "Card Judge - Decks",
 		PlayerName: playerName,
 		Decks:      decks,
 	})
 }
 
-type PageDataDeck struct {
+type DeckData struct {
 	PageTitle  string
 	PlayerName string
 	HasAccess  bool
@@ -202,7 +179,7 @@ type PageDataDeck struct {
 	Cards      []database.Card
 }
 
-func PageDeck(w http.ResponseWriter, r *http.Request) {
+func Deck(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
@@ -241,7 +218,7 @@ func PageDeck(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasAccess(r, deck.Id)
 	}
 
-	tmpl.ExecuteTemplate(w, "base", PageDataDeck{
+	tmpl.ExecuteTemplate(w, "base", DeckData{
 		PageTitle:  "Card Judge - Deck",
 		PlayerName: playerName,
 		HasAccess:  hasAccess,

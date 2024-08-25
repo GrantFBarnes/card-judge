@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/grantfbarnes/card-judge/api"
+	api "github.com/grantfbarnes/card-judge/api"
+	apiPages "github.com/grantfbarnes/card-judge/api/pages"
 )
 
 func main() {
-	http.Handle("GET /", api.Middleware(http.HandlerFunc(api.PageHome)))
-	http.Handle("GET /login", api.Middleware(http.HandlerFunc(api.PageLogin)))
-	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(api.PageLobbies)))
-	http.Handle("GET /lobby/{lobbyid}", api.Middleware(http.HandlerFunc(api.PageLobby)))
-	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(api.PageDecks)))
-	http.Handle("GET /deck/{deckid}", api.Middleware(http.HandlerFunc(api.PageDeck)))
+	http.Handle("GET /", api.Middleware(http.HandlerFunc(apiPages.Home)))
+	http.Handle("GET /login", api.Middleware(http.HandlerFunc(apiPages.Login)))
+	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(apiPages.Lobbies)))
+	http.Handle("GET /lobby/{lobbyid}", api.Middleware(http.HandlerFunc(apiPages.Lobby)))
+	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(apiPages.Decks)))
+	http.Handle("GET /deck/{deckid}", api.Middleware(http.HandlerFunc(apiPages.Deck)))
 
 	http.HandleFunc("POST /api/access/deck/{deckid}", api.PostAccessDeck)
 	http.HandleFunc("POST /api/access/lobby/{lobbyid}", api.PostAccessLobby)
