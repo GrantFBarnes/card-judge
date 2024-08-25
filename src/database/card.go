@@ -7,13 +7,20 @@ import (
 	"github.com/google/uuid"
 )
 
+type CardType string
+
+const (
+	Judge  CardType = "Judge"
+	Player CardType = "Player"
+)
+
 type Card struct {
 	Id           uuid.UUID
 	DateAdded    time.Time
 	DateModified time.Time
 
 	DeckId uuid.UUID
-	Type   string
+	Type   CardType
 	Text   string
 }
 
@@ -103,7 +110,7 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(dbcs string, deckId uuid.UUID, cardType string, text string) (uuid.UUID, error) {
+func CreateCard(dbcs string, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		return id, err
@@ -132,7 +139,7 @@ func CreateCard(dbcs string, deckId uuid.UUID, cardType string, text string) (uu
 	return id, nil
 }
 
-func UpdateCard(dbcs string, id uuid.UUID, cardType string, text string) error {
+func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return err
