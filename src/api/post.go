@@ -160,3 +160,38 @@ func setPlayerName(w http.ResponseWriter, r *http.Request) error {
 
 	return nil
 }
+
+func PostLobbyCreate(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to parse form"))
+		return
+	}
+
+	var name string
+	var password string
+	for key, val := range r.Form {
+		if key == "name" {
+			name = val[0]
+		} else if key == "password" {
+			password = val[0]
+		}
+	}
+
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("no name found"))
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	id, err := database.CreateLobby(dbcs, name, password)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to create lobby"))
+		return
+	}
+
+	w.Header().Add("HX-Redirect", "/game/"+id.String())
+}

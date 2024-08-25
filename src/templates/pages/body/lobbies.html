@@ -1,4 +1,29 @@
 {{define "body"}}
+<h3>Create a new Lobby</h3>
+<form hx-post="/api/lobby/create">
+  <label for="name">Name:</label>
+  <input
+    type="text"
+    id="name"
+    name="name"
+    maxlength="255"
+    placeholder="Enter Lobby Name"
+    required="true"
+  />
+  <br />
+  <label for="password">Password:</label>
+  <input
+    type="text"
+    id="password"
+    name="password"
+    maxlength="255"
+    placeholder="Enter Lobby Password"
+  />
+  <br />
+  <br />
+  <input type="submit" value="Create" />
+</form>
+<br />
 <h3>Choose a Lobby to Join</h3>
 <table>
   <tr>
