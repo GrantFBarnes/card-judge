@@ -21,7 +21,7 @@ func main() {
 	http.HandleFunc("POST /api/player/update", api.PostPlayerUpdate)
 	http.HandleFunc("POST /api/player/logout", api.PostPlayerLogout)
 
-	port := ":8090"
+	port := ":8080"
 	fmt.Printf("running at http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)
 }
