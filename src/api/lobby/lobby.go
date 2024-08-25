@@ -9,8 +9,8 @@ import (
 )
 
 func Access(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyid")
-	lobbyId, err := uuid.Parse(lobbyIdString)
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to get lobby id"))
@@ -18,7 +18,7 @@ func Access(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
-	lobby, err := database.GetLobby(dbcs, lobbyId)
+	lobby, err := database.GetLobby(dbcs, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to get lobby"))

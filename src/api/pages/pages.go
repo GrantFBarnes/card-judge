@@ -107,15 +107,15 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyIdString := r.PathValue("lobbyid")
-	lobbyId, err := uuid.Parse(lobbyIdString)
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
 	if err != nil {
 		fmt.Fprintf(w, "lobby id invalid\n")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
-	lobby, err := database.GetLobby(dbcs, lobbyId)
+	lobby, err := database.GetLobby(dbcs, id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to get lobby\n")
 		return
@@ -190,21 +190,21 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deckIdString := r.PathValue("deckid")
-	deckId, err := uuid.Parse(deckIdString)
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
 	if err != nil {
 		fmt.Fprintf(w, "deck id invalid\n")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
-	deck, err := database.GetDeck(dbcs, deckId)
+	deck, err := database.GetDeck(dbcs, id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to get deck\n")
 		return
 	}
 
-	cards, err := database.GetCardsInDeck(dbcs, deckId)
+	cards, err := database.GetCardsInDeck(dbcs, id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return

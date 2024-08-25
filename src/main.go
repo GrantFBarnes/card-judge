@@ -16,9 +16,9 @@ func main() {
 	http.Handle("GET /", api.Middleware(http.HandlerFunc(apiPages.Home)))
 	http.Handle("GET /login", api.Middleware(http.HandlerFunc(apiPages.Login)))
 	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(apiPages.Lobbies)))
-	http.Handle("GET /lobby/{lobbyid}", api.Middleware(http.HandlerFunc(apiPages.Lobby)))
+	http.Handle("GET /lobby/{id}", api.Middleware(http.HandlerFunc(apiPages.Lobby)))
 	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(apiPages.Decks)))
-	http.Handle("GET /deck/{deckid}", api.Middleware(http.HandlerFunc(apiPages.Deck)))
+	http.Handle("GET /deck/{id}", api.Middleware(http.HandlerFunc(apiPages.Deck)))
 
 	// player
 	http.HandleFunc("POST /api/player/login", apiPlayer.Login)
@@ -26,11 +26,11 @@ func main() {
 	http.HandleFunc("POST /api/player/logout", apiPlayer.Logout)
 
 	// lobby
-	http.HandleFunc("POST /api/lobby/{lobbyid}/access", apiLobby.Access)
+	http.HandleFunc("POST /api/lobby/{id}/access", apiLobby.Access)
 	http.HandleFunc("POST /api/lobby/create", apiLobby.Create)
 
 	// deck
-	http.HandleFunc("POST /api/deck/{deckid}/access", apiDeck.Access)
+	http.HandleFunc("POST /api/deck/{id}/access", apiDeck.Access)
 	http.HandleFunc("POST /api/deck/create", apiDeck.Create)
 
 	port := ":8080"
