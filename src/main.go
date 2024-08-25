@@ -13,7 +13,7 @@ func main() {
 	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(api.PageLobbies)))
 	http.Handle("GET /game/{lobbyid}", api.Middleware(http.HandlerFunc(api.PageGame)))
 	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(api.PageDecks)))
-	http.Handle("GET /cards/{deckid}", api.Middleware(http.HandlerFunc(api.PageCards)))
+	http.Handle("GET /deck/{deckid}", api.Middleware(http.HandlerFunc(api.PageDeck)))
 
 	http.HandleFunc("POST /api/access/deck/{deckid}", api.PostAccessDeck)
 	http.HandleFunc("POST /api/access/lobby/{lobbyid}", api.PostAccessLobby)

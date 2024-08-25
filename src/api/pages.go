@@ -194,7 +194,7 @@ func PageDecks(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type PageDataCards struct {
+type PageDataDeck struct {
 	PageTitle  string
 	PlayerName string
 	HasAccess  bool
@@ -202,11 +202,11 @@ type PageDataCards struct {
 	Cards      []database.Card
 }
 
-func PageCards(w http.ResponseWriter, r *http.Request) {
+func PageDeck(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/topbar/base.html",
-		"templates/pages/body/cards.html",
+		"templates/pages/body/deck.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -241,8 +241,8 @@ func PageCards(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasAccess(r, deck.Id)
 	}
 
-	tmpl.ExecuteTemplate(w, "base", PageDataCards{
-		PageTitle:  "Card Judge - Cards",
+	tmpl.ExecuteTemplate(w, "base", PageDataDeck{
+		PageTitle:  "Card Judge - Deck",
 		PlayerName: playerName,
 		HasAccess:  hasAccess,
 		Deck:       deck,
