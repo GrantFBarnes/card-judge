@@ -21,6 +21,7 @@ func main() {
 	http.HandleFunc("POST /api/player/update", api.PostPlayerUpdate)
 	http.HandleFunc("POST /api/player/logout", api.PostPlayerLogout)
 	http.HandleFunc("POST /api/lobby/create", api.PostLobbyCreate)
+	http.HandleFunc("POST /api/deck/create", api.PostDeckCreate)
 
 	port := ":8080"
 	fmt.Printf("running at http://localhost%s\n", port)

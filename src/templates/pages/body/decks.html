@@ -1,4 +1,29 @@
 {{define "body"}}
+<h3>Create a new Deck</h3>
+<form hx-post="/api/deck/create">
+  <label for="name">Name:</label>
+  <input
+    type="text"
+    id="name"
+    name="name"
+    maxlength="255"
+    placeholder="Enter Deck Name"
+    required="true"
+  />
+  <br />
+  <label for="password">Password:</label>
+  <input
+    type="text"
+    id="password"
+    name="password"
+    maxlength="255"
+    placeholder="Enter Deck Password"
+  />
+  <br />
+  <br />
+  <input type="submit" value="Create" />
+</form>
+<br />
 <h3>Choose a Deck to Modify</h3>
 <table>
   <tr>
