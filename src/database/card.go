@@ -37,8 +37,9 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 			 , DATE_MODIFIED
 			 , TYPE
 			 , TEXT
-	 	FROM CARD 
+	 	FROM CARD
 		WHERE DECK_ID = ?
+		ORDER BY TYPE, DATE_MODIFIED DESC
 	`)
 	if err != nil {
 		return nil, err
@@ -82,7 +83,7 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 			 , DECK_ID
 			 , TYPE
 			 , TEXT
-	 	FROM CARD 
+	 	FROM CARD
 		WHERE ID = ?
 	`)
 	if err != nil {
