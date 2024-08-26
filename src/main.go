@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	api "github.com/grantfbarnes/card-judge/api"
+	apiCard "github.com/grantfbarnes/card-judge/api/card"
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
 	apiPages "github.com/grantfbarnes/card-judge/api/pages"
@@ -34,6 +35,10 @@ func main() {
 	http.HandleFunc("POST /api/deck/{id}/access", apiDeck.Access)
 	http.HandleFunc("POST /api/deck/create", apiDeck.Create)
 	http.HandleFunc("DELETE /api/deck/{id}", apiDeck.Delete)
+
+	// card
+	http.HandleFunc("POST /api/card/create", apiCard.Create)
+	http.HandleFunc("DELETE /api/card/{id}", apiCard.Delete)
 
 	port := ":8080"
 	fmt.Printf("running at http://localhost%s\n", port)

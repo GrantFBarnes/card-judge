@@ -8,6 +8,40 @@
   >
     Delete Deck
   </button>
+  <br />
+  <h3>Create a new Card</h3>
+  <form hx-post="/api/card/create">
+    <input type="text" id="deckId" name="deckId" value="{{.Deck.Id}}" hidden />
+    <div>
+      <input
+        type="radio"
+        id="cardTypeJudge"
+        name="cardType"
+        value="Judge"
+        checked
+      />
+      <label for="cardTypeJudge">Judge</label>
+      <br />
+      <input type="radio" id="cardTypePlayer" name="cardType" value="Player" />
+      <label for="cardTypePlayer">Player</label>
+    </div>
+    <br />
+    <label for="text">Text:</label>
+    <textarea
+      id="text"
+      name="text"
+      maxlength="255"
+      placeholder="Enter Card Text"
+      required="true"
+      cols="40"
+      rows="10"
+    ></textarea>
+    <br />
+    <br />
+    <input type="submit" value="Create" />
+  </form>
+  <br />
+  <h3>Cards in Deck</h3>
   <table>
     <tr>
       <th>Date Added</th>
@@ -19,6 +53,15 @@
       <td>{{.DateAdded.Format "2006-01-02"}}</td>
       <td>{{.Type}}</td>
       <td>{{.Text}}</td>
+      <td>
+        <div
+          hx-delete="/api/card/{{.Id}}"
+          hx-confirm="Are you sure you want to delete this card?"
+          style="cursor: pointer; color: red"
+        >
+          &#128465;
+        </div>
+      </td>
     </tr>
     {{end}}
   </table>
