@@ -74,9 +74,20 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var cardType database.CardType
 	var text string
 	for key, val := range r.Form {
-		if key == "text" {
+		if key == "cardType" {
+			if val[0] == "Judge" {
+				cardType = database.Judge
+			} else if val[0] == "Player" {
+				cardType = database.Player
+			} else {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("failed to parse card type"))
+				return
+			}
+		} else if key == "text" {
 			text = val[0]
 		}
 	}
@@ -88,7 +99,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
-	err = database.UpdateCard(dbcs, id, text)
+	err = database.UpdateCard(dbcs, id, cardType, text)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to update card"))

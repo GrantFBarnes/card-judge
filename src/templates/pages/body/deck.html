@@ -12,21 +12,13 @@
   <h3>Create a new Card</h3>
   <form hx-post="/api/card/create">
     <input type="text" id="deckId" name="deckId" value="{{.Deck.Id}}" hidden />
-    <div>
-      <input
-        type="radio"
-        id="cardTypeJudge"
-        name="cardType"
-        value="Judge"
-        checked
-      />
-      <label for="cardTypeJudge">Judge</label>
-      <br />
-      <input type="radio" id="cardTypePlayer" name="cardType" value="Player" />
-      <label for="cardTypePlayer">Player</label>
-    </div>
+    <label for="cardType">Type:</label>
+    <select id="cardType" name="cardType" required>
+      <option value="Judge" selected>Judge</option>
+      <option value="Player">Player</option>
+    </select>
     <br />
-    <label for="text">Text:</label>
+    <label for="text" style="vertical-align: top">Text:</label>
     <textarea
       id="text"
       name="text"
@@ -62,10 +54,35 @@
         >
           Edit &#128393;
         </button>
-        <dialog id="update-card-{{.Id}}-dialog" style="text-align: center">
-          <p>Update Card</p>
+        <dialog id="update-card-{{.Id}}-dialog">
+          <div style="display: grid; grid-template-columns: auto auto">
+            <h3>Update Card</h3>
+            <div
+              onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
+              style="cursor: pointer; text-align: right"
+            >
+              &#128936;
+            </div>
+          </div>
+
+          <h4>Current Values</h4>
+          <div>Type: {{.Type}}</div>
+          <div>Text: {{.Text}}</div>
+
+          <h4>New Values</h4>
           <form hx-put="/api/card/{{.Id}}">
-            <label for="text{{.Id}}">Text:</label>
+            <label for="cardType{{.Id}}">Type:</label>
+            <select id="cardType{{.Id}}" name="cardType" required>
+              {{if eq .Type "Judge"}}
+              <option value="Judge" selected>Judge</option>
+              <option value="Player">Player</option>
+              {{else}}
+              <option value="Judge">Judge</option>
+              <option value="Player" selected>Player</option>
+              {{end}}
+            </select>
+            <br />
+            <label for="text{{.Id}}" style="vertical-align: top">Text:</label>
             <textarea
               id="text{{.Id}}"
               name="text"
@@ -75,17 +92,11 @@
               cols="40"
               rows="10"
             >
-{{.Text}}
-</textarea
+{{.Text}}</textarea
             >
             <br />
             <br />
             <input type="submit" value="Update" />
-            <button
-              onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
-            >
-              Cancel
-            </button>
           </form>
         </dialog>
       </td>
