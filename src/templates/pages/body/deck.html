@@ -46,7 +46,7 @@
     <tr>
       <td>{{.DateAdded.Format "2006-01-02"}}</td>
       <td>{{.Type}}</td>
-      <td>{{.Text}}</td>
+      <td style="white-space: pre">{{.Text}}</td>
       <td>
         <button
           onclick="document.getElementById('update-card-{{.Id}}-dialog').showModal()"
