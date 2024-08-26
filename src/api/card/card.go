@@ -29,8 +29,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		} else if key == "cardType" {
 			if val[0] == "Judge" {
 				cardType = database.Judge
-			} else {
+			} else if val[0] == "Player" {
 				cardType = database.Player
+			} else {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("failed to parse card type"))
+				return
 			}
 		} else if key == "text" {
 			text = val[0]
@@ -48,6 +52,46 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to create card"))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+}
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to get card id"))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to parse form"))
+		return
+	}
+
+	var text string
+	for key, val := range r.Form {
+		if key == "text" {
+			text = val[0]
+		}
+	}
+
+	if text == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("no text found"))
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.UpdateCard(dbcs, id, text)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to update card"))
 		return
 	}
 

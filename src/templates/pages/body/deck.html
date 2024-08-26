@@ -47,6 +47,8 @@
       <th>Date Added</th>
       <th>Type</th>
       <th>Text</th>
+      <th>Edit</th>
+      <th>Delete</th>
     </tr>
     {{range .Cards}}
     <tr>
@@ -54,13 +56,47 @@
       <td>{{.Type}}</td>
       <td>{{.Text}}</td>
       <td>
-        <div
+        <button
+          onclick="document.getElementById('update-card-{{.Id}}-dialog').showModal()"
+          style="cursor: pointer"
+        >
+          Edit &#128393;
+        </button>
+        <dialog id="update-card-{{.Id}}-dialog" style="text-align: center">
+          <p>Update Card</p>
+          <form hx-put="/api/card/{{.Id}}">
+            <label for="text{{.Id}}">Text:</label>
+            <textarea
+              id="text{{.Id}}"
+              name="text"
+              maxlength="255"
+              placeholder="Enter Card Text"
+              required="true"
+              cols="40"
+              rows="10"
+            >
+{{.Text}}
+</textarea
+            >
+            <br />
+            <br />
+            <input type="submit" value="Update" />
+            <button
+              onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
+            >
+              Cancel
+            </button>
+          </form>
+        </dialog>
+      </td>
+      <td>
+        <button
           hx-delete="/api/card/{{.Id}}"
           hx-confirm="Are you sure you want to delete this card?"
           style="cursor: pointer; color: red"
         >
-          &#128465;
-        </div>
+          Delete &#128465;
+        </button>
       </td>
     </tr>
     {{end}}

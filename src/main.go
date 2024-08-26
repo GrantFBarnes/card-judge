@@ -38,6 +38,7 @@ func main() {
 
 	// card
 	http.HandleFunc("POST /api/card/create", apiCard.Create)
+	http.HandleFunc("PUT /api/card/{id}", apiCard.Update)
 	http.HandleFunc("DELETE /api/card/{id}", apiCard.Delete)
 
 	port := ":8080"

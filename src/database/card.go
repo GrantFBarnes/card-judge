@@ -139,7 +139,7 @@ func CreateCard(dbcs string, deckId uuid.UUID, cardType CardType, text string) (
 	return id, nil
 }
 
-func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error {
+func UpdateCard(dbcs string, id uuid.UUID, text string) error {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return err
@@ -148,8 +148,7 @@ func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error
 
 	statment, err := db.Prepare(`
 		UPDATE CARD
-		SET TYPE = ?,
-			TEXT = ?
+		SET TEXT = ?
 		WHERE ID = ?
 	`)
 	if err != nil {
@@ -157,7 +156,7 @@ func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error
 	}
 	defer statment.Close()
 
-	_, err = statment.Exec(cardType, text, id)
+	_, err = statment.Exec(text, id)
 	if err != nil {
 		return err
 	}
