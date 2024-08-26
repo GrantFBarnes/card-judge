@@ -2,6 +2,12 @@
 <div>
   {{if .HasAccess}}
   <h3>Lobby: {{.Lobby.Name}}</h3>
+  <button
+    hx-delete="/api/lobby/{{.Lobby.Id}}"
+    hx-confirm="Are you sure you want to delete this lobby?"
+  >
+    Delete Lobby
+  </button>
   {{else}}
   <form hx-post="/api/lobby/{{.Lobby.Id}}/access" style="text-align: center">
     <h3>Lobby: {{.Lobby.Name}}</h3>

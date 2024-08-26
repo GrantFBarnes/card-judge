@@ -28,10 +28,12 @@ func main() {
 	// lobby
 	http.HandleFunc("POST /api/lobby/{id}/access", apiLobby.Access)
 	http.HandleFunc("POST /api/lobby/create", apiLobby.Create)
+	http.HandleFunc("DELETE /api/lobby/{id}", apiLobby.Delete)
 
 	// deck
 	http.HandleFunc("POST /api/deck/{id}/access", apiDeck.Access)
 	http.HandleFunc("POST /api/deck/create", apiDeck.Create)
+	http.HandleFunc("DELETE /api/deck/{id}", apiDeck.Delete)
 
 	port := ":8080"
 	fmt.Printf("running at http://localhost%s\n", port)

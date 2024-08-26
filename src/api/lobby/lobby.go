@@ -91,3 +91,23 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("HX-Redirect", "/lobby/"+id.String())
 }
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to get lobby id"))
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.DeleteLobby(dbcs, id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to delete lobby"))
+		return
+	}
+
+	w.Header().Add("HX-Redirect", "/lobbies")
+}
