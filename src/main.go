@@ -13,6 +13,11 @@ import (
 )
 
 func main() {
+	// favicon
+	http.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "images/favicon.png")
+	})
+
 	// pages
 	http.Handle("GET /", api.Middleware(http.HandlerFunc(apiPages.Home)))
 	http.Handle("GET /login", api.Middleware(http.HandlerFunc(apiPages.Login)))
