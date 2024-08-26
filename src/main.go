@@ -13,9 +13,11 @@ import (
 )
 
 func main() {
-	// favicon
-	http.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "images/favicon.png")
+	// static files
+	http.HandleFunc("GET /static/{fileType}/{fileName}", func(w http.ResponseWriter, r *http.Request) {
+		fileType := r.PathValue("fileType")
+		fileName := r.PathValue("fileName")
+		http.ServeFile(w, r, "static/"+fileType+"/"+fileName)
 	})
 
 	// pages

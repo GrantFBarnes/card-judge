@@ -10,42 +10,8 @@
       integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/"
       crossorigin="anonymous"
     ></script>
-    <style>
-      body {
-        margin: 0;
-      }
-
-      #topbar {
-        color: white;
-        background-color: #333;
-        height: 3em;
-        display: grid;
-        grid-auto-flow: column;
-        overflow: hidden;
-      }
-
-      #body {
-        margin: 8px;
-      }
-
-      table {
-        border-collapse: collapse;
-      }
-
-      th,
-      td {
-        padding: 5px;
-      }
-
-      tr:hover {
-        background-color: #dbdbdb;
-      }
-
-      dialog::backdrop {
-        background-color: black;
-        opacity: 0.8;
-      }
-    </style>
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.png" />
+    <link rel="stylesheet" href="/static/css/global.css" />
   </head>
   <body>
     <div id="topbar">{{template "topbar" .}}</div>
