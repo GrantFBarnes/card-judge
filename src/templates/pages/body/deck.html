@@ -55,7 +55,7 @@
           Edit &#128393;
         </button>
         <dialog id="update-card-{{.Id}}-dialog">
-          <div style="display: grid; grid-template-columns: auto auto">
+          <div style="display: grid; grid-auto-flow: column">
             <h3>Update Card</h3>
             <div
               onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
@@ -104,7 +104,8 @@
         <button
           hx-delete="/api/card/{{.Id}}"
           hx-confirm="Are you sure you want to delete this card?"
-          style="cursor: pointer; color: red"
+          class="color-red"
+          style="cursor: pointer"
         >
           Delete &#128465;
         </button>

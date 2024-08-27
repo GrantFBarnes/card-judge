@@ -1,5 +1,8 @@
 {{define "topbar"}}
+<link rel="stylesheet" href="/static/css/topbar.css" />
+<script src="/static/js/topbar.js"></script>
 <div id="topbar-title">Card Judge</div>
+<div id="topbar-toggle-dark-mode" onclick="toggleDarkMode()">&#127762;</div>
 <div id="topbar-player-name">
   Playing as: {{.PlayerName}}
   <span
