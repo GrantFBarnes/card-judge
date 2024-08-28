@@ -1,0 +1,47 @@
+{{define "player-display"}}
+<div>
+  Playing as: {{.Player.Name}}
+  <span
+    onclick="document.getElementById('update-player-dialog').showModal()"
+    style="cursor: pointer"
+  >
+    &#128393;
+  </span>
+</div>
+<dialog id="update-player-dialog" style="text-align: center">
+  <div style="display: grid; grid-auto-flow: column">
+    <h3>Update Player</h3>
+    <div
+      onclick="document.getElementById('update-player-dialog').close()"
+      style="cursor: pointer; text-align: right"
+    >
+      &#128936;
+    </div>
+  </div>
+  <p>Currently playing as: {{.Player.Name}}</p>
+  <form hx-put="/api/player/{{.Player.Id}}">
+    <input
+      type="text"
+      id="playerName"
+      name="playerName"
+      maxlength="255"
+      placeholder="Enter Updated Player Name"
+      required="true"
+      autofocus="true"
+    />
+    <br />
+    <br />
+    <input type="submit" value="Update" />
+  </form>
+  <br />
+  <details>
+    <summary style="cursor: pointer">Logout</summary>
+    <button
+      hx-delete="/api/player/{{.Player.Id}}"
+      hx-confirm="Are you sure you want to logout?"
+    >
+      Logout
+    </button>
+  </details>
+</dialog>
+{{end}}

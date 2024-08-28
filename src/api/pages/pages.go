@@ -71,6 +71,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/lobby.html",
 		"templates/components/login-form.html",
 		"templates/components/lobby-access-form.html",
+		"templates/components/player-display.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
