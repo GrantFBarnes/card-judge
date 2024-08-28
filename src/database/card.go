@@ -10,8 +10,8 @@ import (
 type CardType string
 
 const (
-	Judge  CardType = "Judge"
-	Player CardType = "Player"
+	JudgeCard  CardType = "Judge"
+	PlayerCard CardType = "Player"
 )
 
 type Card struct {

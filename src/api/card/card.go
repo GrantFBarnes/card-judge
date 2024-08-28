@@ -28,9 +28,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			}
 		} else if key == "cardType" {
 			if val[0] == "Judge" {
-				cardType = database.Judge
+				cardType = database.JudgeCard
 			} else if val[0] == "Player" {
-				cardType = database.Player
+				cardType = database.PlayerCard
 			} else {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("failed to parse card type"))
@@ -79,9 +79,9 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	for key, val := range r.Form {
 		if key == "cardType" {
 			if val[0] == "Judge" {
-				cardType = database.Judge
+				cardType = database.JudgeCard
 			} else if val[0] == "Player" {
-				cardType = database.Player
+				cardType = database.PlayerCard
 			} else {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("failed to parse card type"))
