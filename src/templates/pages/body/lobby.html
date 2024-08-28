@@ -1,6 +1,55 @@
 {{define "body"}}
 <div>
-  {{if .HasAccess}}
+  {{if eq .PlayerName ""}}
+  <div>{{template "login-form" .}}</div>
+  {{else if not .HasAccess}}
+  <div>{{template "lobby-access-form" .}}</div>
+  {{else}}
+  <div>
+    Playing as: {{.PlayerName}}
+    <span
+      onclick="document.getElementById('update-player-dialog').showModal()"
+      style="cursor: pointer"
+    >
+      &#128393;
+    </span>
+  </div>
+  <dialog id="update-player-dialog" style="text-align: center">
+    <div style="display: grid; grid-auto-flow: column">
+      <h3>Update Player Name</h3>
+      <div
+        onclick="document.getElementById('update-player-dialog').close()"
+        style="cursor: pointer; text-align: right"
+      >
+        &#128936;
+      </div>
+    </div>
+    <p>You are currently playing as: {{.PlayerName}}</p>
+    <form hx-post="/api/player/update">
+      <input
+        type="text"
+        id="playerName"
+        name="playerName"
+        maxlength="255"
+        placeholder="Enter Updated Player Name"
+        required="true"
+        autofocus="true"
+      />
+      <br />
+      <br />
+      <input type="submit" value="Update" />
+    </form>
+    <br />
+    <details>
+      <summary style="cursor: pointer">Logout</summary>
+      <button
+        hx-post="/api/player/logout"
+        hx-confirm="Are you sure you want to logout?"
+      >
+        Logout
+      </button>
+    </details>
+  </dialog>
   <h3>Lobby: {{.Lobby.Name}}</h3>
   <button
     hx-delete="/api/lobby/{{.Lobby.Id}}"
@@ -8,23 +57,6 @@
   >
     Delete Lobby
   </button>
-  {{else}}
-  <form hx-post="/api/lobby/{{.Lobby.Id}}/access" style="text-align: center">
-    <h3>Lobby: {{.Lobby.Name}}</h3>
-    <p>You must provide the password to join lobby.</p>
-    <input
-      type="text"
-      id="password"
-      name="password"
-      maxlength="255"
-      placeholder="Enter Lobby Password"
-      required="true"
-      autofocus="true"
-    />
-    <br />
-    <br />
-    <input type="submit" value="Submit" />
-  </form>
   {{end}}
 </div>
 {{end}}

@@ -13,37 +13,9 @@ import (
 
 const cookieNamePlayerToken string = "CARD-JUDGE-PLAYER-TOKEN"
 const cookieNameAccessToken string = "CARD-JUDGE-ACCESS-TOKEN"
-const cookieNameRedirectURL string = "CARD-JUDGE-REDIRECT-URL"
 const claimKey string = "value"
 
 var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
-
-func GetRedirectURL(r *http.Request) string {
-	redirectPath := "/"
-	for _, c := range r.Cookies() {
-		if c.Name != cookieNameRedirectURL {
-			continue
-		}
-		redirectPath = c.Value
-		break
-	}
-	return redirectPath
-}
-
-func SetRedirectURL(w http.ResponseWriter, url string) {
-	cookie := http.Cookie{
-		Name:    cookieNameRedirectURL,
-		Value:   url,
-		Path:    "/",
-		Expires: time.Now().Add(time.Hour * 12),
-	}
-	http.SetCookie(w, &cookie)
-}
-
-func RemoveRedirectURL(w http.ResponseWriter) {
-	cookie := getRemovalCookie(cookieNameRedirectURL)
-	http.SetCookie(w, &cookie)
-}
 
 func GetPlayerName(r *http.Request) (string, error) {
 	cookieValue := ""

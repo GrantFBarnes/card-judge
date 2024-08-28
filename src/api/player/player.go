@@ -12,7 +12,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	w.Header().Add("HX-Redirect", auth.GetRedirectURL(r))
+	w.Header().Add("HX-Refresh", "true")
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
