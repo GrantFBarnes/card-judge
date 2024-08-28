@@ -58,10 +58,11 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 }
 
 type LobbyData struct {
-	PageTitle  string
-	PlayerName string
-	HasAccess  bool
-	Lobby      database.Lobby
+	PageTitle string
+	LoggedIn  bool
+	Player    database.Player
+	HasAccess bool
+	Lobby     database.Lobby
 }
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +91,13 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerName, _ := auth.GetPlayerName(r)
+	playerId, err := auth.GetPlayerId(r)
+	loggedIn := err == nil
+	player, err := database.GetPlayer(dbcs, playerId)
+	if loggedIn && err != nil {
+		fmt.Fprintf(w, "failed to get player\n")
+		return
+	}
 
 	hasAccess := true
 	if lobby.Password.Valid {
@@ -98,10 +105,11 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "base", LobbyData{
-		PageTitle:  "Card Judge - Lobby",
-		PlayerName: playerName,
-		HasAccess:  hasAccess,
-		Lobby:      lobby,
+		PageTitle: "Card Judge - Lobby",
+		LoggedIn:  loggedIn,
+		Player:    player,
+		HasAccess: hasAccess,
+		Lobby:     lobby,
 	})
 }
 

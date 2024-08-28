@@ -27,9 +27,9 @@ func main() {
 	http.HandleFunc("GET /deck/{id}", apiPages.Deck)
 
 	// player
-	http.HandleFunc("POST /api/player/login", apiPlayer.Login)
-	http.HandleFunc("POST /api/player/update", apiPlayer.Update)
-	http.HandleFunc("POST /api/player/logout", apiPlayer.Logout)
+	http.HandleFunc("POST /api/player/create", apiPlayer.Create)
+	http.HandleFunc("PUT /api/player/{id}", apiPlayer.Update)
+	http.HandleFunc("DELETE /api/player/{id}", apiPlayer.Delete)
 
 	// lobby
 	http.HandleFunc("POST /api/lobby/{id}/access", apiLobby.Access)

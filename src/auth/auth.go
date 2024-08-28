@@ -17,7 +17,7 @@ const claimKey string = "value"
 
 var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
 
-func GetPlayerName(r *http.Request) (string, error) {
+func GetPlayerId(r *http.Request) (uuid.UUID, error) {
 	cookieValue := ""
 	for _, c := range r.Cookies() {
 		if c.Name != cookieNamePlayerToken {
@@ -28,19 +28,24 @@ func GetPlayerName(r *http.Request) (string, error) {
 	}
 
 	if cookieValue == "" {
-		return "", errors.New("cookie not found")
+		return uuid.Nil, errors.New("cookie not found")
 	}
 
 	claimValue, err := getTokenClaimValue(cookieValue)
 	if err != nil {
-		return "", err
+		return uuid.Nil, err
 	}
 
-	return claimValue, nil
+	result, err := uuid.Parse(claimValue)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return result, nil
 }
 
-func SetPlayerName(w http.ResponseWriter, playerName string) error {
-	tokenString, err := getTokenString(playerName)
+func SetPlayerId(w http.ResponseWriter, playerId uuid.UUID) error {
+	tokenString, err := getTokenString(playerId.String())
 	if err != nil {
 		return err
 	}
@@ -55,7 +60,7 @@ func SetPlayerName(w http.ResponseWriter, playerName string) error {
 	return nil
 }
 
-func RemovePlayerName(w http.ResponseWriter) {
+func RemovePlayerId(w http.ResponseWriter) {
 	cookie := getRemovalCookie(cookieNamePlayerToken)
 	http.SetCookie(w, &cookie)
 }

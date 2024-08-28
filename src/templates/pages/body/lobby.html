@@ -1,12 +1,12 @@
 {{define "body"}}
 <div>
-  {{if eq .PlayerName ""}}
+  {{if not .LoggedIn}}
   <div>{{template "login-form" .}}</div>
   {{else if not .HasAccess}}
   <div>{{template "lobby-access-form" .}}</div>
   {{else}}
   <div>
-    Playing as: {{.PlayerName}}
+    Playing as: {{.Player.Name}}
     <span
       onclick="document.getElementById('update-player-dialog').showModal()"
       style="cursor: pointer"
@@ -24,8 +24,8 @@
         &#128936;
       </div>
     </div>
-    <p>You are currently playing as: {{.PlayerName}}</p>
-    <form hx-post="/api/player/update">
+    <p>You are currently playing as: {{.Player.Name}}</p>
+    <form hx-put="/api/player/{{.Player.Id}}">
       <input
         type="text"
         id="playerName"
@@ -43,7 +43,7 @@
     <details>
       <summary style="cursor: pointer">Logout</summary>
       <button
-        hx-post="/api/player/logout"
+        hx-delete="/api/player/{{.Player.Id}}"
         hx-confirm="Are you sure you want to logout?"
       >
         Logout

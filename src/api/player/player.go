@@ -1,62 +1,110 @@
 package apiPlayer
 
 import (
-	"errors"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/auth"
+	"github.com/grantfbarnes/card-judge/database"
 )
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	err := setPlayerName(w, r)
-	if err != nil {
-		return
-	}
-	w.Header().Add("HX-Refresh", "true")
-}
-
-func Update(w http.ResponseWriter, r *http.Request) {
-	err := setPlayerName(w, r)
-	if err != nil {
-		return
-	}
-	w.Header().Add("HX-Refresh", "true")
-}
-
-func Logout(w http.ResponseWriter, r *http.Request) {
-	auth.RemovePlayerName(w)
-	w.Header().Add("HX-Refresh", "true")
-}
-
-func setPlayerName(w http.ResponseWriter, r *http.Request) error {
+func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to parse form"))
-		return err
+		return
 	}
 
-	var playerName string
+	var name string
 	for key, val := range r.Form {
-		if key != "playerName" {
-			continue
+		if key == "playerName" {
+			name = val[0]
 		}
-		playerName = val[0]
-		break
 	}
 
-	if playerName == "" {
+	if name == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("no name found"))
-		return errors.New("no name found")
+		return
 	}
 
-	err = auth.SetPlayerName(w, playerName)
+	dbcs := database.GetDatabaseConnectionString()
+	id, err := database.CreatePlayer(dbcs, name)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to create player"))
+		return
+	}
+
+	err = auth.SetPlayerId(w, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("failed to set cookie"))
-		return errors.New("failed to set cookie")
+		return
 	}
 
-	return nil
+	w.Header().Add("HX-Refresh", "true")
+}
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to get player id"))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to parse form"))
+		return
+	}
+
+	var name string
+	for key, val := range r.Form {
+		if key == "playerName" {
+			name = val[0]
+		}
+	}
+
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("no name found"))
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.UpdatePlayer(dbcs, id, name)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to update player"))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to get player id"))
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.DeletePlayer(dbcs, id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("failed to delete player"))
+		return
+	}
+
+	auth.RemovePlayerId(w)
+
+	w.Header().Add("HX-Refresh", "true")
 }
