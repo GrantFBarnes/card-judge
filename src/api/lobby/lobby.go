@@ -89,6 +89,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	auth.AddAccessId(w, r, id)
+
 	w.Header().Add("HX-Redirect", "/lobby/"+id.String())
 }
 
