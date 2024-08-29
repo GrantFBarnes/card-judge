@@ -89,6 +89,48 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
+func Update(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var name string
+	var password string
+	for key, val := range r.Form {
+		if key == "newLobbyName" {
+			name = val[0]
+		} else if key == "newLobbyPassword" {
+			password = val[0]
+		}
+	}
+
+	if name == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.UpdateLobby(dbcs, id, name, password)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update lobby in database.")
+		return
+	}
+
+	auth.AddAccessId(w, r, id)
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)

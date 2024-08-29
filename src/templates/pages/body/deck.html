@@ -3,6 +3,56 @@
   {{if .HasAccess}}
   <h3>Deck: {{.Deck.Name}}</h3>
   <button
+    onclick="document.getElementById('update-deck-dialog').showModal()"
+    style="cursor: pointer"
+  >
+    Edit Deck &#128393;
+  </button>
+  <dialog id="update-deck-dialog">
+    <div style="display: grid; grid-auto-flow: column">
+      <h3>Update Deck</h3>
+      <div
+        onclick="document.getElementById('update-deck-dialog').close()"
+        style="cursor: pointer; text-align: right"
+      >
+        &#128936;
+      </div>
+    </div>
+
+    <h4>Current Values</h4>
+    <div>Name: {{.Deck.Name}}</div>
+    <div>Password: {{.Deck.Password.String}}</div>
+
+    <h4>New Values</h4>
+    <form hx-put="/api/deck/{{.Deck.Id}}">
+      <label for="newDeckName">Name:</label>
+      <input
+        type="text"
+        id="newDeckName"
+        name="newDeckName"
+        maxlength="255"
+        placeholder="Enter Deck Name"
+        required="true"
+        value="{{.Deck.Name}}"
+      />
+      <br />
+      <label for="newDeckPassword">Password:</label>
+      <input
+        type="text"
+        id="newDeckPassword"
+        name="newDeckPassword"
+        maxlength="255"
+        placeholder="Enter Deck Password"
+        value="{{.Deck.Password.String}}"
+      />
+      <br />
+      <br />
+      <div class="htmx-result-good"></div>
+      <div class="htmx-result-bad"></div>
+      <input type="submit" value="Update" />
+    </form>
+  </dialog>
+  <button
     hx-delete="/api/deck/{{.Deck.Id}}"
     hx-confirm="Are you sure you want to delete this deck?"
   >
