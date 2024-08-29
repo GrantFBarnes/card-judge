@@ -71,6 +71,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/lobby.html",
 		"templates/components/login-form.html",
 		"templates/components/lobby-access-form.html",
+		"templates/components/lobby-update-form.html",
 		"templates/components/player-display.html",
 	)
 	if err != nil {
@@ -153,6 +154,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/deck.html",
+		"templates/components/deck-update-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
