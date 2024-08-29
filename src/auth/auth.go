@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/grantfbarnes/card-judge/helper"
 )
 
 func GetPlayerId(r *http.Request) (uuid.UUID, error) {
@@ -99,13 +100,13 @@ func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
 
 	accessStrings := strings.Split(tokenValue, " ")
 
-	accessIds = accessToUuid(accessStrings)
+	accessIds = helper.ConvertArrayStringsToUuids(accessStrings)
 
 	return accessIds, nil
 }
 
 func SetAccessIds(w http.ResponseWriter, accessIds []uuid.UUID) error {
-	accessStrings := accessToString(accessIds)
+	accessStrings := helper.ConvertArrayUuidsToStrings(accessIds)
 	tokenString, err := getValueTokenString(strings.Join(accessStrings, " "))
 	if err != nil {
 		return err
@@ -124,24 +125,4 @@ func SetAccessIds(w http.ResponseWriter, accessIds []uuid.UUID) error {
 func RemoveAccess(w http.ResponseWriter) {
 	cookie := getRemovalCookie(cookieNameAccessToken)
 	http.SetCookie(w, &cookie)
-}
-
-func accessToUuid(accessStrings []string) []uuid.UUID {
-	accessIds := make([]uuid.UUID, len(accessStrings))
-	for i := range accessStrings {
-		id, err := uuid.Parse(accessStrings[i])
-		if err != nil {
-			continue
-		}
-		accessIds[i] = id
-	}
-	return accessIds
-}
-
-func accessToString(accessIds []uuid.UUID) []string {
-	accessStrings := make([]string, len(accessIds))
-	for i := range accessIds {
-		accessStrings[i] = accessIds[i].String()
-	}
-	return accessStrings
 }
