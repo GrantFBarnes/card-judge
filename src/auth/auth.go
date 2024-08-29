@@ -11,24 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-const cookieNamePlayerToken string = "CARD-JUDGE-PLAYER-TOKEN"
-const cookieNameAccessToken string = "CARD-JUDGE-ACCESS-TOKEN"
 const claimKey string = "value"
 
 var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
 
 func GetPlayerId(r *http.Request) (uuid.UUID, error) {
-	cookieValue := ""
-	for _, c := range r.Cookies() {
-		if c.Name != cookieNamePlayerToken {
-			continue
-		}
-		cookieValue = c.Value
-		break
-	}
-
-	if cookieValue == "" {
-		return uuid.Nil, errors.New("cookie not found")
+	cookieValue, err := getCookie(r, cookieNamePlayerToken)
+	if err != nil {
+		return uuid.Nil, err
 	}
 
 	claimValue, err := getTokenClaimValue(cookieValue)
@@ -102,17 +92,10 @@ func AddAccessId(w http.ResponseWriter, r *http.Request, accessId uuid.UUID) err
 }
 
 func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
-	cookieValue := ""
-	for _, c := range r.Cookies() {
-		if c.Name != cookieNameAccessToken {
-			continue
-		}
-		cookieValue = c.Value
-		break
-	}
-
 	var accessIds = make([]uuid.UUID, 0)
-	if cookieValue == "" {
+
+	cookieValue, err := getCookie(r, cookieNameAccessToken)
+	if err != nil {
 		return accessIds, nil
 	}
 
@@ -168,15 +151,6 @@ func accessToString(accessIds []uuid.UUID) []string {
 		accessStrings[i] = accessIds[i].String()
 	}
 	return accessStrings
-}
-
-func getRemovalCookie(cookieName string) http.Cookie {
-	return http.Cookie{
-		Name:    cookieName,
-		Value:   "",
-		Path:    "/",
-		Expires: time.Unix(0, 0),
-	}
 }
 
 func getTokenString(tokenStringValue string) (string, error) {
