@@ -1,0 +1,20 @@
+{{define "deck-access-form"}}
+<form hx-post="/api/deck/{{.Deck.Id}}/access" style="text-align: center">
+  <h3>Deck: {{.Deck.Name}}</h3>
+  <p>You must provide the password to see cards.</p>
+  <input
+    type="text"
+    id="password"
+    name="password"
+    maxlength="255"
+    placeholder="Enter Deck Password"
+    required="true"
+    autofocus="true"
+  />
+  <br />
+  <br />
+  <div class="htmx-result-good"></div>
+  <div class="htmx-result-bad"></div>
+  <input type="submit" value="Submit" />
+</form>
+{{end}}
