@@ -105,7 +105,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hasAccess := true
-	if lobby.Password.Valid {
+	if lobby.PasswordHash.Valid {
 		hasAccess = auth.HasAccess(r, lobby.Id)
 	}
 
@@ -191,7 +191,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hasAccess := true
-	if deck.Password.Valid {
+	if deck.PasswordHash.Valid {
 		hasAccess = auth.HasAccess(r, deck.Id)
 	}
 
