@@ -1,19 +1,12 @@
 package auth
 
 import (
-	"errors"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
-	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
-
-const claimKey string = "value"
-
-var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
 
 func GetPlayerId(r *http.Request) (uuid.UUID, error) {
 	cookieValue, err := getCookie(r, cookieNamePlayerToken)
@@ -21,21 +14,21 @@ func GetPlayerId(r *http.Request) (uuid.UUID, error) {
 		return uuid.Nil, err
 	}
 
-	claimValue, err := getTokenClaimValue(cookieValue)
+	tokenValue, err := getTokenStringValue(cookieValue)
 	if err != nil {
 		return uuid.Nil, err
 	}
 
-	result, err := uuid.Parse(claimValue)
+	playerId, err := uuid.Parse(tokenValue)
 	if err != nil {
 		return uuid.Nil, err
 	}
 
-	return result, nil
+	return playerId, nil
 }
 
 func SetPlayerId(w http.ResponseWriter, playerId uuid.UUID) error {
-	tokenString, err := getTokenString(playerId.String())
+	tokenString, err := getValueTokenString(playerId.String())
 	if err != nil {
 		return err
 	}
@@ -99,12 +92,12 @@ func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
 		return accessIds, nil
 	}
 
-	claimValue, err := getTokenClaimValue(cookieValue)
+	tokenValue, err := getTokenStringValue(cookieValue)
 	if err != nil {
 		return nil, err
 	}
 
-	accessStrings := strings.Split(claimValue, " ")
+	accessStrings := strings.Split(tokenValue, " ")
 
 	accessIds = accessToUuid(accessStrings)
 
@@ -113,7 +106,7 @@ func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
 
 func SetAccessIds(w http.ResponseWriter, accessIds []uuid.UUID) error {
 	accessStrings := accessToString(accessIds)
-	tokenString, err := getTokenString(strings.Join(accessStrings, " "))
+	tokenString, err := getValueTokenString(strings.Join(accessStrings, " "))
 	if err != nil {
 		return err
 	}
@@ -151,34 +144,4 @@ func accessToString(accessIds []uuid.UUID) []string {
 		accessStrings[i] = accessIds[i].String()
 	}
 	return accessStrings
-}
-
-func getTokenString(tokenStringValue string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		claimKey: tokenStringValue,
-	})
-	tokenString, err := token.SignedString(jwtSecret)
-	if err != nil {
-		return "", err
-	}
-	return tokenString, nil
-}
-
-func getTokenClaimValue(tokenString string) (string, error) {
-	verified, err := getToken(tokenString)
-	if err != nil {
-		return "", err
-	}
-
-	if claims, ok := verified.Claims.(jwt.MapClaims); ok {
-		return claims[claimKey].(string), nil
-	} else {
-		return "", errors.New("could not get claims")
-	}
-}
-
-func getToken(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
-	})
 }
