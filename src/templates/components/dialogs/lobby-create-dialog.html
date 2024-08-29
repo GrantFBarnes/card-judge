@@ -1,0 +1,20 @@
+{{define "lobby-create-dialog"}}
+<button
+  onclick="document.getElementById('lobby-create-dialog').showModal()"
+  style="cursor: pointer"
+>
+  Create Lobby
+</button>
+<dialog id="lobby-create-dialog">
+  <div style="display: grid; grid-auto-flow: column">
+    <h3>Create Lobby</h3>
+    <div
+      onclick="document.getElementById('lobby-create-dialog').close()"
+      style="cursor: pointer; text-align: right"
+    >
+      &#10060;
+    </div>
+  </div>
+  <div>{{template "lobby-create-form" .}}</div>
+</dialog>
+{{end}}

@@ -64,9 +64,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var name string
 	var password string
 	for key, val := range r.Form {
-		if key == "name" {
+		if key == "newLobbyName" {
 			name = val[0]
-		} else if key == "password" {
+		} else if key == "newLobbyPassword" {
 			password = val[0]
 		}
 	}

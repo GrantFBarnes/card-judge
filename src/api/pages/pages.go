@@ -38,6 +38,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobbies.html",
+		"templates/components/dialogs/lobby-create-dialog.html",
 		"templates/components/forms/lobby-create-form.html",
 	)
 	if err != nil {
