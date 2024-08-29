@@ -1,6 +1,6 @@
 {{define "card-create-form"}}
-<h3>Create a new Card</h3>
 <form hx-post="/api/card/create">
+  <h3>Create a new Card</h3>
   <input type="text" id="deckId" name="deckId" value="{{.Deck.Id}}" hidden />
   <label for="cardType">Type:</label>
   <select id="cardType" name="cardType" required>
