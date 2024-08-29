@@ -1,23 +1,22 @@
 {{define "deck-create-form"}}
 <form hx-post="/api/deck/create">
-  <h3>Create a new Deck</h3>
-  <label for="name">Name:</label>
+  <label for="newDeckName">Name:</label>
   <input
     type="text"
-    id="name"
-    name="name"
+    id="newDeckName"
+    name="newDeckName"
     maxlength="255"
-    placeholder="Enter Deck Name"
+    placeholder="Enter New Deck Name"
     required="true"
   />
   <br />
-  <label for="password">Password:</label>
+  <label for="newDeckPassword">Password:</label>
   <input
     type="password"
-    id="password"
-    name="password"
+    id="newDeckPassword"
+    name="newDeckPassword"
     maxlength="255"
-    placeholder="Enter Deck Password"
+    placeholder="Enter New Deck Password"
   />
   <br />
   <br />

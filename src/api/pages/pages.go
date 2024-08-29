@@ -128,6 +128,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/decks.html",
+		"templates/components/dialogs/deck-create-dialog.html",
 		"templates/components/forms/deck-create-form.html",
 	)
 	if err != nil {
@@ -163,6 +164,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		"templates/components/forms/deck-update-form.html",
 		"templates/components/dialogs/deck-update-dialog.html",
 		"templates/components/forms/card-create-form.html",
+		"templates/components/dialogs/card-create-dialog.html",
 		"templates/components/forms/card-update-form.html",
 		"templates/components/dialogs/card-update-dialog.html",
 	)

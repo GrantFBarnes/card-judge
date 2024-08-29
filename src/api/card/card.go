@@ -19,13 +19,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var cardType database.CardType
 	var text string
 	for key, val := range r.Form {
-		if key == "deckId" {
+		if key == "newCardDeckId" {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse deck id.")
 				return
 			}
-		} else if key == "cardType" {
+		} else if key == "newCardCardType" {
 			if val[0] == "Judge" {
 				cardType = database.JudgeCard
 			} else if val[0] == "Player" {
@@ -34,7 +34,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse card type.")
 				return
 			}
-		} else if key == "text" {
+		} else if key == "newCardText" {
 			text = val[0]
 		}
 	}
