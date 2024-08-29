@@ -3,9 +3,9 @@
   {{if not .HasAccess}}
   <div>{{template "lobby-access-form" .}}</div>
   {{else if not .LoggedIn}}
-  <div>{{template "login-form" .}}</div>
+  <div>{{template "player-create-form" .}}</div>
   {{else}}
-  <div>{{template "player-display" .}}</div>
+  <div>{{template "player-update-form" .}}</div>
   <h3>Lobby: {{.Lobby.Name}}</h3>
   <div>{{template "lobby-update-form" .}}</div>
   <button
