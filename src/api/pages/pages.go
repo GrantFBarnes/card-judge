@@ -97,7 +97,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId, err := auth.GetPlayerId(r)
+	playerId, err := auth.GetCookiePlayerId(r)
 	loggedIn := err == nil
 	player, err := database.GetPlayer(dbcs, playerId)
 	if loggedIn && err != nil {
@@ -107,7 +107,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 
 	hasAccess := true
 	if lobby.PasswordHash.Valid {
-		hasAccess = auth.HasAccess(r, lobby.Id)
+		hasAccess = auth.HasCookieAccess(r, lobby.Id)
 	}
 
 	tmpl.ExecuteTemplate(w, "base", LobbyData{
@@ -195,7 +195,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	hasAccess := true
 	if deck.PasswordHash.Valid {
-		hasAccess = auth.HasAccess(r, deck.Id)
+		hasAccess = auth.HasCookieAccess(r, deck.Id)
 	}
 
 	tmpl.ExecuteTemplate(w, "base", DeckData{

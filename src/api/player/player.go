@@ -35,7 +35,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.SetPlayerId(w, id)
+	err = auth.SetCookiePlayerId(w, id)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player cookie in browser.")
 		return
@@ -97,7 +97,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.RemovePlayerId(w)
+	auth.RemoveCookiePlayerId(w)
 
 	w.Header().Add("HX-Refresh", "true")
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")

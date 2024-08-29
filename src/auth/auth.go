@@ -9,7 +9,7 @@ import (
 	"github.com/grantfbarnes/card-judge/helper"
 )
 
-func GetPlayerId(r *http.Request) (uuid.UUID, error) {
+func GetCookiePlayerId(r *http.Request) (uuid.UUID, error) {
 	cookieValue, err := getCookie(r, cookieNamePlayerToken)
 	if err != nil {
 		return uuid.Nil, err
@@ -28,7 +28,7 @@ func GetPlayerId(r *http.Request) (uuid.UUID, error) {
 	return playerId, nil
 }
 
-func SetPlayerId(w http.ResponseWriter, playerId uuid.UUID) error {
+func SetCookiePlayerId(w http.ResponseWriter, playerId uuid.UUID) error {
 	tokenString, err := getValueTokenString(playerId.String())
 	if err != nil {
 		return err
@@ -44,13 +44,13 @@ func SetPlayerId(w http.ResponseWriter, playerId uuid.UUID) error {
 	return nil
 }
 
-func RemovePlayerId(w http.ResponseWriter) {
+func RemoveCookiePlayerId(w http.ResponseWriter) {
 	cookie := getRemovalCookie(cookieNamePlayerToken)
 	http.SetCookie(w, &cookie)
 }
 
-func HasAccess(r *http.Request, id uuid.UUID) bool {
-	accessIds, err := getAccessIds(r)
+func HasCookieAccess(r *http.Request, id uuid.UUID) bool {
+	accessIds, err := getCookieAccessIds(r)
 	if err != nil {
 		return false
 	}
@@ -64,28 +64,38 @@ func HasAccess(r *http.Request, id uuid.UUID) bool {
 	return false
 }
 
-func AddAccessId(w http.ResponseWriter, r *http.Request, accessId uuid.UUID) error {
-	accessIds, err := getAccessIds(r)
+func AddCookieAccessId(w http.ResponseWriter, r *http.Request, accessId uuid.UUID) error {
+	accessIds, err := getCookieAccessIds(r)
 	if err != nil {
 		return err
 	}
 
-	alreadyAdded := false
 	for _, v := range accessIds {
 		if v == accessId {
-			alreadyAdded = true
-			break
+			// already have access
+			return nil
 		}
 	}
 
-	if !alreadyAdded {
-		accessIds = append(accessIds, accessId)
+	accessIds = append(accessIds, accessId)
+
+	accessStrings := helper.ConvertArrayUuidsToStrings(accessIds)
+	tokenString, err := getValueTokenString(strings.Join(accessStrings, " "))
+	if err != nil {
+		return err
 	}
 
-	return SetAccessIds(w, accessIds)
+	cookie := http.Cookie{
+		Name:    cookieNameAccessToken,
+		Value:   tokenString,
+		Path:    "/",
+		Expires: time.Now().Add(time.Hour * 12),
+	}
+	http.SetCookie(w, &cookie)
+	return nil
 }
 
-func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
+func getCookieAccessIds(r *http.Request) ([]uuid.UUID, error) {
 	var accessIds = make([]uuid.UUID, 0)
 
 	cookieValue, err := getCookie(r, cookieNameAccessToken)
@@ -103,26 +113,4 @@ func getAccessIds(r *http.Request) ([]uuid.UUID, error) {
 	accessIds = helper.ConvertArrayStringsToUuids(accessStrings)
 
 	return accessIds, nil
-}
-
-func SetAccessIds(w http.ResponseWriter, accessIds []uuid.UUID) error {
-	accessStrings := helper.ConvertArrayUuidsToStrings(accessIds)
-	tokenString, err := getValueTokenString(strings.Join(accessStrings, " "))
-	if err != nil {
-		return err
-	}
-
-	cookie := http.Cookie{
-		Name:    cookieNameAccessToken,
-		Value:   tokenString,
-		Path:    "/",
-		Expires: time.Now().Add(time.Hour * 12),
-	}
-	http.SetCookie(w, &cookie)
-	return nil
-}
-
-func RemoveAccess(w http.ResponseWriter) {
-	cookie := getRemovalCookie(cookieNameAccessToken)
-	http.SetCookie(w, &cookie)
 }
