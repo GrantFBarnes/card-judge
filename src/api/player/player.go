@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/auth"
 	"github.com/grantfbarnes/card-judge/database"
 )
@@ -11,8 +12,7 @@ import (
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to parse form"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
 		return
 	}
 
@@ -24,42 +24,38 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if name == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("no name found"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	id, err := database.CreatePlayer(dbcs, name)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to create player"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player in database.")
 		return
 	}
 
 	err = auth.SetPlayerId(w, id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to set cookie"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player cookie in browser.")
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to get player id"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to parse form"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
 		return
 	}
 
@@ -71,40 +67,38 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if name == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("no name found"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.UpdatePlayer(dbcs, id, name)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to update player"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update player in database.")
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to get player id"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeletePlayer(dbcs, id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to delete player"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to delete player in database.")
 		return
 	}
 
 	auth.RemovePlayerId(w)
 
 	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }

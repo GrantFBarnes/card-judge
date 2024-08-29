@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
 )
 
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to parse form"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
 		return
 	}
 
@@ -22,8 +22,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("failed to parse deck id"))
+				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse deck id.")
 				return
 			}
 		} else if key == "cardType" {
@@ -32,8 +31,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			} else if val[0] == "Player" {
 				cardType = database.PlayerCard
 			} else {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("failed to parse card type"))
+				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse card type.")
 				return
 			}
 		} else if key == "text" {
@@ -42,35 +40,32 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if text == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("no text found"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "No text found.")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	_, err = database.CreateCard(dbcs, deckId, cardType, text)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to create card"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create card in database.")
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to get card id"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to parse form"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
 		return
 	}
 
@@ -83,8 +78,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 			} else if val[0] == "Player" {
 				cardType = database.PlayerCard
 			} else {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("failed to parse card type"))
+				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse card type.")
 				return
 			}
 		} else if key == "text" {
@@ -93,38 +87,36 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if text == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("no text found"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "No text found.")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.UpdateCard(dbcs, id, cardType, text)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to update card"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update card in database.")
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to get card id"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeleteCard(dbcs, id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("failed to delete card"))
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to delete card in database.")
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
