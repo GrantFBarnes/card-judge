@@ -1,0 +1,24 @@
+{{define "player-update-dialog"}}
+<div>
+  Playing as: {{.Player.Name}}
+  <span
+    onclick="document.getElementById('update-player-dialog').showModal()"
+    style="cursor: pointer"
+  >
+    &#128393;
+  </span>
+</div>
+<dialog id="update-player-dialog" style="text-align: center">
+  <div style="display: grid; grid-auto-flow: column">
+    <h3>Update Player</h3>
+    <div
+      onclick="document.getElementById('update-player-dialog').close()"
+      style="cursor: pointer; text-align: right"
+    >
+      &#128936;
+    </div>
+  </div>
+  <p>Currently playing as: {{.Player.Name}}</p>
+  <div>{{template "player-update-form" .}}</div>
+</dialog>
+{{end}}

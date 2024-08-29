@@ -4,7 +4,7 @@
   <div>{{template "deck-access-form" .}}</div>
   {{else}}
   <h3>Deck: {{.Deck.Name}}</h3>
-  <div>{{template "deck-update-form" .}}</div>
+  <div>{{template "deck-update-dialog" .}}</div>
   <button
     hx-delete="/api/deck/{{.Deck.Id}}"
     hx-confirm="Are you sure you want to delete this deck?"
@@ -29,7 +29,7 @@
       <td>{{.Type}}</td>
       <td style="white-space: pre">{{.Text}}</td>
       <td>
-        <div>{{template "card-update-form" .}}</div>
+        <div>{{template "card-update-dialog" .}}</div>
       </td>
       <td>
         <button

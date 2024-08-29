@@ -72,8 +72,10 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/lobby.html",
 		"templates/components/forms/player-create-form.html",
 		"templates/components/forms/player-update-form.html",
+		"templates/components/dialogs/player-update-dialog.html",
 		"templates/components/forms/lobby-access-form.html",
 		"templates/components/forms/lobby-update-form.html",
+		"templates/components/dialogs/lobby-update-dialog.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -158,8 +160,10 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/deck.html",
 		"templates/components/forms/deck-access-form.html",
 		"templates/components/forms/deck-update-form.html",
+		"templates/components/dialogs/deck-update-dialog.html",
 		"templates/components/forms/card-create-form.html",
 		"templates/components/forms/card-update-form.html",
+		"templates/components/dialogs/card-update-dialog.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")

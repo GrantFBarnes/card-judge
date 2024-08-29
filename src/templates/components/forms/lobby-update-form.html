@@ -1,52 +1,29 @@
 {{define "lobby-update-form"}}
-<button
-  onclick="document.getElementById('update-lobby-dialog').showModal()"
-  style="cursor: pointer"
->
-  Edit Lobby &#128393;
-</button>
-<dialog id="update-lobby-dialog">
-  <div style="display: grid; grid-auto-flow: column">
-    <h3>Update Lobby</h3>
-    <div
-      onclick="document.getElementById('update-lobby-dialog').close()"
-      style="cursor: pointer; text-align: right"
-    >
-      &#128936;
-    </div>
-  </div>
-
-  <h4>Current Values</h4>
-  <div>Name: {{.Lobby.Name}}</div>
-  <div>Password: {{.Lobby.Password.String}}</div>
-
-  <h4>New Values</h4>
-  <form hx-put="/api/lobby/{{.Lobby.Id}}">
-    <label for="newLobbyName">Name:</label>
-    <input
-      type="text"
-      id="newLobbyName"
-      name="newLobbyName"
-      maxlength="255"
-      placeholder="Enter Lobby Name"
-      required="true"
-      value="{{.Lobby.Name}}"
-    />
-    <br />
-    <label for="newLobbyPassword">Password:</label>
-    <input
-      type="text"
-      id="newLobbyPassword"
-      name="newLobbyPassword"
-      maxlength="255"
-      placeholder="Enter Lobby Password"
-      value="{{.Lobby.Password.String}}"
-    />
-    <br />
-    <br />
-    <div class="htmx-result-good"></div>
-    <div class="htmx-result-bad"></div>
-    <input type="submit" value="Update" />
-  </form>
-</dialog>
+<form hx-put="/api/lobby/{{.Lobby.Id}}">
+  <label for="newLobbyName">Name:</label>
+  <input
+    type="text"
+    id="newLobbyName"
+    name="newLobbyName"
+    maxlength="255"
+    placeholder="Enter Lobby Name"
+    required="true"
+    value="{{.Lobby.Name}}"
+  />
+  <br />
+  <label for="newLobbyPassword">Password:</label>
+  <input
+    type="text"
+    id="newLobbyPassword"
+    name="newLobbyPassword"
+    maxlength="255"
+    placeholder="Enter Lobby Password"
+    value="{{.Lobby.Password.String}}"
+  />
+  <br />
+  <br />
+  <div class="htmx-result-good"></div>
+  <div class="htmx-result-bad"></div>
+  <input type="submit" value="Update" />
+</form>
 {{end}}
