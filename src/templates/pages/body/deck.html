@@ -12,31 +12,7 @@
     Delete Deck
   </button>
   <br />
-  <h3>Create a new Card</h3>
-  <form hx-post="/api/card/create">
-    <input type="text" id="deckId" name="deckId" value="{{.Deck.Id}}" hidden />
-    <label for="cardType">Type:</label>
-    <select id="cardType" name="cardType" required>
-      <option value="Judge" selected>Judge</option>
-      <option value="Player">Player</option>
-    </select>
-    <br />
-    <label for="text" style="vertical-align: top">Text:</label>
-    <textarea
-      id="text"
-      name="text"
-      maxlength="255"
-      placeholder="Enter Card Text"
-      required="true"
-      cols="40"
-      rows="10"
-    ></textarea>
-    <br />
-    <br />
-    <div class="htmx-result-good"></div>
-    <div class="htmx-result-bad"></div>
-    <input type="submit" value="Create" />
-  </form>
+  <div>{{template "card-create-form" .}}</div>
   <br />
   <h3>Cards in Deck</h3>
   <table>
@@ -53,59 +29,7 @@
       <td>{{.Type}}</td>
       <td style="white-space: pre">{{.Text}}</td>
       <td>
-        <button
-          onclick="document.getElementById('update-card-{{.Id}}-dialog').showModal()"
-          style="cursor: pointer"
-        >
-          Edit &#128393;
-        </button>
-        <dialog id="update-card-{{.Id}}-dialog">
-          <div style="display: grid; grid-auto-flow: column">
-            <h3>Update Card</h3>
-            <div
-              onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
-              style="cursor: pointer; text-align: right"
-            >
-              &#128936;
-            </div>
-          </div>
-
-          <h4>Current Values</h4>
-          <div>Type: {{.Type}}</div>
-          <div>Text: {{.Text}}</div>
-
-          <h4>New Values</h4>
-          <form hx-put="/api/card/{{.Id}}">
-            <label for="cardType{{.Id}}">Type:</label>
-            <select id="cardType{{.Id}}" name="cardType" required>
-              {{if eq .Type "Judge"}}
-              <option value="Judge" selected>Judge</option>
-              <option value="Player">Player</option>
-              {{else}}
-              <option value="Judge">Judge</option>
-              <option value="Player" selected>Player</option>
-              {{end}}
-            </select>
-            <br />
-            <label for="text{{.Id}}" style="vertical-align: top">Text:</label>
-            <textarea
-              id="text{{.Id}}"
-              name="text"
-              maxlength="255"
-              placeholder="Enter Card Text"
-              required="true"
-              cols="40"
-              rows="10"
-            >
-{{.Text}}</textarea
-            >
-            <br />
-            <br />
-            <div class="htmx-result-good"></div>
-            <div class="htmx-result-bad"></div>
-            <input type="submit" value="Update" />
-          </form>
-        </dialog>
+        <div>{{template "card-update-form" .}}</div>
       </td>
       <td>
         <button

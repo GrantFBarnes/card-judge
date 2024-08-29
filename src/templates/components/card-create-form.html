@@ -1,0 +1,27 @@
+{{define "card-create-form"}}
+<h3>Create a new Card</h3>
+<form hx-post="/api/card/create">
+  <input type="text" id="deckId" name="deckId" value="{{.Deck.Id}}" hidden />
+  <label for="cardType">Type:</label>
+  <select id="cardType" name="cardType" required>
+    <option value="Judge" selected>Judge</option>
+    <option value="Player">Player</option>
+  </select>
+  <br />
+  <label for="text" style="vertical-align: top">Text:</label>
+  <textarea
+    id="text"
+    name="text"
+    maxlength="255"
+    placeholder="Enter Card Text"
+    required="true"
+    cols="40"
+    rows="10"
+  ></textarea>
+  <br />
+  <br />
+  <div class="htmx-result-good"></div>
+  <div class="htmx-result-bad"></div>
+  <input type="submit" value="Create" />
+</form>
+{{end}}
