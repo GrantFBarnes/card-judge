@@ -1,9 +1,9 @@
 {{define "body"}}
 <div>
-  {{if not .LoggedIn}}
-  <div>{{template "login-form" .}}</div>
-  {{else if not .HasAccess}}
+  {{if not .HasAccess}}
   <div>{{template "lobby-access-form" .}}</div>
+  {{else if not .LoggedIn}}
+  <div>{{template "login-form" .}}</div>
   {{else}}
   <div>{{template "player-display" .}}</div>
   <h3>Lobby: {{.Lobby.Name}}</h3>
