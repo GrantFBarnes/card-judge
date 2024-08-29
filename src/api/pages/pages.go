@@ -38,7 +38,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobbies.html",
-		"templates/components/lobby-create-form.html",
+		"templates/components/forms/lobby-create-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -70,10 +70,10 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobby.html",
-		"templates/components/player-create-form.html",
-		"templates/components/player-update-form.html",
-		"templates/components/lobby-access-form.html",
-		"templates/components/lobby-update-form.html",
+		"templates/components/forms/player-create-form.html",
+		"templates/components/forms/player-update-form.html",
+		"templates/components/forms/lobby-access-form.html",
+		"templates/components/forms/lobby-update-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -125,7 +125,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/decks.html",
-		"templates/components/deck-create-form.html",
+		"templates/components/forms/deck-create-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -156,10 +156,10 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/deck.html",
-		"templates/components/deck-access-form.html",
-		"templates/components/deck-update-form.html",
-		"templates/components/card-create-form.html",
-		"templates/components/card-update-form.html",
+		"templates/components/forms/deck-access-form.html",
+		"templates/components/forms/deck-update-form.html",
+		"templates/components/forms/card-create-form.html",
+		"templates/components/forms/card-update-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
