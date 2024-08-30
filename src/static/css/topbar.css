@@ -13,6 +13,12 @@
 }
 
 #topbar-toggle-dark-mode {
+  text-align: center;
+  padding: 15px;
+  cursor: pointer;
+}
+
+#topbar-player {
   text-align: right;
   padding: 15px;
   cursor: pointer;

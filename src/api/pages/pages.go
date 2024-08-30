@@ -12,6 +12,8 @@ import (
 
 type HomeData struct {
 	PageTitle string
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -24,13 +26,20 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
+
 	tmpl.ExecuteTemplate(w, "base", HomeData{
 		PageTitle: "Card Judge - Home",
+		Player:    player,
+		LoggedIn:  loggedIn,
 	})
 }
 
 type LoginData struct {
 	PageTitle string
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -44,14 +53,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
+
 	tmpl.ExecuteTemplate(w, "base", LoginData{
 		PageTitle: "Card Judge - Login",
+		Player:    player,
+		LoggedIn:  loggedIn,
 	})
 }
 
 type ManageData struct {
 	PageTitle string
 	Player    database.Player
+	LoggedIn  bool
 }
 
 func Manage(w http.ResponseWriter, r *http.Request) {
@@ -65,28 +80,21 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId, err := auth.GetCookiePlayerId(r)
-	if err != nil {
-		fmt.Fprintf(w, "failed to get player id\n")
-		return
-	}
-
-	dbcs := database.GetDatabaseConnectionString()
-	player, err := database.GetPlayer(dbcs, playerId)
-	if err != nil {
-		fmt.Fprintf(w, "failed to get player\n")
-		return
-	}
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
 
 	tmpl.ExecuteTemplate(w, "base", ManageData{
 		PageTitle: "Card Judge - Manage",
 		Player:    player,
+		LoggedIn:  loggedIn,
 	})
 }
 
 type LobbiesData struct {
 	PageTitle string
 	Lobbies   []database.Lobby
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {
@@ -108,17 +116,23 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
+
 	tmpl.ExecuteTemplate(w, "base", LobbiesData{
 		PageTitle: "Card Judge - Lobbies",
 		Lobbies:   lobbies,
+		Player:    player,
+		LoggedIn:  loggedIn,
 	})
 }
 
 type LobbyData struct {
 	PageTitle string
-	Player    database.Player
 	HasAccess bool
 	Lobby     database.Lobby
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
@@ -148,34 +162,28 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId, err := auth.GetCookiePlayerId(r)
-	if err != nil {
-		fmt.Fprintf(w, "failed to get player id\n")
-		return
-	}
-
-	player, err := database.GetPlayer(dbcs, playerId)
-	if err != nil {
-		fmt.Fprintf(w, "failed to get player\n")
-		return
-	}
-
 	hasAccess := true
 	if lobby.PasswordHash.Valid {
 		hasAccess = auth.HasCookieAccess(r, lobby.Id)
 	}
 
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
+
 	tmpl.ExecuteTemplate(w, "base", LobbyData{
 		PageTitle: "Card Judge - Lobby",
-		Player:    player,
 		HasAccess: hasAccess,
 		Lobby:     lobby,
+		Player:    player,
+		LoggedIn:  loggedIn,
 	})
 }
 
 type DecksData struct {
 	PageTitle string
 	Decks     []database.Deck
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Decks(w http.ResponseWriter, r *http.Request) {
@@ -197,9 +205,14 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
+
 	tmpl.ExecuteTemplate(w, "base", DecksData{
 		PageTitle: "Card Judge - Decks",
 		Decks:     decks,
+		Player:    player,
+		LoggedIn:  loggedIn,
 	})
 }
 
@@ -208,6 +221,8 @@ type DeckData struct {
 	HasAccess bool
 	Deck      database.Deck
 	Cards     []database.Card
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
@@ -252,10 +267,30 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasCookieAccess(r, deck.Id)
 	}
 
+	player, err := getRequestPlayer(r)
+	loggedIn := err == nil
+
 	tmpl.ExecuteTemplate(w, "base", DeckData{
 		PageTitle: "Card Judge - Deck",
 		HasAccess: hasAccess,
 		Deck:      deck,
 		Cards:     cards,
+		Player:    player,
+		LoggedIn:  loggedIn,
 	})
+}
+
+func getRequestPlayer(r *http.Request) (player database.Player, err error) {
+	playerId, err := auth.GetCookiePlayerId(r)
+	if err != nil {
+		return player, err
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	player, err = database.GetPlayer(dbcs, playerId)
+	if err != nil {
+		return player, err
+	}
+
+	return player, nil
 }

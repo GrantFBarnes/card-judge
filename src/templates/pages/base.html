@@ -27,6 +27,13 @@
       >
         &#127762;
       </div>
+      <div id="topbar-player">
+        {{if .LoggedIn}}
+        <div onclick="location.href='/manage'">{{.Player.Name}}</div>
+        {{else}}
+        <div onclick="location.href='/login'">Login</div>
+        {{end}}
+      </div>
     </div>
     <div id="body">{{template "body" .}}</div>
   </body>
