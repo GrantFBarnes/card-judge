@@ -149,8 +149,10 @@ func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error
 
 	statment, err := db.Prepare(`
 		UPDATE CARD
-		SET TYPE = ?
-		  , TEXT = ?
+		SET
+			TYPE = ?,
+			TEXT = ?,
+			DATE_MODIFIED = CURRENT_TIMESTAMP()
 		WHERE ID = ?
 	`)
 	if err != nil {
