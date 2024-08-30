@@ -22,3 +22,12 @@ func ConvertArrayUuidsToStrings(uuidArray []uuid.UUID) (stringArray []string) {
 	}
 	return stringArray
 }
+
+func IsIdInArray(idToFind uuid.UUID, uuidArray []uuid.UUID) bool {
+	for _, id := range uuidArray {
+		if id == idToFind {
+			return true
+		}
+	}
+	return false
+}

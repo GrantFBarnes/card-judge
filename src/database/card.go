@@ -40,6 +40,7 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 			CHANGED_ON_DATE,
 			CREATED_BY_PLAYER_ID,
 			CHANGED_BY_PLAYER_ID,
+			DECK_ID,
 			TYPE,
 			TEXT
 		FROM CARD
@@ -65,6 +66,7 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 			&card.ChangedOnDate,
 			&card.CreatedByPlayerId,
 			&card.ChangedByPlayerId,
+			&card.DeckId,
 			&card.Type,
 			&card.Text); err != nil {
 			continue

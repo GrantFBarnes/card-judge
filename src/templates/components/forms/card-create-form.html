@@ -3,20 +3,20 @@
   <input
     type="text"
     id="newCardDeckId"
-    name="newCardDeckId"
+    name="deckId"
     value="{{.Deck.Id}}"
     hidden
   />
   <label for="newCardCardType">Type:</label>
-  <select id="newCardCardType" name="newCardCardType" required>
+  <select id="newCardCardType" name="cardType" required>
     <option value="Judge" selected>Judge</option>
     <option value="Player">Player</option>
   </select>
   <br />
   <label for="newCardText" style="vertical-align: top">Text:</label>
   <textarea
-    id="text"
-    name="newCardText"
+    id="newCardText"
+    name="text"
     maxlength="255"
     placeholder="Enter New Card Text"
     required="true"

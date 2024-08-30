@@ -1,5 +1,12 @@
 {{define "card-update-form"}}
 <form hx-put="/api/card/{{.Id}}">
+  <input
+    type="text"
+    id="deckId{{.Id}}"
+    name="deckId"
+    value="{{.DeckId}}"
+    hidden
+  />
   <label for="cardType{{.Id}}">Type:</label>
   <select id="cardType{{.Id}}" name="cardType" required>
     {{if eq .Type "Judge"}}
