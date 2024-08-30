@@ -152,19 +152,9 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobby"
 
-	hasAccess := !lobby.PasswordHash.Valid
-	if !hasAccess {
-		for _, id := range basePageData.Player.LobbyIds {
-			if id == lobby.Id {
-				hasAccess = true
-				break
-			}
-		}
-	}
-
 	tmpl.ExecuteTemplate(w, "base", lobbyData{
 		Data:      basePageData,
-		HasAccess: hasAccess,
+		HasAccess: !lobby.PasswordHash.Valid || basePageData.Player.HasLobbyAccess(lobby.Id),
 		Lobby:     lobby,
 	})
 }
@@ -249,19 +239,9 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Deck"
 
-	hasAccess := !deck.PasswordHash.Valid
-	if !hasAccess {
-		for _, id := range basePageData.Player.DeckIds {
-			if id == deck.Id {
-				hasAccess = true
-				break
-			}
-		}
-	}
-
 	tmpl.ExecuteTemplate(w, "base", deckData{
 		Data:      basePageData,
-		HasAccess: hasAccess,
+		HasAccess: !deck.PasswordHash.Valid || basePageData.Player.HasDeckAccess(deck.Id),
 		Deck:      deck,
 		Cards:     cards,
 	})
