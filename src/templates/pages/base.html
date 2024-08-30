@@ -15,23 +15,29 @@
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.png" />
     <link rel="stylesheet" href="/static/css/global.css" />
     <link rel="stylesheet" href="/static/css/colors.css" />
-    <link rel="stylesheet" href="/static/css/topbar.css" />
   </head>
   <body class="dark-theme || light-theme">
     <div id="topbar">
-      <div id="topbar-title">Card Judge</div>
-      <div
-        id="topbar-toggle-dark-mode"
-        title="Toggle between light/dark mode"
-        onclick="toggleDarkMode()"
-      >
-        &#127762;
+      <div style="text-align: left">
+        <span class="clickable" onclick="location.href='/'">Card Judge</span>
       </div>
-      <div id="topbar-player">
+      <div style="text-align: center">
+        <span
+          id="topbar-toggle-dark-mode"
+          class="clickable"
+          title="Toggle between light/dark mode"
+          onclick="toggleDarkMode()"
+        >
+          &#127762;
+        </span>
+      </div>
+      <div style="text-align: right">
         {{if .LoggedIn}}
-        <div onclick="location.href='/manage'">{{.Player.Name}}</div>
+        <span class="clickable" onclick="location.href='/manage'">
+          {{.Player.Name}}
+        </span>
         {{else}}
-        <div onclick="location.href='/login'">Login</div>
+        <span class="clickable" onclick="location.href='/login'">Login</span>
         {{end}}
       </div>
     </div>

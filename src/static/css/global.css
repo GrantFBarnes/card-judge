@@ -34,6 +34,16 @@ summary {
   float: right;
 }
 
+#topbar {
+  color: rgb(255, 255, 255);
+  background-color: rgb(50, 50, 50);
+  height: 1em;
+  padding: 15px;
+  display: grid;
+  grid-auto-flow: column;
+  overflow: hidden;
+}
+
 #body {
   margin: 8px;
 }
