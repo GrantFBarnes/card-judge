@@ -15,9 +15,9 @@ const (
 )
 
 type Card struct {
-	Id           uuid.UUID
-	DateAdded    time.Time
-	DateModified time.Time
+	Id            uuid.UUID
+	CreatedOnDate time.Time
+	ChangedOnDate time.Time
 
 	DeckId uuid.UUID
 	Type   CardType
@@ -34,13 +34,13 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 	statment, err := db.Prepare(`
 		SELECT
 			ID,
-			DATE_ADDED,
-			DATE_MODIFIED,
+			CREATED_ON_DATE,
+			CHANGED_ON_DATE,
 			TYPE,
 			TEXT
 		FROM CARD
 		WHERE DECK_ID = ?
-		ORDER BY TYPE, DATE_MODIFIED DESC
+		ORDER BY TYPE, CHANGED_ON_DATE DESC
 	`)
 	if err != nil {
 		return nil, err
@@ -57,8 +57,8 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 		var card Card
 		if err := rows.Scan(
 			&card.Id,
-			&card.DateAdded,
-			&card.DateModified,
+			&card.CreatedOnDate,
+			&card.ChangedOnDate,
 			&card.Type,
 			&card.Text); err != nil {
 			continue
@@ -80,8 +80,8 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 	statment, err := db.Prepare(`
 		SELECT
 			ID,
-			DATE_ADDED,
-			DATE_MODIFIED,
+			CREATED_ON_DATE,
+			CHANGED_ON_DATE,
 			DECK_ID,
 			TYPE,
 			TEXT
@@ -101,8 +101,8 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 	for rows.Next() {
 		if err := rows.Scan(
 			&card.Id,
-			&card.DateAdded,
-			&card.DateModified,
+			&card.CreatedOnDate,
+			&card.ChangedOnDate,
 			&card.DeckId,
 			&card.Type,
 			&card.Text); err != nil {
@@ -154,7 +154,7 @@ func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error
 		SET
 			TYPE = ?,
 			TEXT = ?,
-			DATE_MODIFIED = CURRENT_TIMESTAMP()
+			CHANGED_ON_DATE = CURRENT_TIMESTAMP()
 		WHERE ID = ?
 	`)
 	if err != nil {

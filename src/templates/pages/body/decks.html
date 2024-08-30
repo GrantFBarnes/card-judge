@@ -4,13 +4,13 @@
 <h3>Choose a Deck to Modify</h3>
 <table>
   <tr>
-    <th>Date Added</th>
+    <th>Created</th>
     <th>Name</th>
     <th>Security</th>
   </tr>
   {{range .Decks}}
   <tr>
-    <td>{{.DateAdded.Format "2006-01-02"}}</td>
+    <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
     <td><a href="/deck/{{.Id}}">{{.Name}}</a></td>
     <td>
       {{if .PasswordHash.Valid}} Protected &#128274; {{else}} Open {{end}}

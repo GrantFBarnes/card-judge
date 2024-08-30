@@ -17,7 +17,7 @@
   <h3>Cards in Deck</h3>
   <table>
     <tr>
-      <th>Date Added</th>
+      <th>Created</th>
       <th>Type</th>
       <th>Text</th>
       <th>Edit</th>
@@ -25,7 +25,7 @@
     </tr>
     {{range .Cards}}
     <tr>
-      <td>{{.DateAdded.Format "2006-01-02"}}</td>
+      <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
       <td>{{.Type}}</td>
       <td style="white-space: pre">{{.Text}}</td>
       <td>
