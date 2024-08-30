@@ -10,7 +10,7 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-type HomeData struct {
+type homeData struct {
 	PageTitle string
 	Player    database.Player
 	LoggedIn  bool
@@ -29,14 +29,14 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", HomeData{
+	tmpl.ExecuteTemplate(w, "base", homeData{
 		PageTitle: "Card Judge - Home",
 		Player:    player,
 		LoggedIn:  loggedIn,
 	})
 }
 
-type LoginData struct {
+type loginData struct {
 	PageTitle string
 	Player    database.Player
 	LoggedIn  bool
@@ -56,14 +56,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", LoginData{
+	tmpl.ExecuteTemplate(w, "base", loginData{
 		PageTitle: "Card Judge - Login",
 		Player:    player,
 		LoggedIn:  loggedIn,
 	})
 }
 
-type ManageData struct {
+type manageData struct {
 	PageTitle string
 	Player    database.Player
 	LoggedIn  bool
@@ -83,14 +83,14 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", ManageData{
+	tmpl.ExecuteTemplate(w, "base", manageData{
 		PageTitle: "Card Judge - Manage",
 		Player:    player,
 		LoggedIn:  loggedIn,
 	})
 }
 
-type LobbiesData struct {
+type lobbiesData struct {
 	PageTitle string
 	Lobbies   []database.Lobby
 	Player    database.Player
@@ -119,7 +119,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", LobbiesData{
+	tmpl.ExecuteTemplate(w, "base", lobbiesData{
 		PageTitle: "Card Judge - Lobbies",
 		Lobbies:   lobbies,
 		Player:    player,
@@ -127,7 +127,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type LobbyData struct {
+type lobbyData struct {
 	PageTitle string
 	HasAccess bool
 	Lobby     database.Lobby
@@ -170,7 +170,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", LobbyData{
+	tmpl.ExecuteTemplate(w, "base", lobbyData{
 		PageTitle: "Card Judge - Lobby",
 		HasAccess: hasAccess,
 		Lobby:     lobby,
@@ -179,7 +179,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type DecksData struct {
+type decksData struct {
 	PageTitle string
 	Decks     []database.Deck
 	Player    database.Player
@@ -208,7 +208,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", DecksData{
+	tmpl.ExecuteTemplate(w, "base", decksData{
 		PageTitle: "Card Judge - Decks",
 		Decks:     decks,
 		Player:    player,
@@ -216,7 +216,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type DeckData struct {
+type deckData struct {
 	PageTitle string
 	HasAccess bool
 	Deck      database.Deck
@@ -270,7 +270,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	player, err := getRequestPlayer(r)
 	loggedIn := err == nil
 
-	tmpl.ExecuteTemplate(w, "base", DeckData{
+	tmpl.ExecuteTemplate(w, "base", deckData{
 		PageTitle: "Card Judge - Deck",
 		HasAccess: hasAccess,
 		Deck:      deck,
