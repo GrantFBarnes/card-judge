@@ -111,6 +111,11 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isPlayerOrAdmin(r, id) {
+		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		return
+	}
+
 	err = r.ParseForm()
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
@@ -145,6 +150,11 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(idString)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		return
+	}
+
+	if !isPlayerOrAdmin(r, id) {
+		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
 		return
 	}
 
@@ -185,6 +195,11 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isPlayerOrAdmin(r, id) {
+		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		return
+	}
+
 	err = r.ParseForm()
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
@@ -222,6 +237,11 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isPlayerOrAdmin(r, id) {
+		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		return
+	}
+
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeletePlayer(dbcs, id)
 	if err != nil {
@@ -233,4 +253,27 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("HX-Refresh", "true")
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
+func isPlayerOrAdmin(r *http.Request, checkId uuid.UUID) bool {
+	playerId := api.GetPlayerId(r)
+	if playerId == uuid.Nil {
+		return false
+	}
+
+	if playerId == checkId {
+		return true
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	player, err := database.GetPlayer(dbcs, playerId)
+	if err != nil {
+		return false
+	}
+
+	if player.IsAdmin {
+		return true
+	}
+
+	return false
 }
