@@ -19,9 +19,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var name string
 	var password string
 	for key, val := range r.Form {
-		if key == "playerName" {
+		if key == "name" {
 			name = val[0]
-		} else if key == "playerPassword" {
+		} else if key == "password" {
 			password = val[0]
 		}
 	}
@@ -39,13 +39,137 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	id, err := database.CreatePlayer(dbcs, name, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
 	err = auth.SetCookiePlayerId(w, id)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player cookie in browser.")
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var name string
+	var password string
+	for key, val := range r.Form {
+		if key == "name" {
+			name = val[0]
+		} else if key == "password" {
+			password = val[0]
+		}
+	}
+
+	if name == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		return
+	}
+
+	if password == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	id, err := database.GetPlayerId(dbcs, name, password)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to login.")
+		return
+	}
+
+	err = auth.SetCookiePlayerId(w, id)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player cookie in browser.")
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	auth.RemoveCookiePlayerId(w)
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
+func SetName(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var name string
+	for key, val := range r.Form {
+		if key == "name" {
+			name = val[0]
+		}
+	}
+
+	if name == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.SetPlayerName(dbcs, id, name)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
+func SetPassword(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var password string
+	for key, val := range r.Form {
+		if key == "password" {
+			password = val[0]
+		}
+	}
+
+	if password == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.SetPlayerPassword(dbcs, id, password)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -80,54 +204,9 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
-	err = database.SetColorTheme(dbcs, id, colorTheme)
+	err = database.SetPlayerColorTheme(dbcs, id, colorTheme)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to set player color theme in database.")
-		return
-	}
-
-	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
-}
-
-func Update(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
-	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
-		return
-	}
-
-	err = r.ParseForm()
-	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
-		return
-	}
-
-	var name string
-	var password string
-	for key, val := range r.Form {
-		if key == "playerName" {
-			name = val[0]
-		} else if key == "playerPassword" {
-			password = val[0]
-		}
-	}
-
-	if name == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
-		return
-	}
-
-	if password == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
-		return
-	}
-
-	dbcs := database.GetDatabaseConnectionString()
-	err = database.UpdatePlayer(dbcs, id, name, password)
-	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update player in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -146,7 +225,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeletePlayer(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to delete player in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 

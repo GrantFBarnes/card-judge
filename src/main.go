@@ -30,7 +30,10 @@ func main() {
 
 	// player
 	http.HandleFunc("POST /api/player/create", apiPlayer.Create)
-	http.HandleFunc("PUT /api/player/{id}", apiPlayer.Update)
+	http.HandleFunc("POST /api/player/login", apiPlayer.Login)
+	http.HandleFunc("POST /api/player/logout", apiPlayer.Logout)
+	http.HandleFunc("PUT /api/player/{id}/name", apiPlayer.SetName)
+	http.HandleFunc("PUT /api/player/{id}/password", apiPlayer.SetPassword)
 	http.HandleFunc("PUT /api/player/{id}/color-theme", apiPlayer.SetColorTheme)
 	http.HandleFunc("DELETE /api/player/{id}", apiPlayer.Delete)
 

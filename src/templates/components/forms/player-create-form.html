@@ -1,22 +1,21 @@
 {{define "player-create-form"}}
 <form hx-post="/api/player/create" style="text-align: center">
-  <h3>Login</h3>
-  <label for="playerName">Name:</label>
+  <h3>Create a New Player</h3>
+  <label for="createPlayerName">Name:</label>
   <input
     type="text"
-    id="playerName"
-    name="playerName"
+    id="createPlayerName"
+    name="name"
     maxlength="255"
     placeholder="Enter Player Name"
     required="true"
-    autofocus="true"
   />
   <br />
-  <label for="playerPassword">Password:</label>
+  <label for="createPlayerPassword">Password:</label>
   <input
     type="password"
-    id="playerPassword"
-    name="playerPassword"
+    id="createPlayerPassword"
+    name="password"
     maxlength="255"
     placeholder="Enter Player Password"
     required="true"
@@ -25,6 +24,6 @@
   <br />
   <div class="htmx-result-good"></div>
   <div class="htmx-result-bad"></div>
-  <input type="submit" value="Submit" />
+  <input type="submit" value="Create Player" />
 </form>
 {{end}}

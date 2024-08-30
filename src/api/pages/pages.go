@@ -95,6 +95,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/login.html",
+		"templates/components/forms/player-login-form.html",
 		"templates/components/forms/player-create-form.html",
 	)
 	if err != nil {
@@ -118,8 +119,11 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/manage.html",
-		"templates/components/forms/player-update-form.html",
+		"templates/components/forms/player-name-form.html",
+		"templates/components/forms/player-password-form.html",
 		"templates/components/forms/player-color-theme-form.html",
+		"templates/components/forms/player-logout-form.html",
+		"templates/components/forms/player-delete-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")

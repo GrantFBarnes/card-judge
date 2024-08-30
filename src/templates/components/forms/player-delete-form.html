@@ -1,0 +1,11 @@
+{{define "player-delete-form"}}
+<details>
+  <summary>Delete</summary>
+  <button
+    hx-delete="/api/player/{{.Data.Player.Id}}"
+    hx-confirm="Are you sure you want to delete this player?"
+  >
+    Delete
+  </button>
+</details>
+{{end}}

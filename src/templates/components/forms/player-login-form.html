@@ -1,21 +1,21 @@
-{{define "player-update-form"}}
-<form hx-put="/api/player/{{.Data.Player.Id}}">
+{{define "player-login-form"}}
+<form hx-post="/api/player/login" style="text-align: center">
+  <h3>Player Login</h3>
   <label for="playerName">Name:</label>
   <input
     type="text"
     id="playerName"
-    name="playerName"
+    name="name"
     maxlength="255"
     placeholder="Enter Player Name"
     required="true"
-    autofocus="true"
   />
   <br />
   <label for="playerPassword">Password:</label>
   <input
     type="password"
     id="playerPassword"
-    name="playerPassword"
+    name="password"
     maxlength="255"
     placeholder="Enter Player Password"
     required="true"
@@ -24,16 +24,6 @@
   <br />
   <div class="htmx-result-good"></div>
   <div class="htmx-result-bad"></div>
-  <input type="submit" value="Update" />
+  <input type="submit" value="Login" />
 </form>
-<br />
-<details>
-  <summary>Logout</summary>
-  <button
-    hx-delete="/api/player/{{.Data.Player.Id}}"
-    hx-confirm="Are you sure you want to logout?"
-  >
-    Logout
-  </button>
-</details>
 {{end}}

@@ -47,7 +47,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	_, err = database.CreateCard(dbcs, deckId, cardType, text)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create card in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -94,7 +94,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.UpdateCard(dbcs, id, cardType, text)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update card in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -113,7 +113,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeleteCard(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to delete card in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 

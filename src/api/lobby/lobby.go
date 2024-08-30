@@ -20,7 +20,7 @@ func Access(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	lobby, err := database.GetLobby(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get lobby from database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -79,7 +79,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	id, err := database.CreateLobby(dbcs, name, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create lobby in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -121,7 +121,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.UpdateLobby(dbcs, id, name, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update lobby in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
@@ -142,7 +142,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeleteLobby(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to delete lobby in database.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
 	}
 
