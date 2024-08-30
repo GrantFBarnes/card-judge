@@ -32,12 +32,13 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 	defer db.Close()
 
 	statment, err := db.Prepare(`
-		SELECT ID
-			 , DATE_ADDED
-			 , DATE_MODIFIED
-			 , TYPE
-			 , TEXT
-	 	FROM CARD
+		SELECT
+			ID,
+			DATE_ADDED,
+			DATE_MODIFIED,
+			TYPE,
+			TEXT
+		FROM CARD
 		WHERE DECK_ID = ?
 		ORDER BY TYPE, DATE_MODIFIED DESC
 	`)
@@ -77,13 +78,14 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 	defer db.Close()
 
 	statment, err := db.Prepare(`
-		SELECT ID
-			 , DATE_ADDED
-			 , DATE_MODIFIED
-			 , DECK_ID
-			 , TYPE
-			 , TEXT
-	 	FROM CARD
+		SELECT
+			ID,
+			DATE_ADDED,
+			DATE_MODIFIED,
+			DECK_ID,
+			TYPE,
+			TEXT
+		FROM CARD
 		WHERE ID = ?
 	`)
 	if err != nil {
