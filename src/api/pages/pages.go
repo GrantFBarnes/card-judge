@@ -107,7 +107,11 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 
 	hasAccess := true
 	if lobby.PasswordHash.Valid {
-		hasAccess = auth.HasCookieAccess(r, lobby.Id)
+		hasAccess, err = auth.HasCookieAccess(r, lobby.Id)
+		if err != nil {
+			fmt.Fprintf(w, "failed to check access\n")
+			return
+		}
 	}
 
 	tmpl.ExecuteTemplate(w, "base", LobbyData{
@@ -195,7 +199,11 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	hasAccess := true
 	if deck.PasswordHash.Valid {
-		hasAccess = auth.HasCookieAccess(r, deck.Id)
+		hasAccess, err = auth.HasCookieAccess(r, deck.Id)
+		if err != nil {
+			fmt.Fprintf(w, "failed to check access\n")
+			return
+		}
 	}
 
 	tmpl.ExecuteTemplate(w, "base", DeckData{

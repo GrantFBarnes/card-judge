@@ -49,37 +49,44 @@ func RemoveCookiePlayerId(w http.ResponseWriter) {
 	http.SetCookie(w, &cookie)
 }
 
-func HasCookieAccess(r *http.Request, id uuid.UUID) bool {
-	accessIds, err := getCookieAccessIds(r)
+func HasCookieAccess(r *http.Request, id uuid.UUID) (bool, error) {
+	cookieValue, err := getCookie(r, cookieNameAccessToken)
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	for _, v := range accessIds {
-		if v == id {
-			return true
-		}
+	tokenValue, err := getTokenStringValue(cookieValue)
+	if err != nil {
+		return false, err
 	}
 
-	return false
+	return strings.Contains(tokenValue, id.String()), nil
 }
 
-func AddCookieAccessId(w http.ResponseWriter, r *http.Request, accessId uuid.UUID) error {
-	accessIds, err := getCookieAccessIds(r)
+func AddCookieAccessId(w http.ResponseWriter, r *http.Request, id uuid.UUID) error {
+	cookieValue, err := getCookie(r, cookieNameAccessToken)
 	if err != nil {
 		return err
 	}
 
-	for _, v := range accessIds {
-		if v == accessId {
-			// already have access
-			return nil
-		}
+	tokenValue, err := getTokenStringValue(cookieValue)
+	if err != nil {
+		return err
 	}
 
-	accessIds = append(accessIds, accessId)
+	if strings.Contains(tokenValue, id.String()) {
+		// already have access
+		return nil
+	}
 
-	accessStrings := helper.ConvertArrayUuidsToStrings(accessIds)
+	var accessStrings []string
+	var accessIds []uuid.UUID
+
+	accessStrings = strings.Split(tokenValue, " ")
+	accessIds = helper.ConvertArrayStringsToUuids(accessStrings)
+	accessIds = append(accessIds, id)
+	accessStrings = helper.ConvertArrayUuidsToStrings(accessIds)
+
 	tokenString, err := getValueTokenString(strings.Join(accessStrings, " "))
 	if err != nil {
 		return err
@@ -93,24 +100,4 @@ func AddCookieAccessId(w http.ResponseWriter, r *http.Request, accessId uuid.UUI
 	}
 	http.SetCookie(w, &cookie)
 	return nil
-}
-
-func getCookieAccessIds(r *http.Request) ([]uuid.UUID, error) {
-	var accessIds = make([]uuid.UUID, 0)
-
-	cookieValue, err := getCookie(r, cookieNameAccessToken)
-	if err != nil {
-		return accessIds, nil
-	}
-
-	tokenValue, err := getTokenStringValue(cookieValue)
-	if err != nil {
-		return nil, err
-	}
-
-	accessStrings := strings.Split(tokenValue, " ")
-
-	accessIds = helper.ConvertArrayStringsToUuids(accessStrings)
-
-	return accessIds, nil
 }
