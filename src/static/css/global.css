@@ -17,6 +17,18 @@ dialog::backdrop {
   opacity: 0.8;
 }
 
+button {
+  cursor: pointer;
+}
+
+summary {
+  cursor: pointer;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
 #body {
   margin: 8px;
 }

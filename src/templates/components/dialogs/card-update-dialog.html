@@ -1,7 +1,6 @@
 {{define "card-update-dialog"}}
 <button
   onclick="document.getElementById('update-card-{{.Id}}-dialog').showModal()"
-  style="cursor: pointer"
 >
   Edit &#128393;
 </button>
@@ -9,8 +8,9 @@
   <div style="display: grid; grid-auto-flow: column">
     <h3>Update Card</h3>
     <div
+      class="clickable"
       onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
-      style="cursor: pointer; text-align: right"
+      style="text-align: right"
     >
       &#10060;
     </div>

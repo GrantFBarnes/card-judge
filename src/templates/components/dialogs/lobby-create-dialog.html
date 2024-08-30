@@ -1,16 +1,14 @@
 {{define "lobby-create-dialog"}}
-<button
-  onclick="document.getElementById('lobby-create-dialog').showModal()"
-  style="cursor: pointer"
->
+<button onclick="document.getElementById('lobby-create-dialog').showModal()">
   Create Lobby
 </button>
 <dialog id="lobby-create-dialog">
   <div style="display: grid; grid-auto-flow: column">
     <h3>Create Lobby</h3>
     <div
+      class="clickable"
       onclick="document.getElementById('lobby-create-dialog').close()"
-      style="cursor: pointer; text-align: right"
+      style="text-align: right"
     >
       &#10060;
     </div>
