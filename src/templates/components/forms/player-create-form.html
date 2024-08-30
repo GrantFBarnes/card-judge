@@ -1,6 +1,7 @@
 {{define "player-create-form"}}
 <form hx-post="/api/player/create" style="text-align: center">
-  <p>You must provide your name to play the game.</p>
+  <h3>Login</h3>
+  <label for="playerName">Name:</label>
   <input
     type="text"
     id="playerName"
@@ -9,6 +10,16 @@
     placeholder="Enter Player Name"
     required="true"
     autofocus="true"
+  />
+  <br />
+  <label for="playerPassword">Password:</label>
+  <input
+    type="password"
+    id="playerPassword"
+    name="playerPassword"
+    maxlength="255"
+    placeholder="Enter Player Password"
+    required="true"
   />
   <br />
   <br />

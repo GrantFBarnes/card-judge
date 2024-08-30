@@ -17,9 +17,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var name string
+	var password string
 	for key, val := range r.Form {
 		if key == "playerName" {
 			name = val[0]
+		} else if key == "playerPassword" {
+			password = val[0]
 		}
 	}
 
@@ -28,8 +31,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if password == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		return
+	}
+
 	dbcs := database.GetDatabaseConnectionString()
-	id, err := database.CreatePlayer(dbcs, name)
+	id, err := database.CreatePlayer(dbcs, name, password)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player in database.")
 		return
@@ -60,9 +68,12 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var name string
+	var password string
 	for key, val := range r.Form {
 		if key == "playerName" {
 			name = val[0]
+		} else if key == "playerPassword" {
+			password = val[0]
 		}
 	}
 
@@ -71,8 +82,13 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if password == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		return
+	}
+
 	dbcs := database.GetDatabaseConnectionString()
-	err = database.UpdatePlayer(dbcs, id, name)
+	err = database.UpdatePlayer(dbcs, id, name, password)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update player in database.")
 		return

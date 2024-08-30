@@ -10,6 +10,26 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
+type LoginData struct {
+	PageTitle string
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/body/login.html",
+		"templates/components/forms/player-create-form.html",
+	)
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", LoginData{
+		PageTitle: "Card Judge - Login",
+	})
+}
+
 type HomeData struct {
 	PageTitle string
 }
@@ -61,7 +81,6 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 
 type LobbyData struct {
 	PageTitle string
-	LoggedIn  bool
 	Player    database.Player
 	HasAccess bool
 	Lobby     database.Lobby
@@ -71,7 +90,6 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobby.html",
-		"templates/components/forms/player-create-form.html",
 		"templates/components/forms/player-update-form.html",
 		"templates/components/dialogs/player-update-dialog.html",
 		"templates/components/forms/lobby-access-form.html",
@@ -98,9 +116,13 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	playerId, err := auth.GetCookiePlayerId(r)
-	loggedIn := err == nil
+	if err != nil {
+		fmt.Fprintf(w, "failed to get player id\n")
+		return
+	}
+
 	player, err := database.GetPlayer(dbcs, playerId)
-	if loggedIn && err != nil {
+	if err != nil {
 		fmt.Fprintf(w, "failed to get player\n")
 		return
 	}
@@ -112,7 +134,6 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", LobbyData{
 		PageTitle: "Card Judge - Lobby",
-		LoggedIn:  loggedIn,
 		Player:    player,
 		HasAccess: hasAccess,
 		Lobby:     lobby,
