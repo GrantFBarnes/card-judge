@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/grantfbarnes/card-judge/api"
 	apiCard "github.com/grantfbarnes/card-judge/api/card"
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
@@ -21,13 +20,13 @@ func main() {
 	})
 
 	// pages
-	http.Handle("GET /", api.Middleware(http.HandlerFunc(apiPages.Home)))
-	http.Handle("GET /login", api.Middleware(http.HandlerFunc(apiPages.Login)))
-	http.Handle("GET /manage", api.Middleware(http.HandlerFunc(apiPages.Manage)))
-	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(apiPages.Lobbies)))
-	http.Handle("GET /lobby/{id}", api.Middleware(http.HandlerFunc(apiPages.Lobby)))
-	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(apiPages.Decks)))
-	http.Handle("GET /deck/{id}", api.Middleware(http.HandlerFunc(apiPages.Deck)))
+	http.Handle("GET /", apiPages.Middleware(http.HandlerFunc(apiPages.Home)))
+	http.Handle("GET /login", apiPages.Middleware(http.HandlerFunc(apiPages.Login)))
+	http.Handle("GET /manage", apiPages.Middleware(http.HandlerFunc(apiPages.Manage)))
+	http.Handle("GET /lobbies", apiPages.Middleware(http.HandlerFunc(apiPages.Lobbies)))
+	http.Handle("GET /lobby/{id}", apiPages.Middleware(http.HandlerFunc(apiPages.Lobby)))
+	http.Handle("GET /decks", apiPages.Middleware(http.HandlerFunc(apiPages.Decks)))
+	http.Handle("GET /deck/{id}", apiPages.Middleware(http.HandlerFunc(apiPages.Deck)))
 
 	// player
 	http.HandleFunc("POST /api/player/create", apiPlayer.Create)

@@ -32,9 +32,9 @@
         </span>
       </div>
       <div style="text-align: right">
-        {{if .LoggedIn}}
+        {{if .Data.LoggedIn}}
         <span class="clickable" onclick="location.href='/manage'">
-          {{.Player.Name}}
+          {{.Data.Player.Name}}
         </span>
         {{else}}
         <span class="clickable" onclick="location.href='/login'">Login</span>

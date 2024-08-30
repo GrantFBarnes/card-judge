@@ -1,19 +1,71 @@
 package apiPages
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/auth"
 	"github.com/grantfbarnes/card-judge/database"
 )
 
+type requestContextKey string
+
+const basePageDataKey requestContextKey = "basePageDataKey"
+
+type basePageData struct {
+	Player   database.Player
+	LoggedIn bool
+}
+
+func Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		basePageData := basePageData{
+			Player:   database.Player{},
+			LoggedIn: false,
+		}
+
+		playerId, err := auth.GetCookiePlayerId(r)
+		if err == nil {
+			dbcs := database.GetDatabaseConnectionString()
+			player, err := database.GetPlayer(dbcs, playerId)
+			if err == nil {
+				basePageData.Player = player
+				basePageData.LoggedIn = true
+			}
+		}
+
+		// required to be logged in
+		if r.URL.Path == "/manage" ||
+			strings.HasPrefix(r.URL.Path, "/lobby/") ||
+			strings.HasPrefix(r.URL.Path, "/deck/") {
+			if !basePageData.LoggedIn {
+				auth.SetCookieRedirectURL(w, r.URL.Path)
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+		}
+
+		// required to not be logged in
+		if r.URL.Path == "/login" {
+			if basePageData.LoggedIn {
+				http.Redirect(w, r, auth.GetCookieRedirectURL(r), http.StatusSeeOther)
+				return
+			}
+		}
+
+		r = r.WithContext(context.WithValue(r.Context(), basePageDataKey, basePageData))
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 type homeData struct {
 	PageTitle string
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -26,20 +78,15 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", homeData{
 		PageTitle: "Card Judge - Home",
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
 type loginData struct {
 	PageTitle string
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -53,20 +100,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", loginData{
 		PageTitle: "Card Judge - Login",
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
 type manageData struct {
 	PageTitle string
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Manage(w http.ResponseWriter, r *http.Request) {
@@ -80,21 +122,16 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", manageData{
 		PageTitle: "Card Judge - Manage",
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
 type lobbiesData struct {
 	PageTitle string
 	Lobbies   []database.Lobby
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {
@@ -116,14 +153,10 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", lobbiesData{
 		PageTitle: "Card Judge - Lobbies",
 		Lobbies:   lobbies,
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
@@ -131,8 +164,7 @@ type lobbyData struct {
 	PageTitle string
 	HasAccess bool
 	Lobby     database.Lobby
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
@@ -167,23 +199,18 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasCookieAccess(r, lobby.Id)
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", lobbyData{
 		PageTitle: "Card Judge - Lobby",
 		HasAccess: hasAccess,
 		Lobby:     lobby,
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
 type decksData struct {
 	PageTitle string
 	Decks     []database.Deck
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Decks(w http.ResponseWriter, r *http.Request) {
@@ -205,14 +232,10 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", decksData{
 		PageTitle: "Card Judge - Decks",
 		Decks:     decks,
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
@@ -221,8 +244,7 @@ type deckData struct {
 	HasAccess bool
 	Deck      database.Deck
 	Cards     []database.Card
-	Player    database.Player
-	LoggedIn  bool
+	Data      basePageData
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
@@ -267,30 +289,11 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasCookieAccess(r, deck.Id)
 	}
 
-	player, err := getRequestPlayer(r)
-	loggedIn := err == nil
-
 	tmpl.ExecuteTemplate(w, "base", deckData{
 		PageTitle: "Card Judge - Deck",
 		HasAccess: hasAccess,
 		Deck:      deck,
 		Cards:     cards,
-		Player:    player,
-		LoggedIn:  loggedIn,
+		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
-}
-
-func getRequestPlayer(r *http.Request) (player database.Player, err error) {
-	playerId, err := auth.GetCookiePlayerId(r)
-	if err != nil {
-		return player, err
-	}
-
-	dbcs := database.GetDatabaseConnectionString()
-	player, err = database.GetPlayer(dbcs, playerId)
-	if err != nil {
-		return player, err
-	}
-
-	return player, nil
 }
