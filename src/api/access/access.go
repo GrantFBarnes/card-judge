@@ -44,9 +44,15 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.AddCookieAccessId(w, r, lobby.Id)
+	playerId, err := auth.GetCookiePlayerId(r)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to set cookie in browser.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		return
+	}
+
+	err = database.AddPlayerLobbyAccess(dbcs, playerId, lobby.Id)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to add access.")
 		return
 	}
 
@@ -89,9 +95,15 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.AddCookieAccessId(w, r, deck.Id)
+	playerId, err := auth.GetCookiePlayerId(r)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to set cookie in browser.")
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		return
+	}
+
+	err = database.AddPlayerDeckAccess(dbcs, playerId, deck.Id)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to add access.")
 		return
 	}
 

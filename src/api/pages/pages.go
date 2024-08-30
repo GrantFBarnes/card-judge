@@ -204,13 +204,18 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hasAccess := true
-	if lobby.PasswordHash.Valid {
-		hasAccess = auth.HasCookieAccess(r, lobby.Id)
-	}
-
 	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
 	basePageData.PageTitle = "Card Judge - Lobby"
+
+	hasAccess := !lobby.PasswordHash.Valid
+	if !hasAccess {
+		for _, id := range basePageData.Player.LobbyIds {
+			if id == lobby.Id {
+				hasAccess = true
+				break
+			}
+		}
+	}
 
 	tmpl.ExecuteTemplate(w, "base", lobbyData{
 		Data:      basePageData,
@@ -296,13 +301,18 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hasAccess := true
-	if deck.PasswordHash.Valid {
-		hasAccess = auth.HasCookieAccess(r, deck.Id)
-	}
-
 	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
 	basePageData.PageTitle = "Card Judge - Deck"
+
+	hasAccess := !deck.PasswordHash.Valid
+	if !hasAccess {
+		for _, id := range basePageData.Player.DeckIds {
+			if id == deck.Id {
+				hasAccess = true
+				break
+			}
+		}
+	}
 
 	tmpl.ExecuteTemplate(w, "base", deckData{
 		Data:      basePageData,
