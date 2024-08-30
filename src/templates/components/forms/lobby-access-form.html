@@ -1,5 +1,5 @@
 {{define "lobby-access-form"}}
-<form hx-post="/api/lobby/{{.Lobby.Id}}/access" style="text-align: center">
+<form hx-post="/api/access/lobby/{{.Lobby.Id}}" style="text-align: center">
   <h3>Lobby: {{.Lobby.Name}}</h3>
   <p>You must provide the password to join lobby.</p>
   <input

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	apiAccess "github.com/grantfbarnes/card-judge/api/access"
 	apiCard "github.com/grantfbarnes/card-judge/api/card"
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
@@ -38,13 +39,11 @@ func main() {
 	http.HandleFunc("DELETE /api/player/{id}", apiPlayer.Delete)
 
 	// lobby
-	http.HandleFunc("POST /api/lobby/{id}/access", apiLobby.Access)
 	http.HandleFunc("POST /api/lobby/create", apiLobby.Create)
 	http.HandleFunc("PUT /api/lobby/{id}", apiLobby.Update)
 	http.HandleFunc("DELETE /api/lobby/{id}", apiLobby.Delete)
 
 	// deck
-	http.HandleFunc("POST /api/deck/{id}/access", apiDeck.Access)
 	http.HandleFunc("POST /api/deck/create", apiDeck.Create)
 	http.HandleFunc("PUT /api/deck/{id}", apiDeck.Update)
 	http.HandleFunc("DELETE /api/deck/{id}", apiDeck.Delete)
@@ -53,6 +52,10 @@ func main() {
 	http.HandleFunc("POST /api/card/create", apiCard.Create)
 	http.HandleFunc("PUT /api/card/{id}", apiCard.Update)
 	http.HandleFunc("DELETE /api/card/{id}", apiCard.Delete)
+
+	// access
+	http.HandleFunc("POST /api/access/lobby/{id}", apiAccess.Lobby)
+	http.HandleFunc("POST /api/access/deck/{id}", apiAccess.Deck)
 
 	port := ":8080"
 	fmt.Printf("running at http://localhost%s\n", port)

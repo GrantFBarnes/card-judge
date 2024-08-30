@@ -1,5 +1,5 @@
 {{define "deck-access-form"}}
-<form hx-post="/api/deck/{{.Deck.Id}}/access" style="text-align: center">
+<form hx-post="/api/access/deck/{{.Deck.Id}}" style="text-align: center">
   <h3>Deck: {{.Deck.Name}}</h3>
   <p>You must provide the password to see cards.</p>
   <input
