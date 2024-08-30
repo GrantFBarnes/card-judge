@@ -1,18 +1,21 @@
 {{define "card-update-dialog"}}
 <button
-  onclick="document.getElementById('update-card-{{.Id}}-dialog').showModal()"
+  onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
 >
   Edit &#128393;
 </button>
-<dialog id="update-card-{{.Id}}-dialog">
+<dialog id="card-{{.Id}}-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
-    <h3>Update Card</h3>
-    <div
-      class="clickable"
-      onclick="document.getElementById('update-card-{{.Id}}-dialog').close()"
-      style="text-align: right"
-    >
-      &#10060;
+    <div>
+      <h3>Update Card</h3>
+    </div>
+    <div>
+      <div
+        class="close-button"
+        onclick="document.getElementById('card-{{.Id}}-update-dialog').close()"
+      >
+        &#10060;
+      </div>
     </div>
   </div>
 

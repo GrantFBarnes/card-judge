@@ -29,6 +29,11 @@ summary {
   cursor: pointer;
 }
 
+.close-button {
+  cursor: pointer;
+  float: right;
+}
+
 #body {
   margin: 8px;
 }

@@ -4,13 +4,16 @@
 </button>
 <dialog id="card-create-dialog">
   <div style="display: grid; grid-auto-flow: column">
-    <h3>Create Card</h3>
-    <div
-      class="clickable"
-      onclick="document.getElementById('card-create-dialog').close()"
-      style="text-align: right"
-    >
-      &#10060;
+    <div>
+      <h3>Create Card</h3>
+    </div>
+    <div>
+      <div
+        class="close-button"
+        onclick="document.getElementById('card-create-dialog').close()"
+      >
+        &#10060;
+      </div>
     </div>
   </div>
   <div>{{template "card-create-form" .}}</div>

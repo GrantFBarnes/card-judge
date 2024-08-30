@@ -1,16 +1,19 @@
 {{define "lobby-update-dialog"}}
-<button onclick="document.getElementById('update-lobby-dialog').showModal()">
+<button onclick="document.getElementById('lobby-update-dialog').showModal()">
   Edit Lobby &#128393;
 </button>
-<dialog id="update-lobby-dialog">
+<dialog id="lobby-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
-    <h3>Update Lobby</h3>
-    <div
-      class="clickable"
-      onclick="document.getElementById('update-lobby-dialog').close()"
-      style="text-align: right"
-    >
-      &#10060;
+    <div>
+      <h3>Update Lobby</h3>
+    </div>
+    <div>
+      <div
+        class="close-button"
+        onclick="document.getElementById('lobby-update-dialog').close()"
+      >
+        &#10060;
+      </div>
     </div>
   </div>
 
