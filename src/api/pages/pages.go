@@ -14,18 +14,20 @@ import (
 
 type requestContextKey string
 
-const basePageDataKey requestContextKey = "basePageDataKey"
+const basePageDataContextKey requestContextKey = "basePageDataContextKey"
 
 type basePageData struct {
-	Player   database.Player
-	LoggedIn bool
+	PageTitle string
+	Player    database.Player
+	LoggedIn  bool
 }
 
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		basePageData := basePageData{
-			Player:   database.Player{},
-			LoggedIn: false,
+			PageTitle: "Card Judge",
+			Player:    database.Player{},
+			LoggedIn:  false,
 		}
 
 		playerId, err := auth.GetCookiePlayerId(r)
@@ -57,15 +59,14 @@ func Middleware(next http.Handler) http.Handler {
 			}
 		}
 
-		r = r.WithContext(context.WithValue(r.Context(), basePageDataKey, basePageData))
+		r = r.WithContext(context.WithValue(r.Context(), basePageDataContextKey, basePageData))
 
 		next.ServeHTTP(w, r)
 	})
 }
 
 type homeData struct {
-	PageTitle string
-	Data      basePageData
+	Data basePageData
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -78,15 +79,16 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Home"
+
 	tmpl.ExecuteTemplate(w, "base", homeData{
-		PageTitle: "Card Judge - Home",
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
+		Data: basePageData,
 	})
 }
 
 type loginData struct {
-	PageTitle string
-	Data      basePageData
+	Data basePageData
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -100,15 +102,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Login"
+
 	tmpl.ExecuteTemplate(w, "base", loginData{
-		PageTitle: "Card Judge - Login",
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
+		Data: basePageData,
 	})
 }
 
 type manageData struct {
-	PageTitle string
-	Data      basePageData
+	Data basePageData
 }
 
 func Manage(w http.ResponseWriter, r *http.Request) {
@@ -122,16 +125,17 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Manage"
+
 	tmpl.ExecuteTemplate(w, "base", manageData{
-		PageTitle: "Card Judge - Manage",
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
+		Data: basePageData,
 	})
 }
 
 type lobbiesData struct {
-	PageTitle string
-	Lobbies   []database.Lobby
-	Data      basePageData
+	Data    basePageData
+	Lobbies []database.Lobby
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {
@@ -153,18 +157,19 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Lobbies"
+
 	tmpl.ExecuteTemplate(w, "base", lobbiesData{
-		PageTitle: "Card Judge - Lobbies",
-		Lobbies:   lobbies,
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
+		Data:    basePageData,
+		Lobbies: lobbies,
 	})
 }
 
 type lobbyData struct {
-	PageTitle string
+	Data      basePageData
 	HasAccess bool
 	Lobby     database.Lobby
-	Data      basePageData
 }
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
@@ -199,18 +204,19 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasCookieAccess(r, lobby.Id)
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Lobby"
+
 	tmpl.ExecuteTemplate(w, "base", lobbyData{
-		PageTitle: "Card Judge - Lobby",
+		Data:      basePageData,
 		HasAccess: hasAccess,
 		Lobby:     lobby,
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
 
 type decksData struct {
-	PageTitle string
-	Decks     []database.Deck
-	Data      basePageData
+	Data  basePageData
+	Decks []database.Deck
 }
 
 func Decks(w http.ResponseWriter, r *http.Request) {
@@ -232,19 +238,20 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Decks"
+
 	tmpl.ExecuteTemplate(w, "base", decksData{
-		PageTitle: "Card Judge - Decks",
-		Decks:     decks,
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
+		Data:  basePageData,
+		Decks: decks,
 	})
 }
 
 type deckData struct {
-	PageTitle string
+	Data      basePageData
 	HasAccess bool
 	Deck      database.Deck
 	Cards     []database.Card
-	Data      basePageData
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
@@ -289,11 +296,13 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		hasAccess = auth.HasCookieAccess(r, deck.Id)
 	}
 
+	basePageData := r.Context().Value(basePageDataContextKey).(basePageData)
+	basePageData.PageTitle = "Card Judge - Deck"
+
 	tmpl.ExecuteTemplate(w, "base", deckData{
-		PageTitle: "Card Judge - Deck",
+		Data:      basePageData,
 		HasAccess: hasAccess,
 		Deck:      deck,
 		Cards:     cards,
-		Data:      r.Context().Value(basePageDataKey).(basePageData),
 	})
 }
