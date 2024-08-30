@@ -15,9 +15,11 @@ const (
 )
 
 type Card struct {
-	Id            uuid.UUID
-	CreatedOnDate time.Time
-	ChangedOnDate time.Time
+	Id                uuid.UUID
+	CreatedOnDate     time.Time
+	ChangedOnDate     time.Time
+	CreatedByPlayerId uuid.UUID
+	ChangedByPlayerId uuid.UUID
 
 	DeckId uuid.UUID
 	Type   CardType
@@ -36,6 +38,8 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 			ID,
 			CREATED_ON_DATE,
 			CHANGED_ON_DATE,
+			CREATED_BY_PLAYER_ID,
+			CHANGED_BY_PLAYER_ID,
 			TYPE,
 			TEXT
 		FROM CARD
@@ -59,6 +63,8 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
+			&card.CreatedByPlayerId,
+			&card.ChangedByPlayerId,
 			&card.Type,
 			&card.Text); err != nil {
 			continue
@@ -82,6 +88,8 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 			ID,
 			CREATED_ON_DATE,
 			CHANGED_ON_DATE,
+			CREATED_BY_PLAYER_ID,
+			CHANGED_BY_PLAYER_ID,
 			DECK_ID,
 			TYPE,
 			TEXT
@@ -103,6 +111,8 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
+			&card.CreatedByPlayerId,
+			&card.ChangedByPlayerId,
 			&card.DeckId,
 			&card.Type,
 			&card.Text); err != nil {
@@ -113,7 +123,7 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(dbcs string, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
+func CreateCard(dbcs string, playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		return id, err
@@ -126,15 +136,15 @@ func CreateCard(dbcs string, deckId uuid.UUID, cardType CardType, text string) (
 	defer db.Close()
 
 	statment, err := db.Prepare(`
-		INSERT INTO CARD (ID, DECK_ID, TYPE, TEXT)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO CARD (ID, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID, DECK_ID, TYPE, TEXT)
+		VALUES (?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {
 		return id, err
 	}
 	defer statment.Close()
 
-	_, err = statment.Exec(id, deckId, cardType, text)
+	_, err = statment.Exec(id, playerId, playerId, deckId, cardType, text)
 	if err != nil {
 		return id, err
 	}
@@ -142,7 +152,7 @@ func CreateCard(dbcs string, deckId uuid.UUID, cardType CardType, text string) (
 	return id, nil
 }
 
-func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error {
+func UpdateCard(dbcs string, playerId uuid.UUID, id uuid.UUID, cardType CardType, text string) error {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return err
@@ -154,7 +164,8 @@ func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error
 		SET
 			TYPE = ?,
 			TEXT = ?,
-			CHANGED_ON_DATE = CURRENT_TIMESTAMP()
+			CHANGED_ON_DATE = CURRENT_TIMESTAMP(),
+			CHANGED_BY_PLAYER_ID = ?
 		WHERE ID = ?
 	`)
 	if err != nil {
@@ -162,7 +173,7 @@ func UpdateCard(dbcs string, id uuid.UUID, cardType CardType, text string) error
 	}
 	defer statment.Close()
 
-	_, err = statment.Exec(cardType, text, id)
+	_, err = statment.Exec(cardType, text, playerId, id)
 	if err != nil {
 		return err
 	}

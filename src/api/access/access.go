@@ -44,8 +44,8 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId, err := auth.GetCookiePlayerId(r)
-	if err != nil {
+	playerId := api.GetPlayerId(r)
+	if playerId == uuid.Nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
 		return
 	}
@@ -95,8 +95,8 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId, err := auth.GetCookiePlayerId(r)
-	if err != nil {
+	playerId := api.GetPlayerId(r)
+	if playerId == uuid.Nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
 		return
 	}

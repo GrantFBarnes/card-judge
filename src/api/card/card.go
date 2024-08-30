@@ -44,8 +44,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerId := api.GetPlayerId(r)
+	if playerId == uuid.Nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		return
+	}
+
 	dbcs := database.GetDatabaseConnectionString()
-	_, err = database.CreateCard(dbcs, deckId, cardType, text)
+	_, err = database.CreateCard(dbcs, playerId, deckId, cardType, text)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return
@@ -91,8 +97,14 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerId := api.GetPlayerId(r)
+	if playerId == uuid.Nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		return
+	}
+
 	dbcs := database.GetDatabaseConnectionString()
-	err = database.UpdateCard(dbcs, id, cardType, text)
+	err = database.UpdateCard(dbcs, playerId, id, cardType, text)
 	if err != nil {
 		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
 		return

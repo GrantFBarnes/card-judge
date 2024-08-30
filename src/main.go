@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/grantfbarnes/card-judge/api"
 	apiAccess "github.com/grantfbarnes/card-judge/api/access"
 	apiCard "github.com/grantfbarnes/card-judge/api/card"
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
@@ -21,41 +22,41 @@ func main() {
 	})
 
 	// pages
-	http.Handle("GET /", apiPages.Middleware(http.HandlerFunc(apiPages.Home)))
-	http.Handle("GET /login", apiPages.Middleware(http.HandlerFunc(apiPages.Login)))
-	http.Handle("GET /manage", apiPages.Middleware(http.HandlerFunc(apiPages.Manage)))
-	http.Handle("GET /lobbies", apiPages.Middleware(http.HandlerFunc(apiPages.Lobbies)))
-	http.Handle("GET /lobby/{id}", apiPages.Middleware(http.HandlerFunc(apiPages.Lobby)))
-	http.Handle("GET /decks", apiPages.Middleware(http.HandlerFunc(apiPages.Decks)))
-	http.Handle("GET /deck/{id}", apiPages.Middleware(http.HandlerFunc(apiPages.Deck)))
+	http.Handle("GET /", api.PageMiddleware(http.HandlerFunc(apiPages.Home)))
+	http.Handle("GET /login", api.PageMiddleware(http.HandlerFunc(apiPages.Login)))
+	http.Handle("GET /manage", api.PageMiddleware(http.HandlerFunc(apiPages.Manage)))
+	http.Handle("GET /lobbies", api.PageMiddleware(http.HandlerFunc(apiPages.Lobbies)))
+	http.Handle("GET /lobby/{id}", api.PageMiddleware(http.HandlerFunc(apiPages.Lobby)))
+	http.Handle("GET /decks", api.PageMiddleware(http.HandlerFunc(apiPages.Decks)))
+	http.Handle("GET /deck/{id}", api.PageMiddleware(http.HandlerFunc(apiPages.Deck)))
 
 	// player
-	http.HandleFunc("POST /api/player/create", apiPlayer.Create)
-	http.HandleFunc("POST /api/player/login", apiPlayer.Login)
-	http.HandleFunc("POST /api/player/logout", apiPlayer.Logout)
-	http.HandleFunc("PUT /api/player/{id}/name", apiPlayer.SetName)
-	http.HandleFunc("PUT /api/player/{id}/password", apiPlayer.SetPassword)
-	http.HandleFunc("PUT /api/player/{id}/color-theme", apiPlayer.SetColorTheme)
-	http.HandleFunc("DELETE /api/player/{id}", apiPlayer.Delete)
+	http.Handle("POST /api/player/create", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Create)))
+	http.Handle("POST /api/player/login", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Login)))
+	http.Handle("POST /api/player/logout", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Logout)))
+	http.Handle("PUT /api/player/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetName)))
+	http.Handle("PUT /api/player/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetPassword)))
+	http.Handle("PUT /api/player/{id}/color-theme", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetColorTheme)))
+	http.Handle("DELETE /api/player/{id}", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Delete)))
 
 	// lobby
-	http.HandleFunc("POST /api/lobby/create", apiLobby.Create)
-	http.HandleFunc("PUT /api/lobby/{id}", apiLobby.Update)
-	http.HandleFunc("DELETE /api/lobby/{id}", apiLobby.Delete)
+	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
+	http.Handle("PUT /api/lobby/{id}", api.ApiMiddleware(http.HandlerFunc(apiLobby.Update)))
+	http.Handle("DELETE /api/lobby/{id}", api.ApiMiddleware(http.HandlerFunc(apiLobby.Delete)))
 
 	// deck
-	http.HandleFunc("POST /api/deck/create", apiDeck.Create)
-	http.HandleFunc("PUT /api/deck/{id}", apiDeck.Update)
-	http.HandleFunc("DELETE /api/deck/{id}", apiDeck.Delete)
+	http.Handle("POST /api/deck/create", api.ApiMiddleware(http.HandlerFunc(apiDeck.Create)))
+	http.Handle("PUT /api/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiDeck.Update)))
+	http.Handle("DELETE /api/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiDeck.Delete)))
 
 	// card
-	http.HandleFunc("POST /api/card/create", apiCard.Create)
-	http.HandleFunc("PUT /api/card/{id}", apiCard.Update)
-	http.HandleFunc("DELETE /api/card/{id}", apiCard.Delete)
+	http.Handle("POST /api/card/create", api.ApiMiddleware(http.HandlerFunc(apiCard.Create)))
+	http.Handle("PUT /api/card/{id}", api.ApiMiddleware(http.HandlerFunc(apiCard.Update)))
+	http.Handle("DELETE /api/card/{id}", api.ApiMiddleware(http.HandlerFunc(apiCard.Delete)))
 
 	// access
-	http.HandleFunc("POST /api/access/lobby/{id}", apiAccess.Lobby)
-	http.HandleFunc("POST /api/access/deck/{id}", apiAccess.Deck)
+	http.Handle("POST /api/access/lobby/{id}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Lobby)))
+	http.Handle("POST /api/access/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
 
 	port := ":8080"
 	fmt.Printf("running at http://localhost%s\n", port)
