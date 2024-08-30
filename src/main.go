@@ -23,6 +23,7 @@ func main() {
 	// pages
 	http.Handle("GET /", api.Middleware(http.HandlerFunc(apiPages.Home)))
 	http.Handle("GET /login", api.Middleware(http.HandlerFunc(apiPages.Login)))
+	http.Handle("GET /manage", api.Middleware(http.HandlerFunc(apiPages.Manage)))
 	http.Handle("GET /lobbies", api.Middleware(http.HandlerFunc(apiPages.Lobbies)))
 	http.Handle("GET /lobby/{id}", api.Middleware(http.HandlerFunc(apiPages.Lobby)))
 	http.Handle("GET /decks", api.Middleware(http.HandlerFunc(apiPages.Decks)))

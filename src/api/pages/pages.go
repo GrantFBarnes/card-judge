@@ -10,6 +10,25 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
+type HomeData struct {
+	PageTitle string
+}
+
+func Home(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/body/home.html",
+	)
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", HomeData{
+		PageTitle: "Card Judge - Home",
+	})
+}
+
 type LoginData struct {
 	PageTitle string
 }
@@ -30,22 +49,38 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type HomeData struct {
+type ManageData struct {
 	PageTitle string
+	Player    database.Player
 }
 
-func Home(w http.ResponseWriter, r *http.Request) {
+func Manage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
-		"templates/pages/body/home.html",
+		"templates/pages/body/manage.html",
+		"templates/components/forms/player-update-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", HomeData{
-		PageTitle: "Card Judge - Home",
+	playerId, err := auth.GetCookiePlayerId(r)
+	if err != nil {
+		fmt.Fprintf(w, "failed to get player id\n")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	player, err := database.GetPlayer(dbcs, playerId)
+	if err != nil {
+		fmt.Fprintf(w, "failed to get player\n")
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", ManageData{
+		PageTitle: "Card Judge - Manage",
+		Player:    player,
 	})
 }
 
@@ -90,8 +125,6 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobby.html",
-		"templates/components/forms/player-update-form.html",
-		"templates/components/dialogs/player-update-dialog.html",
 		"templates/components/forms/lobby-access-form.html",
 		"templates/components/forms/lobby-update-form.html",
 		"templates/components/dialogs/lobby-update-dialog.html",
