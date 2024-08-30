@@ -1,0 +1,19 @@
+{{define "player-color-theme-form"}}
+<form hx-put="/api/player/{{.Data.Player.Id}}/color-theme">
+  <label for="colorTheme">Color Theme:</label>
+  <select id="colorTheme" name="colorTheme" required>
+    {{if eq .Data.Player.ColorTheme.String "light-theme"}}
+    <option value="dark-theme">&#127762; Dark</option>
+    <option value="light-theme" selected>&#127766; Light</option>
+    {{else}}
+    <option value="dark-theme" selected>&#127762; Dark</option>
+    <option value="light-theme">&#127766; Light</option>
+    {{end}}
+  </select>
+  <br />
+  <br />
+  <div class="htmx-result-good"></div>
+  <div class="htmx-result-bad"></div>
+  <input type="submit" value="Update" />
+</form>
+{{end}}

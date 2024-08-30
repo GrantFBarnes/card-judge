@@ -53,6 +53,43 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
+func SetColorTheme(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var colorTheme string
+	for key, val := range r.Form {
+		if key == "colorTheme" {
+			colorTheme = val[0]
+		}
+	}
+
+	if colorTheme == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No color theme found.")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.SetColorTheme(dbcs, id, colorTheme)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to set player color theme in database.")
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
 func Update(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)

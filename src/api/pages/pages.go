@@ -119,6 +119,7 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/base.html",
 		"templates/pages/body/manage.html",
 		"templates/components/forms/player-update-form.html",
+		"templates/components/forms/player-color-theme-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")

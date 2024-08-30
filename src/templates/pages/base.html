@@ -11,25 +11,18 @@
       crossorigin="anonymous"
     ></script>
     <script src="/static/js/global.js"></script>
-    <script src="/static/js/topbar.js"></script>
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.png" />
     <link rel="stylesheet" href="/static/css/global.css" />
     <link rel="stylesheet" href="/static/css/colors.css" />
   </head>
-  <body class="dark-theme || light-theme">
+  {{if .Data.Player.ColorTheme.Valid}}
+  <body class="{{.Data.Player.ColorTheme.String}}">
+  {{else}}
+  <body class="dark-theme">
+  {{end}}
     <div id="topbar">
       <div style="text-align: left">
         <span class="clickable" onclick="location.href='/'">Card Judge</span>
-      </div>
-      <div style="text-align: center">
-        <span
-          id="topbar-toggle-dark-mode"
-          class="clickable"
-          title="Toggle between light/dark mode"
-          onclick="toggleDarkMode()"
-        >
-          &#127762;
-        </span>
       </div>
       <div style="text-align: right">
         {{if .Data.LoggedIn}}

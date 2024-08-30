@@ -31,6 +31,7 @@ func main() {
 	// player
 	http.HandleFunc("POST /api/player/create", apiPlayer.Create)
 	http.HandleFunc("PUT /api/player/{id}", apiPlayer.Update)
+	http.HandleFunc("PUT /api/player/{id}/color-theme", apiPlayer.SetColorTheme)
 	http.HandleFunc("DELETE /api/player/{id}", apiPlayer.Delete)
 
 	// lobby
