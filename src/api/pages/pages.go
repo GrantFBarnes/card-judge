@@ -82,6 +82,28 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type adminData struct {
+	Data api.BasePageData
+}
+
+func Admin(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/body/admin.html",
+	)
+	if err != nil {
+		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Admin"
+
+	tmpl.ExecuteTemplate(w, "base", adminData{
+		Data: basePageData,
+	})
+}
+
 type lobbiesData struct {
 	Data    api.BasePageData
 	Lobbies []database.Lobby
