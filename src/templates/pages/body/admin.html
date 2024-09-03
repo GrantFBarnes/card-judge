@@ -1,3 +1,20 @@
 {{define "body"}}
 <h1>Admin</h1>
+<div>{{template "player-create-default-form" .}}</div>
+<br />
+<h3>Players</h3>
+<table>
+  <tr>
+    <th>Created</th>
+    <th>Name</th>
+    <th>Is Admin</th>
+  </tr>
+  {{range .Players}}
+  <tr>
+    <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
+    <td>{{.Name}}</td>
+    <td>{{.IsAdmin}}</td>
+  </tr>
+  {{end}}
+</table>
 {{end}}

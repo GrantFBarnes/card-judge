@@ -33,6 +33,7 @@ func main() {
 
 	// player
 	http.Handle("POST /api/player/create", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Create)))
+	http.Handle("POST /api/player/create/default", api.ApiMiddleware(http.HandlerFunc(apiPlayer.CreateDefault)))
 	http.Handle("POST /api/player/login", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Login)))
 	http.Handle("POST /api/player/logout", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Logout)))
 	http.Handle("PUT /api/player/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetName)))

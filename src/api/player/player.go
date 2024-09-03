@@ -61,6 +61,49 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
+func CreateDefault(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var name string
+	var password string
+	var passwordConfirm string
+	for key, val := range r.Form {
+		if key == "name" {
+			name = val[0]
+		} else if key == "password" {
+			password = val[0]
+		} else if key == "passwordConfirm" {
+			passwordConfirm = val[0]
+		}
+	}
+
+	if name == "" {
+		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		return
+	}
+
+	if password == "" {
+		password = "password"
+	} else if password != passwordConfirm {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Passwords do not match.")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	_, err = database.CreatePlayer(dbcs, name, password)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
 func Login(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {

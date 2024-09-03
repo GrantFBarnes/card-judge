@@ -83,16 +83,25 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 }
 
 type adminData struct {
-	Data api.BasePageData
+	Data    api.BasePageData
+	Players []database.Player
 }
 
 func Admin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/admin.html",
+		"templates/components/forms/player-create-default-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
+		return
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	players, err := database.GetPlayers(dbcs)
+	if err != nil {
+		fmt.Fprintf(w, "failed to connect to database\n")
 		return
 	}
 
@@ -100,7 +109,8 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	basePageData.PageTitle = "Card Judge - Admin"
 
 	tmpl.ExecuteTemplate(w, "base", adminData{
-		Data: basePageData,
+		Data:    basePageData,
+		Players: players,
 	})
 }
 
