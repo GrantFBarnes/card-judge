@@ -68,7 +68,6 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		"templates/components/forms/player-password-form.html",
 		"templates/components/forms/player-color-theme-form.html",
 		"templates/components/forms/player-logout-form.html",
-		"templates/components/forms/player-delete-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")

@@ -2,6 +2,17 @@
 <div>{{template "player-name-form" .}}</div>
 <div>{{template "player-password-form" .}}</div>
 <div>{{template "player-color-theme-form" .}}</div>
+<br />
 <div>{{template "player-logout-form" .}}</div>
-<div>{{template "player-delete-form" .}}</div>
+<br />
+<details>
+  <summary>Danger Zone &#9940;</summary>
+  <br />
+  <button
+    hx-delete="/api/player/{{.Data.Player.Id}}"
+    hx-confirm="Are you sure you want to delete your player account?"
+  >
+    Delete Player Account
+  </button>
+</details>
 {{end}}
