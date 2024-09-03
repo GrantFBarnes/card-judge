@@ -1,4 +1,8 @@
 {{define "body"}}
 <div>{{template "player-login-form" .}}</div>
-<div>{{template "player-create-form" .}}</div>
+<br />
+<details>
+  <summary>Create a New Player</summary>
+  <div>{{template "player-create-form" .}}</div>
+</details>
 {{end}}
