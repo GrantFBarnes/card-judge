@@ -162,7 +162,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isPlayerOrAdmin(r, id) {
+	if !isCurrentPlayer(r, id) {
 		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
 		return
 	}
@@ -204,7 +204,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isPlayerOrAdmin(r, id) {
+	if !isCurrentPlayer(r, id) {
 		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
 		return
 	}
@@ -254,7 +254,7 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isPlayerOrAdmin(r, id) {
+	if !isCurrentPlayer(r, id) {
 		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
 		return
 	}
@@ -296,7 +296,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isPlayerOrAdmin(r, id) {
+	isCurrentPlayer := isCurrentPlayer(r, id)
+	if !isCurrentPlayer && !isAdmin(r) {
 		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
 		return
 	}
@@ -308,20 +309,23 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.RemoveCookiePlayerId(w)
+	if isCurrentPlayer {
+		auth.RemoveCookiePlayerId(w)
+	}
 
 	w.Header().Add("HX-Refresh", "true")
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
-func isPlayerOrAdmin(r *http.Request, checkId uuid.UUID) bool {
+func isCurrentPlayer(r *http.Request, checkId uuid.UUID) bool {
+	playerId := api.GetPlayerId(r)
+	return playerId == checkId
+}
+
+func isAdmin(r *http.Request) bool {
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
 		return false
-	}
-
-	if playerId == checkId {
-		return true
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
@@ -330,9 +334,5 @@ func isPlayerOrAdmin(r *http.Request, checkId uuid.UUID) bool {
 		return false
 	}
 
-	if player.IsAdmin {
-		return true
-	}
-
-	return false
+	return player.IsAdmin
 }
