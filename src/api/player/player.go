@@ -18,11 +18,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	var name string
 	var password string
+	var passwordConfirm string
 	for key, val := range r.Form {
 		if key == "name" {
 			name = val[0]
 		} else if key == "password" {
 			password = val[0]
+		} else if key == "passwordConfirm" {
+			passwordConfirm = val[0]
 		}
 	}
 
@@ -33,6 +36,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	if password == "" {
 		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		return
+	}
+
+	if password != passwordConfirm {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Passwords do not match.")
 		return
 	}
 
@@ -165,14 +173,22 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var password string
+	var passwordConfirm string
 	for key, val := range r.Form {
 		if key == "password" {
 			password = val[0]
+		} else if key == "passwordConfirm" {
+			passwordConfirm = val[0]
 		}
 	}
 
 	if password == "" {
 		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		return
+	}
+
+	if password != passwordConfirm {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Passwords do not match.")
 		return
 	}
 
