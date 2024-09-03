@@ -57,8 +57,8 @@ summary {
 }
 
 #topbar {
-  color: rgb(255, 255, 255);
-  background-color: rgb(50, 50, 50);
+  color: var(--topbar-text);
+  background-color: var(--topbar-bg);
   height: 1em;
   padding: 15px;
   display: grid;
