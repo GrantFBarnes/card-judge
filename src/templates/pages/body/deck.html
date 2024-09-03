@@ -20,25 +20,24 @@
       <th>Created</th>
       <th>Type</th>
       <th>Text</th>
-      <th>Edit</th>
-      <th>Delete</th>
+      <th></th>
+      <th></th>
     </tr>
     {{range .Cards}}
     <tr>
       <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
       <td>{{.Type}}</td>
       <td style="white-space: pre">{{.Text}}</td>
+      <td>{{template "card-update-dialog" .}}</td>
       <td>
-        <div>{{template "card-update-dialog" .}}</div>
-      </td>
-      <td>
-        <button
+        <div
+          title="Delete"
+          class="clickable"
           hx-delete="/api/card/{{.Id}}"
           hx-confirm="Are you sure you want to delete this card?"
-          class="color-red"
         >
-          Delete &#128465;
-        </button>
+          &#128465;
+        </div>
       </td>
     </tr>
     {{end}}

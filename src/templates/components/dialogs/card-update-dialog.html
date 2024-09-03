@@ -1,9 +1,11 @@
 {{define "card-update-dialog"}}
-<button
+<div
+  title="Edit"
+  class="clickable"
   onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
 >
-  Edit &#128393;
-</button>
+  &#128393;
+</div>
 <dialog id="card-{{.Id}}-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
     <div>
