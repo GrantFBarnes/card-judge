@@ -8,22 +8,25 @@
     <th>Created</th>
     <th>Name</th>
     <th>Is Admin</th>
-    <th></th>
   </tr>
   {{range .Players}}
   <tr>
     <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
     <td>{{.Name}}</td>
-    <td>{{.IsAdmin}}</td>
     <td>
-      <div
-        title="Delete"
-        class="clickable"
-        hx-delete="/api/player/{{.Id}}"
-        hx-confirm="Are you sure you want to delete Player {{.Name}}?"
+      <select
+        name="isAdmin"
+        hx-put="/api/player/{{.Id}}/is-admin"
+        hx-trigger="change"
       >
-        &#128465;
-      </div>
+        {{if .IsAdmin}}
+        <option value="0">No</option>
+        <option value="1" selected>Yes</option>
+        {{else}}
+        <option value="0" selected>No</option>
+        <option value="1">Yes</option>
+        {{end}}
+      </select>
     </td>
   </tr>
   {{end}}

@@ -288,6 +288,43 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
 }
 
+func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		return
+	}
+
+	if !isAdmin(r) {
+		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		return
+	}
+
+	var isAdmin bool
+	for key, val := range r.Form {
+		if key == "isAdmin" {
+			isAdmin = val[0] == "1"
+		}
+	}
+
+	dbcs := database.GetDatabaseConnectionString()
+	err = database.SetPlayerIsAdmin(dbcs, id, isAdmin)
+	if err != nil {
+		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+}
+
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
@@ -296,8 +333,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isCurrentPlayer := isCurrentPlayer(r, id)
-	if !isCurrentPlayer && !isAdmin(r) {
+	if !isCurrentPlayer(r, id) {
 		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
 		return
 	}
@@ -309,9 +345,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if isCurrentPlayer {
-		auth.RemoveCookiePlayerId(w)
-	}
+	auth.RemoveCookiePlayerId(w)
 
 	w.Header().Add("HX-Refresh", "true")
 	api.WriteGoodHeader(w, http.StatusCreated, "Success")
