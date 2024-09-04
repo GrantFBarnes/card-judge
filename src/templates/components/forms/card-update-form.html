@@ -1,5 +1,5 @@
 {{define "card-update-form"}}
-<form hx-put="/api/card/{{.Id}}">
+<form hx-put="/api/card/{{.Id}}" hx-target="find .htmx-result">
   <input
     type="text"
     id="deckId{{.Id}}"
@@ -32,8 +32,7 @@
   >
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Update" />
 </form>
 {{end}}

@@ -1,5 +1,5 @@
 {{define "lobby-update-form"}}
-<form hx-put="/api/lobby/{{.Lobby.Id}}">
+<form hx-put="/api/lobby/{{.Lobby.Id}}" hx-target="find .htmx-result">
   <label for="newLobbyName">Name:</label>
   <input
     type="text"
@@ -21,8 +21,7 @@
   />
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Update" />
 </form>
 {{end}}

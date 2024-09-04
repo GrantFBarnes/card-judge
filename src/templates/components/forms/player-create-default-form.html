@@ -1,5 +1,5 @@
 {{define "player-create-default-form"}}
-<form hx-post="/api/player/create/default">
+<form hx-post="/api/player/create/default" hx-target="find .htmx-result">
   <h3>Create a New Player</h3>
   <label for="createPlayerName">Name:</label>
   <input
@@ -34,8 +34,7 @@
     <br />
   </details>
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Create Player" />
 </form>
 {{end}}

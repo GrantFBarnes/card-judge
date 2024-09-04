@@ -1,5 +1,8 @@
 {{define "player-color-theme-form"}}
-<form hx-put="/api/player/{{.Data.Player.Id}}/color-theme">
+<form
+  hx-put="/api/player/{{.Data.Player.Id}}/color-theme"
+  hx-target="find .htmx-result"
+>
   <h3>Set Color Theme</h3>
   <label for="setPlayerColorTheme">Color Theme:</label>
   <select id="setPlayerColorTheme" name="colorTheme" required>
@@ -13,8 +16,7 @@
   </select>
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Set Color Theme" />
 </form>
 {{end}}

@@ -12,7 +12,8 @@ import (
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -30,41 +31,47 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if name == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No name found."))
 		return
 	}
 
 	if password == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No password found."))
 		return
 	}
 
 	if password != passwordConfirm {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Passwords do not match.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Passwords do not match."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	id, err := database.CreatePlayer(dbcs, name, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	err = auth.SetCookiePlayerId(w, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player cookie in browser.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to create player cookie in browser."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func CreateDefault(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -82,32 +89,36 @@ func CreateDefault(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if name == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No name found."))
 		return
 	}
 
 	if password == "" {
 		password = "password"
 	} else if password != passwordConfirm {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Passwords do not match.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Passwords do not match."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	_, err = database.CreatePlayer(dbcs, name, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -122,54 +133,61 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if name == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No name found."))
 		return
 	}
 
 	if password == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No password found."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	id, err := database.GetPlayerId(dbcs, name, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to login.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to login."))
 		return
 	}
 
 	err = auth.SetCookiePlayerId(w, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to create player cookie in browser.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to create player cookie in browser."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	auth.RemoveCookiePlayerId(w)
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func SetName(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	if !isCurrentPlayer(r, id) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -181,37 +199,42 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if name == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No name found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No name found."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.SetPlayerName(dbcs, id, name)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func SetPassword(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	if !isCurrentPlayer(r, id) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -226,42 +249,48 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if password == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No password found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No password found."))
 		return
 	}
 
 	if password != passwordConfirm {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Passwords do not match.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Passwords do not match."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.SetPlayerPassword(dbcs, id, password)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	if !isCurrentPlayer(r, id) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -273,37 +302,42 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if colorTheme == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No color theme found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No color theme found."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.SetPlayerColorTheme(dbcs, id, colorTheme)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	if !isAdmin(r) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -317,38 +351,42 @@ func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.SetPlayerIsAdmin(dbcs, id, isAdmin)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	if !isCurrentPlayer(r, id) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	err = database.DeletePlayer(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	auth.RemoveCookiePlayerId(w)
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func isCurrentPlayer(r *http.Request, checkId uuid.UUID) bool {

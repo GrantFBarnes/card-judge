@@ -1,5 +1,5 @@
 {{define "card-create-form"}}
-<form hx-post="/api/card/create">
+<form hx-post="/api/card/create" hx-target="find .htmx-result">
   <input
     type="text"
     id="newCardDeckId"
@@ -25,8 +25,7 @@
   ></textarea>
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Create" />
 </form>
 {{end}}

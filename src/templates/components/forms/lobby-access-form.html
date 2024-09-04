@@ -1,5 +1,5 @@
 {{define "lobby-access-form"}}
-<form hx-post="/api/access/lobby/{{.Lobby.Id}}">
+<form hx-post="/api/access/lobby/{{.Lobby.Id}}" hx-target="find .htmx-result">
   <h3>Lobby: {{.Lobby.Name}}</h3>
   <p>You must provide the password to join lobby.</p>
   <input
@@ -13,8 +13,7 @@
   />
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Submit" />
 </form>
 {{end}}

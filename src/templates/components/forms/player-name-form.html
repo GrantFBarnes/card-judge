@@ -1,5 +1,8 @@
 {{define "player-name-form"}}
-<form hx-put="/api/player/{{.Data.Player.Id}}/name">
+<form
+  hx-put="/api/player/{{.Data.Player.Id}}/name"
+  hx-target="find .htmx-result"
+>
   <h3>Set Player Name</h3>
   <p>Current Name: {{.Data.Player.Name}}</p>
   <label for="setPlayerName">New Name:</label>
@@ -13,8 +16,7 @@
   />
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Set Player Name" />
 </form>
 {{end}}

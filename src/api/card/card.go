@@ -11,7 +11,8 @@ import (
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -22,7 +23,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
-				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse deck id.")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "cardType" {
@@ -31,7 +33,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			} else if val[0] == "Player" {
 				cardType = database.PlayerCard
 			} else {
-				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse card type.")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse card type."))
 				return
 			}
 		} else if key == "text" {
@@ -40,43 +43,49 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if text == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No text found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No text found."))
 		return
 	}
 
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	if !database.HasDeckAccess(dbcs, playerId, deckId) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	_, err = database.CreateCard(dbcs, playerId, deckId, cardType, text)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -87,7 +96,8 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
-				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse deck id.")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "cardType" {
@@ -96,7 +106,8 @@ func Update(w http.ResponseWriter, r *http.Request) {
 			} else if val[0] == "Player" {
 				cardType = database.PlayerCard
 			} else {
-				api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse card type.")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse card type."))
 				return
 			}
 		} else if key == "text" {
@@ -105,64 +116,73 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if text == "" {
-		api.WriteBadHeader(w, http.StatusBadRequest, "No text found.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No text found."))
 		return
 	}
 
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	if !database.HasDeckAccess(dbcs, playerId, deckId) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	err = database.UpdateCard(dbcs, playerId, id, cardType, text)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	card, err := database.GetCard(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get card.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get card."))
 		return
 	}
 
 	if !database.HasDeckAccess(dbcs, playerId, card.DeckId) {
-		api.WriteBadHeader(w, http.StatusUnauthorized, "Player does not have access.")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
 		return
 	}
 
 	err = database.DeleteCard(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }

@@ -1,5 +1,5 @@
 {{define "player-login-form"}}
-<form hx-post="/api/player/login">
+<form hx-post="/api/player/login" hx-target="find .htmx-result">
   <h3>Player Login</h3>
   <label for="playerName">Name:</label>
   <input
@@ -22,8 +22,7 @@
   />
   <br />
   <br />
-  <div class="htmx-result-good"></div>
-  <div class="htmx-result-bad"></div>
+  <div class="htmx-result"></div>
   <input type="submit" value="Login" />
 </form>
 {{end}}

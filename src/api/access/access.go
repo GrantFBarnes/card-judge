@@ -13,20 +13,23 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	lobby, err := database.GetLobby(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -40,44 +43,50 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !auth.PasswordMatchesHash(password, lobby.PasswordHash.String) {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Provided password is not valid.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Provided password is not valid."))
 		return
 	}
 
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id."))
 		return
 	}
 
 	err = database.AddPlayerLobbyAccess(dbcs, playerId, lobby.Id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to add access.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to add access."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get id from path.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
 	dbcs := database.GetDatabaseConnectionString()
 	deck, err := database.GetDeck(dbcs, id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to update the database.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to parse form.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -91,22 +100,25 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !auth.PasswordMatchesHash(password, deck.PasswordHash.String) {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Provided password is not valid.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Provided password is not valid."))
 		return
 	}
 
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to get player id.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id."))
 		return
 	}
 
 	err = database.AddPlayerDeckAccess(dbcs, playerId, deck.Id)
 	if err != nil {
-		api.WriteBadHeader(w, http.StatusBadRequest, "Failed to add access.")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to add access."))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	api.WriteGoodHeader(w, http.StatusCreated, "Success")
+	w.WriteHeader(http.StatusCreated)
 }
