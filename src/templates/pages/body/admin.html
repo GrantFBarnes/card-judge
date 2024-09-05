@@ -19,6 +19,7 @@
         hx-put="/api/player/{{.Id}}/is-admin"
         hx-trigger="change"
         hx-target="closest td"
+        autocomplete="off"
       >
         {{if .IsAdmin}}
         <option value="0">No</option>

@@ -8,7 +8,7 @@
     hidden
   />
   <label for="cardType{{.Id}}">Type:</label>
-  <select id="cardType{{.Id}}" name="cardType" required>
+  <select id="cardType{{.Id}}" name="cardType" autocomplete="off" required>
     {{if eq .Type "Judge"}}
     <option value="Judge" selected>Judge</option>
     <option value="Player">Player</option>
@@ -27,6 +27,7 @@
     required="true"
     cols="40"
     rows="10"
+    autocomplete="off"
   >
 {{.Text}}</textarea
   >
