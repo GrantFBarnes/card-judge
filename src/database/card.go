@@ -51,7 +51,8 @@ func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 		ORDER BY TYPE, CHANGED_ON_DATE DESC
 	`)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("failed to prepare database statement")
 	}
 	defer statment.Close()
 
@@ -103,7 +104,8 @@ func GetCard(id uuid.UUID) (Card, error) {
 		WHERE ID = ?
 	`)
 	if err != nil {
-		return card, err
+		log.Println(err)
+		return card, errors.New("failed to prepare database statement")
 	}
 	defer statment.Close()
 
@@ -147,7 +149,8 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 		VALUES (?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {
-		return id, err
+		log.Println(err)
+		return id, errors.New("failed to prepare database statement")
 	}
 	defer statment.Close()
 
@@ -177,7 +180,8 @@ func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string
 		WHERE ID = ?
 	`)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("failed to prepare database statement")
 	}
 	defer statment.Close()
 
@@ -202,7 +206,8 @@ func DeleteCard(id uuid.UUID) error {
 		WHERE ID = ?
 	`)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("failed to prepare database statement")
 	}
 	defer statment.Close()
 
