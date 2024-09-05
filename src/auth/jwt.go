@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"log"
 	"os"
 
 	jwt "github.com/golang-jwt/jwt/v5"
@@ -17,7 +18,8 @@ func getValueTokenString(value string) (tokenString string, err error) {
 	})
 	tokenString, err = token.SignedString(jwtSecret)
 	if err != nil {
-		return "", err
+		log.Println(err)
+		return "", errors.New("failed to sign token")
 	}
 	return tokenString, nil
 }
@@ -25,7 +27,8 @@ func getValueTokenString(value string) (tokenString string, err error) {
 func getTokenStringValue(tokenString string) (value string, err error) {
 	token, err := getTokenStringToken(tokenString)
 	if err != nil {
-		return "", err
+		log.Println(err)
+		return "", errors.New("failed to get token")
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
