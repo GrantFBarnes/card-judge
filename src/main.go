@@ -18,7 +18,7 @@ func main() {
 	database.SetDatabaseConnectionString()
 	err := database.Ping()
 	if err != nil {
-		log.Fatalln("failed to connect to database")
+		log.Fatalln(err)
 	}
 
 	// static files
