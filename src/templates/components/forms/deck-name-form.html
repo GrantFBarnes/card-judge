@@ -1,0 +1,20 @@
+{{define "deck-name-form"}}
+<form hx-put="/api/deck/{{.Deck.Id}}/name" hx-target="find .htmx-result">
+  <h3>Set Deck Name</h3>
+  <p>Current Name: {{.Deck.Name}}</p>
+  <label for="setDeckName">New Name:</label>
+  <input
+    type="text"
+    id="setDeckName"
+    name="name"
+    maxlength="255"
+    placeholder="Enter Name"
+    required="true"
+    autocomplete="off"
+  />
+  <br />
+  <br />
+  <div class="htmx-result"></div>
+  <input type="submit" value="Set Deck Name" />
+</form>
+{{end}}

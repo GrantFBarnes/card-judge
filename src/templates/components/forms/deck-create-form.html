@@ -1,28 +1,38 @@
 {{define "deck-create-form"}}
 <form hx-post="/api/deck/create" hx-target="find .htmx-result">
-  <label for="newDeckName">Name:</label>
+  <label for="createDeckName">Name:</label>
   <input
     type="text"
-    id="newDeckName"
+    id="createDeckName"
     name="name"
     maxlength="255"
-    placeholder="Enter New Deck Name"
+    placeholder="Enter Deck Name"
     required="true"
     autocomplete="off"
   />
   <br />
-  <label for="newDeckPassword">Password:</label>
+  <label for="createDeckPassword">Password:</label>
   <input
     type="password"
-    id="newDeckPassword"
+    id="createDeckPassword"
     name="password"
     maxlength="255"
-    placeholder="Enter New Deck Password"
+    placeholder="Enter Deck Password"
+    autocomplete="off"
+  />
+  <br />
+  <label for="createDeckPasswordConfirm">Confirm Password:</label>
+  <input
+    type="password"
+    id="createDeckPasswordConfirm"
+    name="passwordConfirm"
+    maxlength="255"
+    placeholder="Confirm Deck Password"
     autocomplete="off"
   />
   <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Create" />
+  <input type="submit" value="Create Deck" />
 </form>
 {{end}}

@@ -5,7 +5,7 @@
 <dialog id="lobby-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
     <div>
-      <h3>Update Lobby</h3>
+      <h3>Edit Lobby</h3>
     </div>
     <div>
       <div
@@ -16,11 +16,7 @@
       </div>
     </div>
   </div>
-
-  <h4>Current Values</h4>
-  <div>Name: {{.Lobby.Name}}</div>
-
-  <h4>New Values</h4>
-  <div>{{template "lobby-update-form" .}}</div>
+  <div>{{template "lobby-name-form" .}}</div>
+  <div>{{template "lobby-password-form" .}}</div>
 </dialog>
 {{end}}

@@ -1,28 +1,38 @@
 {{define "lobby-create-form"}}
 <form hx-post="/api/lobby/create" hx-target="find .htmx-result">
-  <label for="newLobbyName">Name:</label>
+  <label for="createLobbyName">Name:</label>
   <input
     type="text"
-    id="newLobbyName"
+    id="createLobbyName"
     name="name"
     maxlength="255"
-    placeholder="Enter New Lobby Name"
+    placeholder="Enter Lobby Name"
     required="true"
     autocomplete="off"
   />
   <br />
-  <label for="newLobbyPassword">Password:</label>
+  <label for="createLobbyPassword">Password:</label>
   <input
     type="password"
-    id="newLobbyPassword"
+    id="createLobbyPassword"
     name="password"
     maxlength="255"
-    placeholder="Enter New Lobby Password"
+    placeholder="Enter Lobby Password"
+    autocomplete="off"
+  />
+  <br />
+  <label for="createLobbyPasswordConfirm">Confirm Password:</label>
+  <input
+    type="password"
+    id="createLobbyPasswordConfirm"
+    name="passwordConfirm"
+    maxlength="255"
+    placeholder="Confirm Lobby Password"
     autocomplete="off"
   />
   <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Create" />
+  <input type="submit" value="Create Lobby" />
 </form>
 {{end}}

@@ -156,7 +156,8 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/base.html",
 		"templates/pages/body/lobby.html",
 		"templates/components/forms/lobby-access-form.html",
-		"templates/components/forms/lobby-update-form.html",
+		"templates/components/forms/lobby-name-form.html",
+		"templates/components/forms/lobby-password-form.html",
 		"templates/components/dialogs/lobby-update-dialog.html",
 	)
 	if err != nil {
@@ -231,7 +232,8 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/base.html",
 		"templates/pages/body/deck.html",
 		"templates/components/forms/deck-access-form.html",
-		"templates/components/forms/deck-update-form.html",
+		"templates/components/forms/deck-name-form.html",
+		"templates/components/forms/deck-password-form.html",
 		"templates/components/dialogs/deck-update-dialog.html",
 		"templates/components/forms/card-create-form.html",
 		"templates/components/dialogs/card-create-dialog.html",

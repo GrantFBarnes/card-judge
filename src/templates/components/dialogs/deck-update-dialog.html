@@ -5,7 +5,7 @@
 <dialog id="deck-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
     <div>
-      <h3>Update Deck</h3>
+      <h3>Edit Deck</h3>
     </div>
     <div>
       <div
@@ -16,11 +16,7 @@
       </div>
     </div>
   </div>
-
-  <h4>Current Values</h4>
-  <div>Name: {{.Deck.Name}}</div>
-
-  <h4>New Values</h4>
-  <div>{{template "deck-update-form" .}}</div>
+  <div>{{template "deck-name-form" .}}</div>
+  <div>{{template "deck-password-form" .}}</div>
 </dialog>
 {{end}}
