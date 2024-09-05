@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/grantfbarnes/card-judge/api"
@@ -18,7 +18,7 @@ func main() {
 	database.SetDatabaseConnectionString()
 	err := database.Ping()
 	if err != nil {
-		panic("failed to connect to database")
+		log.Fatalln("failed to connect to database")
 	}
 
 	// static files
@@ -69,6 +69,6 @@ func main() {
 	http.Handle("POST /api/access/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
 
 	port := ":8080"
-	fmt.Printf("running at http://localhost%s\n", port)
+	log.Printf("running at http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)
 }
