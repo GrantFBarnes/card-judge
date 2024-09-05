@@ -26,7 +26,7 @@ type Card struct {
 	Text   string
 }
 
-func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
+func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func GetCardsInDeck(dbcs string, deckId uuid.UUID) ([]Card, error) {
 	return result, nil
 }
 
-func GetCard(dbcs string, id uuid.UUID) (Card, error) {
+func GetCard(id uuid.UUID) (Card, error) {
 	var card Card
 
 	db, err := sql.Open("mysql", dbcs)
@@ -125,7 +125,7 @@ func GetCard(dbcs string, id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(dbcs string, playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
+func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		return id, err
@@ -154,7 +154,7 @@ func CreateCard(dbcs string, playerId uuid.UUID, deckId uuid.UUID, cardType Card
 	return id, nil
 }
 
-func UpdateCard(dbcs string, playerId uuid.UUID, id uuid.UUID, cardType CardType, text string) error {
+func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string) error {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return err
@@ -183,7 +183,7 @@ func UpdateCard(dbcs string, playerId uuid.UUID, id uuid.UUID, cardType CardType
 	return nil
 }
 
-func DeleteCard(dbcs string, id uuid.UUID) error {
+func DeleteCard(id uuid.UUID) error {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		return err

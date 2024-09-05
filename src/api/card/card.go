@@ -55,14 +55,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	if !database.HasDeckAccess(dbcs, playerId, deckId) {
+	if !database.HasDeckAccess(playerId, deckId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
 		return
 	}
 
-	_, err = database.CreateCard(dbcs, playerId, deckId, cardType, text)
+	_, err = database.CreateCard(playerId, deckId, cardType, text)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -128,14 +127,13 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	if !database.HasDeckAccess(dbcs, playerId, deckId) {
+	if !database.HasDeckAccess(playerId, deckId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
 		return
 	}
 
-	err = database.UpdateCard(dbcs, playerId, id, cardType, text)
+	err = database.UpdateCard(playerId, id, cardType, text)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -162,21 +160,20 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	card, err := database.GetCard(dbcs, id)
+	card, err := database.GetCard(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get card."))
 		return
 	}
 
-	if !database.HasDeckAccess(dbcs, playerId, card.DeckId) {
+	if !database.HasDeckAccess(playerId, card.DeckId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
 		return
 	}
 
-	err = database.DeleteCard(dbcs, id)
+	err = database.DeleteCard(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))

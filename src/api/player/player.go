@@ -48,8 +48,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	id, err := database.CreatePlayer(dbcs, name, password)
+	id, err := database.CreatePlayer(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -102,8 +101,7 @@ func CreateDefault(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	_, err = database.CreatePlayer(dbcs, name, password)
+	_, err = database.CreatePlayer(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -144,8 +142,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	id, err := database.GetPlayerId(dbcs, name, password)
+	id, err := database.GetPlayerId(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to login."))
@@ -204,8 +201,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	err = database.SetPlayerName(dbcs, id, name)
+	err = database.SetPlayerName(id, name)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -260,8 +256,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	err = database.SetPlayerPassword(dbcs, id, password)
+	err = database.SetPlayerPassword(id, password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -307,8 +302,7 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	err = database.SetPlayerColorTheme(dbcs, id, colorTheme)
+	err = database.SetPlayerColorTheme(id, colorTheme)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -348,8 +342,7 @@ func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	err = database.SetPlayerIsAdmin(dbcs, id, isAdmin)
+	err = database.SetPlayerIsAdmin(id, isAdmin)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -375,8 +368,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	err = database.DeletePlayer(dbcs, id)
+	err = database.DeletePlayer(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -400,8 +392,7 @@ func isAdmin(r *http.Request) bool {
 		return false
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	player, err := database.GetPlayer(dbcs, playerId)
+	player, err := database.GetPlayer(playerId)
 	if err != nil {
 		return false
 	}

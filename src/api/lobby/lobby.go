@@ -39,15 +39,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	id, err := database.CreateLobby(dbcs, playerId, name, password)
+	id, err := database.CreateLobby(playerId, name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
 		return
 	}
 
-	err = database.AddPlayerLobbyAccess(dbcs, playerId, id)
+	err = database.AddPlayerLobbyAccess(playerId, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
@@ -97,14 +96,13 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	if !database.HasLobbyAccess(dbcs, playerId, id) {
+	if !database.HasLobbyAccess(playerId, id) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
 		return
 	}
 
-	err = database.UpdateLobby(dbcs, playerId, id, name, password)
+	err = database.UpdateLobby(playerId, id, name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -131,14 +129,13 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	if !database.HasLobbyAccess(dbcs, playerId, id) {
+	if !database.HasLobbyAccess(playerId, id) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
 		return
 	}
 
-	err = database.DeleteLobby(dbcs, id)
+	err = database.DeleteLobby(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))

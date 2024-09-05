@@ -18,8 +18,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	lobby, err := database.GetLobby(dbcs, id)
+	lobby, err := database.GetLobby(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -55,7 +54,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddPlayerLobbyAccess(dbcs, playerId, lobby.Id)
+	err = database.AddPlayerLobbyAccess(playerId, lobby.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
@@ -75,8 +74,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	deck, err := database.GetDeck(dbcs, id)
+	deck, err := database.GetDeck(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to update the database."))
@@ -112,7 +110,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddPlayerDeckAccess(dbcs, playerId, deck.Id)
+	err = database.AddPlayerDeckAccess(playerId, deck.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))

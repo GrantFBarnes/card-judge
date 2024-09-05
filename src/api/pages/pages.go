@@ -98,8 +98,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	players, err := database.GetPlayers(dbcs)
+	players, err := database.GetPlayers()
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return
@@ -131,8 +130,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	lobbies, err := database.GetLobbies(dbcs)
+	lobbies, err := database.GetLobbies()
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return
@@ -173,8 +171,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	lobby, err := database.GetLobby(dbcs, id)
+	lobby, err := database.GetLobby(id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to get lobby\n")
 		return
@@ -207,8 +204,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	decks, err := database.GetDecks(dbcs)
+	decks, err := database.GetDecks()
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return
@@ -254,14 +250,13 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbcs := database.GetDatabaseConnectionString()
-	deck, err := database.GetDeck(dbcs, id)
+	deck, err := database.GetDeck(id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to get deck\n")
 		return
 	}
 
-	cards, err := database.GetCardsInDeck(dbcs, id)
+	cards, err := database.GetCardsInDeck(id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return

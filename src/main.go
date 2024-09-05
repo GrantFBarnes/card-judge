@@ -11,9 +11,16 @@ import (
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
 	apiPages "github.com/grantfbarnes/card-judge/api/pages"
 	apiPlayer "github.com/grantfbarnes/card-judge/api/player"
+	"github.com/grantfbarnes/card-judge/database"
 )
 
 func main() {
+	database.SetDatabaseConnectionString()
+	err := database.Ping()
+	if err != nil {
+		panic("failed to connect to database")
+	}
+
 	// static files
 	http.HandleFunc("GET /static/{fileType}/{fileName}", func(w http.ResponseWriter, r *http.Request) {
 		fileType := r.PathValue("fileType")
