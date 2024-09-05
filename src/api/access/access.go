@@ -62,7 +62,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
@@ -118,5 +118,5 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
