@@ -36,7 +36,7 @@ func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 	}
 	defer db.Close()
 
-	statment, err := db.Prepare(`
+	statement, err := db.Prepare(`
 		SELECT
 			ID,
 			CREATED_ON_DATE,
@@ -54,9 +54,9 @@ func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 		log.Println(err)
 		return nil, errors.New("failed to prepare database statement")
 	}
-	defer statment.Close()
+	defer statement.Close()
 
-	rows, err := statment.Query(deckId)
+	rows, err := statement.Query(deckId)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	}
 	defer db.Close()
 
-	statment, err := db.Prepare(`
+	statement, err := db.Prepare(`
 		SELECT
 			ID,
 			CREATED_ON_DATE,
@@ -107,9 +107,9 @@ func GetCard(id uuid.UUID) (Card, error) {
 		log.Println(err)
 		return card, errors.New("failed to prepare database statement")
 	}
-	defer statment.Close()
+	defer statement.Close()
 
-	rows, err := statment.Query(id)
+	rows, err := statement.Query(id)
 	if err != nil {
 		return card, err
 	}
@@ -144,7 +144,7 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 	}
 	defer db.Close()
 
-	statment, err := db.Prepare(`
+	statement, err := db.Prepare(`
 		INSERT INTO CARD (ID, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID, DECK_ID, TYPE, TEXT)
 		VALUES (?, ?, ?, ?, ?, ?)
 	`)
@@ -152,9 +152,9 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 		log.Println(err)
 		return id, errors.New("failed to prepare database statement")
 	}
-	defer statment.Close()
+	defer statement.Close()
 
-	_, err = statment.Exec(id, playerId, playerId, deckId, cardType, text)
+	_, err = statement.Exec(id, playerId, playerId, deckId, cardType, text)
 	if err != nil {
 		return id, err
 	}
@@ -170,7 +170,7 @@ func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string
 	}
 	defer db.Close()
 
-	statment, err := db.Prepare(`
+	statement, err := db.Prepare(`
 		UPDATE CARD
 		SET
 			TYPE = ?,
@@ -183,9 +183,9 @@ func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string
 		log.Println(err)
 		return errors.New("failed to prepare database statement")
 	}
-	defer statment.Close()
+	defer statement.Close()
 
-	_, err = statment.Exec(cardType, text, playerId, id)
+	_, err = statement.Exec(cardType, text, playerId, id)
 	if err != nil {
 		return err
 	}
@@ -201,7 +201,7 @@ func DeleteCard(id uuid.UUID) error {
 	}
 	defer db.Close()
 
-	statment, err := db.Prepare(`
+	statement, err := db.Prepare(`
 		DELETE FROM CARD
 		WHERE ID = ?
 	`)
@@ -209,9 +209,9 @@ func DeleteCard(id uuid.UUID) error {
 		log.Println(err)
 		return errors.New("failed to prepare database statement")
 	}
-	defer statment.Close()
+	defer statement.Close()
 
-	_, err = statment.Exec(id)
+	_, err = statement.Exec(id)
 	if err != nil {
 		return err
 	}
