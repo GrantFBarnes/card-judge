@@ -58,7 +58,8 @@ func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 
 	rows, err := statement.Query(deckId)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("failed to query statement in database")
 	}
 
 	result := make([]Card, 0)
@@ -111,7 +112,8 @@ func GetCard(id uuid.UUID) (Card, error) {
 
 	rows, err := statement.Query(id)
 	if err != nil {
-		return card, err
+		log.Println(err)
+		return card, errors.New("failed to query statement in database")
 	}
 
 	for rows.Next() {
@@ -156,7 +158,8 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 
 	_, err = statement.Exec(id, playerId, playerId, deckId, cardType, text)
 	if err != nil {
-		return id, err
+		log.Println(err)
+		return id, errors.New("failed to execute statement in database")
 	}
 
 	return id, nil
@@ -187,7 +190,8 @@ func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string
 
 	_, err = statement.Exec(cardType, text, playerId, id)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("failed to execute statement in database")
 	}
 
 	return nil
@@ -213,7 +217,8 @@ func DeleteCard(id uuid.UUID) error {
 
 	_, err = statement.Exec(id)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("failed to execute statement in database")
 	}
 
 	return nil
