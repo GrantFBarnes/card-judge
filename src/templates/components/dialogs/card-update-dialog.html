@@ -9,7 +9,7 @@
 <dialog id="card-{{.Id}}-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
     <div>
-      <h3>Update Card</h3>
+      <h3>Edit Card</h3>
     </div>
     <div>
       <div
@@ -20,12 +20,7 @@
       </div>
     </div>
   </div>
-
-  <h4>Current Values</h4>
-  <div>Type: {{.Type}}</div>
-  <div>Text: {{.Text}}</div>
-
-  <h4>New Values</h4>
-  <div>{{template "card-update-form" .}}</div>
+  <div>{{template "card-type-form" .}}</div>
+  <div>{{template "card-text-form" .}}</div>
 </dialog>
 {{end}}

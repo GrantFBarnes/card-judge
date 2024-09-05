@@ -167,7 +167,46 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 	return id, nil
 }
 
-func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string) error {
+func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
+	var id uuid.UUID
+
+	db, err := sql.Open("mysql", dbcs)
+	if err != nil {
+		log.Println(err)
+		return id, errors.New("failed to connect to database")
+	}
+	defer db.Close()
+
+	statement, err := db.Prepare(`
+		SELECT
+			ID
+		FROM CARD
+		WHERE DECK_ID = ?
+			AND TEXT = ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return id, errors.New("failed to prepare database statement")
+	}
+	defer statement.Close()
+
+	rows, err := statement.Query(deckId, text)
+	if err != nil {
+		log.Println(err)
+		return id, errors.New("failed to query statement in database")
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&id); err != nil {
+			log.Println(err)
+			return id, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return id, nil
+}
+
+func SetCardType(playerId uuid.UUID, id uuid.UUID, cardType CardType) error {
 	db, err := sql.Open("mysql", dbcs)
 	if err != nil {
 		log.Println(err)
@@ -179,6 +218,36 @@ func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string
 		UPDATE CARD
 		SET
 			TYPE = ?,
+			CHANGED_ON_DATE = CURRENT_TIMESTAMP(),
+			CHANGED_BY_PLAYER_ID = ?
+		WHERE ID = ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("failed to prepare database statement")
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(cardType, playerId, id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("failed to execute statement in database")
+	}
+
+	return nil
+}
+
+func SetCardText(playerId uuid.UUID, id uuid.UUID, text string) error {
+	db, err := sql.Open("mysql", dbcs)
+	if err != nil {
+		log.Println(err)
+		return errors.New("failed to connect to database")
+	}
+	defer db.Close()
+
+	statement, err := db.Prepare(`
+		UPDATE CARD
+		SET
 			TEXT = ?,
 			CHANGED_ON_DATE = CURRENT_TIMESTAMP(),
 			CHANGED_BY_PLAYER_ID = ?
@@ -190,7 +259,7 @@ func UpdateCard(playerId uuid.UUID, id uuid.UUID, cardType CardType, text string
 	}
 	defer statement.Close()
 
-	_, err = statement.Exec(cardType, text, playerId, id)
+	_, err = statement.Exec(text, playerId, id)
 	if err != nil {
 		log.Println(err)
 		return errors.New("failed to execute statement in database")

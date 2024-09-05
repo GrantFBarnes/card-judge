@@ -64,7 +64,8 @@ func main() {
 
 	// card
 	http.Handle("POST /api/card/create", api.ApiMiddleware(http.HandlerFunc(apiCard.Create)))
-	http.Handle("PUT /api/card/{id}", api.ApiMiddleware(http.HandlerFunc(apiCard.Update)))
+	http.Handle("PUT /api/card/{id}/type", api.ApiMiddleware(http.HandlerFunc(apiCard.SetType)))
+	http.Handle("PUT /api/card/{id}/text", api.ApiMiddleware(http.HandlerFunc(apiCard.SetText)))
 	http.Handle("DELETE /api/card/{id}", api.ApiMiddleware(http.HandlerFunc(apiCard.Delete)))
 
 	// access

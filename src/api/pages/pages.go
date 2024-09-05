@@ -237,7 +237,8 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		"templates/components/dialogs/deck-update-dialog.html",
 		"templates/components/forms/card-create-form.html",
 		"templates/components/dialogs/card-create-dialog.html",
-		"templates/components/forms/card-update-form.html",
+		"templates/components/forms/card-type-form.html",
+		"templates/components/forms/card-text-form.html",
 		"templates/components/dialogs/card-update-dialog.html",
 	)
 	if err != nil {

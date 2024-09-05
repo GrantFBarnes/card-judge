@@ -1,5 +1,6 @@
-{{define "card-update-form"}}
-<form hx-put="/api/card/{{.Id}}" hx-target="find .htmx-result">
+{{define "card-type-form"}}
+<form hx-put="/api/card/{{.Id}}/type" hx-target="find .htmx-result">
+  <h3>Set Card Type</h3>
   <input
     type="text"
     id="deckId{{.Id}}"
@@ -18,22 +19,8 @@
     {{end}}
   </select>
   <br />
-  <label for="text{{.Id}}" style="vertical-align: top">Text:</label>
-  <textarea
-    id="text{{.Id}}"
-    name="text"
-    maxlength="255"
-    placeholder="Enter Card Text"
-    required="true"
-    cols="40"
-    rows="10"
-    autocomplete="off"
-  >
-{{.Text}}</textarea
-  >
-  <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Update" />
+  <input type="submit" value="Set Card Type" />
 </form>
 {{end}}

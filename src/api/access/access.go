@@ -20,8 +20,8 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 
 	lobby, err := database.GetLobby(id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -76,8 +76,8 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	deck, err := database.GetDeck(id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 

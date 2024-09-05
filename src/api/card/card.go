@@ -55,6 +55,18 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	existingCardId, err := database.GetCardId(deckId, text)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if existingCardId != uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Card text already exists."))
+		return
+	}
+
 	if !database.HasDeckAccess(playerId, deckId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
@@ -63,8 +75,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	_, err = database.CreateCard(playerId, deckId, cardType, text)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -72,7 +84,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func Update(w http.ResponseWriter, r *http.Request) {
+func SetType(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
@@ -90,7 +102,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	var deckId uuid.UUID
 	var cardType database.CardType
-	var text string
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -107,6 +118,59 @@ func Update(w http.ResponseWriter, r *http.Request) {
 			} else {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Failed to parse card type."))
+				return
+			}
+		}
+	}
+
+	playerId := api.GetPlayerId(r)
+	if playerId == uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id."))
+		return
+	}
+
+	if !database.HasDeckAccess(playerId, deckId) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
+		return
+	}
+
+	err = database.SetCardType(playerId, id, cardType)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
+func SetText(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var deckId uuid.UUID
+	var text string
+	for key, val := range r.Form {
+		if key == "deckId" {
+			deckId, err = uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "text" {
@@ -133,10 +197,22 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.UpdateCard(playerId, id, cardType, text)
+	existingCardId, err := database.GetCardId(deckId, text)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if existingCardId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.Write([]byte("Card text already exists."))
+		return
+	}
+
+	err = database.SetCardText(playerId, id, text)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -175,8 +251,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	err = database.DeleteCard(id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
