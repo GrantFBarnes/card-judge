@@ -48,17 +48,29 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerNameExists, err := database.PlayerNameExists(name)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if playerNameExists {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Player name already exists."))
+		return
+	}
+
 	id, err := database.CreatePlayer(name, password)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	err = auth.SetCookiePlayerId(w, id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to create player cookie in browser."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -101,10 +113,22 @@ func CreateDefault(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerNameExists, err := database.PlayerNameExists(name)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if playerNameExists {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Player name already exists."))
+		return
+	}
+
 	_, err = database.CreatePlayer(name, password)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -142,28 +166,40 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerNameExists, err := database.PlayerNameExists(name)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if !playerNameExists {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Player name does not exist."))
+		return
+	}
+
 	id, err := database.GetPlayerId(name, password)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to login."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	err = auth.SetCookiePlayerId(w, id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to create player cookie in browser."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	auth.RemoveCookiePlayerId(w)
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func SetName(w http.ResponseWriter, r *http.Request) {
@@ -201,15 +237,27 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerNameExists, err := database.PlayerNameExists(name)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if playerNameExists {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Player name already exists."))
+		return
+	}
+
 	err = database.SetPlayerName(id, name)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func SetPassword(w http.ResponseWriter, r *http.Request) {
@@ -258,13 +306,13 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 
 	err = database.SetPlayerPassword(id, password)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func SetColorTheme(w http.ResponseWriter, r *http.Request) {
@@ -304,13 +352,13 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 
 	err = database.SetPlayerColorTheme(id, colorTheme)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
@@ -344,13 +392,13 @@ func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
 
 	err = database.SetPlayerIsAdmin(id, isAdmin)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
@@ -370,15 +418,15 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	err = database.DeletePlayer(id)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to update the database."))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	auth.RemoveCookiePlayerId(w)
 
 	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func isCurrentPlayer(r *http.Request, checkId uuid.UUID) bool {
