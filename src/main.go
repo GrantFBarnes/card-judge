@@ -45,6 +45,7 @@ func main() {
 	http.Handle("POST /api/player/logout", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Logout)))
 	http.Handle("PUT /api/player/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetName)))
 	http.Handle("PUT /api/player/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetPassword)))
+	http.Handle("PUT /api/player/{id}/password/reset", api.ApiMiddleware(http.HandlerFunc(apiPlayer.ResetPassword)))
 	http.Handle("PUT /api/player/{id}/color-theme", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetColorTheme)))
 	http.Handle("PUT /api/player/{id}/is-admin", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetIsAdmin)))
 	http.Handle("DELETE /api/player/{id}", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Delete)))

@@ -8,6 +8,8 @@
     <th>Created</th>
     <th>Name</th>
     <th>Is Admin</th>
+    <th></th>
+    <th></th>
   </tr>
   {{range .Players}}
   <tr>
@@ -29,6 +31,28 @@
         <option value="1">Yes</option>
         {{end}}
       </select>
+    </td>
+    <td>
+      <div
+        title="Reset Password"
+        class="clickable"
+        hx-put="/api/player/{{.Id}}/password/reset"
+        hx-confirm="Are you sure you want to reset the password for Player {{.Name}}?"
+        hx-target="closest td"
+      >
+        &#8634;
+      </div>
+    </td>
+    <td>
+      <div
+        title="Delete"
+        class="clickable"
+        hx-delete="/api/player/{{.Id}}"
+        hx-confirm="Are you sure you want to delete Player {{.Name}}?"
+        hx-target="closest td"
+      >
+        &#128465;
+      </div>
     </td>
   </tr>
   {{end}}

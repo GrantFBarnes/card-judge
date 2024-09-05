@@ -321,6 +321,32 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func ResetPassword(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	if !isAdmin(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Player does not have access."))
+		return
+	}
+
+	err = database.SetPlayerPassword(id, "password")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("&#9989;"))
+}
+
 func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
@@ -416,7 +442,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isCurrentPlayer(r, id) {
+	isCurrentPlayer := isCurrentPlayer(r, id)
+	if !isCurrentPlayer && !isAdmin(r) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Player does not have access."))
 		return
@@ -429,7 +456,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.RemoveCookiePlayerId(w)
+	if isCurrentPlayer {
+		auth.RemoveCookiePlayerId(w)
+	}
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
