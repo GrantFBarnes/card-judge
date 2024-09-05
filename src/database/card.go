@@ -126,7 +126,8 @@ func GetCard(id uuid.UUID) (Card, error) {
 			&card.DeckId,
 			&card.Type,
 			&card.Text); err != nil {
-			return card, err
+			log.Println(err)
+			return card, errors.New("failed to scan row in query results")
 		}
 	}
 
@@ -136,7 +137,8 @@ func GetCard(id uuid.UUID) (Card, error) {
 func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
-		return id, err
+		log.Println(err)
+		return id, errors.New("failed to generate new id")
 	}
 
 	db, err := sql.Open("mysql", dbcs)
