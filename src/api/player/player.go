@@ -48,13 +48,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerNameExists, err := database.PlayerNameExists(name)
+	existingPlayerId, err := database.GetPlayerId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if playerNameExists {
+	if existingPlayerId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Player name already exists."))
 		return
@@ -113,13 +113,13 @@ func CreateDefault(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerNameExists, err := database.PlayerNameExists(name)
+	existingPlayerId, err := database.GetPlayerId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if playerNameExists {
+	if existingPlayerId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Player name already exists."))
 		return
@@ -166,26 +166,32 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerNameExists, err := database.PlayerNameExists(name)
+	playerId, err := database.GetPlayerId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if !playerNameExists {
+	if playerId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Player name does not exist."))
 		return
 	}
 
-	id, err := database.GetPlayerId(name, password)
+	passwordHash, err := database.GetPlayerPasswordHash(playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = auth.SetCookiePlayerId(w, id)
+	if !auth.PasswordMatchesHash(password, passwordHash) {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Provided password is not valid."))
+		return
+	}
+
+	err = auth.SetCookiePlayerId(w, playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -237,13 +243,13 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerNameExists, err := database.PlayerNameExists(name)
+	existingPlayerId, err := database.GetPlayerId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if playerNameExists {
+	if existingPlayerId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Player name already exists."))
 		return
@@ -440,10 +446,6 @@ func isAdmin(r *http.Request) bool {
 		return false
 	}
 
-	player, err := database.GetPlayer(playerId)
-	if err != nil {
-		return false
-	}
-
-	return player.IsAdmin
+	isAdmin, _ := database.GetPlayerIsAdmin(playerId)
+	return isAdmin
 }
