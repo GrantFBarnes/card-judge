@@ -66,6 +66,11 @@ summary {
   overflow: hidden;
 }
 
+#content {
+  margin: 20px;
+}
+
 #body {
-  margin: 8px;
+  max-width: 1920px;
+  margin: auto;
 }
