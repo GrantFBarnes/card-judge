@@ -52,18 +52,21 @@ func main() {
 	http.Handle("DELETE /api/player/{id}", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Delete)))
 
 	// lobby
+	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
 	http.Handle("PUT /api/lobby/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
 	http.Handle("PUT /api/lobby/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetPassword)))
 	http.Handle("DELETE /api/lobby/{id}", api.ApiMiddleware(http.HandlerFunc(apiLobby.Delete)))
 
 	// deck
+	http.Handle("POST /api/deck/search", api.ApiMiddleware(http.HandlerFunc(apiDeck.Search)))
 	http.Handle("POST /api/deck/create", api.ApiMiddleware(http.HandlerFunc(apiDeck.Create)))
 	http.Handle("PUT /api/deck/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetName)))
 	http.Handle("PUT /api/deck/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPassword)))
 	http.Handle("DELETE /api/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiDeck.Delete)))
 
 	// card
+	http.Handle("POST /api/card/search", api.ApiMiddleware(http.HandlerFunc(apiCard.Search)))
 	http.Handle("POST /api/card/create", api.ApiMiddleware(http.HandlerFunc(apiCard.Create)))
 	http.Handle("PUT /api/card/{id}/type", api.ApiMiddleware(http.HandlerFunc(apiCard.SetType)))
 	http.Handle("PUT /api/card/{id}/text", api.ApiMiddleware(http.HandlerFunc(apiCard.SetText)))

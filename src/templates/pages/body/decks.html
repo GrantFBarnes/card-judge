@@ -2,14 +2,27 @@
 <div>{{template "deck-create-dialog" .}}</div>
 <br />
 <h3>Choose a Deck to Modify</h3>
+<input
+  type="search"
+  id="deckSearch"
+  name="search"
+  maxlength="255"
+  placeholder="Search..."
+  autocomplete="off"
+  hx-post="/api/deck/search"
+  hx-trigger="input changed delay:500ms, search"
+  hx-target="#deck-table-rows"
+/>
 <table>
-  <tr>
-    <th>Created</th>
-    <th>Name</th>
-    <th>Security</th>
-  </tr>
-  {{range .Decks}}
-  <div>{{template "deck-table-row" .}}</div>
-  {{end}}
+  <thead>
+    <tr>
+      <th>Created</th>
+      <th>Name</th>
+      <th>Security</th>
+    </tr>
+  </thead>
+  <tbody id="deck-table-rows">
+    {{template "deck-table-rows" .Decks}}
+  </tbody>
 </table>
 {{end}}

@@ -1,7 +1,7 @@
-{{define "deck-table-row"}}
+{{define "deck-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td><a href="/deck/{{.Id}}">{{.Name}}</a></td>
   <td>{{if .PasswordHash.Valid}} Protected &#128274; {{else}} Open {{end}}</td>
 </tr>
-{{end}}
+{{end}} {{end}}

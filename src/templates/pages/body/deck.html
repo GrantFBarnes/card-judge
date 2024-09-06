@@ -15,17 +15,39 @@
   <div>{{template "card-create-dialog" .}}</div>
   <br />
   <h3>Cards in Deck</h3>
+  <form>
+    <input
+      type="text"
+      id="cardDeckId"
+      name="deckId"
+      value="{{.Deck.Id}}"
+      hidden
+    />
+    <input
+      type="search"
+      id="cardSearch"
+      name="search"
+      maxlength="255"
+      placeholder="Search..."
+      autocomplete="off"
+      hx-post="/api/card/search"
+      hx-trigger="input changed delay:500ms, search"
+      hx-target="#card-table-rows"
+    />
+  </form>
   <table>
-    <tr>
-      <th>Created</th>
-      <th>Type</th>
-      <th>Text</th>
-      <th></th>
-      <th></th>
-    </tr>
-    {{range .Cards}}
-    <div>{{template "card-table-row" .}}</div>
-    {{end}}
+    <thead>
+      <tr>
+        <th>Created</th>
+        <th>Type</th>
+        <th>Text</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="card-table-rows">
+      {{template "card-table-rows" .Cards}}
+    </tbody>
   </table>
   {{end}}
 </div>

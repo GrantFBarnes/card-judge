@@ -2,11 +2,59 @@ package apiCard
 
 import (
 	"net/http"
+	"text/template"
 
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
 )
+
+func Search(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var deckId uuid.UUID
+	var search string
+	for key, val := range r.Form {
+		if key == "deckId" {
+			deckId, err = uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse deck id."))
+				return
+			}
+		} else if key == "search" {
+			search = val[0]
+		}
+	}
+
+	search = "%" + search + "%"
+
+	cards, err := database.SearchCardsInDeck(deckId, search)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/table-rows/card-table-rows.html",
+		"templates/components/dialogs/card-update-dialog.html",
+		"templates/components/forms/card-type-form.html",
+		"templates/components/forms/card-text-form.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "card-table-rows", cards)
+}
 
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()

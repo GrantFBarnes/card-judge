@@ -2,14 +2,27 @@
 <div>{{template "lobby-create-dialog" .}}</div>
 <br />
 <h3>Choose a Lobby to Join</h3>
+<input
+  type="search"
+  id="lobbySearch"
+  name="search"
+  maxlength="255"
+  placeholder="Search..."
+  autocomplete="off"
+  hx-post="/api/lobby/search"
+  hx-trigger="input changed delay:500ms, search"
+  hx-target="#lobby-table-rows"
+/>
 <table>
-  <tr>
-    <th>Created</th>
-    <th>Name</th>
-    <th>Security</th>
-  </tr>
-  {{range .Lobbies}}
-  <div>{{template "lobby-table-row" .}}</div>
-  {{end}}
+  <thead>
+    <tr>
+      <th>Created</th>
+      <th>Name</th>
+      <th>Security</th>
+    </tr>
+  </thead>
+  <tbody id="lobby-table-rows">
+    {{template "lobby-table-rows" .Lobbies}}
+  </tbody>
 </table>
 {{end}}

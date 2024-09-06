@@ -1,4 +1,4 @@
-{{define "card-table-row"}}
+{{define "card-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.Type}}</td>
@@ -15,4 +15,4 @@
     </div>
   </td>
 </tr>
-{{end}}
+{{end}} {{end}}
