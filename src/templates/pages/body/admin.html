@@ -3,16 +3,29 @@
 <div>{{template "player-create-default-form" .}}</div>
 <br />
 <h3>Players</h3>
+<input
+  type="search"
+  id="playerSearch"
+  name="search"
+  maxlength="255"
+  placeholder="Search..."
+  autocomplete="off"
+  hx-post="/api/player/search"
+  hx-trigger="input changed delay:500ms, search"
+  hx-target="#player-table-rows"
+/>
 <table>
-  <tr>
-    <th>Created</th>
-    <th>Name</th>
-    <th>Is Admin</th>
-    <th></th>
-    <th></th>
-  </tr>
-  {{range .Players}}
-  <div>{{template "player-table-row" .}}</div>
-  {{end}}
+  <thead>
+    <tr>
+      <th>Created</th>
+      <th>Name</th>
+      <th>Is Admin</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="player-table-rows">
+    {{template "player-table-rows" .Players}}
+  </tbody>
 </table>
 {{end}}

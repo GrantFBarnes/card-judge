@@ -1,4 +1,4 @@
-{{define "player-table-row"}}
+{{define "player-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.Name}}</td>
@@ -42,4 +42,4 @@
     </div>
   </td>
 </tr>
-{{end}}
+{{end}} {{end}}

@@ -39,6 +39,7 @@ func main() {
 	http.Handle("GET /deck/{id}", api.PageMiddleware(http.HandlerFunc(apiPages.Deck)))
 
 	// player
+	http.Handle("POST /api/player/search", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Search)))
 	http.Handle("POST /api/player/create", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Create)))
 	http.Handle("POST /api/player/create/default", api.ApiMiddleware(http.HandlerFunc(apiPlayer.CreateDefault)))
 	http.Handle("POST /api/player/login", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Login)))

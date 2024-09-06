@@ -91,7 +91,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/admin.html",
-		"templates/components/table-row/player-table-row.html",
+		"templates/components/table-rows/player-table-rows.html",
 		"templates/components/forms/player-create-default-form.html",
 	)
 	if err != nil {

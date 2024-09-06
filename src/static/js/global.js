@@ -5,6 +5,7 @@ document.addEventListener("htmx:beforeOnLoad", function (event) {
 });
 
 document.addEventListener("htmx:afterSwap", function (event) {
+  if (event.detail.pathInfo.requestPath.contains("search")) return;
   if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
     addClassToTarget("htmx-result-good", event.detail.target);
     removeClassFromTarget("htmx-result-bad", event.detail.target);
