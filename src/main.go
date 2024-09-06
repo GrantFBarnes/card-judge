@@ -54,6 +54,8 @@ func main() {
 	// lobby
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
+	http.Handle("POST /api/lobby/{lobbyId}/deck/{deckId}/add", api.ApiMiddleware(http.HandlerFunc(apiLobby.AddDeck)))
+	http.Handle("POST /api/lobby/{lobbyId}/deck/{deckId}/remove", api.ApiMiddleware(http.HandlerFunc(apiLobby.RemoveDeck)))
 	http.Handle("PUT /api/lobby/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
 	http.Handle("PUT /api/lobby/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetPassword)))
 	http.Handle("DELETE /api/lobby/{id}", api.ApiMiddleware(http.HandlerFunc(apiLobby.Delete)))
