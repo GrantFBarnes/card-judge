@@ -91,6 +91,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/admin.html",
+		"templates/components/table-row/player-table-row.html",
 		"templates/components/forms/player-create-default-form.html",
 	)
 	if err != nil {
@@ -122,6 +123,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobbies.html",
+		"templates/components/table-row/lobby-table-row.html",
 		"templates/components/dialogs/lobby-create-dialog.html",
 		"templates/components/forms/lobby-create-form.html",
 	)
@@ -197,6 +199,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/decks.html",
+		"templates/components/table-row/deck-table-row.html",
 		"templates/components/dialogs/deck-create-dialog.html",
 		"templates/components/forms/deck-create-form.html",
 	)
@@ -235,6 +238,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		"templates/components/forms/deck-name-form.html",
 		"templates/components/forms/deck-password-form.html",
 		"templates/components/dialogs/deck-update-dialog.html",
+		"templates/components/table-row/card-table-row.html",
 		"templates/components/forms/card-create-form.html",
 		"templates/components/dialogs/card-create-dialog.html",
 		"templates/components/forms/card-type-form.html",

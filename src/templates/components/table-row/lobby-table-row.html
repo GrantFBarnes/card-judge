@@ -1,0 +1,7 @@
+{{define "lobby-table-row"}}
+<tr>
+  <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
+  <td><a href="/lobby/{{.Id}}">{{.Name}}</a></td>
+  <td>{{if .PasswordHash.Valid}} Protected &#128274; {{else}} Open {{end}}</td>
+</tr>
+{{end}}

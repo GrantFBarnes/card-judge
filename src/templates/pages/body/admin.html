@@ -12,49 +12,7 @@
     <th></th>
   </tr>
   {{range .Players}}
-  <tr>
-    <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
-    <td>{{.Name}}</td>
-    <td>
-      <select
-        name="isAdmin"
-        hx-put="/api/player/{{.Id}}/is-admin"
-        hx-trigger="change"
-        hx-target="closest td"
-        autocomplete="off"
-      >
-        {{if .IsAdmin}}
-        <option value="0">No</option>
-        <option value="1" selected>Yes</option>
-        {{else}}
-        <option value="0" selected>No</option>
-        <option value="1">Yes</option>
-        {{end}}
-      </select>
-    </td>
-    <td>
-      <div
-        title="Reset Password"
-        class="clickable"
-        hx-put="/api/player/{{.Id}}/password/reset"
-        hx-confirm="Are you sure you want to reset the password for Player {{.Name}}?"
-        hx-target="closest td"
-      >
-        &#8634;
-      </div>
-    </td>
-    <td>
-      <div
-        title="Delete"
-        class="clickable"
-        hx-delete="/api/player/{{.Id}}"
-        hx-confirm="Are you sure you want to delete Player {{.Name}}?"
-        hx-target="closest td"
-      >
-        &#128465;
-      </div>
-    </td>
-  </tr>
+  <div>{{template "player-table-row" .}}</div>
   {{end}}
 </table>
 {{end}}
