@@ -12,6 +12,7 @@ import (
 	apiPages "github.com/grantfbarnes/card-judge/api/pages"
 	apiPlayer "github.com/grantfbarnes/card-judge/api/player"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/websocket"
 )
 
 func main() {
@@ -75,6 +76,13 @@ func main() {
 	// access
 	http.Handle("POST /api/access/lobby/{id}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Lobby)))
 	http.Handle("POST /api/access/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
+
+	// websocket
+	hub := websocket.NewHub()
+	go hub.Run()
+	http.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
+		websocket.ServeWs(hub, w, r)
+	})
 
 	port := ":8080"
 	log.Printf("running at http://localhost%s\n", port)
