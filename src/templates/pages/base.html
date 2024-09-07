@@ -17,26 +17,30 @@
   </head>
   {{if .Data.Player.ColorTheme.Valid}}
   <body class="{{.Data.Player.ColorTheme.String}}">
-  {{else}}
-  <body class="dark-theme">
-  {{end}}
-    <div id="topbar">
-      <div style="text-align: left">
-        <span class="clickable" onclick="location.href='/'">Card Judge</span>
+    {{else}}
+    <body class="dark-theme">
+      {{end}}
+      <div id="topbar">
+        <div style="text-align: left">
+          <span class="clickable" onclick="location.href='/'">Card Judge</span>
+        </div>
+        <div style="text-align: right">
+          {{if .Data.LoggedIn}}
+          <span class="clickable" onclick="location.href='/manage'">
+            {{.Data.Player.Name}}
+          </span>
+          {{else}}
+          <span class="clickable" onclick="location.href='/login'">Login</span>
+          {{end}}
+        </div>
       </div>
-      <div style="text-align: right">
-        {{if .Data.LoggedIn}}
-        <span class="clickable" onclick="location.href='/manage'">
-          {{.Data.Player.Name}}
-        </span>
-        {{else}}
-        <span class="clickable" onclick="location.href='/login'">Login</span>
-        {{end}}
+      <div id="content">
+        <div id="body">{{template "body" .}}</div>
       </div>
-    </div>
-    <div id="content">
-      <div id="body">{{template "body" .}}</div>
-    </div>
+      {{if .Data.Player.ColorTheme.Valid}}
+    </body>
+    {{else}}
   </body>
+  {{end}}
 </html>
 {{end}}
