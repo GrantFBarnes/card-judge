@@ -31,6 +31,37 @@
     autocomplete="off"
   />
   <br />
+  <h3>Choose Decks</h3>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Created</th>
+        <th>Name</th>
+        <th>Security</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Decks}}
+      <tr>
+        <td>
+          <input
+            type="checkbox"
+            name="deckId{{.Id}}"
+            value="{{.Id}}"
+            autocomplete="off"
+          />
+        </td>
+        <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
+        <td>{{.Name}}</td>
+        <td>
+          {{if .PasswordHash.Valid}} Protected &#128274; {{else}} Open {{end}}
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  <br />
   <br />
   <div class="htmx-result"></div>
   <input type="submit" value="Create Lobby" />

@@ -117,6 +117,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 type lobbiesData struct {
 	Data    api.BasePageData
 	Lobbies []database.Lobby
+	Decks   []database.Deck
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {
@@ -138,12 +139,19 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	decks, err := database.GetDecks()
+	if err != nil {
+		fmt.Fprintf(w, "failed to connect to database\n")
+		return
+	}
+
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobbies"
 
 	tmpl.ExecuteTemplate(w, "base", lobbiesData{
 		Data:    basePageData,
 		Lobbies: lobbies,
+		Decks:   decks,
 	})
 }
 
@@ -151,7 +159,6 @@ type lobbyData struct {
 	Data      api.BasePageData
 	HasAccess bool
 	Lobby     database.Lobby
-	Decks     []database.Deck
 }
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
@@ -162,8 +169,6 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/components/forms/lobby-name-form.html",
 		"templates/components/forms/lobby-password-form.html",
 		"templates/components/dialogs/lobby-update-dialog.html",
-		"templates/components/dialogs/lobby-deck-dialog.html",
-		"templates/components/forms/lobby-deck-form.html",
 	)
 	if err != nil {
 		fmt.Fprintf(w, "failed to parse HTML\n")
@@ -183,18 +188,6 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decks, err := database.GetDecks()
-	if err != nil {
-		fmt.Fprintf(w, "failed to connect to database\n")
-		return
-	}
-
-	for i, deck := range decks {
-		if lobby.HasDeck(deck.Id) {
-			decks[i].InLobby = true
-		}
-	}
-
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobby"
 
@@ -202,7 +195,6 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		Data:      basePageData,
 		HasAccess: !lobby.PasswordHash.Valid || basePageData.Player.HasLobbyAccess(lobby.Id),
 		Lobby:     lobby,
-		Decks:     decks,
 	})
 }
 
