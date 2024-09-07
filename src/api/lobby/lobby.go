@@ -90,6 +90,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if len(deckIds) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("At least one deck is required."))
+		return
+	}
+
 	playerId := api.GetPlayerId(r)
 	if playerId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
