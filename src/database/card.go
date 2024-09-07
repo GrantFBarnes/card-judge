@@ -28,7 +28,7 @@ type Card struct {
 }
 
 func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
-	rows, err := Query(`
+	sqlString := `
 		SELECT
 			ID,
 			CREATED_ON_DATE,
@@ -41,7 +41,8 @@ func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 		FROM CARD
 		WHERE DECK_ID = ?
 		ORDER BY TYPE, CHANGED_ON_DATE DESC
-	`, deckId)
+	`
+	rows, err := Query(sqlString, deckId)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
 }
 
 func SearchCardsInDeck(deckId uuid.UUID, search string) ([]Card, error) {
-	rows, err := Query(`
+	sqlString := `
 		SELECT
 			ID,
 			CREATED_ON_DATE,
@@ -80,7 +81,8 @@ func SearchCardsInDeck(deckId uuid.UUID, search string) ([]Card, error) {
 		WHERE DECK_ID = ?
 			AND TEXT LIKE ?
 		ORDER BY TYPE, CHANGED_ON_DATE DESC
-	`, deckId, search)
+	`
+	rows, err := Query(sqlString, deckId, search)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +109,7 @@ func SearchCardsInDeck(deckId uuid.UUID, search string) ([]Card, error) {
 func GetCard(id uuid.UUID) (Card, error) {
 	var card Card
 
-	rows, err := Query(`
+	sqlString := `
 		SELECT
 			ID,
 			CREATED_ON_DATE,
@@ -119,7 +121,8 @@ func GetCard(id uuid.UUID) (Card, error) {
 			TEXT
 		FROM CARD
 		WHERE ID = ?
-	`, id)
+	`
+	rows, err := Query(sqlString, id)
 	if err != nil {
 		return card, err
 	}
@@ -159,13 +162,14 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
 	var id uuid.UUID
 
-	rows, err := Query(`
+	sqlString := `
 		SELECT
 			ID
 		FROM CARD
 		WHERE DECK_ID = ?
 			AND TEXT = ?
-	`, deckId, text)
+	`
+	rows, err := Query(sqlString, deckId, text)
 	if err != nil {
 		return id, err
 	}
