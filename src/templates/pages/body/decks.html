@@ -1,6 +1,7 @@
 {{define "body"}}
 <div>{{template "deck-create-dialog" .}}</div>
 <br />
+{{$deckCount := len .Decks}} {{if gt $deckCount 0}}
 <h3>Choose a Deck to Modify</h3>
 <input
   type="search"
@@ -25,4 +26,4 @@
     {{template "deck-table-rows" .Decks}}
   </tbody>
 </table>
-{{end}}
+{{end}} {{end}}

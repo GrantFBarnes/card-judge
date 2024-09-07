@@ -31,6 +31,7 @@
     autocomplete="off"
   />
   <br />
+  {{$deckCount := len .Decks}} {{if gt $deckCount 0}}
   <h3>Choose Decks</h3>
   <table>
     <tbody>
@@ -50,6 +51,7 @@
       {{end}}
     </tbody>
   </table>
+  {{end}}
   <br />
   <details>
     <summary>Missing decks?</summary>

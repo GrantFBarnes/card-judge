@@ -1,6 +1,7 @@
 {{define "body"}}
 <div>{{template "lobby-create-dialog" .}}</div>
 <br />
+{{$lobbyCount := len .Lobbies}} {{if gt $lobbyCount 0}}
 <h3>Choose a Lobby to Join</h3>
 <input
   type="search"
@@ -25,4 +26,4 @@
     {{template "lobby-table-rows" .Lobbies}}
   </tbody>
 </table>
-{{end}}
+{{end}} {{end}}
