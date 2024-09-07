@@ -33,29 +33,18 @@
   <br />
   <h3>Choose Decks</h3>
   <table>
-    <thead>
-      <tr>
-        <th></th>
-        <th>Created</th>
-        <th>Name</th>
-        <th>Security</th>
-      </tr>
-    </thead>
     <tbody>
       {{range .Decks}}
       <tr>
         <td>
           <input
+            id="deckSelect{{.Id}}"
             type="checkbox"
             name="deckId{{.Id}}"
             value="{{.Id}}"
             autocomplete="off"
           />
-        </td>
-        <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
-        <td>{{.Name}}</td>
-        <td>
-          {{if .PasswordHash.Valid}} Protected &#128274; {{else}} Open {{end}}
+          <label for="deckSelect{{.Id}}">{{.Name}}</label>
         </td>
       </tr>
       {{end}}

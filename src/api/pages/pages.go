@@ -139,14 +139,14 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decks, err := database.GetDecks()
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Lobbies"
+
+	decks, err := database.GetPlayerDecks(basePageData.Player.Id)
 	if err != nil {
 		fmt.Fprintf(w, "failed to connect to database\n")
 		return
 	}
-
-	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Lobbies"
 
 	tmpl.ExecuteTemplate(w, "base", lobbiesData{
 		Data:    basePageData,
