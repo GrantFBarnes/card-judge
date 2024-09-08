@@ -3,7 +3,10 @@ window.onload = function () {
   if (document.location.protocol == "http:") {
     wsProtocol = "ws://";
   }
-  const conn = new WebSocket(wsProtocol + document.location.host + "/ws");
+
+  const conn = new WebSocket(
+    wsProtocol + document.location.host + "/ws" + document.location.pathname
+  );
 
   conn.onopen = function (evt) {
     conn.send("connection made");

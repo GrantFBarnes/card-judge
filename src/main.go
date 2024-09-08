@@ -78,11 +78,7 @@ func main() {
 	http.Handle("POST /api/access/deck/{id}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
 
 	// websocket
-	hub := websocket.NewHub()
-	go hub.Run()
-	http.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
-		websocket.ServeWs(hub, w, r)
-	})
+	http.HandleFunc("GET /ws/lobby/{id}", websocket.ServeWs)
 
 	port := ":8080"
 	log.Printf("running at http://localhost%s\n", port)
