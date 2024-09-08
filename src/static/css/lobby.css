@@ -22,8 +22,11 @@
 
 #lobby-chat-messages {
   height: calc(100% - 50px);
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden !important;
   padding: 5px;
+  padding-left: calc(5px + 1em);
+  text-indent: -1em;
 }
 
 #lobby-chat-form {
