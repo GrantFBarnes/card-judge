@@ -19,8 +19,8 @@ CREATE TABLE PLAYER
     CONSTRAINT NAME_UNIQUE UNIQUE (NAME)
 );
 
-INSERT INTO PLAYER (NAME, PASSWORD_HASH, IS_ADMIN)
-VALUES ('Grant', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.', 1);
+INSERT INTO PLAYER (ID, NAME, PASSWORD_HASH, IS_ADMIN)
+VALUES ('ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'Grant', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.', 1);
 
 CREATE TABLE DECK
 (
@@ -34,6 +34,11 @@ CREATE TABLE DECK
     PRIMARY KEY (ID),
     CONSTRAINT NAME_UNIQUE UNIQUE (NAME)
 );
+
+INSERT INTO DECK (ID, NAME, PASSWORD_HASH, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID)
+VALUES ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Deck One', NULL, 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Deck Two', NULL, 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Deck Three', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a');
 
 CREATE TABLE CARD
 (
@@ -49,6 +54,57 @@ CREATE TABLE CARD
     FOREIGN KEY (DECK_ID) REFERENCES DECK (ID) ON DELETE CASCADE,
     CONSTRAINT DECK_TEXT_UNIQUE UNIQUE (DECK_ID, TEXT)
 );
+
+INSERT INTO CARD (DECK_ID, TYPE, TEXT, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID)
+VALUES ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 1', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 2', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 3', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 4', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 5', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 1', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 2', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 3', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 4', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 5', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 6', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 7', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 8', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 9', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 10', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a');
+
+INSERT INTO CARD (DECK_ID, TYPE, TEXT, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID)
+VALUES ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 1', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 2', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 3', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 4', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 5', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 1', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 2', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 3', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 4', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 5', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 6', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 7', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 8', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 9', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 10', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a');
+
+INSERT INTO CARD (DECK_ID, TYPE, TEXT, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID)
+VALUES ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 1', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 2', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 3', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 4', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 5', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 1', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 2', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 3', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 4', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 5', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 6', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 7', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 8', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 9', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a'),
+       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 10', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a', 'ffb89249-6d88-11ef-aad4-28800dbd8d8a');
 
 CREATE TABLE LOBBY
 (
