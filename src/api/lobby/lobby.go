@@ -10,6 +10,31 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
+func GetPlayers(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	players, err := database.GetLobbyPlayers(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	var playerNames string
+	for _, player := range players {
+		playerNames += "<li>" + player.Name + "</li>"
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(playerNames))
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
