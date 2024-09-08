@@ -2,6 +2,7 @@
 <div>{{template "lobby-access-form" .}}</div>
 {{else}}
 <script src="/static/js/lobby.js"></script>
+<link rel="stylesheet" href="/static/css/lobby.css" />
 <h3>Lobby: {{.Lobby.Name}}</h3>
 <div>{{template "lobby-update-dialog" .}}</div>
 <br />
@@ -10,10 +11,6 @@
   <ul hx-get="/api/lobby/{{.Lobby.Id}}/players" hx-trigger="every 2s"></ul>
 </div>
 <br />
-<div>
-  <h4>Chat Box</h4>
-  <div id="chatbox"></div>
-</div>
 <h3>Cards in Lobby</h3>
 <table>
   <thead>
@@ -31,4 +28,16 @@
     {{end}}
   </tbody>
 </table>
+<div id="lobby-chat-container">
+  <div id="lobby-chat-messages"></div>
+  <form id="lobby-chat-form">
+    <input
+      id="lobby-chat-input"
+      type="text"
+      maxlength="255"
+      placeholder="Send a message..."
+    />
+    <input id="lobby-chat-submit" type="submit" value="Send" />
+  </form>
+</div>
 {{end}} {{end}}

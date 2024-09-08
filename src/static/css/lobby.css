@@ -1,0 +1,39 @@
+#lobby-chat-container {
+  height: 100%;
+  min-height: 200px;
+  max-height: 33vh;
+
+  width: 100%;
+  min-width: 500px;
+  max-width: 33vw;
+
+  position: fixed;
+  bottom: 0;
+  right: 0;
+
+  border-left: 2px solid black;
+  border-top: 2px solid black;
+}
+
+#lobby-chat-messages,
+#lobby-chat-form {
+  position: relative;
+}
+
+#lobby-chat-messages {
+  height: calc(100% - 50px);
+  overflow: scroll;
+  padding: 5px;
+}
+
+#lobby-chat-form {
+  height: 40px;
+}
+
+#lobby-chat-input {
+  width: calc(100% - 100px);
+}
+
+#lobby-chat-submit {
+  width: 50px;
+}
