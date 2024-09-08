@@ -22,7 +22,8 @@ window.onload = () => {
   const lobbyChatMessages = document.getElementById("lobby-chat-messages");
   const lobbyChatInput = document.getElementById("lobby-chat-input");
 
-  lobbyChatForm.onsubmit = () => {
+  lobbyChatForm.onsubmit = (event) => {
+    event.preventDefault();
     if (!lobbyChatInput.value) return;
     conn.send(lobbyChatInput.value);
     lobbyChatInput.value = "";
