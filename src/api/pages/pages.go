@@ -1,7 +1,6 @@
 package apiPages
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -23,7 +22,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/home.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -47,7 +47,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/login.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -73,7 +74,8 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/manage.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -90,7 +92,8 @@ type adminData struct {
 func Admin(w http.ResponseWriter, r *http.Request) {
 	players, err := database.GetPlayers()
 	if err != nil {
-		fmt.Fprintf(w, "failed to connect to database\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get players"))
 		return
 	}
 
@@ -104,7 +107,8 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/admin.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -123,7 +127,8 @@ type lobbiesData struct {
 func Lobbies(w http.ResponseWriter, r *http.Request) {
 	lobbies, err := database.GetLobbies()
 	if err != nil {
-		fmt.Fprintf(w, "failed to connect to database\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get lobbies"))
 		return
 	}
 
@@ -132,7 +137,8 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 
 	decks, err := database.GetPlayerDecks(basePageData.Player.Id)
 	if err != nil {
-		fmt.Fprintf(w, "failed to connect to database\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get player decks"))
 		return
 	}
 
@@ -144,7 +150,8 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/lobbies.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -165,13 +172,18 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		fmt.Fprintf(w, "lobby id invalid\n")
+		Lobbies(w, r)
 		return
 	}
 
 	lobby, err := database.GetLobby(id)
 	if err != nil {
-		fmt.Fprintf(w, "failed to get lobby\n")
+		Lobbies(w, r)
+		return
+	}
+
+	if lobby.Id == uuid.Nil {
+		Lobbies(w, r)
 		return
 	}
 
@@ -187,7 +199,8 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/lobby.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -206,7 +219,8 @@ type decksData struct {
 func Decks(w http.ResponseWriter, r *http.Request) {
 	decks, err := database.GetDecks()
 	if err != nil {
-		fmt.Fprintf(w, "failed to connect to database\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get decks"))
 		return
 	}
 
@@ -221,7 +235,8 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/decks.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -242,19 +257,25 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		fmt.Fprintf(w, "deck id invalid\n")
+		Decks(w, r)
 		return
 	}
 
 	deck, err := database.GetDeck(id)
 	if err != nil {
-		fmt.Fprintf(w, "failed to get deck\n")
+		Decks(w, r)
+		return
+	}
+
+	if deck.Id == uuid.Nil {
+		Decks(w, r)
 		return
 	}
 
 	cards, err := database.GetCardsInDeck(id)
 	if err != nil {
-		fmt.Fprintf(w, "failed to connect to database\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get cards in deck"))
 		return
 	}
 
@@ -276,7 +297,8 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		"templates/pages/body/deck.html",
 	)
 	if err != nil {
-		fmt.Fprintf(w, "failed to parse HTML\n")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
