@@ -1,56 +1,34 @@
-{{define "body"}}
-<script>
-  window.onload = function () {
-    let wsProtocol = "wss://";
-    if (document.location.protocol == "http:") {
-      wsProtocol = "ws://";
-    }
-
-    const conn = new WebSocket(
-      wsProtocol + document.location.host + "/ws" + document.location.pathname
-    );
-
-    conn.onopen = function (evt) {
-      conn.send("{{.Data.Player.Name}} Joined");
-    };
-
-    conn.onclose = function (evt) {
-      console.log("disconnected");
-    };
-
-    conn.onmessage = function (evt) {
-      console.log("message:", evt.data);
-    };
-  };
-</script>
+{{define "body"}} {{if not .HasAccess}}
+<div>{{template "lobby-access-form" .}}</div>
+{{else}}
+<script src="/static/js/lobby.js"></script>
+<h3>Lobby: {{.Lobby.Name}}</h3>
+<div>{{template "lobby-update-dialog" .}}</div>
+<br />
 <div>
-  {{if not .HasAccess}}
-  <div>{{template "lobby-access-form" .}}</div>
-  {{else}}
-  <h3>Lobby: {{.Lobby.Name}}</h3>
-  <div>
-    <h4>Players</h4>
-    <ul hx-get="/api/lobby/{{.Lobby.Id}}/players" hx-trigger="every 2s"></ul>
-  </div>
-  <div>{{template "lobby-update-dialog" .}}</div>
-  <br />
-  <h3>Cards in Lobby</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Text</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{range .Lobby.Cards}}
-      <tr>
-        <td>{{.Type}}</td>
-        <td style="white-space: pre">{{.Text}}</td>
-      </tr>
-      {{end}}
-    </tbody>
-  </table>
-  {{end}}
+  <h4>Players</h4>
+  <ul hx-get="/api/lobby/{{.Lobby.Id}}/players" hx-trigger="every 2s"></ul>
 </div>
-{{end}}
+<br />
+<div>
+  <h4>Chat Box</h4>
+  <div id="chatbox"></div>
+</div>
+<h3>Cards in Lobby</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Text</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Lobby.Cards}}
+    <tr>
+      <td>{{.Type}}</td>
+      <td style="white-space: pre">{{.Text}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}} {{end}}
