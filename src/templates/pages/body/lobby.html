@@ -28,6 +28,14 @@
   <div>{{template "lobby-access-form" .}}</div>
   {{else}}
   <h3>Lobby: {{.Lobby.Name}}</h3>
+  <div>
+    <h4>Players</h4>
+    <ul>
+      {{range .Lobby.Players}}
+      <li>{{.Name}}</li>
+      {{end}}
+    </ul>
+  </div>
   <div>{{template "lobby-update-dialog" .}}</div>
   <button
     hx-delete="/api/lobby/{{.Lobby.Id}}"
