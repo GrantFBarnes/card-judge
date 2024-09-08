@@ -18,7 +18,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobby, err := database.GetLobby(id)
+	lobbyPasswordHash, err := database.GetLobbyPasswordHash(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -41,7 +41,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 
-	if !auth.PasswordMatchesHash(password, lobby.PasswordHash.String) {
+	if !auth.PasswordMatchesHash(password, lobbyPasswordHash.String) {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Provided password is not valid."))
 		return
@@ -54,7 +54,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddPlayerLobbyAccess(playerId, lobby.Id)
+	err = database.AddPlayerLobbyAccess(playerId, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
@@ -74,7 +74,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deck, err := database.GetDeck(id)
+	deckPasswordHash, err := database.GetDeckPasswordHash(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -97,7 +97,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 
-	if !auth.PasswordMatchesHash(password, deck.PasswordHash.String) {
+	if !auth.PasswordMatchesHash(password, deckPasswordHash.String) {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Provided password is not valid."))
 		return
@@ -110,7 +110,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddPlayerDeckAccess(playerId, deck.Id)
+	err = database.AddPlayerDeckAccess(playerId, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
