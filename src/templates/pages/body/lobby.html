@@ -19,17 +19,7 @@
   ></ul>
 </div>
 <br />
-<div>
-  <h4>Player Hand</h4>
-  <div
-    hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/draw"
-    hx-trigger="load delay:1s, every 5s"
-  ></div>
-  <ul
-    hx-get="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/hand"
-    hx-trigger="load delay:2s, every 7s"
-  ></ul>
-</div>
+<div>{{template "player-hand" .}}</div>
 <br />
 <div id="lobby-chat-container">
   <div id="lobby-chat-messages"></div>

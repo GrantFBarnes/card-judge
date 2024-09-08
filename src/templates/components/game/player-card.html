@@ -1,0 +1,31 @@
+{{define "player-card"}}
+<table>
+  <tbody>
+    {{range .Cards}}
+    <tr>
+      <td>
+        <div
+          title="Play"
+          class="clickable"
+          hx-post="/api/lobby/{{$.LobbyId}}/player/{{$.PlayerId}}/card/{{.Id}}/play"
+          hx-confirm="Are you sure you want to play this card?"
+        >
+          &#9989;
+        </div>
+      </td>
+      <td>{{.Text}}</td>
+      <td>
+        <div
+          title="Discard"
+          class="clickable"
+          hx-delete="/api/lobby/{{$.LobbyId}}/player/{{$.PlayerId}}/card"
+          hx-confirm="Are you sure you want to discard this card?"
+        >
+          &#9940;
+        </div>
+      </td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}

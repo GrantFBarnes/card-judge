@@ -195,6 +195,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		"templates/components/forms/lobby-access-form.html",
 		"templates/components/forms/lobby-name-form.html",
 		"templates/components/forms/lobby-password-form.html",
+		"templates/components/game/player-hand.html",
 		"templates/pages/base.html",
 		"templates/pages/body/lobby.html",
 	)

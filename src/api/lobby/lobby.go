@@ -80,13 +80,26 @@ func GetPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var cardText string
-	for _, card := range cards {
-		cardText += "<li>" + card.Text + "</li>"
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-card.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(cardText))
+	type data struct {
+		Cards    []database.Card
+		LobbyId  uuid.UUID
+		PlayerId uuid.UUID
+	}
+
+	tmpl.ExecuteTemplate(w, "player-card", data{
+		Cards:    cards,
+		LobbyId:  lobbyId,
+		PlayerId: playerId,
+	})
 }
 
 func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
