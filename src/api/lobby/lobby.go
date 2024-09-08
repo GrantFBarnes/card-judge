@@ -287,36 +287,3 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
 }
-
-func Delete(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
-		return
-	}
-
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
-		return
-	}
-
-	if !database.HasLobbyAccess(playerId, id) {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
-		return
-	}
-
-	err = database.DeleteLobby(id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	w.Header().Add("HX-Redirect", "/lobbies")
-	w.WriteHeader(http.StatusOK)
-}

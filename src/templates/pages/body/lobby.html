@@ -33,12 +33,6 @@
     <ul hx-get="/api/lobby/{{.Lobby.Id}}/players" hx-trigger="every 2s"></ul>
   </div>
   <div>{{template "lobby-update-dialog" .}}</div>
-  <button
-    hx-delete="/api/lobby/{{.Lobby.Id}}"
-    hx-confirm="Are you sure you want to delete this lobby?"
-  >
-    Delete Lobby
-  </button>
   <br />
   <h3>Cards in Lobby</h3>
   <table>
