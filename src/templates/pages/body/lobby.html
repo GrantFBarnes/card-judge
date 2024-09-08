@@ -11,6 +11,18 @@
   <ul hx-get="/api/lobby/{{.Lobby.Id}}/players" hx-trigger="every 2s"></ul>
 </div>
 <br />
+<div>
+  <h4>Player Hand</h4>
+  <div
+    hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/draw"
+    hx-trigger="every 5s"
+  ></div>
+  <ul
+    hx-get="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/hand"
+    hx-trigger="every 7s"
+  ></ul>
+</div>
+<br />
 <h3>Cards in Lobby</h3>
 <table>
   <thead>
