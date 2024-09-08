@@ -132,3 +132,24 @@ func GetLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
 	}
 	return result, nil
 }
+
+func GetLobbyCardCount(lobbyId uuid.UUID) (count int, err error) {
+	sqlString := `
+		SELECT
+			COUNT(CARD_ID)
+		FROM LOBBY_CARD
+		WHERE LOBBY_ID = ?
+	`
+	rows, err := Query(sqlString, lobbyId)
+	if err != nil {
+		return count, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			return count, err
+		}
+	}
+
+	return count, nil
+}

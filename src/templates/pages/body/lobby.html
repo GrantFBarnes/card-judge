@@ -6,6 +6,8 @@
 <h3>Lobby: {{.Lobby.Name}}</h3>
 <div>{{template "lobby-update-dialog" .}}</div>
 <br />
+<div hx-get="/api/lobby/{{.Lobby.Id}}/card-count" hx-trigger="every 30s"></div>
+<br />
 <div>
   <h4>Players</h4>
   <ul hx-get="/api/lobby/{{.Lobby.Id}}/players" hx-trigger="every 2s"></ul>
@@ -23,23 +25,6 @@
   ></ul>
 </div>
 <br />
-<h3>Cards in Lobby</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Text</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .Lobby.Cards}}
-    <tr>
-      <td>{{.Type}}</td>
-      <td style="white-space: pre">{{.Text}}</td>
-    </tr>
-    {{end}}
-  </tbody>
-</table>
 <div id="lobby-chat-container">
   <div id="lobby-chat-messages"></div>
   <form id="lobby-chat-form">

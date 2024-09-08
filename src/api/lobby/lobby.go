@@ -1,6 +1,7 @@
 package apiLobby
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"text/template"
@@ -33,6 +34,26 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(playerNames))
+}
+
+func GetCardCount(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	count, err := database.GetLobbyCardCount(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("Cards Remaining: %d", count)))
 }
 
 func GetPlayerHand(w http.ResponseWriter, r *http.Request) {
