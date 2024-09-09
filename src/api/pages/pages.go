@@ -199,7 +199,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 }
 
 func Decks(w http.ResponseWriter, r *http.Request) {
-	decks, err := database.GetDecks()
+	decks, err := database.GetDecks("%")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get decks"))
@@ -222,7 +222,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		Data  api.BasePageData
-		Decks []database.Deck
+		Decks []database.DeckDetails
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
