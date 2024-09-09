@@ -112,7 +112,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {
-	lobbies, err := database.GetLobbies()
+	lobbies, err := database.GetLobbies("%")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get lobbies"))
@@ -142,7 +142,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		Data    api.BasePageData
-		Lobbies []database.Lobby
+		Lobbies []database.LobbyDetails
 		Decks   []database.Deck
 	}
 

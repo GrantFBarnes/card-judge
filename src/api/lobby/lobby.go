@@ -122,7 +122,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	search = "%" + search + "%"
 
-	lobbies, err := database.SearchLobbies(search)
+	lobbies, err := database.GetLobbies(search)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
