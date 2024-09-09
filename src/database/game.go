@@ -2,6 +2,12 @@ package database
 
 import "github.com/google/uuid"
 
+type LobbyPlayerWins struct {
+	PlayerId   uuid.UUID
+	PlayerName string
+	Wins       int
+}
+
 func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
 	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
 	if err != nil {
@@ -149,4 +155,36 @@ func GetLobbyCardCount(lobbyId uuid.UUID) (count int, err error) {
 	}
 
 	return count, nil
+}
+
+func GetLobbyPlayerWins(lobbyId uuid.UUID) ([]LobbyPlayerWins, error) {
+	sqlString := `
+		SELECT
+			LP.PLAYER_ID,
+			P.NAME AS PLAYER_NAME,
+			COUNT(LR.ID) AS WINS
+		FROM LOBBY_PLAYER AS LP
+			LEFT JOIN LOBBY_RESULT AS LR ON LR.LOBBY_PLAYER_ID = LP.ID
+			INNER JOIN PLAYER AS P ON P.ID = LP.PLAYER_ID
+		WHERE LP.LOBBY_ID = ?
+		GROUP BY LP.PLAYER_ID
+		ORDER BY COUNT(LR.ID) DESC, P.NAME ASC
+	`
+	rows, err := Query(sqlString, lobbyId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]LobbyPlayerWins, 0)
+	for rows.Next() {
+		var lpw LobbyPlayerWins
+		if err := rows.Scan(
+			&lpw.PlayerId,
+			&lpw.PlayerName,
+			&lpw.Wins); err != nil {
+			continue
+		}
+		result = append(result, lpw)
+	}
+	return result, nil
 }

@@ -53,8 +53,8 @@ func main() {
 	http.Handle("DELETE /api/player/{id}", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Delete)))
 
 	// lobby
-	http.Handle("GET /api/lobby/{id}/players", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetPlayers)))
 	http.Handle("GET /api/lobby/{id}/card-count", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetCardCount)))
+	http.Handle("GET /api/lobby/{id}/player-wins", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetLobbyPlayerWins)))
 	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawPlayerHand)))
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))

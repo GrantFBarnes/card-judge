@@ -11,31 +11,6 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-func GetPlayers(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
-		return
-	}
-
-	players, err := database.GetLobbyPlayers(id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	var playerNames string
-	for _, player := range players {
-		playerNames += "<li>" + player.Name + "</li>"
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(playerNames))
-}
-
 func GetCardCount(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
@@ -54,6 +29,34 @@ func GetCardCount(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Cards Remaining: %d", count)))
+}
+
+func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	wins, err := database.GetLobbyPlayerWins(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-wins.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "lobby-wins", wins)
 }
 
 func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {

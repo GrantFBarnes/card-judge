@@ -9,17 +9,16 @@
     <span>{{template "lobby-update-dialog" .}}</span>
     <span
       hx-get="/api/lobby/{{.Lobby.Id}}/card-count"
-      hx-trigger="load delay:1s, every 30s"
+      hx-trigger="load delay:1s, every 60s"
     ></span>
   </div>
   <div id="lobby-left-side">{{template "player-hand" .}}</div>
   <div id="lobby-middle">Board</div>
   <div id="lobby-right-side">
-    <h4>Players</h4>
-    <ul
-      hx-get="/api/lobby/{{.Lobby.Id}}/players"
-      hx-trigger="load delay:5s, every 10s"
-    ></ul>
+    <div
+      hx-get="/api/lobby/{{.Lobby.Id}}/player-wins"
+      hx-trigger="load delay:5s, every 30s"
+    ></div>
   </div>
   <div id="lobby-footer">
     <div id="lobby-chat-messages"></div>

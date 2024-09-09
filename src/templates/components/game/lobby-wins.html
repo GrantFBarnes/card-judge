@@ -1,0 +1,18 @@
+{{define "lobby-wins"}}
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Wins</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .}}
+    <tr>
+      <td>{{.PlayerName}}</td>
+      <td>{{.Wins}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
