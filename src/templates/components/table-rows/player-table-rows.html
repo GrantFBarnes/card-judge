@@ -1,6 +1,7 @@
 {{define "player-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
+  <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
   <td>{{.Name}}</td>
   <td>
     <select
@@ -19,8 +20,8 @@
       {{end}}
     </select>
   </td>
-  <td>
-    <div
+  <td style="text-align: center">
+    <span
       title="Reset Password"
       class="clickable"
       hx-put="/api/player/{{.Id}}/password/reset"
@@ -28,10 +29,10 @@
       hx-target="closest td"
     >
       &#8634;
-    </div>
+    </span>
   </td>
-  <td>
-    <div
+  <td style="text-align: center">
+    <span
       title="Delete"
       class="clickable"
       hx-delete="/api/player/{{.Id}}"
@@ -39,7 +40,7 @@
       hx-target="closest td"
     >
       &#128465;
-    </div>
+    </span>
   </td>
 </tr>
 {{end}} {{end}}

@@ -79,7 +79,7 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 }
 
 func Admin(w http.ResponseWriter, r *http.Request) {
-	players, err := database.GetPlayers()
+	players, err := database.GetPlayers("%")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get players"))

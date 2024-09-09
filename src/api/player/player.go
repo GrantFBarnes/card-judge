@@ -27,7 +27,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	search = "%" + search + "%"
 
-	players, err := database.SearchPlayers(search)
+	players, err := database.GetPlayers(search)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
