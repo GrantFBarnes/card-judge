@@ -71,7 +71,7 @@ summary {
 }
 
 #topbar-menu {
-  color: var(--topbar-fg);
+  color: var(--topbar-text);
   background-color: var(--topbar-bg);
   text-align: right;
   float: right;
