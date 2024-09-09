@@ -1,7 +1,81 @@
 {{define "body"}}
-<div>{{template "player-name-form" .}}</div>
-<div>{{template "player-password-form" .}}</div>
-<div>{{template "player-color-theme-form" .}}</div>
+<form
+  hx-put="/api/player/{{.Data.Player.Id}}/name"
+  hx-target="find .htmx-result"
+>
+  <h3>Set Player Name</h3>
+  <p>Current Name: {{.Data.Player.Name}}</p>
+  <label for="setPlayerName">New Name:</label>
+  <input
+    type="text"
+    id="setPlayerName"
+    name="name"
+    maxlength="255"
+    placeholder="Enter Name"
+    required="true"
+    autocomplete="off"
+  />
+  <br />
+  <br />
+  <div class="htmx-result"></div>
+  <input type="submit" value="Set Player Name" />
+</form>
+<form
+  hx-put="/api/player/{{.Data.Player.Id}}/password"
+  hx-target="find .htmx-result"
+>
+  <h3>Set Player Password</h3>
+  <label for="newPlayerPassword">New Password:</label>
+  <input
+    type="password"
+    id="newPlayerPassword"
+    name="password"
+    maxlength="255"
+    placeholder="Enter Password"
+    required="true"
+    autocomplete="new-password"
+  />
+  <br />
+  <label for="newPlayerPasswordConfirm">Confirm New Password:</label>
+  <input
+    type="password"
+    id="newPlayerPasswordConfirm"
+    name="passwordConfirm"
+    maxlength="255"
+    placeholder="Enter Password"
+    required="true"
+    autocomplete="off"
+  />
+  <br />
+  <br />
+  <div class="htmx-result"></div>
+  <input type="submit" value="Set Player Password" />
+</form>
+<form
+  hx-put="/api/player/{{.Data.Player.Id}}/color-theme"
+  hx-target="find .htmx-result"
+>
+  <h3>Set Color Theme</h3>
+  <label for="setPlayerColorTheme">Color Theme:</label>
+  <select
+    id="setPlayerColorTheme"
+    name="colorTheme"
+    autocomplete="off"
+    required
+  >
+    {{if eq .Data.Player.ColorTheme.String "light-theme"}}
+    <option value="dark-theme">&#127762; Dark</option>
+    <option value="light-theme" selected>&#127766; Light</option>
+    {{else}}
+    <option value="dark-theme" selected>&#127762; Dark</option>
+    <option value="light-theme">&#127766; Light</option>
+    {{end}}
+  </select>
+  <br />
+  <br />
+  <div class="htmx-result"></div>
+  <input type="submit" value="Set Color Theme" />
+</form>
 <br />
 <details>
   <summary>Danger Zone &#9940;</summary>
