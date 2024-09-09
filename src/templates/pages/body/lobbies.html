@@ -83,22 +83,24 @@
 <br />
 {{$lobbyCount := len .Lobbies}} {{if gt $lobbyCount 0}}
 <h3>Choose a Lobby to Join</h3>
-<input
-  type="search"
-  id="lobbySearch"
-  name="search"
-  maxlength="255"
-  placeholder="Search..."
-  autocomplete="off"
-  hx-post="/api/lobby/search"
-  hx-trigger="input changed delay:500ms, search"
-  hx-target="#lobby-table-rows"
-/>
 <table>
   <thead>
     <tr>
       <th>Created</th>
-      <th>Name</th>
+      <th>
+        <label for="lobbySearch">Name</label>
+        <input
+          type="search"
+          id="lobbySearch"
+          name="search"
+          maxlength="255"
+          placeholder="Search..."
+          autocomplete="off"
+          hx-post="/api/lobby/search"
+          hx-trigger="input changed delay:500ms, search"
+          hx-target="#lobby-table-rows"
+        />
+      </th>
       <th>Security</th>
     </tr>
   </thead>

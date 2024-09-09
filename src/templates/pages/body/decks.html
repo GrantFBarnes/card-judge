@@ -56,22 +56,24 @@
 <br />
 {{$deckCount := len .Decks}} {{if gt $deckCount 0}}
 <h3>Choose a Deck to Modify</h3>
-<input
-  type="search"
-  id="deckSearch"
-  name="search"
-  maxlength="255"
-  placeholder="Search..."
-  autocomplete="off"
-  hx-post="/api/deck/search"
-  hx-trigger="input changed delay:500ms, search"
-  hx-target="#deck-table-rows"
-/>
 <table>
   <thead>
     <tr>
       <th>Created</th>
-      <th>Name</th>
+      <th>
+        <label for="deckSearch">Name</label>
+        <input
+          type="search"
+          id="deckSearch"
+          name="search"
+          maxlength="255"
+          placeholder="Search..."
+          autocomplete="off"
+          hx-post="/api/deck/search"
+          hx-trigger="input changed delay:500ms, search"
+          hx-target="#deck-table-rows"
+        />
+      </th>
       <th>Security</th>
     </tr>
   </thead>

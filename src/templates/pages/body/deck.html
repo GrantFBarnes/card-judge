@@ -144,32 +144,34 @@
   <br />
   {{$cardCount := len .Cards}} {{if gt $cardCount 0}}
   <h3>Cards in Deck</h3>
-  <form>
-    <input
-      type="text"
-      id="cardDeckId"
-      name="deckId"
-      value="{{.Deck.Id}}"
-      hidden
-    />
-    <input
-      type="search"
-      id="cardSearch"
-      name="search"
-      maxlength="255"
-      placeholder="Search..."
-      autocomplete="off"
-      hx-post="/api/card/search"
-      hx-trigger="input changed delay:500ms, search"
-      hx-target="#card-table-rows"
-    />
-  </form>
   <table>
     <thead>
       <tr>
         <th>Created</th>
         <th>Type</th>
-        <th>Text</th>
+        <th>
+          <form>
+            <input
+              type="text"
+              id="cardDeckId"
+              name="deckId"
+              value="{{.Deck.Id}}"
+              hidden
+            />
+            <label for="cardSearch">Text</label>
+            <input
+              type="search"
+              id="cardSearch"
+              name="search"
+              maxlength="255"
+              placeholder="Search..."
+              autocomplete="off"
+              hx-post="/api/card/search"
+              hx-trigger="input changed delay:500ms, search"
+              hx-target="#card-table-rows"
+            />
+          </form>
+        </th>
         <th></th>
         <th></th>
       </tr>
