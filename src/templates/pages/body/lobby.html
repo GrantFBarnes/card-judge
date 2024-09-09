@@ -3,34 +3,35 @@
 {{else}}
 <script src="/static/js/lobby.js"></script>
 <link rel="stylesheet" href="/static/css/lobby.css" />
-<h3>Lobby: {{.Lobby.Name}}</h3>
-<div>{{template "lobby-update-dialog" .}}</div>
-<br />
-<div
-  hx-get="/api/lobby/{{.Lobby.Id}}/card-count"
-  hx-trigger="load delay:1s, every 30s"
-></div>
-<br />
-<div>
-  <h4>Players</h4>
-  <ul
-    hx-get="/api/lobby/{{.Lobby.Id}}/players"
-    hx-trigger="load delay:5s, every 10s"
-  ></ul>
-</div>
-<br />
-<div>{{template "player-hand" .}}</div>
-<br />
-<div id="lobby-chat-container">
-  <div id="lobby-chat-messages"></div>
-  <form id="lobby-chat-form">
-    <input
-      id="lobby-chat-input"
-      type="text"
-      maxlength="255"
-      placeholder="Send a message..."
-    />
-    <input id="lobby-chat-submit" type="submit" value="Send" />
-  </form>
+<div id="lobby-grid-container">
+  <div id="lobby-header">
+    <span>Lobby: {{.Lobby.Name}}</span>
+    <span>{{template "lobby-update-dialog" .}}</span>
+    <span
+      hx-get="/api/lobby/{{.Lobby.Id}}/card-count"
+      hx-trigger="load delay:1s, every 30s"
+    ></span>
+  </div>
+  <div id="lobby-left-side">{{template "player-hand" .}}</div>
+  <div id="lobby-middle">Board</div>
+  <div id="lobby-right-side">
+    <h4>Players</h4>
+    <ul
+      hx-get="/api/lobby/{{.Lobby.Id}}/players"
+      hx-trigger="load delay:5s, every 10s"
+    ></ul>
+  </div>
+  <div id="lobby-footer">
+    <div id="lobby-chat-messages"></div>
+    <form id="lobby-chat-form">
+      <input
+        id="lobby-chat-input"
+        type="text"
+        maxlength="255"
+        placeholder="Send a message..."
+      />
+      <input id="lobby-chat-submit" type="submit" value="Send" />
+    </form>
+  </div>
 </div>
 {{end}} {{end}}
