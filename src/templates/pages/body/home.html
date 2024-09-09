@@ -1,5 +1,14 @@
 {{define "body"}}
-<h1>Card Judge</h1>
-<button onclick="window.location.href='/lobbies'">Lobbies</button>
-<button onclick="window.location.href='/decks'">Decks</button>
+<link rel="stylesheet" href="/static/css/home.css" />
+<div id="home">
+  <h1>Card Judge</h1>
+  <div id="home-buttons">
+    <div>
+      <button onclick="window.location.href='/lobbies'">Game Lobbies</button>
+    </div>
+    <div>
+      <button onclick="window.location.href='/decks'">Card Decks</button>
+    </div>
+  </div>
+</div>
 {{end}}
