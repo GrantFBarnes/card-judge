@@ -23,78 +23,79 @@
 <div id="lobby-grid-container">
   <div id="lobby-header">
     <span>Lobby: {{.Lobby.Name}}</span>
-    <span>
-      <button
-        onclick="document.getElementById('lobby-update-dialog').showModal()"
-      >
-        Edit Lobby
-      </button>
-      <dialog id="lobby-update-dialog">
-        <div style="display: grid; grid-auto-flow: column">
-          <div>
-            <h3>Edit Lobby</h3>
-          </div>
-          <div>
-            <div
-              class="close-button"
-              onclick="document.getElementById('lobby-update-dialog').close()"
-            >
-              &#10060;
-            </div>
+    {{if eq .Lobby.CreatedByPlayerId .Data.Player.Id}}
+    <span
+      class="clickable"
+      onclick="document.getElementById('lobby-update-dialog').showModal()"
+    >
+      &#128393;
+    </span>
+    <dialog id="lobby-update-dialog">
+      <div style="display: grid; grid-auto-flow: column">
+        <div>
+          <h3>Edit Lobby</h3>
+        </div>
+        <div>
+          <div
+            class="close-button"
+            onclick="document.getElementById('lobby-update-dialog').close()"
+          >
+            &#10060;
           </div>
         </div>
-        <form
-          hx-put="/api/lobby/{{.Lobby.Id}}/name"
-          hx-target="find .htmx-result"
-        >
-          <h3>Set Lobby Name</h3>
-          <p>Current Name: {{.Lobby.Name}}</p>
-          <label for="setLobbyName">New Name:</label>
-          <input
-            type="text"
-            id="setLobbyName"
-            name="name"
-            maxlength="255"
-            placeholder="Enter Name"
-            required="true"
-            autocomplete="off"
-          />
-          <br />
-          <br />
-          <div class="htmx-result"></div>
-          <input type="submit" value="Set Lobby Name" />
-        </form>
-        <form
-          hx-put="/api/lobby/{{.Lobby.Id}}/password"
-          hx-target="find .htmx-result"
-        >
-          <h3>Set Lobby Password</h3>
-          <label for="newLobbyPassword">New Password:</label>
-          <input
-            type="password"
-            id="newLobbyPassword"
-            name="password"
-            maxlength="255"
-            placeholder="Enter Password"
-            autocomplete="new-password"
-          />
-          <br />
-          <label for="newLobbyPasswordConfirm">Confirm New Password:</label>
-          <input
-            type="password"
-            id="newLobbyPasswordConfirm"
-            name="passwordConfirm"
-            maxlength="255"
-            placeholder="Enter Password"
-            autocomplete="off"
-          />
-          <br />
-          <br />
-          <div class="htmx-result"></div>
-          <input type="submit" value="Set Lobby Password" />
-        </form>
-      </dialog>
-    </span>
+      </div>
+      <form
+        hx-put="/api/lobby/{{.Lobby.Id}}/name"
+        hx-target="find .htmx-result"
+      >
+        <h3>Set Lobby Name</h3>
+        <p>Current Name: {{.Lobby.Name}}</p>
+        <label for="setLobbyName">New Name:</label>
+        <input
+          type="text"
+          id="setLobbyName"
+          name="name"
+          maxlength="255"
+          placeholder="Enter Name"
+          required="true"
+          autocomplete="off"
+        />
+        <br />
+        <br />
+        <div class="htmx-result"></div>
+        <input type="submit" value="Set Lobby Name" />
+      </form>
+      <form
+        hx-put="/api/lobby/{{.Lobby.Id}}/password"
+        hx-target="find .htmx-result"
+      >
+        <h3>Set Lobby Password</h3>
+        <label for="newLobbyPassword">New Password:</label>
+        <input
+          type="password"
+          id="newLobbyPassword"
+          name="password"
+          maxlength="255"
+          placeholder="Enter Password"
+          autocomplete="new-password"
+        />
+        <br />
+        <label for="newLobbyPasswordConfirm">Confirm New Password:</label>
+        <input
+          type="password"
+          id="newLobbyPasswordConfirm"
+          name="passwordConfirm"
+          maxlength="255"
+          placeholder="Enter Password"
+          autocomplete="off"
+        />
+        <br />
+        <br />
+        <div class="htmx-result"></div>
+        <input type="submit" value="Set Lobby Password" />
+      </form>
+    </dialog>
+    {{end}}
     <span
       hx-get="/api/lobby/{{.Lobby.Id}}/card-count"
       hx-trigger="load delay:1s, every 60s"
