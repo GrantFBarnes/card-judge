@@ -1,6 +1,46 @@
 {{define "body"}}
 <h1>Admin</h1>
-<div>{{template "player-create-default-form" .}}</div>
+<form hx-post="/api/player/create/default" hx-target="find .htmx-result">
+  <h3>Create a New Player</h3>
+  <label for="createPlayerName">Name:</label>
+  <input
+    type="text"
+    id="createPlayerName"
+    name="name"
+    maxlength="255"
+    placeholder="Enter Player Name"
+    required="true"
+    autocomplete="off"
+  />
+  <br />
+  <br />
+  <details>
+    <summary>Password (default = <code>password</code>)</summary>
+    <label for="createPlayerPassword">Password:</label>
+    <input
+      type="password"
+      id="createPlayerPassword"
+      name="password"
+      maxlength="255"
+      placeholder="Enter Player Password"
+      autocomplete="off"
+    />
+    <br />
+    <label for="createPlayerPasswordConfirm">Confirm Password:</label>
+    <input
+      type="password"
+      id="createPlayerPasswordConfirm"
+      name="passwordConfirm"
+      maxlength="255"
+      placeholder="Confirm Player Password"
+      autocomplete="off"
+    />
+    <br />
+  </details>
+  <br />
+  <div class="htmx-result"></div>
+  <input type="submit" value="Create Player" />
+</form>
 <br />
 <h3>Players</h3>
 <input

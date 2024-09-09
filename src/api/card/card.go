@@ -43,9 +43,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles(
 		"templates/components/table-rows/card-table-rows.html",
-		"templates/components/dialogs/card-update-dialog.html",
-		"templates/components/forms/card-type-form.html",
-		"templates/components/forms/card-text-form.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

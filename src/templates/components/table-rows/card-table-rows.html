@@ -3,7 +3,86 @@
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.Type}}</td>
   <td style="white-space: pre">{{.Text}}</td>
-  <td>{{template "card-update-dialog" .}}</td>
+  <td>
+    <div
+      title="Edit"
+      class="clickable"
+      onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
+    >
+      &#128393;
+    </div>
+    <dialog id="card-{{.Id}}-update-dialog">
+      <div style="display: grid; grid-auto-flow: column">
+        <div>
+          <h3>Edit Card</h3>
+        </div>
+        <div>
+          <div
+            class="close-button"
+            onclick="document.getElementById('card-{{.Id}}-update-dialog').close()"
+          >
+            &#10060;
+          </div>
+        </div>
+      </div>
+      <form hx-put="/api/card/{{.Id}}/type" hx-target="find .htmx-result">
+        <h3>Set Card Type</h3>
+        <input
+          type="text"
+          id="deckId{{.Id}}"
+          name="deckId"
+          value="{{.DeckId}}"
+          hidden
+        />
+        <label for="cardType{{.Id}}">Type:</label>
+        <select
+          id="cardType{{.Id}}"
+          name="cardType"
+          autocomplete="off"
+          required
+        >
+          {{if eq .Type "Judge"}}
+          <option value="Judge" selected>Judge</option>
+          <option value="Player">Player</option>
+          {{else}}
+          <option value="Judge">Judge</option>
+          <option value="Player" selected>Player</option>
+          {{end}}
+        </select>
+        <br />
+        <br />
+        <div class="htmx-result"></div>
+        <input type="submit" value="Set Card Type" />
+      </form>
+      <form hx-put="/api/card/{{.Id}}/text" hx-target="find .htmx-result">
+        <h3>Set Card Text</h3>
+        <input
+          type="text"
+          id="deckId{{.Id}}"
+          name="deckId"
+          value="{{.DeckId}}"
+          hidden
+        />
+        <label for="text{{.Id}}" style="vertical-align: top">Text:</label>
+        <textarea
+          id="text{{.Id}}"
+          name="text"
+          maxlength="255"
+          placeholder="Enter Card Text"
+          required="true"
+          cols="40"
+          rows="10"
+          autocomplete="off"
+        >
+{{.Text}}</textarea
+        >
+        <br />
+        <br />
+        <div class="htmx-result"></div>
+        <input type="submit" value="Set Card Text" />
+      </form>
+    </dialog>
+  </td>
   <td>
     <div
       title="Delete"

@@ -1,5 +1,85 @@
 {{define "body"}}
-<div>{{template "lobby-create-dialog" .}}</div>
+<button onclick="document.getElementById('lobby-create-dialog').showModal()">
+  Create Lobby
+</button>
+<dialog id="lobby-create-dialog">
+  <div style="display: grid; grid-auto-flow: column">
+    <div>
+      <h3>Create Lobby</h3>
+    </div>
+    <div>
+      <div
+        class="close-button"
+        onclick="document.getElementById('lobby-create-dialog').close()"
+      >
+        &#10060;
+      </div>
+    </div>
+  </div>
+  <form hx-post="/api/lobby/create" hx-target="find .htmx-result">
+    <label for="createLobbyName">Name:</label>
+    <input
+      type="text"
+      id="createLobbyName"
+      name="name"
+      maxlength="255"
+      placeholder="Enter Lobby Name"
+      required="true"
+      autocomplete="off"
+    />
+    <br />
+    <label for="createLobbyPassword">Password:</label>
+    <input
+      type="password"
+      id="createLobbyPassword"
+      name="password"
+      maxlength="255"
+      placeholder="Enter Lobby Password"
+      autocomplete="off"
+    />
+    <br />
+    <label for="createLobbyPasswordConfirm">Confirm Password:</label>
+    <input
+      type="password"
+      id="createLobbyPasswordConfirm"
+      name="passwordConfirm"
+      maxlength="255"
+      placeholder="Confirm Lobby Password"
+      autocomplete="off"
+    />
+    <br />
+    {{$deckCount := len .Decks}} {{if gt $deckCount 0}}
+    <h3>Choose Decks</h3>
+    <table>
+      <tbody>
+        {{range .Decks}}
+        <tr>
+          <td>
+            <input
+              id="deckSelect{{.Id}}"
+              type="checkbox"
+              name="deckId{{.Id}}"
+              value="{{.Id}}"
+              autocomplete="off"
+            />
+            <label for="deckSelect{{.Id}}" class="clickable">{{.Name}}</label>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{end}}
+    <br />
+    <details>
+      <summary>Missing decks?</summary>
+      <p>Go <a href="/decks">here</a> to access/create some.</p>
+    </details>
+    <br />
+    <br />
+    <div class="htmx-result"></div>
+    <input type="submit" value="Create Lobby" />
+  </form>
+</dialog>
 <br />
 {{$lobbyCount := len .Lobbies}} {{if gt $lobbyCount 0}}
 <h3>Choose a Lobby to Join</h3>

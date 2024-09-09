@@ -84,7 +84,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-card.html",
+		"templates/components/game/player-cards.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -98,7 +98,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		PlayerId uuid.UUID
 	}
 
-	tmpl.ExecuteTemplate(w, "player-card", data{
+	tmpl.ExecuteTemplate(w, "player-cards", data{
 		Cards:    cards,
 		LobbyId:  lobbyId,
 		PlayerId: playerId,
