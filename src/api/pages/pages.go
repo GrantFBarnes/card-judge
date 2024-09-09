@@ -250,7 +250,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.GetCardsInDeck(id)
+	cards, err := database.GetCardsInDeck(id, "%", "%")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get cards in deck"))

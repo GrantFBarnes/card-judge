@@ -148,7 +148,6 @@
     <thead>
       <tr>
         <th>Created</th>
-        <th>Type</th>
         <th>
           <form>
             <input
@@ -158,11 +157,36 @@
               value="{{.Deck.Id}}"
               hidden
             />
-            <label for="cardSearch">Text</label>
+            <label for="cardTypeSearch">Type</label>
+            <select
+              id="cardTypeSearch"
+              name="cardType"
+              autocomplete="off"
+              required
+              hx-post="/api/card/search"
+              hx-trigger="input changed"
+              hx-target="#card-table-rows"
+            >
+              <option value="%" selected>Any</option>
+              <option value="Judge">Judge</option>
+              <option value="Player">Player</option>
+            </select>
+          </form>
+        </th>
+        <th>
+          <form>
+            <input
+              type="text"
+              id="cardDeckId"
+              name="deckId"
+              value="{{.Deck.Id}}"
+              hidden
+            />
+            <label for="cardTextSearch">Text</label>
             <input
               type="search"
-              id="cardSearch"
-              name="search"
+              id="cardTextSearch"
+              name="text"
               maxlength="255"
               placeholder="Search..."
               autocomplete="off"

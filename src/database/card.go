@@ -27,46 +27,15 @@ type Card struct {
 	Text   string
 }
 
-func GetCardsInDeck(deckId uuid.UUID) ([]Card, error) {
-	sqlString := `
-		SELECT
-			ID,
-			CREATED_ON_DATE,
-			CHANGED_ON_DATE,
-			CREATED_BY_PLAYER_ID,
-			CHANGED_BY_PLAYER_ID,
-			DECK_ID,
-			TYPE,
-			TEXT
-		FROM CARD
-		WHERE DECK_ID = ?
-		ORDER BY TYPE, CHANGED_ON_DATE DESC
-	`
-	rows, err := Query(sqlString, deckId)
-	if err != nil {
-		return nil, err
+func GetCardsInDeck(deckId uuid.UUID, textSearch string, cardTypeSearch string) ([]Card, error) {
+	if textSearch == "" {
+		textSearch = "%"
 	}
 
-	result := make([]Card, 0)
-	for rows.Next() {
-		var card Card
-		if err := rows.Scan(
-			&card.Id,
-			&card.CreatedOnDate,
-			&card.ChangedOnDate,
-			&card.CreatedByPlayerId,
-			&card.ChangedByPlayerId,
-			&card.DeckId,
-			&card.Type,
-			&card.Text); err != nil {
-			continue
-		}
-		result = append(result, card)
+	if cardTypeSearch == "" {
+		cardTypeSearch = "%"
 	}
-	return result, nil
-}
 
-func SearchCardsInDeck(deckId uuid.UUID, search string) ([]Card, error) {
 	sqlString := `
 		SELECT
 			ID,
@@ -80,9 +49,10 @@ func SearchCardsInDeck(deckId uuid.UUID, search string) ([]Card, error) {
 		FROM CARD
 		WHERE DECK_ID = ?
 			AND TEXT LIKE ?
-		ORDER BY TYPE, CHANGED_ON_DATE DESC
+			AND TYPE LIKE ?
+		ORDER BY TYPE ASC, CHANGED_ON_DATE DESC, TEXT ASC
 	`
-	rows, err := Query(sqlString, deckId, search)
+	rows, err := Query(sqlString, deckId, textSearch, cardTypeSearch)
 	if err != nil {
 		return nil, err
 	}
