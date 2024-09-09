@@ -1,6 +1,14 @@
+:root {
+  --topbar-height: 20px;
+  --topbar-padding: 15px;
+  --content-margin: 20px;
+}
+
+html,
 body {
   margin: 0;
   font-family: "Courier New", Courier, monospace;
+  height: 100%;
 }
 
 table {
@@ -63,8 +71,8 @@ summary {
 #topbar {
   color: var(--topbar-text);
   background-color: var(--topbar-bg);
-  height: 1em;
-  padding: 15px;
+  height: var(--topbar-height);
+  padding: var(--topbar-padding);
   display: grid;
   grid-auto-flow: column;
   overflow: hidden;
@@ -102,10 +110,15 @@ summary {
 }
 
 #content {
-  margin: 20px;
+  margin: var(--content-margin);
+  height: calc(
+    100% - (2 * var(--content-margin)) - (2 * var(--topbar-padding)) -
+      var(--topbar-height)
+  );
 }
 
 #body {
   max-width: 1920px;
   margin: auto;
+  height: 100%;
 }
