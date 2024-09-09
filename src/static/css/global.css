@@ -70,6 +70,28 @@ summary {
   overflow: hidden;
 }
 
+#topbar-menu {
+  color: var(--topbar-fg);
+  background-color: var(--topbar-bg);
+  text-align: right;
+  float: right;
+  min-width: 50px;
+  max-width: 20vw;
+
+  /* will toggle to block */
+  display: none;
+}
+
+#topbar-menu div {
+  border-bottom: 2px solid black;
+  border-left: 2px solid black;
+  padding: 10px;
+}
+
+.topbar-menu-link {
+  cursor: pointer;
+}
+
 #content {
   margin: 20px;
 }

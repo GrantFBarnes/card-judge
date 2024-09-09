@@ -22,17 +22,43 @@
       {{end}}
       <div id="topbar">
         <div style="text-align: left">
-          <span class="clickable" onclick="location.href='/'">Card Judge</span>
+          <span
+            class="clickable"
+            onclick="location.href='/'"
+            title="Go to Home Page"
+          >
+            Card Judge
+          </span>
         </div>
         <div style="text-align: right">
-          {{if .Data.LoggedIn}}
-          <span class="clickable" onclick="location.href='/manage'">
-            {{.Data.Player.Name}}
+          <span
+            id="topbar-menu-toggle"
+            class="clickable"
+            onclick="toggleTopbarMenu()"
+            title="Menu Toggle"
+          >
+            &#9776;
           </span>
-          {{else}}
-          <span class="clickable" onclick="location.href='/login'">Login</span>
-          {{end}}
         </div>
+      </div>
+      <div id="topbar-menu">
+        {{if .Data.LoggedIn}}
+        <div class="topbar-menu-item">Playing As: {{.Data.Player.Name}}</div>
+        <div class="topbar-menu-link" onclick="location.href='/manage'">
+          &#128295; Manage Account
+        </div>
+        <div
+          class="topbar-menu-link"
+          hx-post="/api/player/logout"
+          hx-confirm="Are you sure you want to logout?"
+        >
+          Logout
+        </div>
+        {{else}}
+        <div class="topbar-menu-link" onclick="location.href='/login'">
+          Login
+        </div>
+        {{end}}
       </div>
       <div id="content">
         <div id="body">{{template "body" .}}</div>

@@ -27,3 +27,12 @@ function removeClassFromTarget(className, targetElement) {
     targetElement.classList.remove(className);
   }
 }
+
+function toggleTopbarMenu() {
+  const topbarMenu = document.getElementById("topbar-menu");
+  if (topbarMenu.style.display === "block") {
+    topbarMenu.style.display = "none";
+  } else {
+    topbarMenu.style.display = "block";
+  }
+}
