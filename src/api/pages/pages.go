@@ -63,7 +63,6 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles(
 		"templates/components/forms/player-color-theme-form.html",
-		"templates/components/forms/player-logout-form.html",
 		"templates/components/forms/player-name-form.html",
 		"templates/components/forms/player-password-form.html",
 		"templates/pages/base.html",
