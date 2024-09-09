@@ -1,11 +1,10 @@
 {{define "player-hand"}}
 <h4>Player Hand</h4>
-<div
+<button
   hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/draw"
-  hx-trigger="load delay:1s, every 5s"
-></div>
-<div
-  hx-get="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/hand"
-  hx-trigger="load delay:2s, every 7s"
-></div>
+  hx-target="next div"
+>
+  Draw
+</button>
+<div></div>
 {{end}}

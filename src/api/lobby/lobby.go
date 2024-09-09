@@ -56,7 +56,7 @@ func GetCardCount(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("Cards Remaining: %d", count)))
 }
 
-func GetPlayerHand(w http.ResponseWriter, r *http.Request) {
+func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -73,7 +73,7 @@ func GetPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.GetLobbyPlayerHand(lobbyId, playerId)
+	cards, err := database.DrawLobbyPlayerHand(lobbyId, playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -100,33 +100,6 @@ func GetPlayerHand(w http.ResponseWriter, r *http.Request) {
 		LobbyId:  lobbyId,
 		PlayerId: playerId,
 	})
-}
-
-func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
-		return
-	}
-
-	playerIdString := r.PathValue("playerId")
-	playerId, err := uuid.Parse(playerIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
-		return
-	}
-
-	err = database.DrawLobbyPlayerHand(lobbyId, playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {

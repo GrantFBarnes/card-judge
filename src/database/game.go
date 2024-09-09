@@ -2,53 +2,51 @@ package database
 
 import "github.com/google/uuid"
 
-func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) error {
+func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
 	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	handCount, err := getLobbyPlayerHandCount(lobbyPlayerId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	cardsToDraw := 8 - handCount
-	if cardsToDraw <= 0 {
-		return nil
+	if cardsToDraw > 0 {
+		sqlString := `
+			INSERT INTO LOBBY_PLAYER_CARD
+				(
+					LOBBY_PLAYER_ID,
+					LOBBY_ID,
+					PLAYER_ID,
+					CARD_ID
+				)
+			SELECT DISTINCT
+				? AS LOBBY_PLAYER_ID,
+				? AS LOBBY_ID,
+				? AS PLAYER_ID,
+				C.ID AS CARD_ID
+			FROM LOBBY_CARD AS LC
+				INNER JOIN CARD AS C ON C.ID = LC.CARD_ID
+			WHERE C.TYPE = 'Player'
+				AND LC.LOBBY_ID = ?
+			ORDER BY RAND()
+			LIMIT ?
+		`
+		err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId, lobbyId, cardsToDraw)
+		if err != nil {
+			return nil, err
+		}
+
+		err = removePlayerHandFromLobbyCards()
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	sqlString := `
-		INSERT INTO LOBBY_PLAYER_CARD
-			(
-				LOBBY_PLAYER_ID,
-				LOBBY_ID,
-				PLAYER_ID,
-				CARD_ID
-			)
-		SELECT DISTINCT
-			? AS LOBBY_PLAYER_ID,
-			? AS LOBBY_ID,
-			? AS PLAYER_ID,
-			C.ID AS CARD_ID
-		FROM LOBBY_CARD AS LC
-			INNER JOIN CARD AS C ON C.ID = LC.CARD_ID
-		WHERE C.TYPE = 'Player'
-			AND LC.LOBBY_ID = ?
-		ORDER BY RAND()
-		LIMIT ?
-	`
-	err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId, lobbyId, cardsToDraw)
-	if err != nil {
-		return err
-	}
-
-	err = removePlayerHandFromLobbyCards()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return getLobbyPlayerHand(lobbyPlayerId)
 }
 
 func getLobbyPlayerId(lobbyId uuid.UUID, playerId uuid.UUID) (lobbyPlayerId uuid.UUID, err error) {
@@ -104,18 +102,17 @@ func removePlayerHandFromLobbyCards() error {
 	return Execute(sqlString)
 }
 
-func GetLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
+func getLobbyPlayerHand(lobbyPlayerId uuid.UUID) ([]Card, error) {
 	sqlString := `
 		SELECT
 			C.ID,
 			C.TEXT
 		FROM LOBBY_PLAYER_CARD AS LPC
 			INNER JOIN CARD AS C ON C.ID = LPC.CARD_ID
-		WHERE LPC.LOBBY_ID = ?
-			AND LPC.PLAYER_ID = ?
+		WHERE LPC.LOBBY_PLAYER_ID = ?
 		ORDER BY C.TEXT
 	`
-	rows, err := Query(sqlString, lobbyId, playerId)
+	rows, err := Query(sqlString, lobbyPlayerId)
 	if err != nil {
 		return nil, err
 	}
