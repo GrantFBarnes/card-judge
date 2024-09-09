@@ -207,7 +207,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		Data:      basePageData,
-		HasAccess: !lobby.PasswordHash.Valid || basePageData.Player.HasLobbyAccess(lobby.Id),
+		HasAccess: database.HasLobbyAccess(basePageData.Player.Id, lobby.Id),
 		Lobby:     lobby,
 	})
 }
@@ -305,7 +305,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		Data:      basePageData,
-		HasAccess: !deck.PasswordHash.Valid || basePageData.Player.HasDeckAccess(deck.Id),
+		HasAccess: database.HasDeckAccess(basePageData.Player.Id, deck.Id),
 		Deck:      deck,
 		Cards:     cards,
 	})
