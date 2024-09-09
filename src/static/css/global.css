@@ -92,8 +92,12 @@ summary {
   padding: 10px;
 }
 
-.topbar-menu-link {
+#topbar-menu .topbar-menu-link {
   cursor: pointer;
+}
+
+#topbar-menu .topbar-menu-link:hover {
+  background-color: var(--topbar-hover);
 }
 
 #content {
