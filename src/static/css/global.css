@@ -82,6 +82,10 @@ summary {
   display: none;
 }
 
+#topbar-menu div:first-child {
+  border-top: 2px dashed black;
+}
+
 #topbar-menu div {
   border-bottom: 2px solid black;
   border-left: 2px solid black;
