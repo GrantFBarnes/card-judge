@@ -74,7 +74,8 @@ summary {
   color: var(--topbar-text);
   background-color: var(--topbar-bg);
   text-align: right;
-  float: right;
+  position: absolute;
+  right: 0;
   min-width: 50px;
   max-width: 20vw;
 
