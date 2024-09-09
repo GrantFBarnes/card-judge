@@ -1,8 +1,73 @@
 {{define "body"}}
-<div>{{template "player-login-form" .}}</div>
+<form hx-post="/api/player/login" hx-target="find .htmx-result">
+  <h3>Player Login</h3>
+  <label for="playerName">Name:</label>
+  <input
+    type="text"
+    id="playerName"
+    name="name"
+    maxlength="255"
+    placeholder="Enter Player Name"
+    required="true"
+    autocomplete="username"
+  />
+  <br />
+  <label for="playerPassword">Password:</label>
+  <input
+    type="password"
+    id="playerPassword"
+    name="password"
+    maxlength="255"
+    placeholder="Enter Player Password"
+    required="true"
+    autocomplete="current-password"
+  />
+  <br />
+  <br />
+  <div class="htmx-result"></div>
+  <input type="submit" value="Login" />
+</form>
 <br />
 <details>
   <summary>Create a New Player</summary>
-  <div>{{template "player-create-form" .}}</div>
+  <form hx-post="/api/player/create" hx-target="find .htmx-result">
+    <h3>Create a New Player</h3>
+    <label for="createPlayerName">Name:</label>
+    <input
+      type="text"
+      id="createPlayerName"
+      name="name"
+      maxlength="255"
+      placeholder="Enter Player Name"
+      required="true"
+      autocomplete="username"
+    />
+    <br />
+    <label for="createPlayerPassword">Password:</label>
+    <input
+      type="password"
+      id="createPlayerPassword"
+      name="password"
+      maxlength="255"
+      placeholder="Enter Player Password"
+      required="true"
+      autocomplete="new-password"
+    />
+    <br />
+    <label for="createPlayerPasswordConfirm">Confirm Password:</label>
+    <input
+      type="password"
+      id="createPlayerPasswordConfirm"
+      name="passwordConfirm"
+      maxlength="255"
+      placeholder="Confirm Player Password"
+      required="true"
+      autocomplete="new-password"
+    />
+    <br />
+    <br />
+    <div class="htmx-result"></div>
+    <input type="submit" value="Create Player" />
+  </form>
 </details>
 {{end}}

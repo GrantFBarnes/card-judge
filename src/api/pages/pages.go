@@ -37,8 +37,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	basePageData.PageTitle = "Card Judge - Login"
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/forms/player-create-form.html",
-		"templates/components/forms/player-login-form.html",
 		"templates/pages/base.html",
 		"templates/pages/body/login.html",
 	)
