@@ -1,10 +1,7 @@
 {{define "body"}}
-<form
-  hx-put="/api/player/{{.Data.Player.Id}}/name"
-  hx-target="find .htmx-result"
->
+<form hx-put="/api/player/{{.Player.Id}}/name" hx-target="find .htmx-result">
   <h3>Set Player Name</h3>
-  <p>Current Name: {{.Data.Player.Name}}</p>
+  <p>Current Name: {{.Player.Name}}</p>
   <label for="setPlayerName">New Name:</label>
   <input
     type="text"
@@ -21,7 +18,7 @@
   <input type="submit" value="Set Player Name" />
 </form>
 <form
-  hx-put="/api/player/{{.Data.Player.Id}}/password"
+  hx-put="/api/player/{{.Player.Id}}/password"
   hx-target="find .htmx-result"
 >
   <h3>Set Player Password</h3>
@@ -52,7 +49,7 @@
   <input type="submit" value="Set Player Password" />
 </form>
 <form
-  hx-put="/api/player/{{.Data.Player.Id}}/color-theme"
+  hx-put="/api/player/{{.Player.Id}}/color-theme"
   hx-target="find .htmx-result"
 >
   <h3>Set Color Theme</h3>
@@ -63,7 +60,7 @@
     autocomplete="off"
     required
   >
-    {{if eq .Data.Player.ColorTheme.String "light-theme"}}
+    {{if eq .Player.ColorTheme.String "light-theme"}}
     <option value="dark-theme">&#127762; Dark</option>
     <option value="light-theme" selected>&#127766; Light</option>
     {{else}}
@@ -81,7 +78,7 @@
   <summary>Danger Zone &#9940;</summary>
   <br />
   <button
-    hx-delete="/api/player/{{.Data.Player.Id}}"
+    hx-delete="/api/player/{{.Player.Id}}"
     hx-confirm="Are you sure you want to delete your player account?"
   >
     Delete Player Account

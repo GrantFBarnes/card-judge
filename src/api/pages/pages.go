@@ -24,11 +24,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data api.BasePageData
+		api.BasePageData
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data: basePageData,
+		BasePageData: basePageData,
 	})
 }
 
@@ -47,11 +47,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data api.BasePageData
+		api.BasePageData
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data: basePageData,
+		BasePageData: basePageData,
 	})
 }
 
@@ -70,11 +70,11 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data api.BasePageData
+		api.BasePageData
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data: basePageData,
+		BasePageData: basePageData,
 	})
 }
 
@@ -101,13 +101,13 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data    api.BasePageData
+		api.BasePageData
 		Players []database.Player
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data:    basePageData,
-		Players: players,
+		BasePageData: basePageData,
+		Players:      players,
 	})
 }
 
@@ -141,15 +141,15 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data    api.BasePageData
+		api.BasePageData
 		Lobbies []database.LobbyDetails
 		Decks   []database.Deck
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data:    basePageData,
-		Lobbies: lobbies,
-		Decks:   decks,
+		BasePageData: basePageData,
+		Lobbies:      lobbies,
+		Decks:        decks,
 	})
 }
 
@@ -186,15 +186,15 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data      api.BasePageData
+		api.BasePageData
 		HasAccess bool
 		Lobby     database.Lobby
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data:      basePageData,
-		HasAccess: database.HasLobbyAccess(basePageData.Player.Id, lobby.Id),
-		Lobby:     lobby,
+		BasePageData: basePageData,
+		HasAccess:    database.HasLobbyAccess(basePageData.Player.Id, lobby.Id),
+		Lobby:        lobby,
 	})
 }
 
@@ -221,13 +221,13 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data  api.BasePageData
+		api.BasePageData
 		Decks []database.DeckDetails
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data:  basePageData,
-		Decks: decks,
+		BasePageData: basePageData,
+		Decks:        decks,
 	})
 }
 
@@ -272,16 +272,16 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type data struct {
-		Data      api.BasePageData
+		api.BasePageData
 		HasAccess bool
 		Deck      database.Deck
 		Cards     []database.Card
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		Data:      basePageData,
-		HasAccess: database.HasDeckAccess(basePageData.Player.Id, deck.Id),
-		Deck:      deck,
-		Cards:     cards,
+		BasePageData: basePageData,
+		HasAccess:    database.HasDeckAccess(basePageData.Player.Id, deck.Id),
+		Deck:         deck,
+		Cards:        cards,
 	})
 }

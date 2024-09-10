@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{.Data.PageTitle}}</title>
+    <title>{{.PageTitle}}</title>
     <script
       src="https://unpkg.com/htmx.org@2.0.1"
       integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/"
@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="/static/css/colors.css" />
     <link rel="stylesheet" href="/static/css/global.css" />
   </head>
-  {{if .Data.Player.ColorTheme.Valid}}
-  <body class="{{.Data.Player.ColorTheme.String}}">
+  {{if .Player.ColorTheme.Valid}}
+  <body class="{{.Player.ColorTheme.String}}">
     {{else}}
     <body class="dark-theme">
       {{end}}
@@ -42,8 +42,8 @@
         </div>
       </div>
       <div id="topbar-menu">
-        {{if .Data.LoggedIn}}
-        <div class="topbar-menu-item">Playing As: {{.Data.Player.Name}}</div>
+        {{if .LoggedIn}}
+        <div class="topbar-menu-item">Playing As: {{.Player.Name}}</div>
         <div class="topbar-menu-link" onclick="location.href='/manage'">
           &#128295; Manage Account
         </div>
@@ -63,7 +63,7 @@
       <div id="content">
         <div id="body">{{template "body" .}}</div>
       </div>
-      {{if .Data.Player.ColorTheme.Valid}}
+      {{if .Player.ColorTheme.Valid}}
     </body>
     {{else}}
   </body>
