@@ -159,7 +159,6 @@ func SetCardType(playerId uuid.UUID, id uuid.UUID, cardType CardType) error {
 		UPDATE CARD
 		SET
 			TYPE = ?,
-			CHANGED_ON_DATE = CURRENT_TIMESTAMP(),
 			CHANGED_BY_PLAYER_ID = ?
 		WHERE ID = ?
 	`
@@ -171,7 +170,6 @@ func SetCardText(playerId uuid.UUID, id uuid.UUID, text string) error {
 		UPDATE CARD
 		SET
 			TEXT = ?,
-			CHANGED_ON_DATE = CURRENT_TIMESTAMP(),
 			CHANGED_BY_PLAYER_ID = ?
 		WHERE ID = ?
 	`
