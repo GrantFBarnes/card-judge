@@ -22,7 +22,8 @@
         <span
           title="Discard"
           class="clickable"
-          hx-delete="/api/lobby/{{$.LobbyId}}/player/{{$.PlayerId}}/card"
+          hx-delete="/api/lobby/{{$.LobbyId}}/player/{{$.PlayerId}}/card/{{.Id}}"
+          hx-target="#player-cards"
           hx-confirm="Are you sure you want to discard this card?"
         >
           &#9940;

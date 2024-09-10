@@ -55,6 +55,47 @@ func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) 
 	return getLobbyPlayerHand(lobbyPlayerId)
 }
 
+func DiscardLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
+	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
+	if err != nil {
+		return nil, err
+	}
+
+	sqlString := `
+		DELETE FROM LOBBY_PLAYER_CARD
+		WHERE LOBBY_PLAYER_ID = ?
+			AND LOBBY_ID = ?
+			AND PLAYER_ID = ?
+	`
+	err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId)
+	if err != nil {
+		return nil, err
+	}
+
+	return getLobbyPlayerHand(lobbyPlayerId)
+}
+
+func DiscardLobbyPlayerCard(lobbyId uuid.UUID, playerId uuid.UUID, cardId uuid.UUID) ([]Card, error) {
+	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
+	if err != nil {
+		return nil, err
+	}
+
+	sqlString := `
+		DELETE FROM LOBBY_PLAYER_CARD
+		WHERE LOBBY_PLAYER_ID = ?
+			AND LOBBY_ID = ?
+			AND PLAYER_ID = ?
+			AND CARD_ID = ?
+	`
+	err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId, cardId)
+	if err != nil {
+		return nil, err
+	}
+
+	return getLobbyPlayerHand(lobbyPlayerId)
+}
+
 func getLobbyPlayerId(lobbyId uuid.UUID, playerId uuid.UUID) (lobbyPlayerId uuid.UUID, err error) {
 	sqlString := `
 		SELECT

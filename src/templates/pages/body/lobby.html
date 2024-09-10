@@ -56,11 +56,19 @@
     <h4>Player Hand</h4>
     <button
       hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/draw"
-      hx-target="next div"
+      hx-target="#player-cards"
     >
       Draw
     </button>
-    <div></div>
+    <button
+      style="float: right"
+      hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Data.Player.Id}}/discard"
+      hx-target="#player-cards"
+      hx-confirm="Are you sure you want to discard your hand?"
+    >
+      Discard All
+    </button>
+    <div id="player-cards"></div>
   </div>
   <div id="lobby-middle">Board</div>
   <div id="lobby-right-side">

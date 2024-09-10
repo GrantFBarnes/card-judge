@@ -105,6 +105,106 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	cards, err := database.DiscardLobbyPlayerHand(lobbyId, playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-cards.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	type data struct {
+		Cards    []database.Card
+		LobbyId  uuid.UUID
+		PlayerId uuid.UUID
+	}
+
+	tmpl.ExecuteTemplate(w, "player-cards", data{
+		Cards:    cards,
+		LobbyId:  lobbyId,
+		PlayerId: playerId,
+	})
+}
+
+func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	cards, err := database.DiscardLobbyPlayerCard(lobbyId, playerId, cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-cards.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	type data struct {
+		Cards    []database.Card
+		LobbyId  uuid.UUID
+		PlayerId uuid.UUID
+	}
+
+	tmpl.ExecuteTemplate(w, "player-cards", data{
+		Cards:    cards,
+		LobbyId:  lobbyId,
+		PlayerId: playerId,
+	})
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
