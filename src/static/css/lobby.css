@@ -20,6 +20,15 @@
   grid-area: header;
 }
 
+#lobby-header-table {
+  width: 100%;
+  text-align: center;
+}
+
+#lobby-header-table tr:hover {
+  background-color: transparent;
+}
+
 #lobby-left-side {
   grid-area: menu;
 }

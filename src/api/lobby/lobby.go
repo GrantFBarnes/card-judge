@@ -28,7 +28,7 @@ func GetCardCount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("Cards Remaining: %d", count)))
+	w.Write([]byte(fmt.Sprintf("%d", count)))
 }
 
 func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
