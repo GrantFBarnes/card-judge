@@ -1,7 +1,7 @@
 {{define "card-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
-  <td>{{.Type}}</td>
+  <td>{{.CardTypeName}}</td>
   <td style="white-space: pre">{{.Text}}</td>
   <td>
     <div
@@ -25,7 +25,7 @@
           </div>
         </div>
       </div>
-      <form hx-put="/api/card/{{.Id}}/type" hx-target="find .htmx-result">
+      <form hx-put="/api/card/{{.Id}}/card-type" hx-target="find .htmx-result">
         <h3>Set Card Type</h3>
         <input
           type="text"
@@ -34,14 +34,14 @@
           value="{{.DeckId}}"
           hidden
         />
-        <label for="cardType{{.Id}}">Type:</label>
+        <label for="cardTypeName{{.Id}}">Card Type:</label>
         <select
-          id="cardType{{.Id}}"
-          name="cardType"
+          id="cardTypeName{{.Id}}"
+          name="cardTypeName"
           autocomplete="off"
           required
         >
-          {{if eq .Type "Judge"}}
+          {{if eq .CardTypeName "Judge"}}
           <option value="Judge" selected>Judge</option>
           <option value="Player">Player</option>
           {{else}}

@@ -26,9 +26,6 @@ BEFORE UPDATE ON PLAYER
 FOR EACH ROW
 SET NEW.CHANGED_ON_DATE = CURRENT_TIMESTAMP();
 
-INSERT INTO PLAYER (NAME, PASSWORD_HASH, IS_ADMIN)
-VALUES ('Grant', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.', 1);
-
 CREATE TABLE DECK
 (
     ID CHAR(36) NOT NULL DEFAULT UUID(),
@@ -47,10 +44,22 @@ BEFORE UPDATE ON DECK
 FOR EACH ROW
 SET NEW.CHANGED_ON_DATE = CURRENT_TIMESTAMP();
 
-INSERT INTO DECK (ID, NAME, PASSWORD_HASH)
-VALUES ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Deck One', NULL),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Deck Two', NULL),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Deck Three', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.');
+CREATE TABLE CARD_TYPE
+(
+    ID CHAR(36) NOT NULL DEFAULT UUID(),
+    CREATED_ON_DATE DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    CHANGED_ON_DATE DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+
+    NAME NVARCHAR(255) NOT NULL,
+
+    PRIMARY KEY (ID),
+    CONSTRAINT NAME_UNIQUE UNIQUE (NAME)
+);
+
+CREATE TRIGGER CARD_TYPE_SET_CHANGED_ON_DATE
+BEFORE UPDATE ON CARD_TYPE
+FOR EACH ROW
+SET NEW.CHANGED_ON_DATE = CURRENT_TIMESTAMP();
 
 CREATE TABLE CARD
 (
@@ -59,11 +68,12 @@ CREATE TABLE CARD
     CHANGED_ON_DATE DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
     DECK_ID CHAR(36) NOT NULL,
-    TYPE ENUM ('Judge', 'Player') NOT NULL,
+    CARD_TYPE_ID CHAR(36) NOT NULL,
     TEXT VARCHAR(255) NOT NULL,
 
     PRIMARY KEY (ID),
     FOREIGN KEY (DECK_ID) REFERENCES DECK (ID) ON DELETE CASCADE,
+    FOREIGN KEY (CARD_TYPE_ID) REFERENCES CARD_TYPE (ID) ON DELETE RESTRICT,
     CONSTRAINT DECK_TEXT_UNIQUE UNIQUE (DECK_ID, TEXT)
 );
 
@@ -71,57 +81,6 @@ CREATE TRIGGER CARD_SET_CHANGED_ON_DATE
 BEFORE UPDATE ON CARD
 FOR EACH ROW
 SET NEW.CHANGED_ON_DATE = CURRENT_TIMESTAMP();
-
-INSERT INTO CARD (DECK_ID, TYPE, TEXT)
-VALUES ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 1'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 2'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 3'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 4'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck One - Judge Card 5'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 1'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 2'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 3'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 4'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 5'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 6'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 7'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 8'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 9'),
-       ('f395b797-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck One - Player Card 10');
-
-INSERT INTO CARD (DECK_ID, TYPE, TEXT)
-VALUES ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 1'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 2'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 3'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 4'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Two - Judge Card 5'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 1'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 2'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 3'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 4'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 5'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 6'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 7'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 8'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 9'),
-       ('f395b862-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Two - Player Card 10');
-
-INSERT INTO CARD (DECK_ID, TYPE, TEXT)
-VALUES ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 1'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 2'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 3'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 4'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Judge', 'Deck Three - Judge Card 5'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 1'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 2'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 3'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 4'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 5'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 6'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 7'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 8'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 9'),
-       ('f395b8e4-6d89-11ef-aad4-28800dbd8d8a', 'Player', 'Deck Three - Player Card 10');
 
 CREATE TABLE LOBBY
 (

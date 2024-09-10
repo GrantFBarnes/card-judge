@@ -18,7 +18,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var deckId uuid.UUID
-	var cardTypeSearch string
 	var textSearch string
 	for key, val := range r.Form {
 		if key == "deckId" {
@@ -28,20 +27,14 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-		} else if key == "cardType" {
-			cardTypeSearch = val[0]
 		} else if key == "text" {
 			textSearch = val[0]
 		}
 	}
 
-	if cardTypeSearch == "" {
-		cardTypeSearch = "%"
-	}
-
 	textSearch = "%" + textSearch + "%"
 
-	cards, err := database.GetCardsInDeck(deckId, textSearch, cardTypeSearch)
+	cards, err := database.GetCardsInDeck(deckId, textSearch)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -69,7 +62,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var deckId uuid.UUID
-	var cardType database.CardType
+	var cardTypeName string
 	var text string
 	for key, val := range r.Form {
 		if key == "deckId" {
@@ -79,16 +72,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-		} else if key == "cardType" {
-			if val[0] == "Judge" {
-				cardType = database.JudgeCard
-			} else if val[0] == "Player" {
-				cardType = database.PlayerCard
-			} else {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse card type."))
-				return
-			}
+		} else if key == "cardTypeName" {
+			cardTypeName = val[0]
 		} else if key == "text" {
 			text = val[0]
 		}
@@ -125,7 +110,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = database.CreateCard(deckId, cardType, text)
+	_, err = database.CreateCard(deckId, cardTypeName, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -136,7 +121,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func SetType(w http.ResponseWriter, r *http.Request) {
+func SetCardType(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
@@ -153,7 +138,7 @@ func SetType(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var deckId uuid.UUID
-	var cardType database.CardType
+	var cardTypeName string
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -162,16 +147,8 @@ func SetType(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-		} else if key == "cardType" {
-			if val[0] == "Judge" {
-				cardType = database.JudgeCard
-			} else if val[0] == "Player" {
-				cardType = database.PlayerCard
-			} else {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse card type."))
-				return
-			}
+		} else if key == "cardTypeName" {
+			cardTypeName = val[0]
 		}
 	}
 
@@ -188,7 +165,7 @@ func SetType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardType(id, cardType)
+	err = database.SetCardType(id, cardTypeName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

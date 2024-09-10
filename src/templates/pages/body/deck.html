@@ -114,8 +114,13 @@
       value="{{.Deck.Id}}"
       hidden
     />
-    <label for="newCardCardType">Type:</label>
-    <select id="newCardCardType" name="cardType" autocomplete="off" required>
+    <label for="newCardCardTypeName">Card Type:</label>
+    <select
+      id="newCardCardTypeName"
+      name="cardTypeName"
+      autocomplete="off"
+      required
+    >
       <option value="Judge" selected>Judge</option>
       <option value="Player">Player</option>
     </select>
@@ -144,31 +149,7 @@
   <thead>
     <tr>
       <th>Created</th>
-      <th>
-        <form>
-          <input
-            type="text"
-            id="cardDeckId"
-            name="deckId"
-            value="{{.Deck.Id}}"
-            hidden
-          />
-          <label for="cardTypeSearch">Type</label>
-          <select
-            id="cardTypeSearch"
-            name="cardType"
-            autocomplete="off"
-            required
-            hx-post="/api/card/search"
-            hx-trigger="input changed"
-            hx-target="#card-table-rows"
-          >
-            <option value="%" selected>Any</option>
-            <option value="Judge">Judge</option>
-            <option value="Player">Player</option>
-          </select>
-        </form>
-      </th>
+      <th>Card Type</th>
       <th>
         <form>
           <input

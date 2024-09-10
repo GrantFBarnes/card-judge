@@ -36,7 +36,8 @@ func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) 
 				C.ID AS CARD_ID
 			FROM LOBBY_CARD AS LC
 				INNER JOIN CARD AS C ON C.ID = LC.CARD_ID
-			WHERE C.TYPE = 'Player'
+				INNER JOIN CARD_TYPE AS CT ON CT.ID = C.CARD_TYPE_ID
+			WHERE CT.NAME = 'Player'
 				AND LC.LOBBY_ID = ?
 			ORDER BY RAND()
 			LIMIT ?
