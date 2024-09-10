@@ -16,11 +16,9 @@ const (
 )
 
 type Card struct {
-	Id                uuid.UUID
-	CreatedOnDate     time.Time
-	ChangedOnDate     time.Time
-	CreatedByPlayerId uuid.UUID
-	ChangedByPlayerId uuid.UUID
+	Id            uuid.UUID
+	CreatedOnDate time.Time
+	ChangedOnDate time.Time
 
 	DeckId uuid.UUID
 	Type   CardType
@@ -41,8 +39,6 @@ func GetCardsInDeck(deckId uuid.UUID, textSearch string, cardTypeSearch string) 
 			ID,
 			CREATED_ON_DATE,
 			CHANGED_ON_DATE,
-			CREATED_BY_PLAYER_ID,
-			CHANGED_BY_PLAYER_ID,
 			DECK_ID,
 			TYPE,
 			TEXT
@@ -64,8 +60,6 @@ func GetCardsInDeck(deckId uuid.UUID, textSearch string, cardTypeSearch string) 
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
-			&card.CreatedByPlayerId,
-			&card.ChangedByPlayerId,
 			&card.DeckId,
 			&card.Type,
 			&card.Text); err != nil {
@@ -84,8 +78,6 @@ func GetCard(id uuid.UUID) (Card, error) {
 			ID,
 			CREATED_ON_DATE,
 			CHANGED_ON_DATE,
-			CREATED_BY_PLAYER_ID,
-			CHANGED_BY_PLAYER_ID,
 			DECK_ID,
 			TYPE,
 			TEXT
@@ -102,8 +94,6 @@ func GetCard(id uuid.UUID) (Card, error) {
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
-			&card.CreatedByPlayerId,
-			&card.ChangedByPlayerId,
 			&card.DeckId,
 			&card.Type,
 			&card.Text); err != nil {
@@ -115,7 +105,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
+func CreateCard(deckId uuid.UUID, cardType CardType, text string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		log.Println(err)
@@ -123,10 +113,10 @@ func CreateCard(playerId uuid.UUID, deckId uuid.UUID, cardType CardType, text st
 	}
 
 	sqlString := `
-		INSERT INTO CARD (ID, CREATED_BY_PLAYER_ID, CHANGED_BY_PLAYER_ID, DECK_ID, TYPE, TEXT)
-		VALUES (?, ?, ?, ?, ?, ?)
+		INSERT INTO CARD (ID, DECK_ID, TYPE, TEXT)
+		VALUES (?, ?, ?, ?)
 	`
-	return id, Execute(sqlString, id, playerId, playerId, deckId, cardType, text)
+	return id, Execute(sqlString, id, deckId, cardType, text)
 }
 
 func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
@@ -154,26 +144,24 @@ func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
 	return id, nil
 }
 
-func SetCardType(playerId uuid.UUID, id uuid.UUID, cardType CardType) error {
+func SetCardType(id uuid.UUID, cardType CardType) error {
 	sqlString := `
 		UPDATE CARD
 		SET
-			TYPE = ?,
-			CHANGED_BY_PLAYER_ID = ?
+			TYPE = ?
 		WHERE ID = ?
 	`
-	return Execute(sqlString, cardType, playerId, id)
+	return Execute(sqlString, cardType, id)
 }
 
-func SetCardText(playerId uuid.UUID, id uuid.UUID, text string) error {
+func SetCardText(id uuid.UUID, text string) error {
 	sqlString := `
 		UPDATE CARD
 		SET
-			TEXT = ?,
-			CHANGED_BY_PLAYER_ID = ?
+			TEXT = ?
 		WHERE ID = ?
 	`
-	return Execute(sqlString, text, playerId, id)
+	return Execute(sqlString, text, id)
 }
 
 func DeleteCard(id uuid.UUID) error {

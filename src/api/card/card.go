@@ -125,7 +125,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = database.CreateCard(playerId, deckId, cardType, text)
+	_, err = database.CreateCard(deckId, cardType, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -188,7 +188,7 @@ func SetType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardType(playerId, id, cardType)
+	err = database.SetCardType(id, cardType)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -261,7 +261,7 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardText(playerId, id, text)
+	err = database.SetCardText(id, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

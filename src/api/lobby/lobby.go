@@ -310,7 +310,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := database.CreateLobby(playerId, name, password)
+	id, err := database.CreateLobby(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -389,7 +389,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetLobbyName(playerId, id, name)
+	err = database.SetLobbyName(id, name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -447,7 +447,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = database.SetLobbyPassword(playerId, id, password)
+	err = database.SetLobbyPassword(id, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
