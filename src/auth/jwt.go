@@ -10,7 +10,7 @@ import (
 
 const claimKey string = "value"
 
-var jwtSecret []byte = []byte(os.Getenv("GFB_JWT_SECRET"))
+var jwtSecret []byte = []byte(os.Getenv("CARD_JUDGE_JWT_SECRET"))
 
 func getValueTokenString(value string) (tokenString string, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
