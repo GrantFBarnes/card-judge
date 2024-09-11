@@ -149,7 +149,7 @@
             placeholder="Search..."
             autocomplete="off"
             hx-post="/api/card/search"
-            hx-trigger="input changed delay:500ms, search"
+            hx-trigger="load, input changed delay:500ms, search"
             hx-target="#card-table-rows"
           />
         </form>
@@ -158,10 +158,6 @@
       <th></th>
     </tr>
   </thead>
-  <tbody
-    id="card-table-rows"
-    hx-post="/api/card/search"
-    hx-trigger="load"
-  ></tbody>
+  <tbody id="card-table-rows"></tbody>
 </table>
 {{end}} {{end}}

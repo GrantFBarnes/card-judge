@@ -97,7 +97,7 @@
           placeholder="Search..."
           autocomplete="off"
           hx-post="/api/lobby/search"
-          hx-trigger="input changed delay:500ms, search"
+          hx-trigger="load, input changed delay:500ms, search"
           hx-target="#lobby-table-rows"
         />
       </th>
@@ -105,10 +105,6 @@
       <th>Users</th>
     </tr>
   </thead>
-  <tbody
-    id="lobby-table-rows"
-    hx-post="/api/lobby/search"
-    hx-trigger="load"
-  ></tbody>
+  <tbody id="lobby-table-rows"></tbody>
 </table>
 {{end}} {{end}}
