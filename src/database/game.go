@@ -207,13 +207,13 @@ func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
 	return data, nil
 }
 
-type lobbyPlayerWins struct {
+type lobbyGameStats struct {
 	PlayerId   uuid.UUID
 	PlayerName string
 	Wins       int
 }
 
-func GetLobbyPlayerWins(lobbyId uuid.UUID) ([]lobbyPlayerWins, error) {
+func GetLobbyGameStats(lobbyId uuid.UUID) ([]lobbyGameStats, error) {
 	sqlString := `
 		SELECT
 			LP.PLAYER_ID,
@@ -231,16 +231,16 @@ func GetLobbyPlayerWins(lobbyId uuid.UUID) ([]lobbyPlayerWins, error) {
 		return nil, err
 	}
 
-	result := make([]lobbyPlayerWins, 0)
+	result := make([]lobbyGameStats, 0)
 	for rows.Next() {
-		var lpw lobbyPlayerWins
+		var stats lobbyGameStats
 		if err := rows.Scan(
-			&lpw.PlayerId,
-			&lpw.PlayerName,
-			&lpw.Wins); err != nil {
+			&stats.PlayerId,
+			&stats.PlayerName,
+			&stats.Wins); err != nil {
 			continue
 		}
-		result = append(result, lpw)
+		result = append(result, stats)
 	}
 	return result, nil
 }

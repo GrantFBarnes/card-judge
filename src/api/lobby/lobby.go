@@ -38,7 +38,7 @@ func GetGameInfo(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "game-info", data)
 }
 
-func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
+func GetGameStats(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
@@ -47,7 +47,7 @@ func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wins, err := database.GetLobbyPlayerWins(id)
+	stats, err := database.GetLobbyGameStats(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -55,7 +55,7 @@ func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-wins.html",
+		"templates/components/game/game-stats.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -63,7 +63,7 @@ func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "lobby-wins", wins)
+	tmpl.ExecuteTemplate(w, "game-stats", stats)
 }
 
 func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
