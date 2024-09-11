@@ -154,14 +154,14 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 }
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyid, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		Lobbies(w, r)
 		return
 	}
 
-	lobby, err := database.GetLobby(id)
+	lobby, err := database.GetLobby(lobbyid)
 	if err != nil {
 		Lobbies(w, r)
 		return
@@ -232,14 +232,14 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	deckIdString := r.PathValue("deckId")
+	deckId, err := uuid.Parse(deckIdString)
 	if err != nil {
 		Decks(w, r)
 		return
 	}
 
-	deck, err := database.GetDeck(id)
+	deck, err := database.GetDeck(deckId)
 	if err != nil {
 		Decks(w, r)
 		return
@@ -250,7 +250,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.GetCardsInDeck(id, "%")
+	cards, err := database.GetCardsInDeck(deckId, "%")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get cards in deck"))

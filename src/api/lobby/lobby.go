@@ -11,15 +11,15 @@ import (
 )
 
 func GetGameInfo(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
-	data, err := database.GetLobbyGameInfo(id)
+	data, err := database.GetLobbyGameInfo(lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -43,7 +43,7 @@ func GetGameUser(w http.ResponseWriter, r *http.Request) {
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
@@ -51,7 +51,7 @@ func GetGameUser(w http.ResponseWriter, r *http.Request) {
 	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get user id from path."))
 		return
 	}
 
@@ -75,15 +75,15 @@ func GetGameUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetGameStats(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
-	stats, err := database.GetLobbyGameStats(id)
+	stats, err := database.GetLobbyGameStats(lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -107,7 +107,7 @@ func DrawUserHand(w http.ResponseWriter, r *http.Request) {
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
@@ -115,7 +115,7 @@ func DrawUserHand(w http.ResponseWriter, r *http.Request) {
 	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get user id from path."))
 		return
 	}
 
@@ -143,7 +143,7 @@ func DiscardUserHand(w http.ResponseWriter, r *http.Request) {
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
@@ -151,7 +151,7 @@ func DiscardUserHand(w http.ResponseWriter, r *http.Request) {
 	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get user id from path."))
 		return
 	}
 
@@ -179,7 +179,7 @@ func DiscardUserCard(w http.ResponseWriter, r *http.Request) {
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
@@ -187,7 +187,7 @@ func DiscardUserCard(w http.ResponseWriter, r *http.Request) {
 	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get user id from path."))
 		return
 	}
 
@@ -195,7 +195,7 @@ func DiscardUserCard(w http.ResponseWriter, r *http.Request) {
 	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
@@ -349,11 +349,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetName(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
@@ -364,7 +364,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.HasLobbyAccess(userId, id) {
+	if !database.HasLobbyAccess(userId, lobbyId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
@@ -402,7 +402,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetLobbyName(id, name)
+	err = database.SetLobbyName(lobbyId, name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -414,11 +414,11 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetPassword(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
@@ -429,7 +429,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.HasLobbyAccess(userId, id) {
+	if !database.HasLobbyAccess(userId, lobbyId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
@@ -460,7 +460,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = database.SetLobbyPassword(id, password)
+	err = database.SetLobbyPassword(lobbyId, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

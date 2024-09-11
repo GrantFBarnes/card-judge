@@ -122,11 +122,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetCardType(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
@@ -165,7 +165,7 @@ func SetCardType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardType(id, cardTypeName)
+	err = database.SetCardType(cardId, cardTypeName)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -177,11 +177,11 @@ func SetCardType(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetText(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
@@ -238,7 +238,7 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardText(id, text)
+	err = database.SetCardText(cardId, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -250,11 +250,11 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
@@ -265,7 +265,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	card, err := database.GetCard(id)
+	card, err := database.GetCard(cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get card."))
@@ -278,7 +278,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.DeleteCard(id)
+	err = database.DeleteCard(cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

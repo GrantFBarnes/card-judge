@@ -10,15 +10,15 @@ import (
 )
 
 func Lobby(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get lobby id from path."))
 		return
 	}
 
-	lobbyPasswordHash, err := database.GetLobbyPasswordHash(id)
+	lobbyPasswordHash, err := database.GetLobbyPasswordHash(lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -54,7 +54,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddUserLobbyAccess(userId, id)
+	err = database.AddUserLobbyAccess(userId, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
@@ -66,15 +66,15 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
-	idString := r.PathValue("id")
-	id, err := uuid.Parse(idString)
+	deckIdString := r.PathValue("deckId")
+	deckId, err := uuid.Parse(deckIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get id from path."))
+		w.Write([]byte("Failed to get deck id from path."))
 		return
 	}
 
-	deckPasswordHash, err := database.GetDeckPasswordHash(id)
+	deckPasswordHash, err := database.GetDeckPasswordHash(deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -110,7 +110,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddUserDeckAccess(userId, id)
+	err = database.AddUserDeckAccess(userId, deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
