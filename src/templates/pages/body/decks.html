@@ -79,8 +79,10 @@
       <th>Cards</th>
     </tr>
   </thead>
-  <tbody id="deck-table-rows">
-    {{template "deck-table-rows" .Decks}}
-  </tbody>
+  <tbody
+    id="deck-table-rows"
+    hx-post="/api/deck/search"
+    hx-trigger="load"
+  ></tbody>
 </table>
 {{end}} {{end}}

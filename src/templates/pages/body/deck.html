@@ -158,8 +158,10 @@
       <th></th>
     </tr>
   </thead>
-  <tbody id="card-table-rows">
-    {{template "card-table-rows" .Cards}}
-  </tbody>
+  <tbody
+    id="card-table-rows"
+    hx-post="/api/card/search"
+    hx-trigger="load"
+  ></tbody>
 </table>
 {{end}} {{end}}

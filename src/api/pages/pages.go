@@ -97,7 +97,6 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/lobby-table-rows.html",
 		"templates/pages/base.html",
 		"templates/pages/body/lobbies.html",
 	)
@@ -237,7 +236,6 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	basePageData.PageTitle = "Card Judge - Decks"
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/deck-table-rows.html",
 		"templates/pages/base.html",
 		"templates/pages/body/decks.html",
 	)
@@ -293,7 +291,6 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/card-table-rows.html",
 		"templates/pages/base.html",
 		"templates/pages/body/deck.html",
 	)

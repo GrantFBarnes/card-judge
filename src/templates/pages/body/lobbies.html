@@ -105,8 +105,10 @@
       <th>Users</th>
     </tr>
   </thead>
-  <tbody id="lobby-table-rows">
-    {{template "lobby-table-rows" .Lobbies}}
-  </tbody>
+  <tbody
+    id="lobby-table-rows"
+    hx-post="/api/lobby/search"
+    hx-trigger="load"
+  ></tbody>
 </table>
 {{end}} {{end}}
