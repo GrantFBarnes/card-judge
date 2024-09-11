@@ -12,7 +12,6 @@ func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
 		SELECT
 			L.ID,
 			L.NAME,
-			L.JUDGE_USER_ID,
 			COUNT(DP.CARD_ID) AS CARD_COUNT
 		FROM LOBBY AS L
 			INNER JOIN DRAW_PILE AS DP ON DP.LOBBY_ID = L.ID
@@ -28,7 +27,6 @@ func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
 		if err := rows.Scan(
 			&data.Id,
 			&data.Name,
-			&data.JudgeUserId,
 			&data.CardCount); err != nil {
 			return data, err
 		}
