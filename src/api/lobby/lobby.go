@@ -38,6 +38,42 @@ func GetGameInfo(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "game-info", data)
 }
 
+func GetGamePlayer(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	gamePlayerData, err := database.GetLobbyGamePlayer(lobbyId, playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/game-player.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
+}
+
 func GetGameStats(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
@@ -83,7 +119,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.DrawLobbyPlayerHand(lobbyId, playerId)
+	gamePlayerData, err := database.DrawLobbyPlayerHand(lobbyId, playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -91,7 +127,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-cards.html",
+		"templates/components/game/game-player.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -99,17 +135,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		Cards    []database.Card
-		LobbyId  uuid.UUID
-		PlayerId uuid.UUID
-	}
-
-	tmpl.ExecuteTemplate(w, "player-cards", data{
-		Cards:    cards,
-		LobbyId:  lobbyId,
-		PlayerId: playerId,
-	})
+	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
 }
 
 func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +155,7 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.DiscardLobbyPlayerHand(lobbyId, playerId)
+	gamePlayerData, err := database.DiscardLobbyPlayerHand(lobbyId, playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -137,7 +163,7 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-cards.html",
+		"templates/components/game/game-player.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -145,17 +171,7 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		Cards    []database.Card
-		LobbyId  uuid.UUID
-		PlayerId uuid.UUID
-	}
-
-	tmpl.ExecuteTemplate(w, "player-cards", data{
-		Cards:    cards,
-		LobbyId:  lobbyId,
-		PlayerId: playerId,
-	})
+	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
 }
 
 func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -183,7 +199,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.DiscardLobbyPlayerCard(lobbyId, playerId, cardId)
+	gamePlayerData, err := database.DiscardLobbyPlayerCard(lobbyId, playerId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -191,7 +207,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-cards.html",
+		"templates/components/game/game-player.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -199,17 +215,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		Cards    []database.Card
-		LobbyId  uuid.UUID
-		PlayerId uuid.UUID
-	}
-
-	tmpl.ExecuteTemplate(w, "player-cards", data{
-		Cards:    cards,
-		LobbyId:  lobbyId,
-		PlayerId: playerId,
-	})
+	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {

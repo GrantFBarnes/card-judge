@@ -26,31 +26,17 @@
     hx-get="/api/lobby/{{.Lobby.Id}}/game-info"
     hx-trigger="load delay:1s, every 30s"
   ></div>
-  <div id="lobby-left-side">
-    <h4>Player Hand</h4>
-    <button
-      hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/draw"
-      hx-target="#player-cards"
-    >
-      Draw
-    </button>
-    <button
-      style="float: right"
-      hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/discard"
-      hx-target="#player-cards"
-      hx-confirm="Are you sure you want to discard your hand?"
-    >
-      Discard All
-    </button>
-    <div id="player-cards"></div>
-  </div>
+  <div
+    id="lobby-left-side"
+    hx-get="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/game-player"
+    hx-trigger="load delay:1s"
+  ></div>
   <div id="lobby-middle">Board</div>
-  <div id="lobby-right-side">
-    <div
-      hx-get="/api/lobby/{{.Lobby.Id}}/game-stats"
-      hx-trigger="load delay:3s, every 30s"
-    ></div>
-  </div>
+  <div
+    id="lobby-right-side"
+    hx-get="/api/lobby/{{.Lobby.Id}}/game-stats"
+    hx-trigger="load delay:1s, every 30s"
+  ></div>
   <div id="lobby-footer">
     <div id="lobby-chat-messages"></div>
     <form id="lobby-chat-form">

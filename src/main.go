@@ -55,6 +55,7 @@ func main() {
 	// lobby
 	http.Handle("GET /api/lobby/{id}/game-info", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameInfo)))
 	http.Handle("GET /api/lobby/{id}/game-stats", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameStats)))
+	http.Handle("GET /api/lobby/{lobbyId}/player/{playerId}/game-player", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGamePlayer)))
 	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawPlayerHand)))
 	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/discard", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardPlayerHand)))
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))

@@ -2,15 +2,123 @@ package database
 
 import "github.com/google/uuid"
 
-func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
+type LobbyGameInfo struct {
+	Lobby
+	CardCount int
+}
+
+func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
+	sqlString := `
+		SELECT
+			L.ID,
+			L.NAME,
+			L.JUDGE_PLAYER_ID,
+			COUNT(LC.CARD_ID) AS CARD_COUNT
+		FROM LOBBY AS L
+			INNER JOIN LOBBY_CARD AS LC ON LC.LOBBY_ID = L.ID
+		WHERE L.ID = ?
+		GROUP BY L.ID
+	`
+	rows, err := Query(sqlString, lobbyId)
+	if err != nil {
+		return data, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&data.Id,
+			&data.Name,
+			&data.JudgePlayerId,
+			&data.CardCount); err != nil {
+			return data, err
+		}
+	}
+
+	return data, nil
+}
+
+type lobbyGamePlayer struct {
+	Lobby        Lobby
+	Player       Player
+	Cards        []Card
+	MaxCardCount int
+	CardCount    int
+}
+
+func GetLobbyGamePlayer(lobbyId uuid.UUID, playerId uuid.UUID) (data lobbyGamePlayer, err error) {
+	data.Lobby, err = GetLobby(lobbyId)
+	if err != nil {
+		return data, err
+	}
+
+	data.Player, err = GetPlayer(playerId)
+	if err != nil {
+		return data, err
+	}
+
 	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
+	if err != nil {
+		return data, err
+	}
+
+	data.Cards, err = getLobbyPlayerHand(lobbyPlayerId)
+	if err != nil {
+		return data, err
+	}
+
+	data.MaxCardCount = 8
+	data.CardCount = len(data.Cards)
+
+	return data, nil
+}
+
+type lobbyGameStats struct {
+	PlayerId   uuid.UUID
+	PlayerName string
+	Wins       int
+}
+
+func GetLobbyGameStats(lobbyId uuid.UUID) ([]lobbyGameStats, error) {
+	sqlString := `
+		SELECT
+			LP.PLAYER_ID,
+			P.NAME AS PLAYER_NAME,
+			COUNT(LR.ID) AS WINS
+		FROM LOBBY_PLAYER AS LP
+			LEFT JOIN LOBBY_RESULT AS LR ON LR.LOBBY_PLAYER_ID = LP.ID
+			INNER JOIN PLAYER AS P ON P.ID = LP.PLAYER_ID
+		WHERE LP.LOBBY_ID = ?
+		GROUP BY LP.PLAYER_ID
+		ORDER BY COUNT(LR.ID) DESC, P.NAME ASC
+	`
+	rows, err := Query(sqlString, lobbyId)
 	if err != nil {
 		return nil, err
 	}
 
+	result := make([]lobbyGameStats, 0)
+	for rows.Next() {
+		var stats lobbyGameStats
+		if err := rows.Scan(
+			&stats.PlayerId,
+			&stats.PlayerName,
+			&stats.Wins); err != nil {
+			continue
+		}
+		result = append(result, stats)
+	}
+	return result, nil
+}
+
+func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) (data lobbyGamePlayer, err error) {
+	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
+	if err != nil {
+		return data, err
+	}
+
 	handCount, err := getLobbyPlayerHandCount(lobbyPlayerId)
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 
 	cardsToDraw := 8 - handCount
@@ -38,22 +146,22 @@ func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) 
 		`
 		err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId, lobbyId, cardsToDraw)
 		if err != nil {
-			return nil, err
+			return data, err
 		}
 
 		err = removePlayerHandFromLobbyCards()
 		if err != nil {
-			return nil, err
+			return data, err
 		}
 	}
 
-	return getLobbyPlayerHand(lobbyPlayerId)
+	return GetLobbyGamePlayer(lobbyId, playerId)
 }
 
-func DiscardLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
+func DiscardLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) (data lobbyGamePlayer, err error) {
 	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 
 	sqlString := `
@@ -64,16 +172,16 @@ func DiscardLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, erro
 	`
 	err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId)
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 
-	return getLobbyPlayerHand(lobbyPlayerId)
+	return GetLobbyGamePlayer(lobbyId, playerId)
 }
 
-func DiscardLobbyPlayerCard(lobbyId uuid.UUID, playerId uuid.UUID, cardId uuid.UUID) ([]Card, error) {
+func DiscardLobbyPlayerCard(lobbyId uuid.UUID, playerId uuid.UUID, cardId uuid.UUID) (data lobbyGamePlayer, err error) {
 	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 
 	sqlString := `
@@ -85,10 +193,10 @@ func DiscardLobbyPlayerCard(lobbyId uuid.UUID, playerId uuid.UUID, cardId uuid.U
 	`
 	err = Execute(sqlString, lobbyPlayerId, lobbyId, playerId, cardId)
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 
-	return getLobbyPlayerHand(lobbyPlayerId)
+	return GetLobbyGamePlayer(lobbyId, playerId)
 }
 
 func getLobbyPlayerId(lobbyId uuid.UUID, playerId uuid.UUID) (lobbyPlayerId uuid.UUID, err error) {
@@ -168,79 +276,6 @@ func getLobbyPlayerHand(lobbyPlayerId uuid.UUID) ([]Card, error) {
 			continue
 		}
 		result = append(result, card)
-	}
-	return result, nil
-}
-
-type LobbyGameInfo struct {
-	Lobby
-	CardCount int
-}
-
-func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
-	sqlString := `
-		SELECT
-			L.ID,
-			L.NAME,
-			L.JUDGE_PLAYER_ID,
-			COUNT(LC.CARD_ID) AS CARD_COUNT
-		FROM LOBBY AS L
-			INNER JOIN LOBBY_CARD AS LC ON LC.LOBBY_ID = L.ID
-		WHERE L.ID = ?
-		GROUP BY L.ID
-	`
-	rows, err := Query(sqlString, lobbyId)
-	if err != nil {
-		return data, err
-	}
-
-	for rows.Next() {
-		if err := rows.Scan(
-			&data.Id,
-			&data.Name,
-			&data.JudgePlayerId,
-			&data.CardCount); err != nil {
-			return data, err
-		}
-	}
-
-	return data, nil
-}
-
-type lobbyGameStats struct {
-	PlayerId   uuid.UUID
-	PlayerName string
-	Wins       int
-}
-
-func GetLobbyGameStats(lobbyId uuid.UUID) ([]lobbyGameStats, error) {
-	sqlString := `
-		SELECT
-			LP.PLAYER_ID,
-			P.NAME AS PLAYER_NAME,
-			COUNT(LR.ID) AS WINS
-		FROM LOBBY_PLAYER AS LP
-			LEFT JOIN LOBBY_RESULT AS LR ON LR.LOBBY_PLAYER_ID = LP.ID
-			INNER JOIN PLAYER AS P ON P.ID = LP.PLAYER_ID
-		WHERE LP.LOBBY_ID = ?
-		GROUP BY LP.PLAYER_ID
-		ORDER BY COUNT(LR.ID) DESC, P.NAME ASC
-	`
-	rows, err := Query(sqlString, lobbyId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]lobbyGameStats, 0)
-	for rows.Next() {
-		var stats lobbyGameStats
-		if err := rows.Scan(
-			&stats.PlayerId,
-			&stats.PlayerName,
-			&stats.Wins); err != nil {
-			continue
-		}
-		result = append(result, stats)
 	}
 	return result, nil
 }

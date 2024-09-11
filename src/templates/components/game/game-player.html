@@ -1,0 +1,62 @@
+{{define "game-player"}}
+<div id="game-player">
+  <h3>Player Hand</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          {{if lt .CardCount .MaxCardCount}}
+          <button
+            hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/draw"
+            hx-target="#game-player"
+          >
+            Draw
+          </button>
+          {{end}}
+        </th>
+        <th>
+          {{if gt .CardCount 0}}
+          <button
+            hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/discard"
+            hx-target="#game-player"
+            hx-confirm="Are you sure you want to discard your hand?"
+          >
+            Discard All
+          </button>
+          {{end}}
+        </th>
+      </tr>
+      <tr>
+        <th>Card</th>
+        <th>Discard</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Cards}}
+      <tr>
+        <td>
+          <span
+            class="clickable"
+            hx-post="/api/lobby/{{$.Lobby.Id}}/player/{{$.Player.Id}}/card/{{.Id}}/play"
+            hx-confirm="Are you sure you want to play this card?"
+          >
+            {{.Text}}
+          </span>
+        </td>
+        <td style="text-align: center">
+          <span
+            title="Discard"
+            class="clickable"
+            hx-delete="/api/lobby/{{$.Lobby.Id}}/player/{{$.Player.Id}}/card/{{.Id}}"
+            hx-target="#game-player"
+            hx-confirm="Are you sure you want to discard this card?"
+          >
+            &#9940;
+          </span>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}
