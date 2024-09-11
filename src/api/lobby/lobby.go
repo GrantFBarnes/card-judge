@@ -38,7 +38,7 @@ func GetGameInfo(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "game-info", data)
 }
 
-func GetGamePlayer(w http.ResponseWriter, r *http.Request) {
+func GetGameUser(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -47,15 +47,15 @@ func GetGamePlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerIdString := r.PathValue("playerId")
-	playerId, err := uuid.Parse(playerIdString)
+	userIdString := r.PathValue("userId")
+	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
-	gamePlayerData, err := database.GetLobbyGamePlayer(lobbyId, playerId)
+	gameUserData, err := database.GetLobbyGameUser(lobbyId, userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -63,7 +63,7 @@ func GetGamePlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-player.html",
+		"templates/components/game/game-user.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -71,7 +71,7 @@ func GetGamePlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
+	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
 }
 
 func GetGameStats(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +102,7 @@ func GetGameStats(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "game-stats", stats)
 }
 
-func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
+func DrawUserHand(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -111,15 +111,15 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerIdString := r.PathValue("playerId")
-	playerId, err := uuid.Parse(playerIdString)
+	userIdString := r.PathValue("userId")
+	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
-	gamePlayerData, err := database.DrawLobbyPlayerHand(lobbyId, playerId)
+	gameUserData, err := database.DrawLobbyUserHand(lobbyId, userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -127,7 +127,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-player.html",
+		"templates/components/game/game-user.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -135,10 +135,10 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
+	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
 }
 
-func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
+func DiscardUserHand(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -147,15 +147,15 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerIdString := r.PathValue("playerId")
-	playerId, err := uuid.Parse(playerIdString)
+	userIdString := r.PathValue("userId")
+	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get id from path."))
 		return
 	}
 
-	gamePlayerData, err := database.DiscardLobbyPlayerHand(lobbyId, playerId)
+	gameUserData, err := database.DiscardLobbyUserHand(lobbyId, userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -163,7 +163,7 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-player.html",
+		"templates/components/game/game-user.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -171,10 +171,10 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
+	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
 }
 
-func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
+func DiscardUserCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -183,8 +183,8 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerIdString := r.PathValue("playerId")
-	playerId, err := uuid.Parse(playerIdString)
+	userIdString := r.PathValue("userId")
+	userId, err := uuid.Parse(userIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get id from path."))
@@ -199,7 +199,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gamePlayerData, err := database.DiscardLobbyPlayerCard(lobbyId, playerId, cardId)
+	gameUserData, err := database.DiscardLobbyUserCard(lobbyId, userId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -207,7 +207,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-player.html",
+		"templates/components/game/game-user.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -215,7 +215,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "game-player", gamePlayerData)
+	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
@@ -304,10 +304,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
@@ -337,7 +337,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddPlayerLobbyAccess(playerId, id)
+	err = database.AddUserLobbyAccess(userId, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -357,16 +357,16 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
-	if !database.HasLobbyAccess(playerId, id) {
+	if !database.HasLobbyAccess(userId, id) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -422,16 +422,16 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
-	if !database.HasLobbyAccess(playerId, id) {
+	if !database.HasLobbyAccess(userId, id) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 

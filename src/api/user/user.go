@@ -1,4 +1,4 @@
-package apiPlayer
+package apiUser
 
 import (
 	"net/http"
@@ -27,7 +27,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	search = "%" + search + "%"
 
-	players, err := database.GetPlayers(search)
+	users, err := database.GetUsers(search)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -35,7 +35,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/player-table-rows.html",
+		"templates/components/table-rows/user-table-rows.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -43,7 +43,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "player-table-rows", players)
+	tmpl.ExecuteTemplate(w, "user-table-rows", users)
 }
 
 func Create(w http.ResponseWriter, r *http.Request) {
@@ -85,26 +85,26 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingPlayerId, err := database.GetPlayerId(name)
+	existingUserId, err := database.GetUserId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingPlayerId != uuid.Nil {
+	if existingUserId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Player name already exists."))
+		w.Write([]byte("User name already exists."))
 		return
 	}
 
-	id, err := database.CreatePlayer(name, password)
+	id, err := database.CreateUser(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = auth.SetCookiePlayerId(w, id)
+	err = auth.SetCookieUserId(w, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -150,19 +150,19 @@ func CreateDefault(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingPlayerId, err := database.GetPlayerId(name)
+	existingUserId, err := database.GetUserId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingPlayerId != uuid.Nil {
+	if existingUserId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Player name already exists."))
+		w.Write([]byte("User name already exists."))
 		return
 	}
 
-	_, err = database.CreatePlayer(name, password)
+	_, err = database.CreateUser(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -203,19 +203,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId, err := database.GetPlayerId(name)
+	userId, err := database.GetUserId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if playerId == uuid.Nil {
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Player name does not exist."))
+		w.Write([]byte("User name does not exist."))
 		return
 	}
 
-	passwordHash, err := database.GetPlayerPasswordHash(playerId)
+	passwordHash, err := database.GetUserPasswordHash(userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -228,7 +228,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.SetCookiePlayerId(w, playerId)
+	err = auth.SetCookieUserId(w, userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -240,7 +240,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	auth.RemoveCookiePlayerId(w)
+	auth.RemoveCookieUserId(w)
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
 }
@@ -254,9 +254,9 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isCurrentPlayer(r, id) {
+	if !isCurrentUser(r, id) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -280,19 +280,19 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingPlayerId, err := database.GetPlayerId(name)
+	existingUserId, err := database.GetUserId(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingPlayerId != uuid.Nil {
+	if existingUserId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Player name already exists."))
+		w.Write([]byte("User name already exists."))
 		return
 	}
 
-	err = database.SetPlayerName(id, name)
+	err = database.SetUserName(id, name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -312,9 +312,9 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isCurrentPlayer(r, id) {
+	if !isCurrentUser(r, id) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -347,7 +347,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetPlayerPassword(id, password)
+	err = database.SetUserPassword(id, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -369,11 +369,11 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	if !isAdmin(r) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
-	err = database.SetPlayerPassword(id, "password")
+	err = database.SetUserPassword(id, "password")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -393,9 +393,9 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isCurrentPlayer(r, id) {
+	if !isCurrentUser(r, id) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -419,7 +419,7 @@ func SetColorTheme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetPlayerColorTheme(id, colorTheme)
+	err = database.SetUserColorTheme(id, colorTheme)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -441,7 +441,7 @@ func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
 
 	if !isAdmin(r) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -459,7 +459,7 @@ func SetIsAdmin(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = database.SetPlayerIsAdmin(id, isAdmin)
+	err = database.SetUserIsAdmin(id, isAdmin)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -479,39 +479,39 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isCurrentPlayer := isCurrentPlayer(r, id)
-	if !isCurrentPlayer && !isAdmin(r) {
+	isCurrentUser := isCurrentUser(r, id)
+	if !isCurrentUser && !isAdmin(r) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
-	err = database.DeletePlayer(id)
+	err = database.DeleteUser(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	if isCurrentPlayer {
-		auth.RemoveCookiePlayerId(w)
+	if isCurrentUser {
+		auth.RemoveCookieUserId(w)
 	}
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
 }
 
-func isCurrentPlayer(r *http.Request, checkId uuid.UUID) bool {
-	playerId := api.GetPlayerId(r)
-	return playerId == checkId
+func isCurrentUser(r *http.Request, checkId uuid.UUID) bool {
+	userId := api.GetUserId(r)
+	return userId == checkId
 }
 
 func isAdmin(r *http.Request) bool {
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		return false
 	}
 
-	isAdmin, _ := database.GetPlayerIsAdmin(playerId)
+	isAdmin, _ := database.GetUserIsAdmin(userId)
 	return isAdmin
 }

@@ -85,10 +85,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
@@ -104,9 +104,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.HasDeckAccess(playerId, deckId) {
+	if !database.HasDeckAccess(userId, deckId) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -152,16 +152,16 @@ func SetCardType(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
-	if !database.HasDeckAccess(playerId, deckId) {
+	if !database.HasDeckAccess(userId, deckId) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -213,16 +213,16 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
-	if !database.HasDeckAccess(playerId, deckId) {
+	if !database.HasDeckAccess(userId, deckId) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -258,10 +258,10 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
@@ -272,9 +272,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.HasDeckAccess(playerId, card.DeckId) {
+	if !database.HasDeckAccess(userId, card.DeckId) {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Player does not have access."))
+		w.Write([]byte("User does not have access."))
 		return
 	}
 

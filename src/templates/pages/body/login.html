@@ -1,24 +1,24 @@
 {{define "body"}}
-<form hx-post="/api/player/login" hx-target="find .htmx-result">
-  <h3>Player Login</h3>
-  <label for="playerName">Name:</label>
+<form hx-post="/api/user/login" hx-target="find .htmx-result">
+  <h3>User Login</h3>
+  <label for="userName">Name:</label>
   <input
     type="text"
-    id="playerName"
+    id="userName"
     name="name"
     maxlength="255"
-    placeholder="Enter Player Name"
+    placeholder="Enter User Name"
     required="true"
     autocomplete="username"
   />
   <br />
-  <label for="playerPassword">Password:</label>
+  <label for="userPassword">Password:</label>
   <input
     type="password"
-    id="playerPassword"
+    id="userPassword"
     name="password"
     maxlength="255"
-    placeholder="Enter Player Password"
+    placeholder="Enter User Password"
     required="true"
     autocomplete="current-password"
   />
@@ -29,45 +29,45 @@
 </form>
 <br />
 <details>
-  <summary>Create a New Player</summary>
+  <summary>Create a New User</summary>
   <br />
-  <form hx-post="/api/player/create" hx-target="find .htmx-result">
-    <label for="createPlayerName">Name:</label>
+  <form hx-post="/api/user/create" hx-target="find .htmx-result">
+    <label for="createUserName">Name:</label>
     <input
       type="text"
-      id="createPlayerName"
+      id="createUserName"
       name="name"
       maxlength="255"
-      placeholder="Enter Player Name"
+      placeholder="Enter User Name"
       required="true"
       autocomplete="username"
     />
     <br />
-    <label for="createPlayerPassword">Password:</label>
+    <label for="createUserPassword">Password:</label>
     <input
       type="password"
-      id="createPlayerPassword"
+      id="createUserPassword"
       name="password"
       maxlength="255"
-      placeholder="Enter Player Password"
+      placeholder="Enter User Password"
       required="true"
       autocomplete="new-password"
     />
     <br />
-    <label for="createPlayerPasswordConfirm">Confirm Password:</label>
+    <label for="createUserPasswordConfirm">Confirm Password:</label>
     <input
       type="password"
-      id="createPlayerPasswordConfirm"
+      id="createUserPasswordConfirm"
       name="passwordConfirm"
       maxlength="255"
-      placeholder="Confirm Player Password"
+      placeholder="Confirm User Password"
       required="true"
       autocomplete="new-password"
     />
     <br />
     <br />
     <div class="htmx-result"></div>
-    <input type="submit" value="Create Player" />
+    <input type="submit" value="Create User" />
   </form>
 </details>
 {{end}}

@@ -1,14 +1,14 @@
-{{define "game-player"}}
-<div id="game-player">
-  <h3>Player Hand</h3>
+{{define "game-user"}}
+<div id="game-user">
+  <h3>User Hand</h3>
   <table>
     <thead>
       <tr>
         <th>
           {{if lt .CardCount .MaxCardCount}}
           <button
-            hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/draw"
-            hx-target="#game-player"
+            hx-post="/api/lobby/{{.Lobby.Id}}/user/{{.User.Id}}/draw"
+            hx-target="#game-user"
           >
             Draw
           </button>
@@ -17,8 +17,8 @@
         <th>
           {{if gt .CardCount 0}}
           <button
-            hx-post="/api/lobby/{{.Lobby.Id}}/player/{{.Player.Id}}/discard"
-            hx-target="#game-player"
+            hx-post="/api/lobby/{{.Lobby.Id}}/user/{{.User.Id}}/discard"
+            hx-target="#game-user"
             hx-confirm="Are you sure you want to discard your hand?"
           >
             Discard All
@@ -37,7 +37,7 @@
         <td>
           <span
             class="clickable"
-            hx-post="/api/lobby/{{$.Lobby.Id}}/player/{{$.Player.Id}}/card/{{.Id}}/play"
+            hx-post="/api/lobby/{{$.Lobby.Id}}/user/{{$.User.Id}}/card/{{.Id}}/play"
             hx-confirm="Are you sure you want to play this card?"
           >
             {{.Text}}
@@ -47,8 +47,8 @@
           <span
             title="Discard"
             class="clickable"
-            hx-delete="/api/lobby/{{$.Lobby.Id}}/player/{{$.Player.Id}}/card/{{.Id}}"
-            hx-target="#game-player"
+            hx-delete="/api/lobby/{{$.Lobby.Id}}/user/{{$.User.Id}}/card/{{.Id}}"
+            hx-target="#game-user"
             hx-confirm="Are you sure you want to discard this card?"
           >
             &#9940;

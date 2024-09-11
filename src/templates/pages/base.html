@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="/static/css/colors.css" />
     <link rel="stylesheet" href="/static/css/global.css" />
   </head>
-  {{if .Player.ColorTheme.Valid}}
-  <body class="{{.Player.ColorTheme.String}}">
+  {{if .User.ColorTheme.Valid}}
+  <body class="{{.User.ColorTheme.String}}">
     {{else}}
     <body class="dark-theme">
       {{end}}
@@ -43,13 +43,13 @@
       </div>
       <div id="topbar-menu">
         {{if .LoggedIn}}
-        <div class="topbar-menu-item">Playing As: {{.Player.Name}}</div>
+        <div class="topbar-menu-item">Playing As: {{.User.Name}}</div>
         <div class="topbar-menu-link" onclick="location.href='/manage'">
           &#128295; Manage Account
         </div>
         <div
           class="topbar-menu-link"
-          hx-post="/api/player/logout"
+          hx-post="/api/user/logout"
           hx-confirm="Are you sure you want to logout?"
         >
           Logout
@@ -63,7 +63,7 @@
       <div id="content">
         <div id="body">{{template "body" .}}</div>
       </div>
-      {{if .Player.ColorTheme.Valid}}
+      {{if .User.ColorTheme.Valid}}
     </body>
     {{else}}
   </body>

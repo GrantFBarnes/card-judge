@@ -1,4 +1,4 @@
-{{define "player-table-rows"}} {{range .}}
+{{define "user-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
@@ -6,7 +6,7 @@
   <td>
     <select
       name="isAdmin"
-      hx-put="/api/player/{{.Id}}/is-admin"
+      hx-put="/api/user/{{.Id}}/is-admin"
       hx-trigger="change"
       hx-target="closest td"
       autocomplete="off"
@@ -24,8 +24,8 @@
     <span
       title="Reset Password"
       class="clickable"
-      hx-put="/api/player/{{.Id}}/password/reset"
-      hx-confirm="Are you sure you want to reset the password for Player {{.Name}}?"
+      hx-put="/api/user/{{.Id}}/password/reset"
+      hx-confirm="Are you sure you want to reset the password for User {{.Name}}?"
       hx-target="closest td"
     >
       &#8634;
@@ -35,8 +35,8 @@
     <span
       title="Delete"
       class="clickable"
-      hx-delete="/api/player/{{.Id}}"
-      hx-confirm="Are you sure you want to delete Player {{.Name}}?"
+      hx-delete="/api/user/{{.Id}}"
+      hx-confirm="Are you sure you want to delete User {{.Name}}?"
       hx-target="closest td"
     >
       &#128465;

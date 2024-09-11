@@ -79,10 +79,10 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 }
 
 func Admin(w http.ResponseWriter, r *http.Request) {
-	players, err := database.GetPlayers("%")
+	users, err := database.GetUsers("%")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get players"))
+		w.Write([]byte("failed to get users"))
 		return
 	}
 
@@ -90,7 +90,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	basePageData.PageTitle = "Card Judge - Admin"
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/player-table-rows.html",
+		"templates/components/table-rows/user-table-rows.html",
 		"templates/pages/base.html",
 		"templates/pages/body/admin.html",
 	)
@@ -102,12 +102,12 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		Players []database.Player
+		Users []database.User
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		Players:      players,
+		Users:        users,
 	})
 }
 
@@ -122,10 +122,10 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobbies"
 
-	decks, err := database.GetPlayerDecks(basePageData.Player.Id)
+	decks, err := database.GetUserDecks(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get player decks"))
+		w.Write([]byte("failed to get user decks"))
 		return
 	}
 
@@ -193,7 +193,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		HasAccess:    database.HasLobbyAccess(basePageData.Player.Id, lobby.Id),
+		HasAccess:    database.HasLobbyAccess(basePageData.User.Id, lobby.Id),
 		Lobby:        lobby,
 	})
 }
@@ -280,7 +280,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		HasAccess:    database.HasDeckAccess(basePageData.Player.Id, deck.Id),
+		HasAccess:    database.HasDeckAccess(basePageData.User.Id, deck.Id),
 		Deck:         deck,
 		Cards:        cards,
 	})

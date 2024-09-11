@@ -1,11 +1,11 @@
 {{define "body"}}
-<form hx-put="/api/player/{{.Player.Id}}/name" hx-target="find .htmx-result">
-  <h3>Set Player Name</h3>
-  <p>Current Name: {{.Player.Name}}</p>
-  <label for="setPlayerName">New Name:</label>
+<form hx-put="/api/user/{{.User.Id}}/name" hx-target="find .htmx-result">
+  <h3>Set User Name</h3>
+  <p>Current Name: {{.User.Name}}</p>
+  <label for="setUserName">New Name:</label>
   <input
     type="text"
-    id="setPlayerName"
+    id="setUserName"
     name="name"
     maxlength="255"
     placeholder="Enter Name"
@@ -15,17 +15,14 @@
   <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Set Player Name" />
+  <input type="submit" value="Set User Name" />
 </form>
-<form
-  hx-put="/api/player/{{.Player.Id}}/password"
-  hx-target="find .htmx-result"
->
-  <h3>Set Player Password</h3>
-  <label for="newPlayerPassword">New Password:</label>
+<form hx-put="/api/user/{{.User.Id}}/password" hx-target="find .htmx-result">
+  <h3>Set User Password</h3>
+  <label for="newUserPassword">New Password:</label>
   <input
     type="password"
-    id="newPlayerPassword"
+    id="newUserPassword"
     name="password"
     maxlength="255"
     placeholder="Enter Password"
@@ -33,10 +30,10 @@
     autocomplete="new-password"
   />
   <br />
-  <label for="newPlayerPasswordConfirm">Confirm New Password:</label>
+  <label for="newUserPasswordConfirm">Confirm New Password:</label>
   <input
     type="password"
-    id="newPlayerPasswordConfirm"
+    id="newUserPasswordConfirm"
     name="passwordConfirm"
     maxlength="255"
     placeholder="Enter Password"
@@ -46,21 +43,13 @@
   <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Set Player Password" />
+  <input type="submit" value="Set User Password" />
 </form>
-<form
-  hx-put="/api/player/{{.Player.Id}}/color-theme"
-  hx-target="find .htmx-result"
->
+<form hx-put="/api/user/{{.User.Id}}/color-theme" hx-target="find .htmx-result">
   <h3>Set Color Theme</h3>
-  <label for="setPlayerColorTheme">Color Theme:</label>
-  <select
-    id="setPlayerColorTheme"
-    name="colorTheme"
-    autocomplete="off"
-    required
-  >
-    {{if eq .Player.ColorTheme.String "light-theme"}}
+  <label for="setUserColorTheme">Color Theme:</label>
+  <select id="setUserColorTheme" name="colorTheme" autocomplete="off" required>
+    {{if eq .User.ColorTheme.String "light-theme"}}
     <option value="dark-theme">&#127762; Dark</option>
     <option value="light-theme" selected>&#127766; Light</option>
     {{else}}
@@ -78,10 +67,10 @@
   <summary>Danger Zone &#9940;</summary>
   <br />
   <button
-    hx-delete="/api/player/{{.Player.Id}}"
-    hx-confirm="Are you sure you want to delete your player account?"
+    hx-delete="/api/user/{{.User.Id}}"
+    hx-confirm="Are you sure you want to delete your user account?"
   >
-    Delete Player Account
+    Delete User Account
   </button>
 </details>
 {{end}}

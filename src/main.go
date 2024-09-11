@@ -10,7 +10,7 @@ import (
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
 	apiPages "github.com/grantfbarnes/card-judge/api/pages"
-	apiPlayer "github.com/grantfbarnes/card-judge/api/player"
+	apiUser "github.com/grantfbarnes/card-judge/api/user"
 	"github.com/grantfbarnes/card-judge/database"
 	"github.com/grantfbarnes/card-judge/websocket"
 )
@@ -39,30 +39,30 @@ func main() {
 	http.Handle("GET /decks", api.PageMiddleware(http.HandlerFunc(apiPages.Decks)))
 	http.Handle("GET /deck/{id}", api.PageMiddleware(http.HandlerFunc(apiPages.Deck)))
 
-	// player
-	http.Handle("POST /api/player/search", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Search)))
-	http.Handle("POST /api/player/create", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Create)))
-	http.Handle("POST /api/player/create/default", api.ApiMiddleware(http.HandlerFunc(apiPlayer.CreateDefault)))
-	http.Handle("POST /api/player/login", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Login)))
-	http.Handle("POST /api/player/logout", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Logout)))
-	http.Handle("PUT /api/player/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetName)))
-	http.Handle("PUT /api/player/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetPassword)))
-	http.Handle("PUT /api/player/{id}/password/reset", api.ApiMiddleware(http.HandlerFunc(apiPlayer.ResetPassword)))
-	http.Handle("PUT /api/player/{id}/color-theme", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetColorTheme)))
-	http.Handle("PUT /api/player/{id}/is-admin", api.ApiMiddleware(http.HandlerFunc(apiPlayer.SetIsAdmin)))
-	http.Handle("DELETE /api/player/{id}", api.ApiMiddleware(http.HandlerFunc(apiPlayer.Delete)))
+	// user
+	http.Handle("POST /api/user/search", api.ApiMiddleware(http.HandlerFunc(apiUser.Search)))
+	http.Handle("POST /api/user/create", api.ApiMiddleware(http.HandlerFunc(apiUser.Create)))
+	http.Handle("POST /api/user/create/default", api.ApiMiddleware(http.HandlerFunc(apiUser.CreateDefault)))
+	http.Handle("POST /api/user/login", api.ApiMiddleware(http.HandlerFunc(apiUser.Login)))
+	http.Handle("POST /api/user/logout", api.ApiMiddleware(http.HandlerFunc(apiUser.Logout)))
+	http.Handle("PUT /api/user/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiUser.SetName)))
+	http.Handle("PUT /api/user/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiUser.SetPassword)))
+	http.Handle("PUT /api/user/{id}/password/reset", api.ApiMiddleware(http.HandlerFunc(apiUser.ResetPassword)))
+	http.Handle("PUT /api/user/{id}/color-theme", api.ApiMiddleware(http.HandlerFunc(apiUser.SetColorTheme)))
+	http.Handle("PUT /api/user/{id}/is-admin", api.ApiMiddleware(http.HandlerFunc(apiUser.SetIsAdmin)))
+	http.Handle("DELETE /api/user/{id}", api.ApiMiddleware(http.HandlerFunc(apiUser.Delete)))
 
 	// lobby
 	http.Handle("GET /api/lobby/{id}/game-info", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameInfo)))
 	http.Handle("GET /api/lobby/{id}/game-stats", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameStats)))
-	http.Handle("GET /api/lobby/{lobbyId}/player/{playerId}/game-player", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGamePlayer)))
-	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawPlayerHand)))
-	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/discard", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardPlayerHand)))
+	http.Handle("GET /api/lobby/{lobbyId}/user/{userId}/game-user", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameUser)))
+	http.Handle("POST /api/lobby/{lobbyId}/user/{userId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawUserHand)))
+	http.Handle("POST /api/lobby/{lobbyId}/user/{userId}/discard", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardUserHand)))
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
 	http.Handle("PUT /api/lobby/{id}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
 	http.Handle("PUT /api/lobby/{id}/password", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetPassword)))
-	http.Handle("DELETE /api/lobby/{lobbyId}/player/{playerId}/card/{cardId}", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardPlayerCard)))
+	http.Handle("DELETE /api/lobby/{lobbyId}/user/{userId}/card/{cardId}", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardUserCard)))
 
 	// deck
 	http.Handle("POST /api/deck/search", api.ApiMiddleware(http.HandlerFunc(apiDeck.Search)))

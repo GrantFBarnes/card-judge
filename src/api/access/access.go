@@ -47,14 +47,14 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
-	err = database.AddPlayerLobbyAccess(playerId, id)
+	err = database.AddUserLobbyAccess(userId, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
@@ -103,14 +103,14 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerId := api.GetPlayerId(r)
-	if playerId == uuid.Nil {
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id."))
+		w.Write([]byte("Failed to get user id."))
 		return
 	}
 
-	err = database.AddPlayerDeckAccess(playerId, id)
+	err = database.AddUserDeckAccess(userId, id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to add access."))
