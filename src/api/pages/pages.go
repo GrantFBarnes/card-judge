@@ -24,13 +24,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		api.BasePageData
-	}
-
-	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-	})
+	tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -47,13 +41,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		api.BasePageData
-	}
-
-	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-	})
+	tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Manage(w http.ResponseWriter, r *http.Request) {
@@ -70,28 +58,14 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		api.BasePageData
-	}
-
-	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-	})
+	tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Admin(w http.ResponseWriter, r *http.Request) {
-	users, err := database.GetUsers("%")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get users"))
-		return
-	}
-
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Admin"
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/user-table-rows.html",
 		"templates/pages/base.html",
 		"templates/pages/body/admin.html",
 	)
@@ -101,15 +75,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		api.BasePageData
-		Users []database.User
-	}
-
-	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-		Users:        users,
-	})
+	tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {

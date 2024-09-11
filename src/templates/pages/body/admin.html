@@ -67,8 +67,10 @@
       <th>Delete</th>
     </tr>
   </thead>
-  <tbody id="user-table-rows">
-    {{template "user-table-rows" .Users}}
-  </tbody>
+  <tbody
+    id="user-table-rows"
+    hx-post="/api/user/search"
+    hx-trigger="load"
+  ></tbody>
 </table>
 {{end}}
