@@ -122,7 +122,7 @@ func DrawPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, er
 	cardsToDraw := 8 - handCount
 	if cardsToDraw > 0 {
 		sqlString := `
-			INSERT INTO PLAYER_CARD
+			INSERT INTO HAND
 				(
 					PLAYER_ID,
 					LOBBY_ID,
@@ -163,7 +163,7 @@ func DiscardPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser,
 	}
 
 	sqlString := `
-		DELETE FROM PLAYER_CARD
+		DELETE FROM HAND
 		WHERE PLAYER_ID = ?
 			AND LOBBY_ID = ?
 			AND USER_ID = ?
@@ -183,7 +183,7 @@ func DiscardPlayerCard(lobbyId uuid.UUID, userId uuid.UUID, cardId uuid.UUID) (d
 	}
 
 	sqlString := `
-		DELETE FROM PLAYER_CARD
+		DELETE FROM HAND
 		WHERE PLAYER_ID = ?
 			AND LOBBY_ID = ?
 			AND USER_ID = ?
@@ -224,7 +224,7 @@ func getPlayerHandCount(playerId uuid.UUID) (handCount int, err error) {
 	sqlString := `
 		SELECT
 			COUNT(CARD_ID)
-		FROM PLAYER_CARD
+		FROM HAND
 		WHERE PLAYER_ID = ?
 	`
 	rows, err := Query(sqlString, playerId)
@@ -245,7 +245,7 @@ func removeUserHandFromLobbyCards() error {
 	sqlString := `
 		DELETE DP
 		FROM DRAW_PILE AS DP
-			INNER JOIN PLAYER_CARD AS PC ON LUC.LOBBY_ID = DP.LOBBY_ID AND LUC.CARD_ID = DP.CARD_ID
+			INNER JOIN HAND AS H ON H.LOBBY_ID = DP.LOBBY_ID AND H.CARD_ID = DP.CARD_ID
 	`
 	return Execute(sqlString)
 }
@@ -255,9 +255,9 @@ func getPlayerHand(playerId uuid.UUID) ([]Card, error) {
 		SELECT
 			C.ID,
 			C.TEXT
-		FROM PLAYER_CARD AS PC
-			INNER JOIN CARD AS C ON C.ID = LUC.CARD_ID
-		WHERE LUC.PLAYER_ID = ?
+		FROM HAND AS H
+			INNER JOIN CARD AS C ON C.ID = H.CARD_ID
+		WHERE H.PLAYER_ID = ?
 		ORDER BY C.TEXT
 	`
 	rows, err := Query(sqlString, playerId)
