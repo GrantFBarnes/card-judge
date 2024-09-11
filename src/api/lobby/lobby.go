@@ -1,7 +1,6 @@
 package apiLobby
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"text/template"
@@ -11,7 +10,7 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-func GetCardCount(w http.ResponseWriter, r *http.Request) {
+func GetGameHeader(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
@@ -20,15 +19,23 @@ func GetCardCount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	count, err := database.GetLobbyCardCount(id)
+	data, err := database.GetLobbyGameHeaderData(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("%d", count)))
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-header.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "lobby-header", data)
 }
 
 func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {
@@ -396,8 +403,8 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("success"))
 }
 
 func SetPassword(w http.ResponseWriter, r *http.Request) {
@@ -454,6 +461,6 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("success"))
 }

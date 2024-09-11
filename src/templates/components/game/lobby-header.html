@@ -1,0 +1,26 @@
+{{define "lobby-header"}}
+<table id="lobby-header-table">
+  <thead>
+    <tr>
+      <th>Lobby</th>
+      <th>Judge</th>
+      <th>Cards</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        {{.Name}}
+        <span
+          class="clickable"
+          onclick="document.getElementById('lobby-update-dialog').showModal()"
+        >
+          &#128393;
+        </span>
+      </td>
+      <td>{{.JudgePlayerId.Valid}}</td>
+      <td>{{.CardCount}}</td>
+    </tr>
+  </tbody>
+</table>
+{{end}}

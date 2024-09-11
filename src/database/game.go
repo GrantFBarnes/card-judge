@@ -2,12 +2,6 @@ package database
 
 import "github.com/google/uuid"
 
-type LobbyPlayerWins struct {
-	PlayerId   uuid.UUID
-	PlayerName string
-	Wins       int
-}
-
 func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) ([]Card, error) {
 	lobbyPlayerId, err := getLobbyPlayerId(lobbyId, playerId)
 	if err != nil {
@@ -178,28 +172,48 @@ func getLobbyPlayerHand(lobbyPlayerId uuid.UUID) ([]Card, error) {
 	return result, nil
 }
 
-func GetLobbyCardCount(lobbyId uuid.UUID) (count int, err error) {
+type LobbyGameHeaderData struct {
+	Lobby
+	CardCount int
+}
+
+func GetLobbyGameHeaderData(lobbyId uuid.UUID) (data LobbyGameHeaderData, err error) {
 	sqlString := `
 		SELECT
-			COUNT(CARD_ID)
-		FROM LOBBY_CARD
-		WHERE LOBBY_ID = ?
+			L.ID,
+			L.NAME,
+			L.JUDGE_PLAYER_ID,
+			COUNT(LC.CARD_ID) AS CARD_COUNT
+		FROM LOBBY AS L
+			INNER JOIN LOBBY_CARD AS LC ON LC.LOBBY_ID = L.ID
+		WHERE L.ID = ?
+		GROUP BY L.ID
 	`
 	rows, err := Query(sqlString, lobbyId)
 	if err != nil {
-		return count, err
+		return data, err
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&count); err != nil {
-			return count, err
+		if err := rows.Scan(
+			&data.Id,
+			&data.Name,
+			&data.JudgePlayerId,
+			&data.CardCount); err != nil {
+			return data, err
 		}
 	}
 
-	return count, nil
+	return data, nil
 }
 
-func GetLobbyPlayerWins(lobbyId uuid.UUID) ([]LobbyPlayerWins, error) {
+type lobbyPlayerWins struct {
+	PlayerId   uuid.UUID
+	PlayerName string
+	Wins       int
+}
+
+func GetLobbyPlayerWins(lobbyId uuid.UUID) ([]lobbyPlayerWins, error) {
 	sqlString := `
 		SELECT
 			LP.PLAYER_ID,
@@ -217,9 +231,9 @@ func GetLobbyPlayerWins(lobbyId uuid.UUID) ([]LobbyPlayerWins, error) {
 		return nil, err
 	}
 
-	result := make([]LobbyPlayerWins, 0)
+	result := make([]lobbyPlayerWins, 0)
 	for rows.Next() {
-		var lpw LobbyPlayerWins
+		var lpw lobbyPlayerWins
 		if err := rows.Scan(
 			&lpw.PlayerId,
 			&lpw.PlayerName,

@@ -21,37 +21,11 @@
 <script src="/static/js/lobby.js"></script>
 <link rel="stylesheet" href="/static/css/lobby.css" />
 <div id="lobby-grid-container">
-  <div id="lobby-header">
-    <table id="lobby-header-table">
-      <thead>
-        <tr>
-          <th>Lobby</th>
-          <th>Judge</th>
-          <th>Cards</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            {{.Lobby.Name}}
-            <span
-              class="clickable"
-              onclick="document.getElementById('lobby-update-dialog').showModal()"
-            >
-              &#128393;
-            </span>
-          </td>
-          <td>{{.Lobby.JudgePlayer.Valid}}</td>
-          <td>
-            <span
-              hx-get="/api/lobby/{{.Lobby.Id}}/card-count"
-              hx-trigger="load delay:1s, every 60s"
-            ></span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div
+    id="lobby-header"
+    hx-get="/api/lobby/{{.Lobby.Id}}/header"
+    hx-trigger="load delay:1s, every 30s"
+  ></div>
   <div id="lobby-left-side">
     <h4>Player Hand</h4>
     <button
