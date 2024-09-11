@@ -81,13 +81,13 @@ func GetLobbyGameStats(lobbyId uuid.UUID) ([]lobbyGameStats, error) {
 		SELECT
 			P.USER_ID,
 			U.NAME AS USER_NAME,
-			COUNT(LR.ID) AS WINS
+			COUNT(W.ID) AS WINS
 		FROM PLAYER AS P
-			LEFT JOIN LOBBY_RESULT AS LR ON LR.PLAYER_ID = P.ID
+			LEFT JOIN WIN AS W ON W.PLAYER_ID = P.ID
 			INNER JOIN USER AS U ON U.ID = P.USER_ID
 		WHERE P.LOBBY_ID = ?
 		GROUP BY P.USER_ID
-		ORDER BY COUNT(LR.ID) DESC, U.NAME ASC
+		ORDER BY COUNT(W.ID) DESC, U.NAME ASC
 	`
 	rows, err := Query(sqlString, lobbyId)
 	if err != nil {
