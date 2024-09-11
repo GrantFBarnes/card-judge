@@ -119,7 +119,7 @@ func DrawUserHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gameUserData, err := database.DrawLobbyUserHand(lobbyId, userId)
+	gameUserData, err := database.DrawPlayerHand(lobbyId, userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -155,7 +155,7 @@ func DiscardUserHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gameUserData, err := database.DiscardLobbyUserHand(lobbyId, userId)
+	gameUserData, err := database.DiscardPlayerHand(lobbyId, userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -199,7 +199,7 @@ func DiscardUserCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gameUserData, err := database.DiscardLobbyUserCard(lobbyId, userId, cardId)
+	gameUserData, err := database.DiscardPlayerCard(lobbyId, userId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

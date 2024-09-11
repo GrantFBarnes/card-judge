@@ -56,12 +56,12 @@ func GetLobbyGameUser(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, 
 		return data, err
 	}
 
-	lobbyUserId, err := getLobbyUserId(lobbyId, userId)
+	playerId, err := getPlayerId(lobbyId, userId)
 	if err != nil {
 		return data, err
 	}
 
-	data.Cards, err = getLobbyUserHand(lobbyUserId)
+	data.Cards, err = getPlayerHand(playerId)
 	if err != nil {
 		return data, err
 	}
@@ -81,14 +81,14 @@ type lobbyGameStats struct {
 func GetLobbyGameStats(lobbyId uuid.UUID) ([]lobbyGameStats, error) {
 	sqlString := `
 		SELECT
-			LU.USER_ID,
+			P.USER_ID,
 			U.NAME AS USER_NAME,
 			COUNT(LR.ID) AS WINS
-		FROM LOBBY_USER AS LU
-			LEFT JOIN LOBBY_RESULT AS LR ON LR.LOBBY_USER_ID = LU.ID
-			INNER JOIN USER AS U ON U.ID = LU.USER_ID
-		WHERE LU.LOBBY_ID = ?
-		GROUP BY LU.USER_ID
+		FROM PLAYER AS P
+			LEFT JOIN LOBBY_RESULT AS LR ON LR.PLAYER_ID = P.ID
+			INNER JOIN USER AS U ON U.ID = P.USER_ID
+		WHERE P.LOBBY_ID = ?
+		GROUP BY P.USER_ID
 		ORDER BY COUNT(LR.ID) DESC, U.NAME ASC
 	`
 	rows, err := Query(sqlString, lobbyId)
@@ -110,13 +110,13 @@ func GetLobbyGameStats(lobbyId uuid.UUID) ([]lobbyGameStats, error) {
 	return result, nil
 }
 
-func DrawLobbyUserHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, err error) {
-	lobbyUserId, err := getLobbyUserId(lobbyId, userId)
+func DrawPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, err error) {
+	playerId, err := getPlayerId(lobbyId, userId)
 	if err != nil {
 		return data, err
 	}
 
-	handCount, err := getLobbyUserHandCount(lobbyUserId)
+	handCount, err := getPlayerHandCount(playerId)
 	if err != nil {
 		return data, err
 	}
@@ -124,15 +124,15 @@ func DrawLobbyUserHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser,
 	cardsToDraw := 8 - handCount
 	if cardsToDraw > 0 {
 		sqlString := `
-			INSERT INTO LOBBY_USER_CARD
+			INSERT INTO PLAYER_CARD
 				(
-					LOBBY_USER_ID,
+					PLAYER_ID,
 					LOBBY_ID,
 					USER_ID,
 					CARD_ID
 				)
 			SELECT DISTINCT
-				? AS LOBBY_USER_ID,
+				? AS PLAYER_ID,
 				? AS LOBBY_ID,
 				? AS USER_ID,
 				C.ID AS CARD_ID
@@ -144,7 +144,7 @@ func DrawLobbyUserHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser,
 			ORDER BY RAND()
 			LIMIT ?
 		`
-		err = Execute(sqlString, lobbyUserId, lobbyId, userId, lobbyId, cardsToDraw)
+		err = Execute(sqlString, playerId, lobbyId, userId, lobbyId, cardsToDraw)
 		if err != nil {
 			return data, err
 		}
@@ -158,19 +158,19 @@ func DrawLobbyUserHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser,
 	return GetLobbyGameUser(lobbyId, userId)
 }
 
-func DiscardLobbyUserHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, err error) {
-	lobbyUserId, err := getLobbyUserId(lobbyId, userId)
+func DiscardPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, err error) {
+	playerId, err := getPlayerId(lobbyId, userId)
 	if err != nil {
 		return data, err
 	}
 
 	sqlString := `
-		DELETE FROM LOBBY_USER_CARD
-		WHERE LOBBY_USER_ID = ?
+		DELETE FROM PLAYER_CARD
+		WHERE PLAYER_ID = ?
 			AND LOBBY_ID = ?
 			AND USER_ID = ?
 	`
-	err = Execute(sqlString, lobbyUserId, lobbyId, userId)
+	err = Execute(sqlString, playerId, lobbyId, userId)
 	if err != nil {
 		return data, err
 	}
@@ -178,20 +178,20 @@ func DiscardLobbyUserHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUs
 	return GetLobbyGameUser(lobbyId, userId)
 }
 
-func DiscardLobbyUserCard(lobbyId uuid.UUID, userId uuid.UUID, cardId uuid.UUID) (data lobbyGameUser, err error) {
-	lobbyUserId, err := getLobbyUserId(lobbyId, userId)
+func DiscardPlayerCard(lobbyId uuid.UUID, userId uuid.UUID, cardId uuid.UUID) (data lobbyGameUser, err error) {
+	playerId, err := getPlayerId(lobbyId, userId)
 	if err != nil {
 		return data, err
 	}
 
 	sqlString := `
-		DELETE FROM LOBBY_USER_CARD
-		WHERE LOBBY_USER_ID = ?
+		DELETE FROM PLAYER_CARD
+		WHERE PLAYER_ID = ?
 			AND LOBBY_ID = ?
 			AND USER_ID = ?
 			AND CARD_ID = ?
 	`
-	err = Execute(sqlString, lobbyUserId, lobbyId, userId, cardId)
+	err = Execute(sqlString, playerId, lobbyId, userId, cardId)
 	if err != nil {
 		return data, err
 	}
@@ -199,37 +199,37 @@ func DiscardLobbyUserCard(lobbyId uuid.UUID, userId uuid.UUID, cardId uuid.UUID)
 	return GetLobbyGameUser(lobbyId, userId)
 }
 
-func getLobbyUserId(lobbyId uuid.UUID, userId uuid.UUID) (lobbyUserId uuid.UUID, err error) {
+func getPlayerId(lobbyId uuid.UUID, userId uuid.UUID) (playerId uuid.UUID, err error) {
 	sqlString := `
 		SELECT
 			ID
-		FROM LOBBY_USER
+		FROM PLAYER
 		WHERE LOBBY_ID = ?
 			AND USER_ID = ?
 		LIMIT 1
 	`
 	rows, err := Query(sqlString, lobbyId, userId)
 	if err != nil {
-		return lobbyUserId, err
+		return playerId, err
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&lobbyUserId); err != nil {
-			return lobbyUserId, err
+		if err := rows.Scan(&playerId); err != nil {
+			return playerId, err
 		}
 	}
 
-	return lobbyUserId, nil
+	return playerId, nil
 }
 
-func getLobbyUserHandCount(lobbyUserId uuid.UUID) (handCount int, err error) {
+func getPlayerHandCount(playerId uuid.UUID) (handCount int, err error) {
 	sqlString := `
 		SELECT
 			COUNT(CARD_ID)
-		FROM LOBBY_USER_CARD
-		WHERE LOBBY_USER_ID = ?
+		FROM PLAYER_CARD
+		WHERE PLAYER_ID = ?
 	`
-	rows, err := Query(sqlString, lobbyUserId)
+	rows, err := Query(sqlString, playerId)
 	if err != nil {
 		return handCount, err
 	}
@@ -247,22 +247,22 @@ func removeUserHandFromLobbyCards() error {
 	sqlString := `
 		DELETE DP
 		FROM DRAW_PILE AS DP
-			INNER JOIN LOBBY_USER_CARD AS LUC ON LUC.LOBBY_ID = DP.LOBBY_ID AND LUC.CARD_ID = DP.CARD_ID
+			INNER JOIN PLAYER_CARD AS PC ON LUC.LOBBY_ID = DP.LOBBY_ID AND LUC.CARD_ID = DP.CARD_ID
 	`
 	return Execute(sqlString)
 }
 
-func getLobbyUserHand(lobbyUserId uuid.UUID) ([]Card, error) {
+func getPlayerHand(playerId uuid.UUID) ([]Card, error) {
 	sqlString := `
 		SELECT
 			C.ID,
 			C.TEXT
-		FROM LOBBY_USER_CARD AS LUC
+		FROM PLAYER_CARD AS PC
 			INNER JOIN CARD AS C ON C.ID = LUC.CARD_ID
-		WHERE LUC.LOBBY_USER_ID = ?
+		WHERE LUC.PLAYER_ID = ?
 		ORDER BY C.TEXT
 	`
-	rows, err := Query(sqlString, lobbyUserId)
+	rows, err := Query(sqlString, playerId)
 	if err != nil {
 		return nil, err
 	}
