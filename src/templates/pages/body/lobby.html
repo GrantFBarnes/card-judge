@@ -1,23 +1,4 @@
-{{define "body"}} {{if not .HasAccess}}
-<form hx-post="/api/access/lobby/{{.Lobby.Id}}" hx-target="find .htmx-result">
-  <h3>Lobby: {{.Lobby.Name}}</h3>
-  <p>You must provide the password to join lobby.</p>
-  <input
-    type="password"
-    id="password"
-    name="password"
-    maxlength="255"
-    placeholder="Enter Lobby Password"
-    required="true"
-    autofocus="true"
-    autocomplete="off"
-  />
-  <br />
-  <br />
-  <div class="htmx-result"></div>
-  <input type="submit" value="Submit" />
-</form>
-{{else}}
+{{define "body"}}
 <script src="/static/js/lobby.js"></script>
 <link rel="stylesheet" href="/static/css/lobby.css" />
 <div id="lobby-grid-container">
@@ -28,7 +9,7 @@
   ></div>
   <div
     id="lobby-left-side"
-    hx-get="/api/lobby/{{.Lobby.Id}}/user/{{.User.Id}}/game-user"
+    hx-get="/api/player/{{.PlayerId}}/player-data"
     hx-trigger="load delay:1s"
   ></div>
   <div id="lobby-middle">Board</div>
@@ -50,7 +31,6 @@
     </form>
   </div>
 </div>
-{{end}}
 <dialog id="lobby-update-dialog">
   <div style="display: grid; grid-auto-flow: column">
     <div>

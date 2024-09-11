@@ -38,42 +38,6 @@ func GetGameInfo(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "game-info", data)
 }
 
-func GetGameUser(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	userIdString := r.PathValue("userId")
-	userId, err := uuid.Parse(userIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id from path."))
-		return
-	}
-
-	gameUserData, err := database.GetLobbyGameUser(lobbyId, userId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-user.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
-}
-
 func GetGameStats(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
@@ -100,122 +64,6 @@ func GetGameStats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "game-stats", stats)
-}
-
-func DrawUserHand(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	userIdString := r.PathValue("userId")
-	userId, err := uuid.Parse(userIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id from path."))
-		return
-	}
-
-	gameUserData, err := database.DrawPlayerHand(lobbyId, userId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-user.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
-}
-
-func DiscardUserHand(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	userIdString := r.PathValue("userId")
-	userId, err := uuid.Parse(userIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id from path."))
-		return
-	}
-
-	gameUserData, err := database.DiscardPlayerHand(lobbyId, userId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-user.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
-}
-
-func DiscardUserCard(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	userIdString := r.PathValue("userId")
-	userId, err := uuid.Parse(userIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id from path."))
-		return
-	}
-
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get card id from path."))
-		return
-	}
-
-	gameUserData, err := database.DiscardPlayerCard(lobbyId, userId, cardId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-user.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-user", gameUserData)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
@@ -323,28 +171,28 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := database.CreateLobby(name, password)
+	lobbyId, err := database.CreateLobby(name, password)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = database.AddCardsToLobby(id, deckIds)
+	err = database.AddCardsToLobby(lobbyId, deckIds)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = database.AddUserLobbyAccess(userId, id)
+	err = database.AddUserLobbyAccess(userId, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	w.Header().Add("HX-Redirect", "/lobby/"+id.String())
+	w.Header().Add("HX-Redirect", "/lobby/"+lobbyId.String())
 	w.WriteHeader(http.StatusCreated)
 }
 

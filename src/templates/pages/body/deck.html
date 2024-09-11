@@ -1,23 +1,4 @@
-{{define "body"}} {{if not .HasAccess}}
-<form hx-post="/api/access/deck/{{.Deck.Id}}" hx-target="find .htmx-result">
-  <h3>Deck: {{.Deck.Name}}</h3>
-  <p>You must provide the password to see cards.</p>
-  <input
-    type="password"
-    id="password"
-    name="password"
-    maxlength="255"
-    placeholder="Enter Deck Password"
-    required="true"
-    autofocus="true"
-    autocomplete="off"
-  />
-  <br />
-  <br />
-  <div class="htmx-result"></div>
-  <input type="submit" value="Submit" />
-</form>
-{{else}}
+{{define "body"}}
 <h3>Deck: {{.Deck.Name}}</h3>
 <button onclick="document.getElementById('deck-update-dialog').showModal()">
   Edit Deck
@@ -181,4 +162,4 @@
     {{template "card-table-rows" .Cards}}
   </tbody>
 </table>
-{{end}} {{end}} {{end}}
+{{end}} {{end}}
