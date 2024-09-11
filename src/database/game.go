@@ -13,9 +13,9 @@ func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
 			L.ID,
 			L.NAME,
 			L.JUDGE_PLAYER_ID,
-			COUNT(LC.CARD_ID) AS CARD_COUNT
+			COUNT(DP.CARD_ID) AS CARD_COUNT
 		FROM LOBBY AS L
-			INNER JOIN LOBBY_CARD AS LC ON LC.LOBBY_ID = L.ID
+			INNER JOIN DRAW_PILE AS DP ON DP.LOBBY_ID = L.ID
 		WHERE L.ID = ?
 		GROUP BY L.ID
 	`
@@ -136,11 +136,11 @@ func DrawLobbyPlayerHand(lobbyId uuid.UUID, playerId uuid.UUID) (data lobbyGameP
 				? AS LOBBY_ID,
 				? AS PLAYER_ID,
 				C.ID AS CARD_ID
-			FROM LOBBY_CARD AS LC
-				INNER JOIN CARD AS C ON C.ID = LC.CARD_ID
+			FROM DRAW_PILE AS DP
+				INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
 				INNER JOIN CARD_TYPE AS CT ON CT.ID = C.CARD_TYPE_ID
 			WHERE CT.NAME = 'Player'
-				AND LC.LOBBY_ID = ?
+				AND DP.LOBBY_ID = ?
 			ORDER BY RAND()
 			LIMIT ?
 		`
@@ -245,9 +245,9 @@ func getLobbyPlayerHandCount(lobbyPlayerId uuid.UUID) (handCount int, err error)
 
 func removePlayerHandFromLobbyCards() error {
 	sqlString := `
-		DELETE LC
-		FROM LOBBY_CARD AS LC
-			INNER JOIN LOBBY_PLAYER_CARD AS LPC ON LPC.LOBBY_ID = LC.LOBBY_ID AND LPC.CARD_ID = LC.CARD_ID
+		DELETE DP
+		FROM DRAW_PILE AS DP
+			INNER JOIN LOBBY_PLAYER_CARD AS LPC ON LPC.LOBBY_ID = DP.LOBBY_ID AND LPC.CARD_ID = DP.CARD_ID
 	`
 	return Execute(sqlString)
 }
