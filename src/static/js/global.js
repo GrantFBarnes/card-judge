@@ -9,6 +9,10 @@ document.addEventListener("htmx:afterSwap", function (event) {
     if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
       addClassToTarget("htmx-result-good", event.detail.target);
       removeClassFromTarget("htmx-result-bad", event.detail.target);
+      // remove good status message after 5 seconds
+      setTimeout(() => {
+        event.detail.target.innerHTML = "";
+      }, 5000);
     } else {
       addClassToTarget("htmx-result-bad", event.detail.target);
       removeClassFromTarget("htmx-result-good", event.detail.target);
