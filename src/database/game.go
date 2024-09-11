@@ -172,12 +172,12 @@ func getLobbyPlayerHand(lobbyPlayerId uuid.UUID) ([]Card, error) {
 	return result, nil
 }
 
-type LobbyGameHeaderData struct {
+type LobbyGameInfo struct {
 	Lobby
 	CardCount int
 }
 
-func GetLobbyGameHeaderData(lobbyId uuid.UUID) (data LobbyGameHeaderData, err error) {
+func GetLobbyGameInfo(lobbyId uuid.UUID) (data LobbyGameInfo, err error) {
 	sqlString := `
 		SELECT
 			L.ID,

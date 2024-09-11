@@ -20,12 +20,12 @@
   grid-area: header;
 }
 
-#lobby-header-table {
+#game-info-table {
   width: 100%;
   text-align: center;
 }
 
-#lobby-header-table tr:hover {
+#game-info-table tr:hover {
   background-color: transparent;
 }
 

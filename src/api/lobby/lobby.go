@@ -10,7 +10,7 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-func GetGameHeader(w http.ResponseWriter, r *http.Request) {
+func GetGameInfo(w http.ResponseWriter, r *http.Request) {
 	idString := r.PathValue("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
@@ -19,7 +19,7 @@ func GetGameHeader(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := database.GetLobbyGameHeaderData(id)
+	data, err := database.GetLobbyGameInfo(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -27,7 +27,7 @@ func GetGameHeader(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-header.html",
+		"templates/components/game/game-info.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -35,7 +35,7 @@ func GetGameHeader(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "lobby-header", data)
+	tmpl.ExecuteTemplate(w, "game-info", data)
 }
 
 func GetLobbyPlayerWins(w http.ResponseWriter, r *http.Request) {

@@ -23,7 +23,7 @@
 <div id="lobby-grid-container">
   <div
     id="lobby-header"
-    hx-get="/api/lobby/{{.Lobby.Id}}/header"
+    hx-get="/api/lobby/{{.Lobby.Id}}/game-info"
     hx-trigger="load delay:1s, every 30s"
   ></div>
   <div id="lobby-left-side">
