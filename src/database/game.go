@@ -125,14 +125,10 @@ func DrawPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, er
 			INSERT INTO HAND
 				(
 					PLAYER_ID,
-					LOBBY_ID,
-					USER_ID,
 					CARD_ID
 				)
 			SELECT DISTINCT
 				? AS PLAYER_ID,
-				? AS LOBBY_ID,
-				? AS USER_ID,
 				C.ID AS CARD_ID
 			FROM DRAW_PILE AS DP
 				INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
@@ -142,7 +138,7 @@ func DrawPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser, er
 			ORDER BY RAND()
 			LIMIT ?
 		`
-		err = Execute(sqlString, playerId, lobbyId, userId, lobbyId, cardsToDraw)
+		err = Execute(sqlString, playerId, lobbyId, cardsToDraw)
 		if err != nil {
 			return data, err
 		}
@@ -165,10 +161,8 @@ func DiscardPlayerHand(lobbyId uuid.UUID, userId uuid.UUID) (data lobbyGameUser,
 	sqlString := `
 		DELETE FROM HAND
 		WHERE PLAYER_ID = ?
-			AND LOBBY_ID = ?
-			AND USER_ID = ?
 	`
-	err = Execute(sqlString, playerId, lobbyId, userId)
+	err = Execute(sqlString, playerId)
 	if err != nil {
 		return data, err
 	}
@@ -185,11 +179,9 @@ func DiscardPlayerCard(lobbyId uuid.UUID, userId uuid.UUID, cardId uuid.UUID) (d
 	sqlString := `
 		DELETE FROM HAND
 		WHERE PLAYER_ID = ?
-			AND LOBBY_ID = ?
-			AND USER_ID = ?
 			AND CARD_ID = ?
 	`
-	err = Execute(sqlString, playerId, lobbyId, userId, cardId)
+	err = Execute(sqlString, playerId, cardId)
 	if err != nil {
 		return data, err
 	}
@@ -245,7 +237,8 @@ func removeUserHandFromLobbyCards() error {
 	sqlString := `
 		DELETE DP
 		FROM DRAW_PILE AS DP
-			INNER JOIN HAND AS H ON H.LOBBY_ID = DP.LOBBY_ID AND H.CARD_ID = DP.CARD_ID
+			INNER JOIN PLAYER AS P ON P.LOBBY_ID = DP.LOBBY_ID
+			INNER JOIN HAND AS H ON H.PLAYER_ID = P.ID AND H.CARD_ID = DP.CARD_ID
 	`
 	return Execute(sqlString)
 }
