@@ -4,7 +4,7 @@
     <thead>
       <tr>
         <th>
-          {{if lt .CardCount .MaxCardCount}}
+          {{$cardCount := len .Cards}} {{if lt $cardCount .HandSize}}
           <button
             hx-post="/api/player/{{.PlayerId}}/draw"
             hx-target="#player-data"
@@ -14,7 +14,7 @@
           {{end}}
         </th>
         <th>
-          {{if gt .CardCount 0}}
+          {{$cardCount := len .Cards}} {{if gt $cardCount 0}}
           <button
             hx-post="/api/player/{{.PlayerId}}/discard"
             hx-target="#player-data"

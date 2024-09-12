@@ -2,6 +2,7 @@ package apiLobby
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -113,6 +114,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var name string
 	var password string
 	var passwordConfirm string
+	var handSize int
 	var deckIds []uuid.UUID = make([]uuid.UUID, 0)
 	for key, val := range r.Form {
 		if key == "name" {
@@ -121,6 +123,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			password = val[0]
 		} else if key == "passwordConfirm" {
 			passwordConfirm = val[0]
+		} else if key == "handSize" {
+			handSize, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse hand size."))
+				return
+			}
 		} else if strings.HasPrefix(key, "deckId") {
 			deckId, err := uuid.Parse(val[0])
 			if err != nil {
@@ -144,6 +153,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Passwords do not match."))
 			return
 		}
+	}
+
+	if handSize <= 0 {
+		handSize = 1
+	}
+
+	if handSize > 16 {
+		handSize = 16
 	}
 
 	if len(deckIds) == 0 {
@@ -171,7 +188,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, password)
+	lobbyId, err := database.CreateLobby(name, password, handSize)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -309,6 +326,66 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = database.SetLobbyPassword(lobbyId, password)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("success"))
+}
+
+func SetHandSize(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get user id."))
+		return
+	}
+
+	if !database.HasLobbyAccess(userId, lobbyId) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("User does not have access."))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var handSize int
+	for key, val := range r.Form {
+		if key == "handSize" {
+			handSize, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse hand size."))
+				return
+			}
+		}
+	}
+
+	if handSize <= 0 {
+		handSize = 1
+	}
+
+	if handSize > 16 {
+		handSize = 16
+	}
+
+	err = database.SetLobbyHandSize(lobbyId, handSize)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

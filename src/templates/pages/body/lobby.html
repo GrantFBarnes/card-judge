@@ -47,7 +47,6 @@
   </div>
   <form hx-put="/api/lobby/{{.Lobby.Id}}/name" hx-target="find .htmx-result">
     <h3>Set Lobby Name</h3>
-    <p>Current Name: {{.Lobby.Name}}</p>
     <label for="setLobbyName">New Name:</label>
     <input
       type="text"
@@ -91,6 +90,27 @@
     <br />
     <div class="htmx-result"></div>
     <input type="submit" value="Set Lobby Password" />
+  </form>
+  <form
+    hx-put="/api/lobby/{{.Lobby.Id}}/hand-size"
+    hx-target="find .htmx-result"
+  >
+    <h3>Set Lobby Hand Size</h3>
+    <label for="setLobbyHandSize">New Hand Size:</label>
+    <input
+      type="number"
+      id="setLobbyHandSize"
+      name="handSize"
+      min="1"
+      max="16"
+      value="8"
+      required="true"
+      autocomplete="off"
+    />
+    <br />
+    <br />
+    <div class="htmx-result"></div>
+    <input type="submit" value="Set Lobby Hand Size" />
   </form>
 </dialog>
 {{end}}

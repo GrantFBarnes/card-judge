@@ -48,6 +48,18 @@
       autocomplete="off"
     />
     <br />
+    <label for="createLobbyHandSize">Hand Size:</label>
+    <input
+      type="number"
+      id="createLobbyHandSize"
+      name="handSize"
+      min="1"
+      max="16"
+      value="8"
+      required="true"
+      autocomplete="off"
+    />
+    <br />
     {{$deckCount := len .Decks}} {{if gt $deckCount 0}}
     <h3>Choose Decks</h3>
     <table>
