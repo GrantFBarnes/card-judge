@@ -6,9 +6,11 @@
   </div>
   <div>
     <h1>Board Cards</h1>
-    {{range .BoardCards}}
+    {{range .BoardCards}} {{if $.PlayerIsJudge}}
+    <div>(hidden)</div>
+    {{else}}
     <div>{{.Text}}</div>
-    {{end}}
+    {{end}} {{end}}
   </div>
 </div>
 {{end}}

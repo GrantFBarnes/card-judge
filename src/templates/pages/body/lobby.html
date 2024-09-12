@@ -14,7 +14,7 @@
   ></div>
   <div
     id="lobby-game-board"
-    hx-get="/api/lobby/{{.Lobby.Id}}/game-board"
+    hx-get="/api/player/{{.PlayerId}}/game-board"
     hx-trigger="load, every 5s"
   ></div>
   <div
