@@ -36,6 +36,34 @@ func GetPlayerData(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "player-data", playerData)
 }
 
+func BecomeJudge(w http.ResponseWriter, r *http.Request) {
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	playerData, err := database.PlayerBecomeJudge(playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-data.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "player-data", playerData)
+}
+
 func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	playerIdString := r.PathValue("playerId")
 	playerId, err := uuid.Parse(playerIdString)

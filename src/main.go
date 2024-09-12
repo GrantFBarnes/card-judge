@@ -84,6 +84,7 @@ func main() {
 
 	// player
 	http.Handle("GET /api/player/{playerId}/player-data", api.ApiMiddleware(http.HandlerFunc(apiPlayer.GetPlayerData)))
+	http.Handle("POST /api/player/{playerId}/become-judge", api.ApiMiddleware(http.HandlerFunc(apiPlayer.BecomeJudge)))
 	http.Handle("POST /api/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DrawPlayerHand)))
 	http.Handle("POST /api/player/{playerId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiPlayer.PlayPlayerCard)))
 	http.Handle("POST /api/player/{playerId}/discard", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DiscardPlayerHand)))
