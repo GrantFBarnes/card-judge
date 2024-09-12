@@ -76,7 +76,6 @@ func main() {
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
 	http.Handle("PUT /api/lobby/{lobbyId}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
-	http.Handle("PUT /api/lobby/{lobbyId}/password", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetPassword)))
 	http.Handle("PUT /api/lobby/{lobbyId}/hand-size", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetHandSize)))
 
 	// access

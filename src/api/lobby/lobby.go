@@ -312,66 +312,6 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("success"))
 }
 
-func SetPassword(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	userId := api.GetUserId(r)
-	if userId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	if !database.HasLobbyAccess(userId, lobbyId) {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
-		return
-	}
-
-	err = r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to parse form."))
-		return
-	}
-
-	var password string
-	var passwordConfirm string
-	for key, val := range r.Form {
-		if key == "password" {
-			password = val[0]
-		} else if key == "passwordConfirm" {
-			passwordConfirm = val[0]
-		}
-	}
-
-	if password != "" {
-		if password != passwordConfirm {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Passwords do not match."))
-			return
-		}
-	}
-
-	err = database.SetLobbyPassword(lobbyId, password)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	websocket.LobbyBroadcast(lobbyId, "Lobby password changed...")
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("success"))
-}
-
 func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
