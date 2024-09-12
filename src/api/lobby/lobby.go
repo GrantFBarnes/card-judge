@@ -86,12 +86,14 @@ func PickLobbyWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.PickLobbyWinner(lobbyId, cardId)
+	playerName, err := database.PickLobbyWinner(lobbyId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	websocket.LobbyBroadcast(lobbyId, playerName+" is the winner! They are now the new judge...")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("winner"))
