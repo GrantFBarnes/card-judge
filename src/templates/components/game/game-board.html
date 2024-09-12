@@ -10,9 +10,15 @@
         <tr>
           <td style="padding: 20px">
             {{if $.PlayerIsJudge}}
-            <div class="clickable">{{.Text}}</div>
+            <span
+              class="clickable"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/winner"
+              hx-confirm="Are you sure you want to pick this card as the winner?"
+            >
+              {{.Text}}
+            </span>
             {{else}}
-            <div>{{.Text}}</div>
+            <span>{{.Text}}</span>
             {{end}}
           </td>
         </tr>

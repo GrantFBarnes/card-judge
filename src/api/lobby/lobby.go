@@ -69,6 +69,34 @@ func GetGameStats(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "game-stats", stats)
 }
 
+func PickLobbyWinner(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get card id from path."))
+		return
+	}
+
+	err = database.PickLobbyWinner(lobbyId, cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("winner"))
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
