@@ -16,7 +16,7 @@
   padding: 10px;
 }
 
-#lobby-header {
+#lobby-game-info {
   grid-area: header;
 }
 
@@ -29,23 +29,23 @@
   background-color: transparent;
 }
 
-#lobby-left-side {
+#lobby-player-data {
   grid-area: menu;
   overflow: scroll;
 }
 
-#lobby-middle {
+#lobby-board {
   grid-area: main;
   min-height: 400px;
   min-width: 400px;
 }
 
-#lobby-right-side {
+#lobby-game-stats {
   grid-area: right;
   overflow: scroll;
 }
 
-#lobby-footer {
+#lobby-chat {
   grid-area: footer;
 }
 

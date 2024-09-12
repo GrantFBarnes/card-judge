@@ -3,22 +3,22 @@
 <link rel="stylesheet" href="/static/css/lobby.css" />
 <div id="lobby-grid-container">
   <div
-    id="lobby-header"
+    id="lobby-game-info"
     hx-get="/api/lobby/{{.Lobby.Id}}/game-info"
     hx-trigger="load, every 30s"
   ></div>
   <div
-    id="lobby-left-side"
+    id="lobby-player-data"
     hx-get="/api/player/{{.PlayerId}}/player-data"
     hx-trigger="load"
   ></div>
-  <div id="lobby-middle">Board</div>
+  <div id="lobby-board">Board</div>
   <div
-    id="lobby-right-side"
+    id="lobby-game-stats"
     hx-get="/api/lobby/{{.Lobby.Id}}/game-stats"
     hx-trigger="load, every 30s"
   ></div>
-  <div id="lobby-footer">
+  <div id="lobby-chat">
     <div id="lobby-chat-messages"></div>
     <form id="lobby-chat-form">
       <input
