@@ -1,6 +1,5 @@
 {{define "player-data"}}
 <div id="player-data">
-  <h3>User Hand</h3>
   <table>
     <thead>
       <tr>
@@ -21,20 +20,16 @@
             hx-target="#player-data"
             hx-confirm="Are you sure you want to discard your hand?"
           >
-            Discard All
+            Discard
           </button>
           {{end}}
         </th>
       </tr>
-      <tr>
-        <th>Card</th>
-        <th>Discard</th>
-      </tr>
     </thead>
     <tbody>
       {{range .Cards}}
-      <tr>
-        <td>
+      <tr style="border-top: 2px solid black">
+        <td style="padding: 20px">
           <span
             class="clickable"
             hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/play"

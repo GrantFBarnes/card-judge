@@ -31,6 +31,7 @@
 
 #lobby-left-side {
   grid-area: menu;
+  overflow: scroll;
 }
 
 #lobby-middle {
@@ -41,6 +42,7 @@
 
 #lobby-right-side {
   grid-area: right;
+  overflow: scroll;
 }
 
 #lobby-footer {
