@@ -1,6 +1,7 @@
 package apiLobby
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/websocket"
 )
 
 func GetGameInfo(w http.ResponseWriter, r *http.Request) {
@@ -274,6 +276,8 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Lobby name set to %s...", name))
+
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
 }
@@ -331,6 +335,8 @@ func SetPassword(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	websocket.LobbyBroadcast(lobbyId, "Lobby password changed...")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
@@ -391,6 +397,8 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Lobby hand size set to %d...", handSize))
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
