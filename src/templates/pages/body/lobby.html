@@ -12,7 +12,11 @@
     hx-get="/api/player/{{.PlayerId}}/player-data"
     hx-trigger="load"
   ></div>
-  <div id="lobby-board">Board</div>
+  <div
+    id="lobby-game-board"
+    hx-get="/api/lobby/{{.Lobby.Id}}/game-board"
+    hx-trigger="load, every 5s"
+  ></div>
   <div
     id="lobby-game-stats"
     hx-get="/api/lobby/{{.Lobby.Id}}/game-stats"

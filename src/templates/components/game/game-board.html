@@ -1,0 +1,14 @@
+{{define "game-board"}}
+<div id="game-board">
+  <div>
+    <h1>Judge Card</h1>
+    {{.JudgeCard.Text}}
+  </div>
+  <div>
+    <h1>Played Cards</h1>
+    {{range .PlayedCards}}
+    <div>{{.Text}}</div>
+    {{end}}
+  </div>
+</div>
+{{end}}

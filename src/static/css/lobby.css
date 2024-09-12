@@ -34,7 +34,7 @@
   overflow: scroll;
 }
 
-#lobby-board {
+#lobby-game-board {
   grid-area: main;
   min-height: 400px;
   min-width: 400px;
