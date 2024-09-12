@@ -5,18 +5,18 @@
   <div
     id="lobby-header"
     hx-get="/api/lobby/{{.Lobby.Id}}/game-info"
-    hx-trigger="load delay:1s, every 30s"
+    hx-trigger="load, every 30s"
   ></div>
   <div
     id="lobby-left-side"
     hx-get="/api/player/{{.PlayerId}}/player-data"
-    hx-trigger="load delay:1s"
+    hx-trigger="load"
   ></div>
   <div id="lobby-middle">Board</div>
   <div
     id="lobby-right-side"
     hx-get="/api/lobby/{{.Lobby.Id}}/game-stats"
-    hx-trigger="load delay:1s, every 30s"
+    hx-trigger="load, every 30s"
   ></div>
   <div id="lobby-footer">
     <div id="lobby-chat-messages"></div>
