@@ -30,6 +30,9 @@
       {{range .Cards}}
       <tr style="border-top: 2px solid black">
         <td style="padding: 20px">
+          {{if or $.IsJudge $.HasPlayed}}
+          <span>{{.Text}}</span>
+          {{else}}
           <span
             class="clickable"
             hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/play"
@@ -38,6 +41,7 @@
           >
             {{.Text}}
           </span>
+          {{end}}
         </td>
         <td style="text-align: center">
           <span
