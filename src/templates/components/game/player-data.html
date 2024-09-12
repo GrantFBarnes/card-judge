@@ -1,14 +1,5 @@
 {{define "player-data"}}
 <div id="player-data">
-  {{if not .LobbyHasJudge}}
-  <button
-    hx-post="/api/player/{{.PlayerId}}/become-judge"
-    hx-target="#player-data"
-    hx-confirm="Are you sure you want to become the judge?"
-  >
-    Become the Judge
-  </button>
-  {{end}}
   <table>
     <thead>
       <tr>
