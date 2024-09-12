@@ -51,7 +51,7 @@ func GetCardsInDeck(deckId uuid.UUID, textSearch string) ([]CardDetails, error) 
 			AND C.TEXT LIKE ?
 		ORDER BY
 			CT.NAME ASC,
-			C.CHANGED_ON_DATE DESC,
+			TO_DAYS(C.CHANGED_ON_DATE) DESC,
 			C.TEXT ASC
 	`
 	rows, err := Query(sqlString, deckId, textSearch)

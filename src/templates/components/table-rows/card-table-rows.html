@@ -1,6 +1,7 @@
 {{define "card-table-rows"}} {{range .}}
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
+  <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
   <td>{{.CardTypeName}}</td>
   <td style="white-space: pre-wrap">{{.Text}}</td>
   <td>
