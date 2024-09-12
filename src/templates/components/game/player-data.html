@@ -4,7 +4,7 @@
     <thead>
       <tr>
         <th>
-          {{$cardCount := len .Cards}} {{if lt $cardCount .HandSize}}
+          {{$cardCount := len .PlayerHand}} {{if lt $cardCount .LobbyHandSize}}
           <button
             hx-post="/api/player/{{.PlayerId}}/draw"
             hx-target="#player-data"
@@ -14,7 +14,7 @@
           {{end}}
         </th>
         <th>
-          {{$cardCount := len .Cards}} {{if gt $cardCount 0}}
+          {{$cardCount := len .PlayerHand}} {{if gt $cardCount 0}}
           <button
             hx-post="/api/player/{{.PlayerId}}/discard"
             hx-target="#player-data"
@@ -27,10 +27,10 @@
       </tr>
     </thead>
     <tbody>
-      {{range .Cards}}
+      {{range .PlayerHand}}
       <tr style="border-top: 2px solid black">
         <td style="padding: 20px">
-          {{if or $.IsJudge $.HasPlayed}}
+          {{if or $.PlayerIsJudge $.PlayerPlayed}}
           <span>{{.Text}}</span>
           {{else}}
           <span
