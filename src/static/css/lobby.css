@@ -40,6 +40,13 @@
   min-width: 400px;
 }
 
+#judge-card {
+  text-align: center;
+  padding: 30px;
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
 #lobby-game-stats {
   grid-area: right;
   overflow: scroll;

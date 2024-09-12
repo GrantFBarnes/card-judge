@@ -1,16 +1,27 @@
 {{define "game-board"}}
 <div id="game-board">
-  <div>
-    <h1>Judge Card</h1>
-    {{.JudgeCard.Text}}
+  <h3 id="judge-card">{{.JudgeCard.Text}}</h3>
+  <br />
+  {{$cardCount := len .BoardCards}} {{if eq $cardCount .PlayerCount}}
+  <div id="board-cards">
+    <table id="board-cards-table">
+      <tbody>
+        {{range .BoardCards}}
+        <tr>
+          <td style="padding: 20px">
+            {{if $.PlayerIsJudge}}
+            <div class="clickable">{{.Text}}</div>
+            {{else}}
+            <div>{{.Text}}</div>
+            {{end}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
   </div>
-  <div>
-    <h1>Board Cards</h1>
-    {{range .BoardCards}} {{if $.PlayerIsJudge}}
-    <div>(hidden)</div>
-    {{else}}
-    <div>{{.Text}}</div>
-    {{end}} {{end}}
-  </div>
+  {{else}}
+  <div>{{$cardCount}}/{{.PlayerCount}} cards have been played...</div>
+  {{end}}
 </div>
 {{end}}
