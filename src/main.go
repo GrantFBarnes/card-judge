@@ -18,8 +18,7 @@ import (
 )
 
 func main() {
-	database.SetDatabaseConnectionString()
-	err := database.Ping()
+	err := database.Setup()
 	if err != nil {
 		log.Fatalln(err)
 	}
