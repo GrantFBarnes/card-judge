@@ -1,6 +1,17 @@
 {{define "game-board"}}
 <div id="game-board">
-  <h3 id="judge-card">{{.JudgeCardText}}</h3>
+  <h3 id="judge-card">
+    {{.JudgeCardText}}
+    <span
+      class="clickable"
+      style="float: right"
+      title="Skip Current Card"
+      hx-post="/api/lobby/{{.LobbyId}}/skip-judge-card"
+      hx-confirm="Are you sure you want to skip this judge card?"
+    >
+      &#11118;
+    </span>
+  </h3>
   <br />
   {{$cardCount := len .BoardCards}} {{if eq $cardCount .PlayerCount}}
   <div id="board-cards">
