@@ -79,13 +79,6 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {
-	lobbies, err := database.GetLobbies("%")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get lobbies"))
-		return
-	}
-
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobbies"
 
@@ -108,13 +101,11 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		Lobbies []database.LobbyDetails
-		Decks   []database.Deck
+		Decks []database.Deck
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		Lobbies:      lobbies,
 		Decks:        decks,
 	})
 }
@@ -225,13 +216,6 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 }
 
 func Decks(w http.ResponseWriter, r *http.Request) {
-	decks, err := database.GetDecks("%")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get decks"))
-		return
-	}
-
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Decks"
 
@@ -245,15 +229,7 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type data struct {
-		api.BasePageData
-		Decks []database.DeckDetails
-	}
-
-	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-		Decks:        decks,
-	})
+	tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
