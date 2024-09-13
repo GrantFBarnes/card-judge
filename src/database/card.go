@@ -70,7 +70,8 @@ func GetCardsInDeck(deckId uuid.UUID, textSearch string) ([]CardDetails, error) 
 			&cardDetails.CardTypeId,
 			&cardDetails.Text,
 			&cardDetails.CardTypeName); err != nil {
-			continue
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
 		}
 		result = append(result, cardDetails)
 	}
