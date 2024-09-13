@@ -141,7 +141,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobby"
 
-	if !database.HasLobbyAccess(basePageData.User.Id, lobbyId) {
+	if !database.UserHasLobbyAccess(basePageData.User.Id, lobbyId) {
 		http.Redirect(w, r, fmt.Sprintf("/lobby/%s/access", lobbyId), http.StatusSeeOther)
 		return
 	}
@@ -198,7 +198,7 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobby Access"
 
-	if database.HasLobbyAccess(basePageData.User.Id, lobbyId) {
+	if database.UserHasLobbyAccess(basePageData.User.Id, lobbyId) {
 		http.Redirect(w, r, fmt.Sprintf("/lobby/%s", lobbyId), http.StatusSeeOther)
 		return
 	}
@@ -285,7 +285,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Deck"
 
-	if !database.HasDeckAccess(basePageData.User.Id, deckId) {
+	if !database.UserHasDeckAccess(basePageData.User.Id, deckId) {
 		http.Redirect(w, r, fmt.Sprintf("/deck/%s/access", deckId), http.StatusSeeOther)
 		return
 	}
@@ -335,7 +335,7 @@ func DeckAccess(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Deck"
 
-	if database.HasDeckAccess(basePageData.User.Id, deckId) {
+	if database.UserHasDeckAccess(basePageData.User.Id, deckId) {
 		http.Redirect(w, r, fmt.Sprintf("/deck/%s", deckId), http.StatusSeeOther)
 		return
 	}

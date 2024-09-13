@@ -281,7 +281,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.HasLobbyAccess(userId, lobbyId) {
+	if !database.UserHasLobbyAccess(userId, lobbyId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
@@ -348,7 +348,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.HasLobbyAccess(userId, lobbyId) {
+	if !database.UserHasLobbyAccess(userId, lobbyId) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
