@@ -1,6 +1,6 @@
 {{define "game-board"}}
 <div id="game-board">
-  <h3 id="judge-card">{{.JudgeCard.Text}}</h3>
+  <h3 id="judge-card">{{.JudgeCardText}}</h3>
   <br />
   {{$cardCount := len .BoardCards}} {{if eq $cardCount .PlayerCount}}
   <div id="board-cards">
