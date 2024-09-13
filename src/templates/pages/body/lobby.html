@@ -3,24 +3,9 @@
 <link rel="stylesheet" href="/static/css/lobby.css" />
 <div id="lobby-grid-container">
   <div
-    id="lobby-game-info"
-    hx-get="/api/lobby/{{.Lobby.Id}}/game-info"
-    hx-trigger="load, every 10s"
-  ></div>
-  <div
-    id="lobby-player-data"
-    hx-get="/api/player/{{.PlayerId}}/player-data"
+    id="lobby-grid-interface"
+    hx-get="/api/player/{{.PlayerId}}/game-interface"
     hx-trigger="load, every 5s"
-  ></div>
-  <div
-    id="lobby-game-board"
-    hx-get="/api/player/{{.PlayerId}}/game-board"
-    hx-trigger="load, every 3s"
-  ></div>
-  <div
-    id="lobby-game-stats"
-    hx-get="/api/lobby/{{.Lobby.Id}}/game-stats"
-    hx-trigger="load, every 30s"
   ></div>
   <div id="lobby-chat">
     <div id="lobby-chat-messages"></div>

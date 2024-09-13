@@ -8,7 +8,7 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 )
 
-func GetPlayerData(w http.ResponseWriter, r *http.Request) {
+func GetGameInterfaceHtml(w http.ResponseWriter, r *http.Request) {
 	playerIdString := r.PathValue("playerId")
 	playerId, err := uuid.Parse(playerIdString)
 	if err != nil {
@@ -17,7 +17,7 @@ func GetPlayerData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerData, err := database.GetPlayerData(playerId)
+	gameData, err := database.GetPlayerGameData(playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -25,7 +25,7 @@ func GetPlayerData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-data.html",
+		"templates/components/game/game-interface.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -33,35 +33,7 @@ func GetPlayerData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "player-data", playerData)
-}
-
-func GetGameBoard(w http.ResponseWriter, r *http.Request) {
-	playerIdString := r.PathValue("playerId")
-	playerId, err := uuid.Parse(playerIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get player id from path."))
-		return
-	}
-
-	data, err := database.GetPlayerGameBoard(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-board.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-board", data)
+	tmpl.ExecuteTemplate(w, "game-interface", gameData)
 }
 
 func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
@@ -73,23 +45,15 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerData, err := database.DrawPlayerHand(playerId)
+	err = database.DrawPlayerHand(playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-data.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "player-data", playerData)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("&#9989;"))
 }
 
 func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -109,23 +73,15 @@ func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerData, err := database.PlayPlayerCard(playerId, cardId)
+	err = database.PlayPlayerCard(playerId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-data.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "player-data", playerData)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("&#9989;"))
 }
 
 func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
@@ -137,23 +93,15 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerData, err := database.DiscardPlayerHand(playerId)
+	err = database.DiscardPlayerHand(playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-data.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "player-data", playerData)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("&#9989;"))
 }
 
 func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -173,21 +121,13 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerData, err := database.DiscardPlayerCard(playerId, cardId)
+	err = database.DiscardPlayerCard(playerId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-data.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "player-data", playerData)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("&#9989;"))
 }

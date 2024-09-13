@@ -13,62 +13,6 @@ import (
 	"github.com/grantfbarnes/card-judge/websocket"
 )
 
-func GetGameInfo(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	data, err := database.GetLobbyGameInfo(lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-info.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-info", data)
-}
-
-func GetGameStats(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	stats, err := database.GetLobbyGameStats(lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-stats.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "game-stats", stats)
-}
-
 func SkipJudgeCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)

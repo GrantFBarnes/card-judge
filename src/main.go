@@ -70,8 +70,6 @@ func main() {
 	http.Handle("DELETE /api/card/{cardId}", api.ApiMiddleware(http.HandlerFunc(apiCard.Delete)))
 
 	// lobby
-	http.Handle("GET /api/lobby/{lobbyId}/game-info", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameInfo)))
-	http.Handle("GET /api/lobby/{lobbyId}/game-stats", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameStats)))
 	http.Handle("POST /api/lobby/{lobbyId}/skip-judge-card", api.ApiMiddleware(http.HandlerFunc(apiLobby.SkipJudgeCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/winner", api.ApiMiddleware(http.HandlerFunc(apiLobby.PickLobbyWinner)))
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
@@ -84,8 +82,7 @@ func main() {
 	http.Handle("POST /api/access/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
 
 	// player
-	http.Handle("GET /api/player/{playerId}/player-data", api.ApiMiddleware(http.HandlerFunc(apiPlayer.GetPlayerData)))
-	http.Handle("GET /api/player/{playerId}/game-board", api.ApiMiddleware(http.HandlerFunc(apiPlayer.GetGameBoard)))
+	http.Handle("GET /api/player/{playerId}/game-interface", api.ApiMiddleware(http.HandlerFunc(apiPlayer.GetGameInterfaceHtml)))
 	http.Handle("POST /api/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DrawPlayerHand)))
 	http.Handle("POST /api/player/{playerId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiPlayer.PlayPlayerCard)))
 	http.Handle("POST /api/player/{playerId}/discard", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DiscardPlayerHand)))

@@ -1,0 +1,142 @@
+{{define "game-interface"}}
+<div id="lobby-game-info">
+  <table id="game-info-table">
+    <thead>
+      <tr>
+        <th>Lobby</th>
+        <th>Judge</th>
+        <th>Hand Size</th>
+        <th>Draw Pile</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          {{.LobbyName}}
+          <span
+            class="clickable"
+            onclick="document.getElementById('lobby-update-dialog').showModal()"
+          >
+            &#128393;
+          </span>
+        </td>
+        <td>{{if eq .JudgeName ""}} (None) {{else}} {{.JudgeName}} {{end}}</td>
+        <td>{{.LobbyHandSize}}</td>
+        <td>{{.LobbyDrawPileCount}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div id="lobby-player-data">
+  <table>
+    <thead>
+      <tr>
+        <th>
+          {{$cardCount := len .PlayerHand}} {{if lt $cardCount .LobbyHandSize}}
+          <button hx-post="/api/player/{{.PlayerId}}/draw">Draw</button>
+          {{end}}
+        </th>
+        <th>
+          {{$cardCount := len .PlayerHand}} {{if gt $cardCount 0}}
+          <button
+            hx-post="/api/player/{{.PlayerId}}/discard"
+            hx-confirm="Are you sure you want to discard your hand?"
+          >
+            Discard
+          </button>
+          {{end}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .PlayerHand}}
+      <tr style="border-top: 2px solid black">
+        <td style="padding: 20px">
+          {{if or $.PlayerIsJudge $.PlayerPlayed}}
+          <span>{{.Text}}</span>
+          {{else}}
+          <span
+            class="clickable"
+            hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/play"
+            hx-confirm="Are you sure you want to play this card?"
+          >
+            {{.Text}}
+          </span>
+          {{end}}
+        </td>
+        <td style="text-align: center">
+          <span
+            title="Discard"
+            class="clickable"
+            hx-delete="/api/player/{{$.PlayerId}}/card/{{.Id}}"
+            hx-confirm="Are you sure you want to discard this card?"
+          >
+            &#9940;
+          </span>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+<div id="lobby-game-board">
+  <h3 id="judge-card">
+    {{.JudgeCardText}}
+    <span
+      class="clickable"
+      style="float: right"
+      title="Skip Current Card"
+      hx-post="/api/lobby/{{.LobbyId}}/skip-judge-card"
+      hx-confirm="Are you sure you want to skip this judge card?"
+    >
+      &#11118;
+    </span>
+  </h3>
+  <br />
+  {{$cardCount := len .BoardCards}} {{if eq $cardCount .LobbyPlayerCount}}
+  <div id="board-cards">
+    <table id="board-cards-table">
+      <tbody>
+        {{range .BoardCards}}
+        <tr>
+          <td style="padding: 20px">
+            {{if $.PlayerIsJudge}}
+            <span
+              class="clickable"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/winner"
+              hx-confirm="Are you sure you want to pick this card as the winner?"
+            >
+              {{.Text}}
+            </span>
+            {{else}}
+            <span>{{.Text}}</span>
+            {{end}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+  <div>{{$cardCount}}/{{.LobbyPlayerCount}} cards have been played...</div>
+  {{end}}
+</div>
+<div id="lobby-game-stats">
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Wins</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Wins}}
+      <tr>
+        <td>{{.UserName}}</td>
+        <td>{{.WinCount}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}
