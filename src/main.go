@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/grantfbarnes/card-judge/api"
 	apiAccess "github.com/grantfbarnes/card-judge/api/access"
@@ -94,10 +95,30 @@ func main() {
 	// websocket
 	http.HandleFunc("GET /ws/lobby/{lobbyId}", websocket.ServeWs)
 
-	port := ":8080"
-	log.Printf("running at http://localhost%s\n", port)
-	err = http.ListenAndServe(port, nil)
-	if err != nil {
-		log.Fatalln(err)
+	if os.Getenv("CARD_JUDGE_ENV") == "PROD" {
+		logFileName := os.Getenv("CARD_JUDGE_LOG_FILE")
+		certFileName := os.Getenv("CARD_JUDGE_CERT_FILE")
+		keyFileName := os.Getenv("CARD_JUDGE_KEY_FILE")
+
+		logFile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer logFile.Close()
+		log.SetOutput(logFile)
+
+		port := ":443"
+		log.Println("server is running...")
+		err = http.ListenAndServeTLS(port, certFileName, keyFileName, nil)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	} else {
+		port := ":8080"
+		log.Println("server is running...")
+		err = http.ListenAndServe(port, nil)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 }
