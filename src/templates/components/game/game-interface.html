@@ -33,13 +33,19 @@
       <tr>
         <th>
           {{$cardCount := len .PlayerHand}} {{if lt $cardCount .LobbyHandSize}}
-          <button hx-post="/api/player/{{.PlayerId}}/draw">Draw</button>
+          <button
+            hx-post="/api/player/{{.PlayerId}}/draw"
+            hx-target="#lobby-grid-interface"
+          >
+            Draw
+          </button>
           {{end}}
         </th>
         <th>
           {{$cardCount := len .PlayerHand}} {{if gt $cardCount 0}}
           <button
             hx-post="/api/player/{{.PlayerId}}/discard"
+            hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to discard your hand?"
           >
             Discard
@@ -58,6 +64,7 @@
           <span
             class="clickable"
             hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/play"
+            hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to play this card?"
           >
             {{.Text}}
@@ -69,6 +76,7 @@
             title="Discard"
             class="clickable"
             hx-delete="/api/player/{{$.PlayerId}}/card/{{.Id}}"
+            hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to discard this card?"
           >
             &#9940;

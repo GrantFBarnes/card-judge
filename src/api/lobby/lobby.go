@@ -60,7 +60,7 @@ func PickLobbyWinner(w http.ResponseWriter, r *http.Request) {
 	websocket.LobbyBroadcast(lobbyId, playerName+" is the winner! They are now the new judge...")
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("winner"))
+	w.Write([]byte("&#9989;"))
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {

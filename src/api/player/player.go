@@ -52,8 +52,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("&#9989;"))
+	GetGameInterfaceHtml(w, r)
 }
 
 func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -80,8 +79,7 @@ func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("&#9989;"))
+	GetGameInterfaceHtml(w, r)
 }
 
 func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
@@ -100,8 +98,7 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("&#9989;"))
+	GetGameInterfaceHtml(w, r)
 }
 
 func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +125,5 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("&#9989;"))
+	GetGameInterfaceHtml(w, r)
 }
