@@ -126,7 +126,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 
-			_, err = database.CreateCard(deckId, cardTypeName, text)
+			var blankCount = 0
+
+			if cardTypeName == "Judge"{
+
+				blankCount = CountBlanks(text)
+			}
+
+			_, err = database.CreateCard(deckId, cardTypeName, text, blankCount)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				w.Write([]byte(err.Error()))
@@ -266,7 +273,20 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardText(cardId, text)
+	var blankCount = 0
+
+	var cardType, err2 = database.GetCardType(cardId)
+	if err2 != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if cardType == "Judge" {
+		blankCount = CountBlanks(text)
+	}
+
+	err = database.SetCardText(cardId, text, blankCount)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -276,6 +296,7 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
 }
+
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	cardIdString := r.PathValue("cardId")
@@ -315,4 +336,20 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
+}
+
+func CountBlanks(text string) (int){
+
+	var blankCount = 0; 
+
+	var words []string = strings.Split(text, " ")	
+
+		for _, word := range words {
+			if strings.Contains(word, "__") {
+				blankCount++
+			}
+
+		}
+
+	return blankCount; 
 }
