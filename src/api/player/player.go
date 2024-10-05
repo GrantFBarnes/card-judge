@@ -118,7 +118,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.DiscardPlayerCard(playerId, cardId)
+	err = database.DiscardPlayerCard(playerId, cardId, true)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

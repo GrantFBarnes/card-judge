@@ -113,7 +113,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(deckId uuid.UUID, cardTypeName string, text string) (uuid.UUID, error) {
+func CreateCard(deckId uuid.UUID, cardTypeName string, text string, blankCount int) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		log.Println(err)
@@ -132,10 +132,10 @@ func CreateCard(deckId uuid.UUID, cardTypeName string, text string) (uuid.UUID, 
 	}
 
 	sqlString := `
-		INSERT INTO CARD (ID, DECK_ID, CARD_TYPE_ID, TEXT)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO CARD (ID, DECK_ID, CARD_TYPE_ID, TEXT, BLANK_COUNT)
+		VALUES (?, ?, ?, ?, ?)
 	`
-	return id, Execute(sqlString, id, deckId, cardTypeId, text)
+	return id, Execute(sqlString, id, deckId, cardTypeId, text, blankCount)
 }
 
 func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
@@ -161,6 +161,32 @@ func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
 	}
 
 	return id, nil
+}
+
+func GetCardType(id uuid.UUID) (string, error) {
+	var cardType string
+
+	sqlString := `
+		SELECT
+			CT.NAME
+		FROM CARD C
+		INNER JOIN CARD_TYPE CT ON CT.ID = C.CARD_TYPE_ID
+		WHERE C.ID = ?
+	`
+	rows, err := Query(sqlString, id)
+	if err != nil {
+		return cardType, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&cardType); err != nil {
+			log.Println(err)
+			return cardType, errors.New("failed to scan row in query results")
+		}
+
+	}
+
+	return cardType, nil
 }
 
 func getCardTypeId(cardTypeName string) (uuid.UUID, error) {
@@ -208,14 +234,16 @@ func SetCardType(id uuid.UUID, cardTypeName string) error {
 	return Execute(sqlString, cardTypeId, id)
 }
 
-func SetCardText(id uuid.UUID, text string) error {
+func SetCardText(id uuid.UUID, text string, blankCount int) error {
 	sqlString := `
 		UPDATE CARD
 		SET
-			TEXT = ?
+			TEXT = ?,
+			BLANK_COUNT = ?
+
 		WHERE ID = ?
 	`
-	return Execute(sqlString, text, id)
+	return Execute(sqlString, text, blankCount, id)
 }
 
 func DeleteCard(id uuid.UUID) error {

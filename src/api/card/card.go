@@ -2,6 +2,7 @@ package apiCard
 
 import (
 	"net/http"
+	"strings"
 	"text/template"
 
 	"github.com/google/uuid"
@@ -98,7 +99,15 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingCardId != uuid.Nil {
+
+	existingCardTypeName, err := database.GetCardType(existingCardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if existingCardId != uuid.Nil && existingCardTypeName == cardTypeName {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Card text already exists."))
 		return
@@ -110,7 +119,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = database.CreateCard(deckId, cardTypeName, text)
+	var blankCount int
+	if strings.ToLower(cardTypeName) == "judge" {
+		text, blankCount = ProcessJudgeCardText(text)
+	}
+
+	_, err = database.CreateCard(deckId, cardTypeName, text, blankCount)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -232,13 +246,33 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingCardId != uuid.Nil {
+
+	existingCardTypeName, err := database.GetCardType(existingCardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	cardTypeName, err := database.GetCardType(cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if existingCardId != uuid.Nil && existingCardTypeName == cardTypeName {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Card text already exists."))
 		return
 	}
 
-	err = database.SetCardText(cardId, text)
+	var blankCount int
+	if strings.ToLower(cardTypeName) == "judge" {
+		text, blankCount = ProcessJudgeCardText(text)
+	}
+
+	err = database.SetCardText(cardId, text, blankCount)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -287,4 +321,20 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
+}
+
+func ProcessJudgeCardText(text string) (nomralizedText string, blankCount int) {
+
+	var words []string = strings.Fields(text)
+
+	for _, word := range words {
+		if strings.Contains(word, "_") {
+			text = strings.Replace(text, word, "<BLANK>", -1)
+			blankCount++
+
+		}
+	}
+
+	nomralizedText = strings.Replace(text, "<BLANK>", "_______", -1)
+	return
 }
