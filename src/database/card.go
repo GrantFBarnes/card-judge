@@ -183,12 +183,11 @@ func GetCardType(id uuid.UUID) (string, error) {
 			log.Println(err)
 			return cardType, errors.New("failed to scan row in query results")
 		}
-						
+
 	}
 
 	return cardType, nil
 }
-
 
 func getCardTypeId(cardTypeName string) (uuid.UUID, error) {
 	var id uuid.UUID
