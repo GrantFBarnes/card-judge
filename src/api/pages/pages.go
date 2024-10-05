@@ -251,13 +251,6 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cards, err := database.GetCardsInDeck(deckId, "%")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get cards in deck"))
-		return
-	}
-
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Deck"
 
@@ -278,14 +271,12 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		Deck  database.Deck
-		Cards []database.CardDetails
+		Deck database.Deck
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Deck:         deck,
-		Cards:        cards,
 	})
 }
 

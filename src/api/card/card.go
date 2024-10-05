@@ -20,6 +20,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var deckId uuid.UUID
+	var cardTypeNameSearch string
 	var textSearch string
 	for key, val := range r.Form {
 		if key == "deckId" {
@@ -29,6 +30,8 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Failed to parse deck id."))
 				return
 			}
+		} else if key == "cardTypeName" {
+			cardTypeNameSearch = val[0]
 		} else if key == "text" {
 			textSearch = val[0]
 		}
@@ -36,7 +39,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	textSearch = "%" + textSearch + "%"
 
-	cards, err := database.GetCardsInDeck(deckId, textSearch)
+	cards, err := database.GetCardsInDeck(deckId, cardTypeNameSearch, textSearch)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

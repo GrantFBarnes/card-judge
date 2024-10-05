@@ -31,7 +31,11 @@ type CardDetails struct {
 	CardTypeName string
 }
 
-func GetCardsInDeck(deckId uuid.UUID, textSearch string) ([]CardDetails, error) {
+func GetCardsInDeck(deckId uuid.UUID, cardTypeNameSearch string, textSearch string) ([]CardDetails, error) {
+	if cardTypeNameSearch == "" {
+		cardTypeNameSearch = "%"
+	}
+
 	if textSearch == "" {
 		textSearch = "%"
 	}
@@ -48,13 +52,14 @@ func GetCardsInDeck(deckId uuid.UUID, textSearch string) ([]CardDetails, error) 
 		FROM CARD AS C
 			INNER JOIN CARD_TYPE AS CT ON CT.ID = C.CARD_TYPE_ID
 		WHERE C.DECK_ID = ?
+			AND CT.NAME LIKE ?
 			AND C.TEXT LIKE ?
 		ORDER BY
 			CT.NAME ASC,
 			TO_DAYS(C.CHANGED_ON_DATE) DESC,
 			C.TEXT ASC
 	`
-	rows, err := query(sqlString, deckId, textSearch)
+	rows, err := query(sqlString, deckId, cardTypeNameSearch, textSearch)
 	if err != nil {
 		return nil, err
 	}

@@ -124,7 +124,6 @@
   </form>
 </dialog>
 <br />
-{{$cardCount := len .Cards}} {{if gt $cardCount 0}}
 <h3>Cards in Deck</h3>
 <table>
   <thead>
@@ -132,33 +131,36 @@
       <th>Created</th>
       <th>Changed</th>
       <th>Card Type</th>
-      <th>
-        <form>
-          <input
-            type="text"
-            id="cardDeckId"
-            name="deckId"
-            value="{{.Deck.Id}}"
-            hidden
-          />
-          <label for="cardTextSearch">Text</label>
+      <th>Text</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+      <th colspan="4">
+        <form
+          hx-post="/api/card/search"
+          hx-trigger="load, input change delay:500ms"
+          hx-target="#card-table-rows"
+        >
+          <input type="text" name="deckId" value="{{.Deck.Id}}" hidden />
+          <select name="cardTypeName" autocomplete="off" required>
+            <option value="%" selected>Any</option>
+            <option value="Judge">Judge</option>
+            <option value="Player">Player</option>
+          </select>
           <input
             type="search"
-            id="cardTextSearch"
             name="text"
             maxlength="510"
             placeholder="Search..."
             autocomplete="off"
-            hx-post="/api/card/search"
-            hx-trigger="load, input changed delay:500ms, search"
-            hx-target="#card-table-rows"
           />
         </form>
       </th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody id="card-table-rows"></tbody>
 </table>
-{{end}} {{end}}
+{{end}}
