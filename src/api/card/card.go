@@ -2,6 +2,7 @@ package apiCard
 
 import (
 	"net/http"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -121,7 +122,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	var blankCount int
 	if strings.ToLower(cardTypeName) == "judge" {
-		text, blankCount = ProcessJudgeCardText(text)
+		text, blankCount, err = processJudgeCardText(text)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
 	}
 
 	_, err = database.CreateCard(deckId, cardTypeName, text, blankCount)
@@ -269,7 +275,12 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 
 	var blankCount int
 	if strings.ToLower(cardTypeName) == "judge" {
-		text, blankCount = ProcessJudgeCardText(text)
+		text, blankCount, err = processJudgeCardText(text)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
 	}
 
 	err = database.SetCardText(cardId, text, blankCount)
@@ -323,18 +334,17 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func ProcessJudgeCardText(text string) (nomralizedText string, blankCount int) {
+func processJudgeCardText(text string) (string, int, error) {
+	var normalizedText string = text
+	var blankCount int = 0
 
-	var words []string = strings.Fields(text)
-
-	for _, word := range words {
-		if strings.Contains(word, "_") {
-			text = strings.Replace(text, word, "<BLANK>", -1)
-			blankCount++
-
-		}
+	blankRegExp, err := regexp.Compile(`__+`)
+	if err != nil {
+		return normalizedText, blankCount, err
 	}
 
-	nomralizedText = strings.Replace(text, "<BLANK>", "_______", -1)
-	return
+	normalizedText = blankRegExp.ReplaceAllString(text, "_____")
+	blankCount = len(blankRegExp.FindAllString(text, -1))
+
+	return normalizedText, blankCount, err
 }

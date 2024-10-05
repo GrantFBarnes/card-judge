@@ -169,8 +169,8 @@ func GetCardType(id uuid.UUID) (string, error) {
 	sqlString := `
 		SELECT
 			CT.NAME
-		FROM CARD C
-		INNER JOIN CARD_TYPE CT ON CT.ID = C.CARD_TYPE_ID
+		FROM CARD AS C
+			INNER JOIN CARD_TYPE AS CT ON CT.ID = C.CARD_TYPE_ID
 		WHERE C.ID = ?
 	`
 	rows, err := query(sqlString, id)
@@ -240,7 +240,6 @@ func SetCardText(id uuid.UUID, text string, blankCount int) error {
 		SET
 			TEXT = ?,
 			BLANK_COUNT = ?
-
 		WHERE ID = ?
 	`
 	return execute(sqlString, text, blankCount, id)
