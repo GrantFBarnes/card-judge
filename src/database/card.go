@@ -54,7 +54,7 @@ func GetCardsInDeck(deckId uuid.UUID, textSearch string) ([]CardDetails, error) 
 			TO_DAYS(C.CHANGED_ON_DATE) DESC,
 			C.TEXT ASC
 	`
-	rows, err := Query(sqlString, deckId, textSearch)
+	rows, err := query(sqlString, deckId, textSearch)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 		FROM CARD
 		WHERE ID = ?
 	`
-	rows, err := Query(sqlString, id)
+	rows, err := query(sqlString, id)
 	if err != nil {
 		return card, err
 	}
@@ -135,7 +135,7 @@ func CreateCard(deckId uuid.UUID, cardTypeName string, text string, blankCount i
 		INSERT INTO CARD (ID, DECK_ID, CARD_TYPE_ID, TEXT, BLANK_COUNT)
 		VALUES (?, ?, ?, ?, ?)
 	`
-	return id, Execute(sqlString, id, deckId, cardTypeId, text, blankCount)
+	return id, execute(sqlString, id, deckId, cardTypeId, text, blankCount)
 }
 
 func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
@@ -148,7 +148,7 @@ func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
 		WHERE DECK_ID = ?
 			AND TEXT = ?
 	`
-	rows, err := Query(sqlString, deckId, text)
+	rows, err := query(sqlString, deckId, text)
 	if err != nil {
 		return id, err
 	}
@@ -173,7 +173,7 @@ func GetCardType(id uuid.UUID) (string, error) {
 		INNER JOIN CARD_TYPE CT ON CT.ID = C.CARD_TYPE_ID
 		WHERE C.ID = ?
 	`
-	rows, err := Query(sqlString, id)
+	rows, err := query(sqlString, id)
 	if err != nil {
 		return cardType, err
 	}
@@ -198,7 +198,7 @@ func getCardTypeId(cardTypeName string) (uuid.UUID, error) {
 		FROM CARD_TYPE
 		WHERE NAME = ?
 	`
-	rows, err := Query(sqlString, cardTypeName)
+	rows, err := query(sqlString, cardTypeName)
 	if err != nil {
 		return id, err
 	}
@@ -231,7 +231,7 @@ func SetCardType(id uuid.UUID, cardTypeName string) error {
 			CARD_TYPE_ID = ?
 		WHERE ID = ?
 	`
-	return Execute(sqlString, cardTypeId, id)
+	return execute(sqlString, cardTypeId, id)
 }
 
 func SetCardText(id uuid.UUID, text string, blankCount int) error {
@@ -243,7 +243,7 @@ func SetCardText(id uuid.UUID, text string, blankCount int) error {
 
 		WHERE ID = ?
 	`
-	return Execute(sqlString, text, blankCount, id)
+	return execute(sqlString, text, blankCount, id)
 }
 
 func DeleteCard(id uuid.UUID) error {
@@ -251,5 +251,5 @@ func DeleteCard(id uuid.UUID) error {
 		DELETE FROM CARD
 		WHERE ID = ?
 	`
-	return Execute(sqlString, id)
+	return execute(sqlString, id)
 }
