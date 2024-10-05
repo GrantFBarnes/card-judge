@@ -18,10 +18,12 @@ import (
 )
 
 func main() {
-	err := database.Setup()
+	db, err := database.CreateDatabaseConnection()
 	if err != nil {
 		log.Fatalln(err)
+		return
 	}
+	defer db.Close()
 
 	// static files
 	http.HandleFunc("GET /static/{fileType}/{fileName}", func(w http.ResponseWriter, r *http.Request) {
