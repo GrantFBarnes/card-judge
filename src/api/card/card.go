@@ -1,7 +1,6 @@
 package apiCard
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"text/template"
@@ -66,7 +65,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var deckId uuid.UUID
 	var cardTypeName string
 	var text string
-
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -82,10 +80,28 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if text == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No text found."))
+		return
+	}
+
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get user id."))
+		return
+	}
+
+	existingCardId, err := database.GetCardId(deckId, text)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	if existingCardId != uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Card text already exists."))
 		return
 	}
 
@@ -95,59 +111,16 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var lines []string = strings.Split(text, "\n")
+	var blankCount int
+	if strings.ToLower(cardTypeName) == "judge" {
 
-	if len(lines) > 500 {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Only up to 500 cards can be created at one time."))
-		return
-
+		blankCount = CountBlanks(text)
 	}
 
-	var duplicates []string
-
-	for _, text := range lines {
-
-		if text == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("No text found."))
-			return
-		}
-
-		existingCardId, err := database.GetCardId(deckId, text)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-			return
-		}
-		if existingCardId != uuid.Nil {
-
-			duplicates = append(duplicates, fmt.Sprintf("Card text '%s' already exists.", text))
-
-		} else {
-
-			var blankCount = 0
-
-			if cardTypeName == "Judge" {
-
-				blankCount = CountBlanks(text)
-			}
-
-			_, err = database.CreateCard(deckId, cardTypeName, text, blankCount)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(err.Error()))
-				return
-
-			}
-
-		}
-
-	}
-
-	if len(duplicates) > 0 {
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte("WARNING: Duplicates were automatically removed.  New cards were added successfully."))
+	_, err = database.CreateCard(deckId, cardTypeName, text, blankCount)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -274,14 +247,14 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 
 	var blankCount int
 
-	cardType, err := database.GetCardType(cardId)
+	cardTypeName, err := database.GetCardType(cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	if cardType == "Judge" {
+	if strings.ToLower(cardTypeName) == "judge" {
 		blankCount = CountBlanks(text)
 	}
 
