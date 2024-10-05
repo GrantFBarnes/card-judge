@@ -1,10 +1,11 @@
 package apiCard
 
 import (
-	"net/http"
-	"text/template"
-	"strings"
 	"fmt"
+	"net/http"
+	"strings"
+	"text/template"
+
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
@@ -81,7 +82,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -106,7 +106,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	var duplicates []string
 
-	for  _, text := range lines {
+	for _, text := range lines {
 
 		if text == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -128,7 +128,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 			var blankCount = 0
 
-			if cardTypeName == "Judge"{
+			if cardTypeName == "Judge" {
 
 				blankCount = CountBlanks(text)
 			}
@@ -145,11 +145,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-
 	if len(duplicates) > 0 {
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("WARNING: Duplicates were automatically removed.  New cards were added successfully."))
-	    return
+		return
 	}
 
 	w.Header().Add("HX-Refresh", "true")
@@ -273,10 +272,10 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var blankCount = 0
+	var blankCount int
 
-	var cardType, err2 = database.GetCardType(cardId)
-	if err2 != nil {
+	cardType, err := database.GetCardType(cardId)
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
@@ -296,7 +295,6 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
 }
-
 
 func Delete(w http.ResponseWriter, r *http.Request) {
 	cardIdString := r.PathValue("cardId")
@@ -338,18 +336,18 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func CountBlanks(text string) (int){
+func CountBlanks(text string) int {
 
-	var blankCount = 0; 
+	var blankCount = 0
 
-	var words []string = strings.Split(text, " ")	
+	var words []string = strings.Split(text, " ")
 
-		for _, word := range words {
-			if strings.Contains(word, "__") {
-				blankCount++
-			}
-
+	for _, word := range words {
+		if strings.Contains(word, "__") {
+			blankCount++
 		}
 
-	return blankCount; 
+	}
+
+	return blankCount
 }
