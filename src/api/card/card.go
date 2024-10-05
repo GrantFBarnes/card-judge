@@ -99,7 +99,15 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingCardId != uuid.Nil {
+
+	existingCardTypeName, err := database.GetCardType(existingCardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if existingCardId != uuid.Nil && existingCardTypeName == cardTypeName {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Card text already exists."))
 		return
@@ -113,8 +121,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	var blankCount int
 	if strings.ToLower(cardTypeName) == "judge" {
-
-		blankCount = CountBlanks(text)
+		text, blankCount = ProcessJudgeCardText(text)
 	}
 
 	_, err = database.CreateCard(deckId, cardTypeName, text, blankCount)
@@ -239,13 +246,13 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if existingCardId != uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Card text already exists."))
+
+	existingCardTypeName, err := database.GetCardType(existingCardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
-
-	var blankCount int
 
 	cardTypeName, err := database.GetCardType(cardId)
 	if err != nil {
@@ -254,8 +261,15 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if existingCardId != uuid.Nil && existingCardTypeName == cardTypeName {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Card text already exists."))
+		return
+	}
+
+	var blankCount int
 	if strings.ToLower(cardTypeName) == "judge" {
-		blankCount = CountBlanks(text)
+		text, blankCount = ProcessJudgeCardText(text)
 	}
 
 	err = database.SetCardText(cardId, text, blankCount)
@@ -309,18 +323,18 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func CountBlanks(text string) int {
+func ProcessJudgeCardText(text string) (nomralizedText string, blankCount int) {
 
-	var blankCount = 0
-
-	var words []string = strings.Split(text, " ")
+	var words []string = strings.Fields(text)
 
 	for _, word := range words {
-		if strings.Contains(word, "__") {
+		if strings.Contains(word, "_") {
+			text = strings.Replace(text, word, "<BLANK>", -1)
 			blankCount++
-		}
 
+		}
 	}
 
-	return blankCount
+	nomralizedText = strings.Replace(text, "<BLANK>", "_______", -1)
+	return
 }
