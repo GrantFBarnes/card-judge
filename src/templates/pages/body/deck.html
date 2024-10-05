@@ -125,6 +125,34 @@
 </dialog>
 <br />
 <h3>Cards in Deck</h3>
+<form
+  hx-post="/api/card/search"
+  hx-trigger="load, input change delay:500ms"
+  hx-target="#card-table-rows"
+>
+  <input type="text" name="deckId" value="{{.Deck.Id}}" hidden />
+  <label for="cardTypeNameSearch">Card Type:</label>
+  <select
+    id="cardTypeNameSearch"
+    name="cardTypeName"
+    autocomplete="off"
+    required
+  >
+    <option value="%" selected>Any</option>
+    <option value="Judge">Judge</option>
+    <option value="Player">Player</option>
+  </select>
+  <label for="textSearch">Text:</label>
+  <input
+    type="search"
+    id="textSearch"
+    name="text"
+    maxlength="510"
+    placeholder="Search..."
+    autocomplete="off"
+  />
+</form>
+<br />
 <table>
   <thead>
     <tr>
@@ -134,31 +162,6 @@
       <th>Text</th>
       <th>Edit</th>
       <th>Delete</th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-      <th colspan="4">
-        <form
-          hx-post="/api/card/search"
-          hx-trigger="load, input change delay:500ms"
-          hx-target="#card-table-rows"
-        >
-          <input type="text" name="deckId" value="{{.Deck.Id}}" hidden />
-          <select name="cardTypeName" autocomplete="off" required>
-            <option value="%" selected>Any</option>
-            <option value="Judge">Judge</option>
-            <option value="Player">Player</option>
-          </select>
-          <input
-            type="search"
-            name="text"
-            maxlength="510"
-            placeholder="Search..."
-            autocomplete="off"
-          />
-        </form>
-      </th>
     </tr>
   </thead>
   <tbody id="card-table-rows"></tbody>
