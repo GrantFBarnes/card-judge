@@ -3,6 +3,7 @@ package apiCard
 import (
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -22,6 +23,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	var deckId uuid.UUID
 	var cardTypeNameSearch string
 	var textSearch string
+	var pageNumber int
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -34,12 +36,19 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			cardTypeNameSearch = val[0]
 		} else if key == "text" {
 			textSearch = val[0]
+		} else if key == "page" {
+			pageNumber, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse page."))
+				return
+			}
 		}
 	}
 
 	textSearch = "%" + textSearch + "%"
 
-	cards, err := database.GetCardsInDeck(deckId, cardTypeNameSearch, textSearch)
+	cards, err := database.GetCardsInDeck(deckId, cardTypeNameSearch, textSearch, pageNumber)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

@@ -31,13 +31,21 @@ type CardDetails struct {
 	CardTypeName string
 }
 
-func GetCardsInDeck(deckId uuid.UUID, cardTypeNameSearch string, textSearch string) ([]CardDetails, error) {
+func GetCardsInDeck(deckId uuid.UUID, cardTypeNameSearch string, textSearch string, pageNumber int) ([]CardDetails, error) {
 	if cardTypeNameSearch == "" {
 		cardTypeNameSearch = "%"
 	}
 
 	if textSearch == "" {
 		textSearch = "%"
+	}
+
+	pageSize := 10
+
+	if pageNumber < 1 {
+		pageNumber = 1
+	} else if pageNumber > 100 {
+		pageNumber = 100
 	}
 
 	sqlString := `
@@ -58,8 +66,9 @@ func GetCardsInDeck(deckId uuid.UUID, cardTypeNameSearch string, textSearch stri
 			CT.NAME ASC,
 			TO_DAYS(C.CHANGED_ON_DATE) DESC,
 			C.TEXT ASC
+		LIMIT ? OFFSET ?
 	`
-	rows, err := query(sqlString, deckId, cardTypeNameSearch, textSearch)
+	rows, err := query(sqlString, deckId, cardTypeNameSearch, textSearch, pageSize, (pageNumber-1)*pageSize)
 	if err != nil {
 		return nil, err
 	}
