@@ -197,10 +197,37 @@ func GetCardType(id uuid.UUID) (string, error) {
 			log.Println(err)
 			return cardType, errors.New("failed to scan row in query results")
 		}
-
 	}
 
 	return cardType, nil
+}
+
+func GetCardTextStart(id uuid.UUID) (string, error) {
+	var text string
+
+	sqlString := `
+		SELECT
+			TEXT
+		FROM CARD
+		WHERE ID = ?
+	`
+	rows, err := query(sqlString, id)
+	if err != nil {
+		return text, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&text); err != nil {
+			log.Println(err)
+			return text, errors.New("failed to scan row in query results")
+		}
+	}
+
+	if len(text) > 100 {
+		text = text[:100] + "..."
+	}
+
+	return text, nil
 }
 
 func getCardTypeId(cardTypeName string) (uuid.UUID, error) {

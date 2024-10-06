@@ -57,7 +57,14 @@ func PickLobbyWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, playerName+" is the winner! They are now the new judge...")
+	cardTextStart, err := database.GetCardTextStart(cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "Winner: "+playerName+"\nCard Played: "+cardTextStart)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("&#9989;"))
