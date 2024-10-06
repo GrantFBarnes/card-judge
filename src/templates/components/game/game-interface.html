@@ -88,8 +88,9 @@
   </table>
 </div>
 <div id="lobby-game-board">
-  <h3 id="judge-card" style="white-space: pre-wrap">
-    {{.JudgeCardText}}
+  <h3 id="judge-card">
+    <span style="white-space: pre-wrap">{{.JudgeCardText}}</span>
+    {{if .PlayerIsJudge}}
     <span
       class="clickable"
       style="float: right"
@@ -99,6 +100,7 @@
     >
       &#11118;
     </span>
+    {{end}}
   </h3>
   <br />
   {{$cardCount := len .BoardCards}} {{if eq $cardCount .LobbyPlayerCount}}
