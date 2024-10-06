@@ -101,6 +101,60 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 	GetGameInterfaceHtml(w, r)
 }
 
+func LockPlayerCard(w http.ResponseWriter, r *http.Request) {
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get card id from path."))
+		return
+	}
+
+	err = database.LockPlayerCard(playerId, cardId, true)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	GetGameInterfaceHtml(w, r)
+}
+
+func UnlockPlayerCard(w http.ResponseWriter, r *http.Request) {
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get card id from path."))
+		return
+	}
+
+	err = database.LockPlayerCard(playerId, cardId, false)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	GetGameInterfaceHtml(w, r)
+}
+
 func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 	playerIdString := r.PathValue("playerId")
 	playerId, err := uuid.Parse(playerIdString)

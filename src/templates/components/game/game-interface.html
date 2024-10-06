@@ -31,6 +31,7 @@
   <table>
     <thead>
       <tr>
+        <th></th>
         <th>
           {{$cardCount := len .PlayerHand}} {{if lt $cardCount .LobbyHandSize}}
           <button
@@ -57,6 +58,27 @@
     <tbody>
       {{range .PlayerHand}}
       <tr style="border-top: 2px solid black">
+        <td style="text-align: center">
+          {{if .Locked}}
+          <span
+            title="Unlock"
+            class="clickable"
+            hx-put="/api/player/{{$.PlayerId}}/card/{{.Id}}/unlock"
+            hx-target="#lobby-grid-interface"
+          >
+            &#128274;
+          </span>
+          {{else}}
+          <span
+            title="Lock"
+            class="clickable"
+            hx-put="/api/player/{{$.PlayerId}}/card/{{.Id}}/lock"
+            hx-target="#lobby-grid-interface"
+          >
+            &#128275;
+          </span>
+          {{end}}
+        </td>
         <td style="padding: 20px">
           {{if or $.PlayerIsJudge $.PlayerPlayed}}
           <span>{{.Text}}</span>
@@ -72,6 +94,7 @@
           {{end}}
         </td>
         <td style="text-align: center">
+          {{if not .Locked}}
           <span
             title="Discard"
             class="clickable"
@@ -81,6 +104,7 @@
           >
             &#9940;
           </span>
+          {{end}}
         </td>
       </tr>
       {{end}}
