@@ -59,7 +59,7 @@
       {{range .PlayerHand}}
       <tr style="border-top: 2px solid black">
         <td style="text-align: center">
-          {{if .Locked}}
+          {{if .IsLocked}}
           <span
             title="Unlock"
             class="clickable"
@@ -94,7 +94,7 @@
           {{end}}
         </td>
         <td style="text-align: center">
-          {{if not .Locked}}
+          {{if not .IsLocked}}
           <span
             title="Discard"
             class="clickable"
