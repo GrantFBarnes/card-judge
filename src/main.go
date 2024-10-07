@@ -18,6 +18,12 @@ import (
 )
 
 func main() {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("panic occurred:", err)
+		}
+	}()
+
 	db, err := database.CreateDatabaseConnection()
 	if err != nil {
 		log.Fatalln(err)
