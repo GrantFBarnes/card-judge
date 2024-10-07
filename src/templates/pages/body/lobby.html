@@ -16,7 +16,10 @@
         maxlength="255"
         placeholder="Send a message..."
       />
-      <input id="lobby-chat-submit" type="submit" value="Send" />
+      <input id="lobby-chat-submit" type="submit" value="Send Message" />
+      <button hx-post="/api/player/{{.PlayerId}}/flip" hx-swap="none">
+        Flip the Table!
+      </button>
     </form>
   </div>
 </div>

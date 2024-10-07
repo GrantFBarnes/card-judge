@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/websocket"
 )
 
 func GetGameInterfaceHtml(w http.ResponseWriter, r *http.Request) {
@@ -180,4 +181,26 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	GetGameInterfaceHtml(w, r)
+}
+
+func FlipTable(w http.ResponseWriter, r *http.Request) {
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	player, err := database.GetPlayer(playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(player.LobbyId, player.Name+": FLIP THE TABLE!")
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
 }

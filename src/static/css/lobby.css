@@ -70,7 +70,7 @@
 }
 
 #lobby-chat-messages {
-  height: calc(100% - 50px);
+  height: calc(100% - 75px);
   overflow-y: scroll;
   overflow-x: hidden !important;
   padding-left: calc(5px + 1em);
@@ -82,9 +82,5 @@
 }
 
 #lobby-chat-input {
-  width: calc(100% - 100px);
-}
-
-#lobby-chat-submit {
-  width: 50px;
+  width: calc(100% - 20px);
 }
