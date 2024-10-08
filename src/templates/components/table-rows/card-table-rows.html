@@ -2,7 +2,7 @@
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
-  <td>{{.CardTypeName}}</td>
+  <td>{{.Category}}</td>
   <td style="white-space: pre-wrap">{{.Text}}</td>
   <td>
     <div
@@ -26,8 +26,8 @@
           </div>
         </div>
       </div>
-      <form hx-put="/api/card/{{.Id}}/card-type" hx-target="find .htmx-result">
-        <h3>Set Card Type</h3>
+      <form hx-put="/api/card/{{.Id}}/category" hx-target="find .htmx-result">
+        <h3>Set Category</h3>
         <input
           type="text"
           id="deckId{{.Id}}"
@@ -35,25 +35,25 @@
           value="{{.DeckId}}"
           hidden
         />
-        <label for="cardTypeName{{.Id}}">Card Type:</label>
+        <label for="category{{.Id}}">Category:</label>
         <select
-          id="cardTypeName{{.Id}}"
-          name="cardTypeName"
+          id="category{{.Id}}"
+          name="category"
           autocomplete="off"
           required
         >
-          {{if eq .CardTypeName "Judge"}}
-          <option value="Judge" selected>Judge</option>
-          <option value="Player">Player</option>
+          {{if eq .Category "JUDGE"}}
+          <option value="JUDGE" selected>JUDGE</option>
+          <option value="PLAYER">PLAYER</option>
           {{else}}
-          <option value="Judge">Judge</option>
-          <option value="Player" selected>Player</option>
+          <option value="JUDGE">JUDGE</option>
+          <option value="PLAYER" selected>PLAYER</option>
           {{end}}
         </select>
         <br />
         <br />
         <div class="htmx-result"></div>
-        <input type="submit" value="Set Card Type" />
+        <input type="submit" value="Set Category" />
       </form>
       <form hx-put="/api/card/{{.Id}}/text" hx-target="find .htmx-result">
         <h3>Set Card Text</h3>

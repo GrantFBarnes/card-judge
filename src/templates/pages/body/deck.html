@@ -95,15 +95,10 @@
       value="{{.Deck.Id}}"
       hidden
     />
-    <label for="newCardCardTypeName">Card Type:</label>
-    <select
-      id="newCardCardTypeName"
-      name="cardTypeName"
-      autocomplete="off"
-      required
-    >
-      <option value="Judge" selected>Judge</option>
-      <option value="Player">Player</option>
+    <label for="newCardCategory">Category:</label>
+    <select id="newCardCategory" name="category" autocomplete="off" required>
+      <option value="JUDGE" selected>JUDGE</option>
+      <option value="PLAYER">PLAYER</option>
     </select>
     <br />
     <label for="newCardText" style="vertical-align: top">Text:</label>
@@ -131,16 +126,11 @@
   hx-target="#card-table-rows"
 >
   <input type="text" name="deckId" value="{{.Deck.Id}}" hidden />
-  <label for="cardTypeNameSearch">Card Type:</label>
-  <select
-    id="cardTypeNameSearch"
-    name="cardTypeName"
-    autocomplete="off"
-    required
-  >
+  <label for="categorySearch">Category:</label>
+  <select id="categorySearch" name="category" autocomplete="off" required>
     <option value="%" selected>Any</option>
-    <option value="Judge">Judge</option>
-    <option value="Player">Player</option>
+    <option value="JUDGE">JUDGE</option>
+    <option value="PLAYER">PLAYER</option>
   </select>
   <label for="textSearch">Text:</label>
   <input
@@ -168,7 +158,7 @@
     <tr>
       <th>Created</th>
       <th>Changed</th>
-      <th>Card Type</th>
+      <th>Category</th>
       <th>Text</th>
       <th>Edit</th>
       <th>Delete</th>
