@@ -42,3 +42,20 @@ window.onload = () => {
       lobbyChatMessages.scrollHeight - lobbyChatMessages.clientHeight;
   };
 };
+
+let lobbyPlayerDataScrollTop = 0;
+let lobbyGameBoardScrollTop = 0;
+
+document.addEventListener("htmx:beforeSwap", function () {
+  const lobbyPlayerData = document.getElementById("lobby-player-data");
+  if (lobbyPlayerData) lobbyPlayerDataScrollTop = lobbyPlayerData.scrollTop;
+  const lobbyGameBoard = document.getElementById("lobby-game-board");
+  if (lobbyGameBoard) lobbyGameBoardScrollTop = lobbyGameBoard.scrollTop;
+});
+
+document.addEventListener("htmx:afterSwap", function () {
+  const lobbyPlayerData = document.getElementById("lobby-player-data");
+  if (lobbyPlayerData) lobbyPlayerData.scrollTop = lobbyPlayerDataScrollTop;
+  const lobbyGameBoard = document.getElementById("lobby-game-board");
+  if (lobbyGameBoard) lobbyGameBoard.scrollTop = lobbyGameBoardScrollTop;
+});
