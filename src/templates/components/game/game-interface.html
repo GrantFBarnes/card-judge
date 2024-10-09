@@ -33,7 +33,7 @@
       <tr>
         <th></th>
         <th>
-          {{$cardCount := len .PlayerHand}} {{if lt $cardCount .LobbyHandSize}}
+          {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
           <button
             hx-post="/api/player/{{.PlayerId}}/draw"
             hx-target="#lobby-grid-interface"
@@ -43,7 +43,7 @@
           {{end}}
         </th>
         <th>
-          {{$cardCount := len .PlayerHand}} {{if gt $cardCount 0}}
+          {{$handSize := len .PlayerHand}} {{if gt $handSize 0}}
           <button
             hx-post="/api/player/{{.PlayerId}}/discard"
             hx-target="#lobby-grid-interface"
@@ -127,9 +127,9 @@
     {{end}}
   </h3>
   <br />
-  {{$cardCount := len .BoardCards}} {{if eq $cardCount .LobbyPlayerCount}}
   <div id="board-cards">
     <table id="board-cards-table">
+      {{if .BoardReady}}
       <tbody>
         {{range .BoardCards}}
         <tr>
@@ -149,11 +149,24 @@
         </tr>
         {{end}}
       </tbody>
+      {{else}}
+      <thead>
+        <tr>
+          <th style="padding: 20px">Player</th>
+          <th style="padding: 20px">Cards Played</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .LobbyPlayerDetails}}
+        <tr>
+          <td>{{.UserName}}</td>
+          <td style="text-align: center">{{.CardsOnBoard}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+      {{end}}
     </table>
   </div>
-  {{else}}
-  <div>{{$cardCount}}/{{.LobbyPlayerCount}} cards have been played...</div>
-  {{end}}
 </div>
 <div id="lobby-game-stats">
   <table>
