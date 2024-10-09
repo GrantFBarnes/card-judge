@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/google/uuid"
@@ -124,14 +125,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text, blankCount, err := processCardText(text)
+	text, err = processCardText(text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	_, err = database.CreateCard(deckId, category, text, blankCount)
+	_, err = database.CreateCard(deckId, category, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -260,14 +261,14 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text, blankCount, err := processCardText(text)
+	text, err = processCardText(text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = database.SetCardText(cardId, text, blankCount)
+	err = database.SetCardText(cardId, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -318,17 +319,16 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func processCardText(text string) (string, int, error) {
+func processCardText(text string) (string, error) {
 	var normalizedText string = text
-	var blankCount int = 0
 
 	blankRegExp, err := regexp.Compile(`__+`)
 	if err != nil {
-		return normalizedText, blankCount, err
+		return normalizedText, err
 	}
 
 	normalizedText = blankRegExp.ReplaceAllString(text, "_____")
-	blankCount = len(blankRegExp.FindAllString(text, -1))
+	normalizedText = strings.TrimSpace(normalizedText)
 
-	return normalizedText, blankCount, err
+	return normalizedText, err
 }

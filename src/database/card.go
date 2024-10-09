@@ -111,7 +111,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(deckId uuid.UUID, category string, text string, blankCount int) (uuid.UUID, error) {
+func CreateCard(deckId uuid.UUID, category string, text string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		log.Println(err)
@@ -119,10 +119,10 @@ func CreateCard(deckId uuid.UUID, category string, text string, blankCount int) 
 	}
 
 	sqlString := `
-		INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT, BLANK_COUNT)
+		INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT)
 		VALUES (?, ?, ?, ?, ?)
 	`
-	return id, execute(sqlString, id, deckId, category, text, blankCount)
+	return id, execute(sqlString, id, deckId, category, text)
 }
 
 func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
@@ -187,15 +187,14 @@ func SetCardCategory(id uuid.UUID, category string) error {
 	return execute(sqlString, category, id)
 }
 
-func SetCardText(id uuid.UUID, text string, blankCount int) error {
+func SetCardText(id uuid.UUID, text string) error {
 	sqlString := `
 		UPDATE CARD
 		SET
-			TEXT = ?,
-			BLANK_COUNT = ?
+			TEXT = ?
 		WHERE ID = ?
 	`
-	return execute(sqlString, text, blankCount, id)
+	return execute(sqlString, text, id)
 }
 
 func DeleteCard(id uuid.UUID) error {
