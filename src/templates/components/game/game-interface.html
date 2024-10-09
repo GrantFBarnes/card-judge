@@ -157,10 +157,10 @@
         </tr>
       </thead>
       <tbody>
-        {{range .LobbyPlayerDetails}}
+        {{range .BoardPlayers}}
         <tr>
           <td>{{.UserName}}</td>
-          <td style="text-align: center">{{.CardsOnBoard}}</td>
+          <td style="text-align: center">{{.CardsPlayedCount}}</td>
         </tr>
         {{end}}
       </tbody>
