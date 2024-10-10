@@ -228,6 +228,6 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 
 	websocket.LobbyBroadcast(player.LobbyId, player.Name+": FLIP THE TABLE!")
 
+	w.Header().Add("HX-Redirect", "/lobbies")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
 }

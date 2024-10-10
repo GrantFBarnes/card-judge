@@ -17,7 +17,10 @@
         placeholder="Send a message..."
       />
       <input id="lobby-chat-submit" type="submit" value="Send Message" />
-      <button hx-post="/api/player/{{.PlayerId}}/flip" hx-swap="none">
+      <button
+        hx-post="/api/player/{{.PlayerId}}/flip"
+        hx-confirm="Are you sure you want to flip the table and leave?"
+      >
         Flip the Table!
       </button>
     </form>
