@@ -190,7 +190,9 @@
         {{range .BoardPlays}}
         <tr>
           <td>{{.PlayerUserName}}</td>
-          <td style="text-align: center">{{len .Cards}}</td>
+          <td style="text-align: center">
+            {{len .Cards}}/{{$.CardsToPlayCount}}
+          </td>
         </tr>
         {{end}}
       </tbody>
