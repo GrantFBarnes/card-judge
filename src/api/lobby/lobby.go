@@ -236,7 +236,8 @@ func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
 }
 
 func WithdrawalPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -270,7 +271,8 @@ func WithdrawalPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
 }
 
 func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
@@ -392,7 +394,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getLobbyRequestPlayer(r, lobbyId)
+	_, err = getLobbyRequestPlayer(r, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(err.Error()))
@@ -414,8 +416,8 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "Winner: "+winnerName+"\nCard Played: "+cardTextStart)
-
-	writeGameInterfaceHtml(w, player.Id)
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
 }
 
 func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
@@ -475,7 +477,7 @@ func SkipJudgeCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getLobbyRequestPlayer(r, lobbyId)
+	_, err = getLobbyRequestPlayer(r, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -489,7 +491,8 @@ func SkipJudgeCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
 }
 
 func SetName(w http.ResponseWriter, r *http.Request) {
@@ -554,6 +557,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Lobby name set to %s...", name))
+	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
@@ -616,6 +620,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Lobby hand size set to %d...", handSize))
+	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))

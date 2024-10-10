@@ -5,7 +5,7 @@
   <div
     id="lobby-grid-interface"
     hx-get="/api/lobby/{{.Lobby.Id}}/game-interface"
-    hx-trigger="load, every 5s"
+    hx-trigger="load"
   ></div>
   <div id="lobby-chat">
     <div id="lobby-chat-messages"></div>

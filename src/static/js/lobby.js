@@ -30,6 +30,14 @@ window.onload = () => {
   };
 
   conn.onmessage = (event) => {
+    if (event.data == "refresh") {
+      htmx.ajax(
+        "GET",
+        "/api" + document.location.pathname + "/game-interface",
+        { target: "#lobby-grid-interface" }
+      );
+      return;
+    }
     const message = document.createElement("div");
     message.innerText = event.data;
     lobbyChatMessages.appendChild(message);
