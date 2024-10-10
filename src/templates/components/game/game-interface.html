@@ -114,7 +114,7 @@
 <div id="lobby-game-board">
   <h3 id="judge-card">
     <span style="white-space: pre-wrap">{{.JudgeCardText}}</span>
-    {{if .PlayerIsJudge}}
+    {{if and .PlayerIsJudge (not .BoardIsReady)}}
     <span
       class="clickable"
       style="float: right"
@@ -128,7 +128,7 @@
     {{end}}
   </h3>
   <br />
-  {{if .BoardReady}}
+  {{if .BoardIsReady}}
   <div id="board-cards">
     <table id="board-cards-table">
       <tbody>
