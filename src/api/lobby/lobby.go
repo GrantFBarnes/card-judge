@@ -415,7 +415,8 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "Winner: "+winnerName+"\nCard Played: "+cardTextStart)
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winning Card: %s", cardTextStart))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winner: %s", winnerName))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
@@ -462,7 +463,7 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, player.Name+": FLIP THE TABLE!")
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: FLIP THE TABLE!", player.Name))
 
 	w.Header().Add("HX-Redirect", "/lobbies")
 	w.WriteHeader(http.StatusOK)
@@ -504,16 +505,10 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId := api.GetUserId(r)
-	if userId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	if !database.UserHasLobbyAccess(userId, lobbyId) {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -556,7 +551,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Lobby name set to %s...", name))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby name set to %s", player.Name, name))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
@@ -572,16 +567,10 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId := api.GetUserId(r)
-	if userId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	if !database.UserHasLobbyAccess(userId, lobbyId) {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -619,7 +608,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Lobby hand size set to %d...", handSize))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby hand size set to %d", player.Name, handSize))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
