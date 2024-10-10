@@ -93,6 +93,7 @@ func main() {
 	http.Handle("GET /api/player/{playerId}/game-interface", api.ApiMiddleware(http.HandlerFunc(apiPlayer.GetGameInterfaceHtml)))
 	http.Handle("POST /api/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DrawPlayerHand)))
 	http.Handle("POST /api/player/{playerId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiPlayer.PlayPlayerCard)))
+	http.Handle("POST /api/player/{playerId}/card/{cardId}/withdrawal", api.ApiMiddleware(http.HandlerFunc(apiPlayer.WithdrawalPlayerCard)))
 	http.Handle("POST /api/player/{playerId}/discard", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DiscardPlayerHand)))
 	http.Handle("POST /api/player/{playerId}/flip", api.ApiMiddleware(http.HandlerFunc(apiPlayer.FlipTable)))
 	http.Handle("PUT /api/player/{playerId}/card/{cardId}/lock", api.ApiMiddleware(http.HandlerFunc(apiPlayer.LockPlayerCard)))

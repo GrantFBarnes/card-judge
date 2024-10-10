@@ -161,12 +161,23 @@
       <tbody>
         {{range .PlayerPlays}}
         <tr>
+          <td>
+            <span
+              title="Withdrawal"
+              class="clickable"
+              hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/withdrawal"
+              hx-target="#lobby-grid-interface"
+            >
+              &#8998;
+            </span>
+          </td>
           <td>{{.Text}}</td>
         </tr>
         {{end}}
       </tbody>
     </table>
   </div>
+  <br />
   <div id="players-played">
     <table id="players-played-table">
       <thead>

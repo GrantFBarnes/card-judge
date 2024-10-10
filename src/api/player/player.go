@@ -83,6 +83,33 @@ func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
 	GetGameInterfaceHtml(w, r)
 }
 
+func WithdrawalPlayerCard(w http.ResponseWriter, r *http.Request) {
+	playerIdString := r.PathValue("playerId")
+	playerId, err := uuid.Parse(playerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get card id from path."))
+		return
+	}
+
+	err = database.WithdrawalPlayerCard(playerId, cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	GetGameInterfaceHtml(w, r)
+}
+
 func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 	playerIdString := r.PathValue("playerId")
 	playerId, err := uuid.Parse(playerIdString)
