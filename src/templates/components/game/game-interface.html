@@ -35,7 +35,7 @@
         <th>
           {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
           <button
-            hx-post="/api/player/{{.PlayerId}}/draw"
+            hx-post="/api/lobby/{{.LobbyId}}/draw"
             hx-target="#lobby-grid-interface"
           >
             Draw
@@ -45,7 +45,7 @@
         <th>
           {{$handSize := len .PlayerHand}} {{if gt $handSize 0}}
           <button
-            hx-post="/api/player/{{.PlayerId}}/discard"
+            hx-post="/api/lobby/{{.LobbyId}}/discard"
             hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to discard your hand?"
           >
@@ -63,7 +63,7 @@
           <span
             title="Unlock"
             class="clickable"
-            hx-put="/api/player/{{$.PlayerId}}/card/{{.Id}}/unlock"
+            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
             hx-target="#lobby-grid-interface"
           >
             &#128274;
@@ -72,7 +72,7 @@
           <span
             title="Lock"
             class="clickable"
-            hx-put="/api/player/{{$.PlayerId}}/card/{{.Id}}/lock"
+            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
             hx-target="#lobby-grid-interface"
           >
             &#128275;
@@ -85,7 +85,7 @@
           {{else}}
           <span
             class="clickable"
-            hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/play"
+            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
             hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to play this card?"
           >
@@ -98,7 +98,7 @@
           <span
             title="Discard"
             class="clickable"
-            hx-delete="/api/player/{{$.PlayerId}}/card/{{.Id}}"
+            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
             hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to discard this card?"
           >
@@ -120,6 +120,7 @@
       style="float: right"
       title="Skip Current Card"
       hx-post="/api/lobby/{{.LobbyId}}/skip-judge-card"
+      hx-target="#lobby-grid-interface"
       hx-confirm="Are you sure you want to skip this judge card?"
     >
       &#11118;
@@ -141,7 +142,8 @@
             {{if $.PlayerIsJudge}}
             <span
               class="clickable"
-              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/winner"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/pick-winner"
+              hx-target="#lobby-grid-interface"
               hx-confirm="Are you sure you want to pick this card as the winner?"
             >
               {{.Text}}
@@ -165,7 +167,7 @@
             <span
               title="Withdrawal"
               class="clickable"
-              hx-post="/api/player/{{$.PlayerId}}/card/{{.Id}}/withdrawal"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/withdrawal"
               hx-target="#lobby-grid-interface"
             >
               &#8998;

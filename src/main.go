@@ -11,7 +11,6 @@ import (
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
 	apiPages "github.com/grantfbarnes/card-judge/api/pages"
-	apiPlayer "github.com/grantfbarnes/card-judge/api/player"
 	apiUser "github.com/grantfbarnes/card-judge/api/user"
 	"github.com/grantfbarnes/card-judge/database"
 	"github.com/grantfbarnes/card-judge/websocket"
@@ -78,27 +77,25 @@ func main() {
 	http.Handle("DELETE /api/card/{cardId}", api.ApiMiddleware(http.HandlerFunc(apiCard.Delete)))
 
 	// lobby
-	http.Handle("POST /api/lobby/{lobbyId}/skip-judge-card", api.ApiMiddleware(http.HandlerFunc(apiLobby.SkipJudgeCard)))
-	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/winner", api.ApiMiddleware(http.HandlerFunc(apiLobby.PickLobbyWinner)))
+	http.Handle("GET /api/lobby/{lobbyId}/game-interface", api.ApiMiddleware(http.HandlerFunc(apiLobby.GetGameInterface)))
 	http.Handle("POST /api/lobby/search", api.ApiMiddleware(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
+	http.Handle("POST /api/lobby/{lobbyId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawPlayerHand)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlayPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/withdrawal", api.ApiMiddleware(http.HandlerFunc(apiLobby.WithdrawalPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/discard", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/lock", api.ApiMiddleware(http.HandlerFunc(apiLobby.LockPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/unlock", api.ApiMiddleware(http.HandlerFunc(apiLobby.UnlockPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/pick-winner", api.ApiMiddleware(http.HandlerFunc(apiLobby.PickWinner)))
+	http.Handle("POST /api/lobby/{lobbyId}/discard", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardPlayerHand)))
+	http.Handle("POST /api/lobby/{lobbyId}/flip", api.ApiMiddleware(http.HandlerFunc(apiLobby.FlipTable)))
+	http.Handle("POST /api/lobby/{lobbyId}/skip-judge-card", api.ApiMiddleware(http.HandlerFunc(apiLobby.SkipJudgeCard)))
 	http.Handle("PUT /api/lobby/{lobbyId}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
 	http.Handle("PUT /api/lobby/{lobbyId}/hand-size", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetHandSize)))
 
 	// access
 	http.Handle("POST /api/access/lobby/{lobbyId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Lobby)))
 	http.Handle("POST /api/access/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
-
-	// player
-	http.Handle("GET /api/player/{playerId}/game-interface", api.ApiMiddleware(http.HandlerFunc(apiPlayer.GetGameInterfaceHtml)))
-	http.Handle("POST /api/player/{playerId}/draw", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DrawPlayerHand)))
-	http.Handle("POST /api/player/{playerId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiPlayer.PlayPlayerCard)))
-	http.Handle("POST /api/player/{playerId}/card/{cardId}/withdrawal", api.ApiMiddleware(http.HandlerFunc(apiPlayer.WithdrawalPlayerCard)))
-	http.Handle("POST /api/player/{playerId}/discard", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DiscardPlayerHand)))
-	http.Handle("POST /api/player/{playerId}/flip", api.ApiMiddleware(http.HandlerFunc(apiPlayer.FlipTable)))
-	http.Handle("PUT /api/player/{playerId}/card/{cardId}/lock", api.ApiMiddleware(http.HandlerFunc(apiPlayer.LockPlayerCard)))
-	http.Handle("PUT /api/player/{playerId}/card/{cardId}/unlock", api.ApiMiddleware(http.HandlerFunc(apiPlayer.UnlockPlayerCard)))
-	http.Handle("DELETE /api/player/{playerId}/card/{cardId}", api.ApiMiddleware(http.HandlerFunc(apiPlayer.DiscardPlayerCard)))
 
 	// websocket
 	http.HandleFunc("GET /ws/lobby/{lobbyId}", websocket.ServeWs)

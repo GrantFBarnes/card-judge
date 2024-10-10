@@ -4,7 +4,7 @@
 <div id="lobby-grid-container">
   <div
     id="lobby-grid-interface"
-    hx-get="/api/player/{{.PlayerId}}/game-interface"
+    hx-get="/api/lobby/{{.Lobby.Id}}/game-interface"
     hx-trigger="load, every 5s"
   ></div>
   <div id="lobby-chat">
@@ -18,7 +18,7 @@
       />
       <input id="lobby-chat-submit" type="submit" value="Send Message" />
       <button
-        hx-post="/api/player/{{.PlayerId}}/flip"
+        hx-post="/api/lobby/{{.Lobby.Id}}/flip"
         hx-confirm="Are you sure you want to flip the table and leave?"
       >
         Flip the Table!
