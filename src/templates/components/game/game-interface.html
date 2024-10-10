@@ -80,7 +80,7 @@
           {{end}}
         </td>
         <td style="padding: 20px">
-          {{if or $.PlayerIsJudge $.PlayerPlayed}}
+          {{if or $.PlayerIsJudge $.PlayerIsReady}}
           <span>{{.Text}}</span>
           {{else}}
           <span
@@ -127,11 +127,15 @@
     {{end}}
   </h3>
   <br />
+  {{if .BoardReady}}
   <div id="board-cards">
     <table id="board-cards-table">
-      {{if .BoardReady}}
       <tbody>
-        {{range .BoardCards}}
+        {{range .BoardPlays}}
+        <tr>
+          <td><hr /></td>
+        </tr>
+        {{range .Cards}}
         <tr>
           <td style="padding: 20px">
             {{if $.PlayerIsJudge}}
@@ -147,9 +151,24 @@
             {{end}}
           </td>
         </tr>
+        {{end}} {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+  <div id="player-plays">
+    <table id="player-plays-table">
+      <tbody>
+        {{range .PlayerPlays}}
+        <tr>
+          <td>{{.Text}}</td>
+        </tr>
         {{end}}
       </tbody>
-      {{else}}
+    </table>
+  </div>
+  <div id="players-played">
+    <table id="players-played-table">
       <thead>
         <tr>
           <th style="padding: 20px">Player</th>
@@ -157,16 +176,16 @@
         </tr>
       </thead>
       <tbody>
-        {{range .BoardPlayers}}
+        {{range .BoardPlays}}
         <tr>
-          <td>{{.UserName}}</td>
-          <td style="text-align: center">{{.CardsPlayedCount}}</td>
+          <td>{{.PlayerUserName}}</td>
+          <td style="text-align: center">{{len .Cards}}</td>
         </tr>
         {{end}}
       </tbody>
-      {{end}}
     </table>
   </div>
+  {{end}}
 </div>
 <div id="lobby-game-stats">
   <table>
