@@ -34,7 +34,7 @@
         <th></th>
         <th>
           {{$playerPlays := len .PlayerPlays}} 
-          {{if and (lt $playerPlays 1) (not .PlayerIsJudge) (ne .PlayerSurpriseCardsRemaining 0) (lt .CardsToPlayCount 2)}}
+          {{if and (lt $playerPlays .CardsToPlayCount) (not .PlayerIsJudge) (ne .PlayerSurpriseCardsRemaining 0)}}
           <button
             hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
             hx-target="#lobby-grid-interface"
