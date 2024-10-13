@@ -33,13 +33,18 @@
       <tr>
         <th></th>
         <th>
-          {{$playerPlays := len .PlayerPlays}} {{if and (lt $playerPlays 1) (not .PlayerIsJudge)}}
+          {{$playerPlays := len .PlayerPlays}} 
+          {{if and (lt $playerPlays 1) (not .PlayerIsJudge) (ne .PlayerSurpriseCardsRemaining 0) (lt .CardsToPlayCount 2)}}
           <button
             hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
             hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to use a wild card?"
             >
-            Surprise Me!
+            {{if eq .PlayerSurpriseCardsRemaining -1}}
+            Surprise Me! (∞)
+            {{else}}
+            Surprise Me! ({{.PlayerSurpriseCardsRemaining}})
+            {{end}}
           </button>
           {{end}}
         </th>

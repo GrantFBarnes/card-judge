@@ -93,6 +93,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/skip-judge-card", api.ApiMiddleware(http.HandlerFunc(apiLobby.SkipJudgeCard)))
 	http.Handle("PUT /api/lobby/{lobbyId}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
 	http.Handle("PUT /api/lobby/{lobbyId}/hand-size", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetHandSize)))
+	http.Handle("PUT /api/lobby/{lobbyId}/surprise-card-limit", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetSurpriseCardLimit)))
 
 	// access
 	http.Handle("POST /api/access/lobby/{lobbyId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Lobby)))
