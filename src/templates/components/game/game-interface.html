@@ -33,6 +33,17 @@
       <tr>
         <th></th>
         <th>
+          {{$playerPlays := len .PlayerPlays}} {{if and (lt $playerPlays 1) (not .PlayerIsJudge)}}
+          <button
+            hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
+            hx-target="#lobby-grid-interface"
+            hx-confirm="Are you sure you want to use a wild card?"
+            >
+            Surprise Me!
+          </button>
+          {{end}}
+        </th>
+        <th>
           {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
           <button
             hx-post="/api/lobby/{{.LobbyId}}/draw"
@@ -164,6 +175,7 @@
         {{range .PlayerPlays}}
         <tr>
           <td>
+            {{if not .IsSurprise}}
             <span
               title="Withdrawal"
               class="clickable"
@@ -172,8 +184,13 @@
             >
               &#8998;
             </span>
+            {{end}}
           </td>
+          {{if .IsSurprise}}
+          <td><p>[***SURPRISE CARD PLAYED!***]</p></td>
+          {{else}}
           <td>{{.Text}}</td>
+          {{end}}
         </tr>
         {{end}}
       </tbody>
