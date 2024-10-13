@@ -67,6 +67,7 @@ func main() {
 	http.Handle("POST /api/deck/create", api.ApiMiddleware(http.HandlerFunc(apiDeck.Create)))
 	http.Handle("PUT /api/deck/{deckId}/name", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetName)))
 	http.Handle("PUT /api/deck/{deckId}/password", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPassword)))
+	http.Handle("PUT /api/deck/{deckId}/public-read-only", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPublicReadOnly)))
 	http.Handle("DELETE /api/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiDeck.Delete)))
 
 	// card
