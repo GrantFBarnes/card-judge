@@ -38,7 +38,7 @@
           <button
             hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
             hx-target="#lobby-grid-interface"
-            hx-confirm="Are you sure you want to use a wild card?"
+            hx-confirm="Are you sure you want to use a Surprise Card?"
             >
             {{if eq .PlayerSurpriseCardsRemaining -1}}
             Surprise Me! (∞)
