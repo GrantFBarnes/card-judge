@@ -284,15 +284,13 @@ func PlaySurpriseCard(w http.ResponseWriter, r *http.Request) {
 }
 
 func PlayWildCard(w http.ResponseWriter, r *http.Request) {
-	
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to parse form."))
 		return
 	}
-	
-	
+
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -301,14 +299,12 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	var text string
 	for key, val := range r.Form {
 		if key == "text" {
 			text = val[0]
 		}
 	}
-
 
 	player, err := getLobbyRequestPlayer(r, lobbyId)
 	if err != nil {
@@ -800,7 +796,6 @@ func SetWildCardLimit(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
 }
-
 
 func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player, error) {
 	var player database.Player

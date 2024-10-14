@@ -61,17 +61,20 @@
     <div class="htmx-result"></div>
     <input type="submit" value="Set Deck Password" />
   </form>
-  <form hx-put="/api/deck/{{.Deck.Id}}/public-read-only" hx-target="find .htmx-result">
+  <form
+    hx-put="/api/deck/{{.Deck.Id}}/public-read-only"
+    hx-target="find .htmx-result"
+  >
     <h3>Set Public Read Only</h3>
     <p>Current Status: {{.Deck.IsPublicReadOnly}}</p>
     <input
-    id="isPublicReadOnly"
-    type="checkbox"
-    name="isPublicReadOnly"
-    value="true"
-    autocomplete="off"
-  />
-  <label for="labelForPublicReadOnly">Public Read Only</label>
+      id="isPublicReadOnly"
+      type="checkbox"
+      name="isPublicReadOnly"
+      value="true"
+      autocomplete="off"
+    />
+    <label for="labelForPublicReadOnly">Public Read Only</label>
     <br />
     <br />
     <div class="htmx-result"></div>
