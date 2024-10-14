@@ -30,11 +30,8 @@
     <br />
     <div class="htmx-result"></div>
     <input type="submit" value="Play Wild Card" />
-
   </form>
 
-  
- 
 </dialog>
 <div id="lobby-game-info">
   <table id="game-info-table">
@@ -229,7 +226,7 @@
         {{range .PlayerPlays}}
         <tr>
           <td>
-            {{if not .IsSurprise}}
+            {{if and (not .IsSurprise) (not .IsWild)}}
             <span
               title="Withdrawal"
               class="clickable"
