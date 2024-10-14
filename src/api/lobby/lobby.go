@@ -82,6 +82,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var passwordConfirm string
 	var handSize int
 	var surpriseCardLimit int
+	var wildCardLimit int
 	var deckIds []uuid.UUID = make([]uuid.UUID, 0)
 	for key, val := range r.Form {
 		if key == "name" {
@@ -110,6 +111,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Failed to parse surprise card limit."))
+				return
+			}
+		} else if key == "wildCardLimit" {
+			wildCardLimit, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse wild card limit."))
 				return
 			}
 		}
@@ -162,7 +170,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, password, handSize, surpriseCardLimit)
+	lobbyId, err := database.CreateLobby(name, password, handSize, surpriseCardLimit, wildCardLimit)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -265,6 +273,51 @@ func PlaySurpriseCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = database.PlaySurpriseCard(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
+}
+
+func PlayWildCard(w http.ResponseWriter, r *http.Request) {
+	
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
+		return
+	}
+	
+	
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+
+	var text string
+	for key, val := range r.Form {
+		if key == "text" {
+			text = val[0]
+		}
+	}
+
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.PlayWildCard(player.Id, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -698,6 +751,56 @@ func SetSurpriseCardLimit(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
 }
+
+func SetWildCardLimit(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var wildCardLimit int
+	for key, val := range r.Form {
+		if key == "wildCardLimit" {
+			wildCardLimit, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse wild card limit."))
+				return
+			}
+		}
+	}
+
+	err = database.SetLobbyWildCardLimit(lobbyId, wildCardLimit)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby wild card limit set to %d", player.Name, wildCardLimit))
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("success"))
+}
+
 
 func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player, error) {
 	var player database.Player
