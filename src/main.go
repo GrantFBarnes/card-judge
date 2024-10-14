@@ -67,6 +67,7 @@ func main() {
 	http.Handle("POST /api/deck/create", api.ApiMiddleware(http.HandlerFunc(apiDeck.Create)))
 	http.Handle("PUT /api/deck/{deckId}/name", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetName)))
 	http.Handle("PUT /api/deck/{deckId}/password", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPassword)))
+	http.Handle("PUT /api/deck/{deckId}/public-read-only", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPublicReadOnly)))
 	http.Handle("DELETE /api/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiDeck.Delete)))
 
 	// card
@@ -82,6 +83,8 @@ func main() {
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
 	http.Handle("POST /api/lobby/{lobbyId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawPlayerHand)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlayPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/surprise/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlaySurpriseCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/wild/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlayWildCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/withdrawal", api.ApiMiddleware(http.HandlerFunc(apiLobby.WithdrawalPlayerCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/discard", api.ApiMiddleware(http.HandlerFunc(apiLobby.DiscardPlayerCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/lock", api.ApiMiddleware(http.HandlerFunc(apiLobby.LockPlayerCard)))
@@ -92,7 +95,8 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/skip-judge-card", api.ApiMiddleware(http.HandlerFunc(apiLobby.SkipJudgeCard)))
 	http.Handle("PUT /api/lobby/{lobbyId}/name", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetName)))
 	http.Handle("PUT /api/lobby/{lobbyId}/hand-size", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetHandSize)))
-
+	http.Handle("PUT /api/lobby/{lobbyId}/surprise-card-limit", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetSurpriseCardLimit)))
+	http.Handle("PUT /api/lobby/{lobbyId}/wild-card-limit", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetWildCardLimit)))
 	// access
 	http.Handle("POST /api/access/lobby/{lobbyId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Lobby)))
 	http.Handle("POST /api/access/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
