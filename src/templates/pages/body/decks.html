@@ -53,14 +53,15 @@
       <br />
     </details>
     <br />
-    <input
-      id="isPublicReadOnly"
-      type="checkbox"
+    <label for="createDeckIsPublicReadOnly">Is Public Read-Only:</label>
+    <select
+      id="createDeckIsPublicReadOnly"
       name="isPublicReadOnly"
-      value="true"
       autocomplete="off"
-    />
-    <label for="labelForPublicReadOnly">Public Read Only</label>
+    >
+      <option value="0" selected>No</option>
+      <option value="1">Yes</option>
+    </select>
     <br />
     <br />
     <div class="htmx-result"></div>
@@ -74,7 +75,6 @@
     <tr>
       <th>Created</th>
       <th>Changed</th>
-      <th>Security</th>
       <th>
         <label for="deckSearch">Name</label>
         <input
@@ -90,6 +90,8 @@
         />
       </th>
       <th>Cards</th>
+      <th>View Access</th>
+      <th>Edit Access</th>
     </tr>
   </thead>
   <tbody id="deck-table-rows"></tbody>

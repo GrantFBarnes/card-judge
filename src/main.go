@@ -67,7 +67,7 @@ func main() {
 	http.Handle("POST /api/deck/create", api.ApiMiddleware(http.HandlerFunc(apiDeck.Create)))
 	http.Handle("PUT /api/deck/{deckId}/name", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetName)))
 	http.Handle("PUT /api/deck/{deckId}/password", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPassword)))
-	http.Handle("PUT /api/deck/{deckId}/public-read-only", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetPublicReadOnly)))
+	http.Handle("PUT /api/deck/{deckId}/is-public-read-only", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetIsPublicReadOnly)))
 	http.Handle("DELETE /api/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiDeck.Delete)))
 
 	// card
@@ -97,6 +97,7 @@ func main() {
 	http.Handle("PUT /api/lobby/{lobbyId}/hand-size", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetHandSize)))
 	http.Handle("PUT /api/lobby/{lobbyId}/surprise-card-limit", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetSurpriseCardLimit)))
 	http.Handle("PUT /api/lobby/{lobbyId}/wild-card-limit", api.ApiMiddleware(http.HandlerFunc(apiLobby.SetWildCardLimit)))
+
 	// access
 	http.Handle("POST /api/access/lobby/{lobbyId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Lobby)))
 	http.Handle("POST /api/access/deck/{deckId}", api.ApiMiddleware(http.HandlerFunc(apiAccess.Deck)))
