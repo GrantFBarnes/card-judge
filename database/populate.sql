@@ -9,9 +9,9 @@ VALUES ('TestA', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.',
 INSERT INTO USER (NAME, PASSWORD_HASH, IS_ADMIN)
 VALUES ('TestB', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.', 0);
 
-INSERT INTO DECK (NAME)
-VALUES ('Test 1'),
-       ('Test 2');
+INSERT INTO DECK (NAME, PASSWORD_HASH)
+VALUES ('Test 1', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.'),
+       ('Test 2', '$2a$14$t7gWxR3Ak8uBkyPnw4TZz.WcN3nVlbDMEQgqHOuxEfWN3yCL3dgY.');
 
 SELECT ID FROM DECK WHERE NAME = 'Test 1' into @DeckId1;
 

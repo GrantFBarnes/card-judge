@@ -28,30 +28,27 @@
       autocomplete="off"
     />
     <br />
+    <label for="createDeckPassword">Password:</label>
+    <input
+      type="password"
+      id="createDeckPassword"
+      name="password"
+      maxlength="255"
+      placeholder="Enter Deck Password"
+      autocomplete="off"
+      required="true"
+    />
     <br />
-    <details>
-      <summary>Password (optional)</summary>
-      <label for="createDeckPassword">Password:</label>
-      <input
-        type="password"
-        id="createDeckPassword"
-        name="password"
-        maxlength="255"
-        placeholder="Enter Deck Password"
-        autocomplete="off"
-      />
-      <br />
-      <label for="createDeckPasswordConfirm">Confirm Password:</label>
-      <input
-        type="password"
-        id="createDeckPasswordConfirm"
-        name="passwordConfirm"
-        maxlength="255"
-        placeholder="Confirm Deck Password"
-        autocomplete="off"
-      />
-      <br />
-    </details>
+    <label for="createDeckPasswordConfirm">Confirm Password:</label>
+    <input
+      type="password"
+      id="createDeckPasswordConfirm"
+      name="passwordConfirm"
+      maxlength="255"
+      placeholder="Confirm Deck Password"
+      autocomplete="off"
+      required="true"
+    />
     <br />
     <label for="createDeckIsPublicReadOnly">Is Public Read-Only:</label>
     <select
@@ -91,7 +88,6 @@
       </th>
       <th>Cards</th>
       <th>View Access</th>
-      <th>Edit Access</th>
     </tr>
   </thead>
   <tbody id="deck-table-rows"></tbody>
