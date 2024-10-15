@@ -5,7 +5,6 @@
       <tr>
         <th>Lobby</th>
         <th>Judge</th>
-        <th>Hand Size</th>
         <th>Draw Pile</th>
       </tr>
     </thead>
@@ -21,7 +20,6 @@
           </span>
         </td>
         <td>{{if eq .JudgeName ""}} (None) {{else}} {{.JudgeName}} {{end}}</td>
-        <td>{{.LobbyHandSize}}</td>
         <td>{{.LobbyDrawPileCount}}</td>
       </tr>
     </tbody>

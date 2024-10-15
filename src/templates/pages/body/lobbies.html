@@ -54,23 +54,26 @@
     </details>
     <br />
     <label for="createLobbyHandSize">Hand Size:</label>
-    <input
-      type="number"
+    <select
       id="createLobbyHandSize"
       name="handSize"
-      min="1"
-      max="16"
-      value="8"
-      required="true"
       autocomplete="off"
-    />
+      required="true"
+    >
+      <option value="6">6</option>
+      <option value="8" selected>8</option>
+      <option value="10">10</option>
+      <option value="12">12</option>
+      <option value="14">14</option>
+      <option value="16">16</option>
+    </select>
     <br />
     <label for="createLobbySpecialCardLimit">Special Card Limit:</label>
     <select
       id="createLobbySpecialCardLimit"
       name="specialCardLimit"
       autocomplete="off"
-      required
+      required="true"
     >
       <option value="-1">Unlimited</option>
       <option value="0">Not Allowed</option>

@@ -129,8 +129,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if handSize <= 0 {
-		handSize = 1
+	if handSize < 6 {
+		handSize = 6
 	}
 
 	if handSize > 16 {
@@ -669,8 +669,8 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if handSize <= 0 {
-		handSize = 1
+	if handSize < 6 {
+		handSize = 6
 	}
 
 	if handSize > 16 {

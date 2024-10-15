@@ -62,17 +62,20 @@
     hx-target="find .htmx-result"
   >
     <h3>Set Lobby Hand Size</h3>
-    <label for="setLobbyHandSize">New Hand Size:</label>
-    <input
-      type="number"
+    <label for="setLobbyHandSize">Hand Size:</label>
+    <select
       id="setLobbyHandSize"
       name="handSize"
-      min="1"
-      max="16"
-      value="8"
-      required="true"
       autocomplete="off"
-    />
+      required="true"
+    >
+      <option value="6">6</option>
+      <option value="8" selected>8</option>
+      <option value="10">10</option>
+      <option value="12">12</option>
+      <option value="14">14</option>
+      <option value="16">16</option>
+    </select>
     <br />
     <br />
     <div class="htmx-result"></div>
@@ -88,7 +91,7 @@
       id="setLobbySpecialCardLimit"
       name="specialCardLimit"
       autocomplete="off"
-      required
+      required="true"
     >
       <option value="-1">Unlimited</option>
       <option value="0">Not Allowed</option>
