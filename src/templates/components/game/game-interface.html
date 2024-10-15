@@ -134,9 +134,10 @@
         <tr>
           <td>
             <button
-              onclick="document.getElementById('wild-card-dialog').showModal()"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
+              hx-confirm="Are you sure you want to use a Steal Card?"
             >
-              Wild Card!
+              Steal Card
             </button>
           </td>
         </tr>
@@ -146,7 +147,16 @@
               hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
               hx-confirm="Are you sure you want to use a Surprise Card?"
             >
-              Surprise Me!
+              Surprise Card
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button
+              onclick="document.getElementById('wild-card-dialog').showModal()"
+            >
+              Wild Card
             </button>
           </td>
         </tr>

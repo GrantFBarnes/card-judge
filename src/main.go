@@ -83,6 +83,7 @@ func main() {
 	http.Handle("POST /api/lobby/create", api.ApiMiddleware(http.HandlerFunc(apiLobby.Create)))
 	http.Handle("POST /api/lobby/{lobbyId}/draw", api.ApiMiddleware(http.HandlerFunc(apiLobby.DrawPlayerHand)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlayPlayerCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/steal/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlayStealCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/surprise/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlaySurpriseCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/wild/play", api.ApiMiddleware(http.HandlerFunc(apiLobby.PlayWildCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/withdrawal", api.ApiMiddleware(http.HandlerFunc(apiLobby.WithdrawalPlayerCard)))
