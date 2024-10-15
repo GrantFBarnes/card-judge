@@ -46,6 +46,10 @@
   overflow-y: scroll;
 }
 
+.lobby-player-data-message {
+  padding: 10px;
+}
+
 #special-card-table {
   width: 100%;
   text-align: center;

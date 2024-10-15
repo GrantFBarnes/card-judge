@@ -26,125 +26,135 @@
   </table>
 </div>
 <div id="lobby-player-data">
-  <table>
-    <thead>
-      <tr>
-        <th colspan="3">Cards in Hand</th>
-      </tr>
-      <tr>
-        <th></th>
-        <th>
-          {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
-          <button
-            hx-post="/api/lobby/{{.LobbyId}}/draw"
-            hx-target="#lobby-grid-interface"
-          >
-            Draw
-          </button>
-          {{end}}
-        </th>
-        <th>
-          {{$handSize := len .PlayerHand}} {{if gt $handSize 0}}
-          <button
-            hx-post="/api/lobby/{{.LobbyId}}/discard"
-            hx-target="#lobby-grid-interface"
-            hx-confirm="Are you sure you want to discard your hand?"
-          >
-            Discard
-          </button>
-          {{end}}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {{range .PlayerHand}}
-      <tr style="border-top: 2px solid black">
-        <td style="text-align: center">
-          {{if .IsLocked}}
-          <span
-            title="Unlock"
-            class="clickable"
-            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
-            hx-target="#lobby-grid-interface"
-          >
-            &#128274;
-          </span>
-          {{else}}
-          <span
-            title="Lock"
-            class="clickable"
-            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
-            hx-target="#lobby-grid-interface"
-          >
-            &#128275;
-          </span>
-          {{end}}
-        </td>
-        <td style="padding: 20px">
-          {{if or $.PlayerIsJudge $.PlayerIsReady}}
-          <span>{{.Text}}</span>
-          {{else}}
-          <span
-            class="clickable"
-            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
-            hx-confirm="Are you sure you want to play this card?"
-          >
-            {{.Text}}
-          </span>
-          {{end}}
-        </td>
-        <td style="text-align: center">
-          {{if not .IsLocked}}
-          <span
-            title="Discard"
-            class="clickable"
-            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
-            hx-target="#lobby-grid-interface"
-            hx-confirm="Are you sure you want to discard this card?"
-          >
-            &#9940;
-          </span>
-          {{end}}
-        </td>
-      </tr>
-      {{end}}
-    </tbody>
-  </table>
-  {{if and .PlayerCanPlaySpecial}}
-  <hr />
-  <table id="special-card-table">
-    <thead>
-      <tr>
-        <th>Special Cards</th>
-      </tr>
-      {{if ge .LobbySpecialCardLimit 0}}
-      <tr>
-        <td>({{.PlayerSpecialCardsRemaining}} Remaining)</td>
-      </tr>
-      {{end}}
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <button
-            onclick="document.getElementById('wild-card-dialog').showModal()"
-          >
-            Wild Card!
-          </button>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <button
-            hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
-            hx-confirm="Are you sure you want to use a Surprise Card?"
-          >
-            Surprise Me!
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  {{if .PlayerIsJudge}}
+  <div class="lobby-player-data-message">You are the Judge.</div>
+  {{else if .BoardIsReady}}
+  <div class="lobby-player-data-message">The board is being judged...</div>
+  {{else}}
+  <div id="lobby-player-data-hand">
+    <table id="player-hand-table">
+      <thead>
+        <tr>
+          <th colspan="3">Cards in Hand</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th>
+            {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
+            <button
+              hx-post="/api/lobby/{{.LobbyId}}/draw"
+              hx-target="#lobby-grid-interface"
+            >
+              Draw
+            </button>
+            {{end}}
+          </th>
+          <th>
+            {{$handSize := len .PlayerHand}} {{if gt $handSize 0}}
+            <button
+              hx-post="/api/lobby/{{.LobbyId}}/discard"
+              hx-target="#lobby-grid-interface"
+              hx-confirm="Are you sure you want to discard your hand?"
+            >
+              Discard
+            </button>
+            {{end}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .PlayerHand}}
+        <tr style="border-top: 2px solid black">
+          <td style="text-align: center">
+            {{if .IsLocked}}
+            <span
+              title="Unlock"
+              class="clickable"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
+              hx-target="#lobby-grid-interface"
+            >
+              &#128274;
+            </span>
+            {{else}}
+            <span
+              title="Lock"
+              class="clickable"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
+              hx-target="#lobby-grid-interface"
+            >
+              &#128275;
+            </span>
+            {{end}}
+          </td>
+          <td style="padding: 20px">
+            {{if $.PlayerIsReady}}
+            <span>{{.Text}}</span>
+            {{else}}
+            <span
+              class="clickable"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
+              hx-confirm="Are you sure you want to play this card?"
+            >
+              {{.Text}}
+            </span>
+            {{end}}
+          </td>
+          <td style="text-align: center">
+            {{if not .IsLocked}}
+            <span
+              title="Discard"
+              class="clickable"
+              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
+              hx-target="#lobby-grid-interface"
+              hx-confirm="Are you sure you want to discard this card?"
+            >
+              &#9940;
+            </span>
+            {{end}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  <div id="lobby-player-data-special">
+    {{if and .PlayerCanPlaySpecial}}
+    <hr />
+    <table id="special-card-table">
+      <thead>
+        <tr>
+          <th>Special Cards</th>
+        </tr>
+        {{if ge .LobbySpecialCardLimit 0}}
+        <tr>
+          <td>({{.PlayerSpecialCardsRemaining}} Remaining)</td>
+        </tr>
+        {{end}}
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <button
+              onclick="document.getElementById('wild-card-dialog').showModal()"
+            >
+              Wild Card!
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button
+              hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
+              hx-confirm="Are you sure you want to use a Surprise Card?"
+            >
+              Surprise Me!
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    {{end}}
+  </div>
   {{end}}
 </div>
 <div id="lobby-game-board">
