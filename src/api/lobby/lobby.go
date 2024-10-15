@@ -276,18 +276,25 @@ func PlaySurpriseCard(w http.ResponseWriter, r *http.Request) {
 }
 
 func PlayWildCard(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to parse form."))
-		return
-	}
-
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -298,10 +305,16 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	player, err := getLobbyRequestPlayer(r, lobbyId)
+	existingCardId, err := database.GetCardId(uuid.Nil, text)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if existingCardId != uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Wild card text has already been played."))
 		return
 	}
 
