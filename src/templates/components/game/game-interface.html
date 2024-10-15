@@ -26,65 +26,11 @@
   </table>
 </div>
 <div id="lobby-player-data">
-  {{if and .PlayerCanPlaySpecial}}
-  <details>
-    <summary>
-      Special Cards {{if ge .LobbySpecialCardLimit 0}}
-      ({{.PlayerSpecialCardsRemaining}} Remaining) {{end}}
-    </summary>
-    <button onclick="document.getElementById('wild-card-dialog').showModal()">
-      Wild Card!
-    </button>
-    <dialog id="wild-card-dialog">
-      <div style="display: grid; grid-auto-flow: column">
-        <div>
-          <h3>Create Wild Card!</h3>
-          <h5>
-            <i>A temporary card played for this round only</i>
-          </h5>
-        </div>
-        <div>
-          <div
-            class="close-button"
-            onclick="document.getElementById('wild-card-dialog').close()"
-          >
-            &#10060;
-          </div>
-        </div>
-      </div>
-      <form
-        hx-post="/api/lobby/{{.LobbyId}}/card/wild/play"
-        hx-target="find .htmx-result"
-        hx-confirm="Are you sure you want to play this Wild Card?"
-      >
-        <label for="wildCardText" style="vertical-align: top"> Text: </label>
-        <textarea
-          id="wildCardText"
-          name="text"
-          maxlength="255"
-          placeholder="Enter Wild Card Text"
-          required="true"
-          cols="40"
-          rows="10"
-          autocomplete="off"
-        ></textarea>
-        <br />
-        <br />
-        <div class="htmx-result"></div>
-        <input type="submit" value="Play Wild Card" />
-      </form>
-    </dialog>
-    <br />
-    <button
-      hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
-      hx-confirm="Are you sure you want to use a Surprise Card?"
-    >
-      Surprise Me!
-    </button>
-  </details>
-  {{end}}
   <table>
     <thead>
+      <tr>
+        <th colspan="3">Cards in Hand</th>
+      </tr>
       <tr>
         <th></th>
         <th>
@@ -164,6 +110,42 @@
       {{end}}
     </tbody>
   </table>
+  {{if and .PlayerCanPlaySpecial}}
+  <hr />
+  <table id="special-card-table">
+    <thead>
+      <tr>
+        <th>Special Cards</th>
+      </tr>
+      {{if ge .LobbySpecialCardLimit 0}}
+      <tr>
+        <td>({{.PlayerSpecialCardsRemaining}} Remaining)</td>
+      </tr>
+      {{end}}
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <button
+            onclick="document.getElementById('wild-card-dialog').showModal()"
+          >
+            Wild Card!
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button
+            hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
+            hx-confirm="Are you sure you want to use a Surprise Card?"
+          >
+            Surprise Me!
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {{end}}
 </div>
 <div id="lobby-game-board">
   <h3 id="judge-card">

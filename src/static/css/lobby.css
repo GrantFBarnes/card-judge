@@ -46,6 +46,19 @@
   overflow-y: scroll;
 }
 
+#special-card-table {
+  width: 100%;
+  text-align: center;
+}
+
+#special-card-table tr:hover {
+  background-color: transparent;
+}
+
+#special-card-table button {
+  width: 100%;
+}
+
 #lobby-game-board {
   grid-area: board;
   overflow-y: scroll;
