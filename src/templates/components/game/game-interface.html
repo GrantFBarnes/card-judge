@@ -168,7 +168,7 @@
 <div id="lobby-game-board">
   <h3 id="judge-card">
     <span style="white-space: pre-wrap">{{.JudgeCardText}}</span>
-    {{if and .PlayerIsJudge (not .BoardIsReady)}}
+    {{if and .PlayerIsJudge .BoardIsEmpty}}
     <span
       class="clickable"
       style="float: right"
