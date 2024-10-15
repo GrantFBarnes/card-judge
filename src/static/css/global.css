@@ -63,6 +63,10 @@ summary {
   cursor: pointer;
 }
 
+.wrap-new-lines {
+  white-space: pre-wrap;
+}
+
 .close-button {
   cursor: pointer;
   float: right;

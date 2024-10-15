@@ -88,15 +88,14 @@
           </td>
           <td style="padding: 20px">
             {{if $.PlayerIsReady}}
-            <span>{{.Text}}</span>
+            <span class="wrap-new-lines">{{.Text}}</span>
             {{else}}
             <span
-              class="clickable"
+              class="clickable wrap-new-lines"
               hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
               hx-confirm="Are you sure you want to play this card?"
+              >{{.Text}}</span
             >
-              {{.Text}}
-            </span>
             {{end}}
           </td>
           <td style="text-align: center">
@@ -159,7 +158,7 @@
 </div>
 <div id="lobby-game-board">
   <h3 id="judge-card">
-    <span style="white-space: pre-wrap">{{.JudgeCardText}}</span>
+    <span class="wrap-new-lines">{{.JudgeCardText}}</span>
     {{if and .PlayerIsJudge .BoardIsEmpty}}
     <span
       class="clickable"
@@ -186,14 +185,13 @@
           <td style="padding: 20px">
             {{if $.PlayerIsJudge}}
             <span
-              class="clickable"
+              class="clickable wrap-new-lines"
               hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/pick-winner"
               hx-confirm="Are you sure you want to pick this card as the winner?"
+              >{{.Text}}</span
             >
-              {{.Text}}
-            </span>
             {{else}}
-            <span>{{.Text}}</span>
+            <span class="wrap-new-lines">{{.Text}}</span>
             {{end}}
           </td>
         </tr>
@@ -219,9 +217,9 @@
             {{end}}
           </td>
           {{if .IsSurprise}}
-          <td><p>[***SURPRISE CARD PLAYED!***]</p></td>
+          <td>[***SURPRISE CARD PLAYED!***]</td>
           {{else}}
-          <td>{{.Text}}</td>
+          <td class="wrap-new-lines">{{.Text}}</td>
           {{end}}
         </tr>
         {{end}}
