@@ -206,7 +206,7 @@
         {{range .PlayerPlays}}
         <tr>
           <td>
-            {{if and (not .IsSurprise) (not .IsWild)}}
+            {{if not .SpecialCategory.Valid}}
             <span
               title="Withdrawal"
               class="clickable"
@@ -216,7 +216,7 @@
             </span>
             {{end}}
           </td>
-          {{if .IsSurprise}}
+          {{if eq .SpecialCategory.String "SURPRISE"}}
           <td>[***SURPRISE CARD PLAYED!***]</td>
           {{else}}
           <td class="wrap-new-lines">{{.Text}}</td>
