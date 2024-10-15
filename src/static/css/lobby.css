@@ -76,6 +76,10 @@
   border-radius: 10px;
 }
 
+#board-cards-table {
+  width: 100%;
+}
+
 #lobby-game-stats {
   grid-area: stats;
 }
