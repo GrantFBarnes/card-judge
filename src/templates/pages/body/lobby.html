@@ -79,48 +79,34 @@
     <input type="submit" value="Set Lobby Hand Size" />
   </form>
   <form
-    hx-put="/api/lobby/{{.Lobby.Id}}/surprise-card-limit"
+    hx-put="/api/lobby/{{.Lobby.Id}}/special-card-limit"
     hx-target="find .htmx-result"
   >
-    <h3>Set Surprise Card Limit</h3>
-    <label for="setLobbySurpriseCardLimit">New Surprise Card Limit:</label>
-    <input
-      type="number"
-      id="setLobbySurpriseCardLimit"
-      name="surpriseCardLimit"
-      min="-1"
-      max="20"
-      value="-1"
-      required="true"
+    <h3>Set Special Card Limit</h3>
+    <label for="setLobbySpecialCardLimit">Special Card Limit:</label>
+    <select
+      id="setLobbySpecialCardLimit"
+      name="specialCardLimit"
       autocomplete="off"
-    />
+      required
+    >
+      <option value="-1">Unlimited</option>
+      <option value="0">Not Allowed</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+    </select>
     <br />
     <br />
     <div class="htmx-result"></div>
-    <input type="submit" value="Set Surprise Card Limit" />
-    <p><i>*Setting Surprise Card limit to -1 allows unlimited uses</i></p>
-  </form>
-  <form
-    hx-put="/api/lobby/{{.Lobby.Id}}/wild-card-limit"
-    hx-target="find .htmx-result"
-  >
-    <h3>Set Wild Card Limit</h3>
-    <label for="setLobbyWildCardLimit">New Wild Card Limit:</label>
-    <input
-      type="number"
-      id="setLobbyWildCardLimit"
-      name="wildCardLimit"
-      min="-1"
-      max="20"
-      value="3"
-      required="true"
-      autocomplete="off"
-    />
-    <br />
-    <br />
-    <div class="htmx-result"></div>
-    <input type="submit" value="Set Wild Card Limit" />
-    <p><i>*Setting Wild Card limit to -1 allows unlimited uses</i></p>
+    <input type="submit" value="Set Special Card Limit" />
   </form>
 </dialog>
 {{end}}

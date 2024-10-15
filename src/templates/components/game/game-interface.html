@@ -1,45 +1,4 @@
 {{define "game-interface"}}
-<dialog id="wild-card-dialog">
-  <div style="display: grid; grid-auto-flow: column">
-    <div>
-      <h3>Create Wild Card!</h3>
-      <h5>
-        <i>
-          The wild card will be created and played for this round only and not
-          saved to the deck
-        </i>
-      </h5>
-    </div>
-    <div>
-      <div
-        class="close-button"
-        onclick="document.getElementById('wild-card-dialog').close()"
-      >
-        &#10060;
-      </div>
-    </div>
-  </div>
-  <form
-    hx-post="/api/lobby/{{.LobbyId}}/card/wild/play"
-    hx-target="find .htmx-result"
-  >
-    <label for="wildCardText" style="vertical-align: top">Text:</label>
-    <textarea
-      id="wildCardText"
-      name="text"
-      maxlength="255"
-      placeholder="Enter Wild Card Text"
-      required="true"
-      cols="40"
-      rows="10"
-      autocomplete="off"
-    ></textarea>
-    <br />
-    <br />
-    <div class="htmx-result"></div>
-    <input type="submit" value="Play Wild Card" />
-  </form>
-</dialog>
 <div id="lobby-game-info">
   <table id="game-info-table">
     <thead>
@@ -69,36 +28,67 @@
   </table>
 </div>
 <div id="lobby-player-data">
+  {{if and .PlayerCanPlaySpecial}}
+  <details>
+    <summary>
+      Special Cards {{if ge .LobbySpecialCardLimit 0}}
+      ({{.PlayerSpecialCardsRemaining}} Remaining) {{end}}
+    </summary>
+    <button onclick="document.getElementById('wild-card-dialog').showModal()">
+      Wild Card!
+    </button>
+    <dialog id="wild-card-dialog">
+      <div style="display: grid; grid-auto-flow: column">
+        <div>
+          <h3>Create Wild Card!</h3>
+          <h5>
+            <i>A temporary card played for this round only</i>
+          </h5>
+        </div>
+        <div>
+          <div
+            class="close-button"
+            onclick="document.getElementById('wild-card-dialog').close()"
+          >
+            &#10060;
+          </div>
+        </div>
+      </div>
+      <form
+        hx-post="/api/lobby/{{.LobbyId}}/card/wild/play"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to play this Wild Card?"
+      >
+        <label for="wildCardText" style="vertical-align: top"> Text: </label>
+        <textarea
+          id="wildCardText"
+          name="text"
+          maxlength="255"
+          placeholder="Enter Wild Card Text"
+          required="true"
+          cols="40"
+          rows="10"
+          autocomplete="off"
+        ></textarea>
+        <br />
+        <br />
+        <div class="htmx-result"></div>
+        <input type="submit" value="Play Wild Card" />
+      </form>
+    </dialog>
+    <br />
+    <button
+      hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
+      hx-confirm="Are you sure you want to use a Surprise Card?"
+    >
+      Surprise Me!
+    </button>
+  </details>
+  {{end}}
   <table>
     <thead>
       <tr>
         <th></th>
-        <th>
-          {{$playerPlays := len .PlayerPlays}} {{if and (lt $playerPlays
-          .CardsToPlayCount) (not .PlayerIsJudge) (ne .PlayerWildCardsRemaining
-          0)}}
-          <button
-            onclick="document.getElementById('wild-card-dialog').showModal()"
-          >
-            {{if eq .PlayerWildCardsRemaining -1}} Wild Card! (∞) {{else}} Wild
-            Card! ({{.PlayerWildCardsRemaining}}) {{end}}
-          </button>
-          {{end}}
-        </th>
-        <th>
-          {{$playerPlays := len .PlayerPlays}} {{if and (lt $playerPlays
-          .CardsToPlayCount) (not .PlayerIsJudge) (ne
-          .PlayerSurpriseCardsRemaining 0)}}
-          <button
-            hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
-            hx-target="#lobby-grid-interface"
-            hx-confirm="Are you sure you want to use a Surprise Card?"
-          >
-            {{if eq .PlayerSurpriseCardsRemaining -1}} Surprise Me! (∞) {{else}}
-            Surprise Me! ({{.PlayerSurpriseCardsRemaining}}) {{end}}
-          </button>
-          {{end}}
-        </th>
         <th>
           {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
           <button
@@ -153,7 +143,6 @@
           <span
             class="clickable"
             hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
-            hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to play this card?"
           >
             {{.Text}}
@@ -187,7 +176,6 @@
       style="float: right"
       title="Skip Current Card"
       hx-post="/api/lobby/{{.LobbyId}}/skip-judge-card"
-      hx-target="#lobby-grid-interface"
       hx-confirm="Are you sure you want to skip this judge card?"
     >
       &#11118;
@@ -210,7 +198,6 @@
             <span
               class="clickable"
               hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/pick-winner"
-              hx-target="#lobby-grid-interface"
               hx-confirm="Are you sure you want to pick this card as the winner?"
             >
               {{.Text}}
@@ -236,7 +223,6 @@
               title="Withdrawal"
               class="clickable"
               hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/withdrawal"
-              hx-target="#lobby-grid-interface"
             >
               &#8998;
             </span>
