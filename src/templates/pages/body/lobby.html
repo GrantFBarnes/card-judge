@@ -146,7 +146,11 @@
     <br />
     <br />
     <div class="htmx-result"></div>
-    <input type="submit" value="Play Wild Card" />
+    <input
+      type="submit"
+      value="Play Wild Card"
+      onclick="document.getElementById('wild-card-dialog').close();"
+    />
   </form>
 </dialog>
 {{end}}
