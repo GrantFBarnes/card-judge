@@ -81,7 +81,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var password string
 	var passwordConfirm string
 	var handSize int
-	var specialCardLimit int
+	var creditLimit int
 	var deckIds []uuid.UUID = make([]uuid.UUID, 0)
 	for key, val := range r.Form {
 		if key == "name" {
@@ -97,6 +97,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Failed to parse hand size."))
 				return
 			}
+		} else if key == "creditLimit" {
+			creditLimit, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Failed to parse credit limit."))
+				return
+			}
 		} else if strings.HasPrefix(key, "deckId") {
 			deckId, err := uuid.Parse(val[0])
 			if err != nil {
@@ -105,13 +112,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			deckIds = append(deckIds, deckId)
-		} else if key == "specialCardLimit" {
-			specialCardLimit, err = strconv.Atoi(val[0])
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse special card limit."))
-				return
-			}
 		}
 	}
 
@@ -135,6 +135,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	if handSize > 16 {
 		handSize = 16
+	}
+
+	if creditLimit < 0 {
+		creditLimit = 0
+	}
+
+	if creditLimit > 10 {
+		creditLimit = 10
 	}
 
 	if len(deckIds) == 0 {
@@ -162,7 +170,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, password, handSize, specialCardLimit)
+	lobbyId, err := database.CreateLobby(name, password, handSize, creditLimit)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -731,7 +739,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("success"))
 }
 
-func SetSpecialCardLimit(w http.ResponseWriter, r *http.Request) {
+func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -754,26 +762,34 @@ func SetSpecialCardLimit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var specialCardLimit int
+	var creditLimit int
 	for key, val := range r.Form {
-		if key == "specialCardLimit" {
-			specialCardLimit, err = strconv.Atoi(val[0])
+		if key == "creditLimit" {
+			creditLimit, err = strconv.Atoi(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse special card limit."))
+				w.Write([]byte("Failed to parse credit limit."))
 				return
 			}
 		}
 	}
 
-	err = database.SetLobbySpecialCardLimit(lobbyId, specialCardLimit)
+	if creditLimit < 0 {
+		creditLimit = 0
+	}
+
+	if creditLimit > 10 {
+		creditLimit = 10
+	}
+
+	err = database.SetLobbyCreditLimit(lobbyId, creditLimit)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby special card limit set to %d", player.Name, specialCardLimit))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby credit limit set to %d", player.Name, creditLimit))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)

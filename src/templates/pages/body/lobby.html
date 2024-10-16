@@ -82,19 +82,18 @@
     <input type="submit" value="Set Lobby Hand Size" />
   </form>
   <form
-    hx-put="/api/lobby/{{.Lobby.Id}}/special-card-limit"
+    hx-put="/api/lobby/{{.Lobby.Id}}/credit-limit"
     hx-target="find .htmx-result"
   >
-    <h3>Set Special Card Limit</h3>
-    <label for="setLobbySpecialCardLimit">Special Card Limit:</label>
+    <h3>Set Lobby Credit Limit</h3>
+    <label for="setLobbyCreditLimit">Credit Limit:</label>
     <select
-      id="setLobbySpecialCardLimit"
-      name="specialCardLimit"
+      id="setLobbyCreditLimit"
+      name="creditLimit"
       autocomplete="off"
       required="true"
     >
-      <option value="-1">Unlimited</option>
-      <option value="0">Not Allowed</option>
+      <option value="0">0</option>
       <option value="1">1</option>
       <option value="2">2</option>
       <option value="3" selected>3</option>
@@ -109,7 +108,7 @@
     <br />
     <br />
     <div class="htmx-result"></div>
-    <input type="submit" value="Set Special Card Limit" />
+    <input type="submit" value="Set Credit Limit" />
   </form>
 </dialog>
 <dialog id="wild-card-dialog">
