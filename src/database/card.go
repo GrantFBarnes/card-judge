@@ -120,7 +120,7 @@ func CreateCard(deckId uuid.UUID, category string, text string) (uuid.UUID, erro
 
 	sqlString := `
 		INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?)
 	`
 	return id, execute(sqlString, id, deckId, category, text)
 }
