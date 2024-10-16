@@ -525,13 +525,6 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	winnerName, err := database.PickLobbyWinner(lobbyId, cardId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
 	cardTextStart, err := database.GetCardTextStart(cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -540,7 +533,16 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winning Card: %s", cardTextStart))
+
+	winnerName, err := database.PickLobbyWinner(lobbyId, cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winner: %s", winnerName))
+
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
