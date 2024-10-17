@@ -3,9 +3,9 @@
   <table id="game-info-table">
     <thead>
       <tr>
-        <th>Lobby</th>
-        <th>Judge</th>
-        <th>Draw Pile</th>
+        <th style="width: 34%">Lobby</th>
+        <th style="width: 33%">Judge</th>
+        <th style="width: 33%">Draw Pile</th>
       </tr>
     </thead>
     <tbody>
@@ -22,7 +22,7 @@
         <td>
           {{if .JudgeName.Valid}} {{.JudgeName.String}} {{else}} (None) {{end}}
         </td>
-        <td>{{.LobbyDrawPileCount}}</td>
+        <td>Judge {{.DrawPileJudgeCount}} | Player {{.DrawPilePlayerCount}}</td>
       </tr>
     </tbody>
   </table>
