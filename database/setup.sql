@@ -230,7 +230,9 @@ BEGIN
     ) THEN
         SELECT 1;
     ELSE
-        SELECT 0;
+        SELECT PASSWORD_HASH IS NULL
+        FROM LOBBY
+        WHERE ID = VAR_LOBBY_ID;
     END IF;
 END;
 //
