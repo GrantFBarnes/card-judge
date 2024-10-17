@@ -19,14 +19,18 @@
             &#128393;
           </span>
         </td>
-        <td>{{if eq .JudgeName ""}} (None) {{else}} {{.JudgeName}} {{end}}</td>
+        <td>
+          {{if .JudgeName.Valid}} {{.JudgeName.String}} {{else}} (None) {{end}}
+        </td>
         <td>{{.LobbyDrawPileCount}}</td>
       </tr>
     </tbody>
   </table>
 </div>
 <div id="lobby-player-data">
-  {{if .PlayerIsJudge}}
+  {{if not .JudgeCardText.Valid}}
+  <div class="lobby-player-data-message">[NO JUDGE CARD]</div>
+  {{else if .PlayerIsJudge}}
   <div class="lobby-player-data-message">You are the Judge.</div>
   {{else if .BoardIsReady}}
   <div class="lobby-player-data-message">The board is being judged...</div>
@@ -179,7 +183,10 @@
 </div>
 <div id="lobby-game-board">
   <h3 id="judge-card">
-    <span class="wrap-new-lines">{{.JudgeCardText}}</span>
+    {{if not .JudgeCardText.Valid}}
+    <span>[NO JUDGE CARD]</span>
+    {{else}}
+    <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
     {{if and .PlayerIsJudge .BoardIsEmpty}}
     <span
       class="clickable"
@@ -190,8 +197,9 @@
     >
       &#11118;
     </span>
-    {{end}}
+    {{end}} {{end}}
   </h3>
+  {{if .JudgeCardText.Valid}}
   <br />
   {{if .BoardIsReady}}
   <div id="board-cards">
@@ -268,6 +276,8 @@
       </tbody>
     </table>
   </div>
+  {{end}}
+  <br />
   {{end}}
 </div>
 <div id="lobby-game-stats">
