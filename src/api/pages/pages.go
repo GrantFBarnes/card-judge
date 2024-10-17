@@ -82,7 +82,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobbies"
 
-	decks, err := database.GetUserDecks(basePageData.User.Id)
+	decks, err := database.GetReadableDecks(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get user decks"))
@@ -132,7 +132,14 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobby"
 
-	if !database.UserHasLobbyAccess(basePageData.User.Id, lobbyId) {
+	hasLobbyAccess, err := database.UserHasLobbyAccess(basePageData.User.Id, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to check lobby access"))
+		return
+	}
+
+	if !hasLobbyAccess {
 		http.Redirect(w, r, fmt.Sprintf("/lobby/%s/access", lobbyId), http.StatusSeeOther)
 		return
 	}
@@ -189,7 +196,14 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobby Access"
 
-	if database.UserHasLobbyAccess(basePageData.User.Id, lobbyId) {
+	hasLobbyAccess, err := database.UserHasLobbyAccess(basePageData.User.Id, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to check lobby access"))
+		return
+	}
+
+	if hasLobbyAccess {
 		http.Redirect(w, r, fmt.Sprintf("/lobby/%s", lobbyId), http.StatusSeeOther)
 		return
 	}
@@ -254,7 +268,14 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Deck"
 
-	if !database.UserHasDeckAccess(basePageData.User.Id, deckId) {
+	hasDeckAccess, err := database.UserHasDeckAccess(basePageData.User.Id, deckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to check deck access"))
+		return
+	}
+
+	if !hasDeckAccess {
 		http.Redirect(w, r, fmt.Sprintf("/deck/%s/access", deckId), http.StatusSeeOther)
 		return
 	}
@@ -302,7 +323,14 @@ func DeckAccess(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Deck"
 
-	if database.UserHasDeckAccess(basePageData.User.Id, deckId) {
+	hasDeckAccess, err := database.UserHasDeckAccess(basePageData.User.Id, deckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to check deck access"))
+		return
+	}
+
+	if hasDeckAccess {
 		http.Redirect(w, r, fmt.Sprintf("/deck/%s", deckId), http.StatusSeeOther)
 		return
 	}

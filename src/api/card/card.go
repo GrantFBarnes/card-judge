@@ -119,7 +119,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.UserHasDeckAccess(userId, deckId) {
+	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to check deck access."))
+		return
+	}
+
+	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
@@ -181,7 +188,14 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.UserHasDeckAccess(userId, deckId) {
+	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to check deck access."))
+		return
+	}
+
+	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
@@ -242,7 +256,14 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.UserHasDeckAccess(userId, deckId) {
+	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to check deck access."))
+		return
+	}
+
+	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
@@ -302,7 +323,14 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !database.UserHasDeckAccess(userId, card.DeckId) {
+	hasDeckAccess, err := database.UserHasDeckAccess(userId, card.DeckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to check deck access."))
+		return
+	}
+
+	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("User does not have access."))
 		return
