@@ -89,7 +89,6 @@ summary {
   position: absolute;
   right: 0;
   min-width: 50px;
-  max-width: 20vw;
 
   /* will toggle to block */
   display: none;
