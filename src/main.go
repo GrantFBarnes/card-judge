@@ -65,6 +65,7 @@ func main() {
 	http.Handle("DELETE /api/user/{userId}", api.ApiMiddleware(http.HandlerFunc(apiUser.Delete)))
 
 	// deck
+	http.Handle("GET /api/deck/{deckId}/card-export", api.ApiMiddleware(http.HandlerFunc(apiDeck.GetCardExport)))
 	http.Handle("POST /api/deck/search", api.ApiMiddleware(http.HandlerFunc(apiDeck.Search)))
 	http.Handle("POST /api/deck/create", api.ApiMiddleware(http.HandlerFunc(apiDeck.Create)))
 	http.Handle("PUT /api/deck/{deckId}/name", api.ApiMiddleware(http.HandlerFunc(apiDeck.SetName)))

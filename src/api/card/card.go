@@ -48,7 +48,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	textSearch = "%" + textSearch + "%"
 
-	cards, err := database.GetCardsInDeck(deckId, categorySearch, textSearch, pageNumber)
+	cards, err := database.SearchCardsInDeck(deckId, categorySearch, textSearch, pageNumber)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

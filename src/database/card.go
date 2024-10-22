@@ -18,7 +18,7 @@ type Card struct {
 	Text     string
 }
 
-func GetCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
+func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
 	if categorySearch == "" {
 		categorySearch = "%"
 	}
@@ -60,18 +60,46 @@ func GetCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, 
 
 	result := make([]Card, 0)
 	for rows.Next() {
-		var cardDetails Card
+		var card Card
 		if err := rows.Scan(
-			&cardDetails.Id,
-			&cardDetails.CreatedOnDate,
-			&cardDetails.ChangedOnDate,
-			&cardDetails.DeckId,
-			&cardDetails.Category,
-			&cardDetails.Text); err != nil {
+			&card.Id,
+			&card.CreatedOnDate,
+			&card.ChangedOnDate,
+			&card.DeckId,
+			&card.Category,
+			&card.Text); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, cardDetails)
+		result = append(result, card)
+	}
+	return result, nil
+}
+
+func GetCardsInDeckExport(deckId uuid.UUID) ([]Card, error) {
+	sqlString := `
+		SELECT
+			C.CATEGORY,
+			C.TEXT
+		FROM CARD AS C
+		WHERE C.DECK_ID = ?
+		ORDER BY
+			C.CATEGORY ASC,
+			C.TEXT ASC
+	`
+	rows, err := query(sqlString, deckId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]Card, 0)
+	for rows.Next() {
+		var card Card
+		if err := rows.Scan(&card.Category, &card.Text); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, card)
 	}
 	return result, nil
 }

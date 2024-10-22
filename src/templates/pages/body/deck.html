@@ -1,4 +1,5 @@
 {{define "body"}}
+<script src="/static/js/deck.js"></script>
 <h3>Deck: {{.Deck.Name}}</h3>
 <button onclick="document.getElementById('deck-update-dialog').showModal()">
   Edit Deck
@@ -93,6 +94,16 @@
   hx-confirm="Are you sure you want to delete this deck?"
 >
   Delete Deck
+</button>
+<br />
+<br />
+<button
+  hx-get="/api/deck/{{.Deck.Id}}/card-export"
+  hx-target="#deck-card-export-content"
+  hx-confirm="Are you sure you want to export cards to a CSV file?"
+>
+  Export Cards
+  <span id="deck-card-export-content" style="display: none"></span>
 </button>
 <br />
 <br />
