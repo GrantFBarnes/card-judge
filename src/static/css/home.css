@@ -1,9 +1,7 @@
 #home {
   text-align: center;
-  height: 300px;
-  height: 200px;
+  width: 200px;
   position: absolute;
-  top: calc(50% - 150px);
   left: calc(50% - 100px);
 }
 
