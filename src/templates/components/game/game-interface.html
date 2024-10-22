@@ -22,14 +22,16 @@
         <td>
           {{if .JudgeName.Valid}} {{.JudgeName.String}} {{else}} (None) {{end}}
         </td>
-        <td>Judge {{.DrawPileJudgeCount}} | Player {{.DrawPilePlayerCount}}</td>
+        <td>
+          Prompt {{.DrawPilePromptCount}} | Response {{.DrawPileResponseCount}}
+        </td>
       </tr>
     </tbody>
   </table>
 </div>
 <div id="lobby-player-data">
-  {{if not .JudgeCardText.Valid}}
-  <div class="lobby-player-data-message">[NO JUDGE CARD]</div>
+  {{if not .PromptCardText.Valid}}
+  <div class="lobby-player-data-message">[NO PROMPT CARD]</div>
   {{else if .PlayerIsJudge}}
   <div class="lobby-player-data-message">You are the Judge.</div>
   {{else if .BoardIsReady}}
@@ -45,7 +47,7 @@
         <th>
           {{$handSize := len .PlayerHand}} {{if lt $handSize .LobbyHandSize}}
           <button
-            hx-post="/api/lobby/{{.LobbyId}}/draw"
+            hx-post="/api/lobby/{{.LobbyId}}/draw-hand"
             hx-target="#lobby-grid-interface"
           >
             Draw
@@ -55,7 +57,7 @@
         <th>
           {{$handSize := len .PlayerHand}} {{if gt $handSize 0}}
           <button
-            hx-post="/api/lobby/{{.LobbyId}}/discard"
+            hx-post="/api/lobby/{{.LobbyId}}/discard-hand"
             hx-target="#lobby-grid-interface"
             hx-confirm="Are you sure you want to discard your hand?"
           >
@@ -182,24 +184,24 @@
   {{end}}
 </div>
 <div id="lobby-game-board">
-  <h3 id="judge-card">
-    {{if not .JudgeCardText.Valid}}
-    <span>[NO JUDGE CARD]</span>
+  <h3 id="prompt-card">
+    {{if not .PromptCardText.Valid}}
+    <span>[NO PROMPT CARD]</span>
     {{else}}
-    <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
+    <span class="wrap-new-lines">{{.PromptCardText.String}}</span>
     {{if and .PlayerIsJudge .BoardIsEmpty}}
     <span
       class="clickable"
       style="float: right"
       title="Skip Current Card"
-      hx-post="/api/lobby/{{.LobbyId}}/skip-judge-card"
-      hx-confirm="Are you sure you want to skip this judge card?"
+      hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
+      hx-confirm="Are you sure you want to skip this prompt?"
     >
       &#11118;
     </span>
     {{end}} {{end}}
   </h3>
-  {{if .JudgeCardText.Valid}}
+  {{if .PromptCardText.Valid}}
   <br />
   {{if .BoardIsReady}}
   <div id="board-cards">

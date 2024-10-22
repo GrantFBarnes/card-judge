@@ -195,7 +195,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
+func DrawHand(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -211,7 +211,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.DrawPlayerHand(player.Id)
+	err = database.DrawHand(player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -221,7 +221,7 @@ func DrawPlayerHand(w http.ResponseWriter, r *http.Request) {
 	writeGameInterfaceHtml(w, player.Id)
 }
 
-func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
+func PlayCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -245,7 +245,7 @@ func PlayPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.PlayPlayerCard(player.Id, cardId)
+	err = database.PlayCard(player.Id, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -364,7 +364,7 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func WithdrawalPlayerCard(w http.ResponseWriter, r *http.Request) {
+func WithdrawalCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -388,7 +388,7 @@ func WithdrawalPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.WithdrawalPlayerCard(player.Id, cardId)
+	err = database.WithdrawalCard(player.Id, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -399,7 +399,7 @@ func WithdrawalPlayerCard(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
+func DiscardCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -423,7 +423,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.DiscardPlayerCard(player.Id, cardId)
+	err = database.DiscardCard(player.Id, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -433,7 +433,7 @@ func DiscardPlayerCard(w http.ResponseWriter, r *http.Request) {
 	writeGameInterfaceHtml(w, player.Id)
 }
 
-func LockPlayerCard(w http.ResponseWriter, r *http.Request) {
+func LockCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -457,7 +457,7 @@ func LockPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.LockPlayerCard(player.Id, cardId, true)
+	err = database.LockCard(player.Id, cardId, true)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -467,7 +467,7 @@ func LockPlayerCard(w http.ResponseWriter, r *http.Request) {
 	writeGameInterfaceHtml(w, player.Id)
 }
 
-func UnlockPlayerCard(w http.ResponseWriter, r *http.Request) {
+func UnlockCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -491,7 +491,7 @@ func UnlockPlayerCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.LockPlayerCard(player.Id, cardId, false)
+	err = database.LockCard(player.Id, cardId, false)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -534,7 +534,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winning Card: %s", cardTextStart))
 
-	winnerName, err := database.PickLobbyWinner(lobbyId, cardId)
+	winnerName, err := database.PickWinner(lobbyId, cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -547,7 +547,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
+func DiscardHand(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -563,7 +563,7 @@ func DiscardPlayerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.DiscardPlayerHand(player.Id)
+	err = database.DiscardHand(player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -595,7 +595,7 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func SkipJudgeCard(w http.ResponseWriter, r *http.Request) {
+func SkipPrompt(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -611,7 +611,7 @@ func SkipJudgeCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SkipJudgeCard(lobbyId)
+	err = database.SkipPrompt(lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

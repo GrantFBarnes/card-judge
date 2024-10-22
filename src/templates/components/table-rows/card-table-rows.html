@@ -2,7 +2,7 @@
 <tr>
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
-  <td>{{.Category}}</td>
+  <td>{{if eq .Category "PROMPT"}} Prompt {{else}} Response {{end}}</td>
   <td class="wrap-new-lines">{{.Text}}</td>
   <td>
     <div
@@ -42,12 +42,12 @@
           autocomplete="off"
           required="true"
         >
-          {{if eq .Category "JUDGE"}}
-          <option value="JUDGE" selected>JUDGE</option>
-          <option value="PLAYER">PLAYER</option>
+          {{if eq .Category "PROMPT"}}
+          <option value="PROMPT" selected>Prompt</option>
+          <option value="RESPONSE">Response</option>
           {{else}}
-          <option value="JUDGE">JUDGE</option>
-          <option value="PLAYER" selected>PLAYER</option>
+          <option value="PROMPT">Prompt</option>
+          <option value="RESPONSE" selected>Response</option>
           {{end}}
         </select>
         <br />
