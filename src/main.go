@@ -39,9 +39,11 @@ func main() {
 
 	// pages
 	http.Handle("GET /", api.PageMiddleware(http.HandlerFunc(apiPages.Home)))
+	http.Handle("GET /about", api.PageMiddleware(http.HandlerFunc(apiPages.About)))
 	http.Handle("GET /login", api.PageMiddleware(http.HandlerFunc(apiPages.Login)))
 	http.Handle("GET /manage", api.PageMiddleware(http.HandlerFunc(apiPages.Manage)))
 	http.Handle("GET /admin", api.PageMiddleware(http.HandlerFunc(apiPages.Admin)))
+	http.Handle("GET /stats", api.PageMiddleware(http.HandlerFunc(apiPages.Stats)))
 	http.Handle("GET /lobbies", api.PageMiddleware(http.HandlerFunc(apiPages.Lobbies)))
 	http.Handle("GET /lobby/{lobbyId}", api.PageMiddleware(http.HandlerFunc(apiPages.Lobby)))
 	http.Handle("GET /lobby/{lobbyId}/access", api.PageMiddleware(http.HandlerFunc(apiPages.LobbyAccess)))

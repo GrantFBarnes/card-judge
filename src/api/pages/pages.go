@@ -27,6 +27,23 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
+func About(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - About"
+
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/body/about.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", basePageData)
+}
+
 func Login(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Login"
@@ -68,6 +85,23 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/admin.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", basePageData)
+}
+
+func Stats(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Stats"
+
+	tmpl, err := template.ParseFiles(
+		"templates/pages/base.html",
+		"templates/pages/body/stats.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
