@@ -30,6 +30,85 @@ func main() {
 	}
 	defer db.Close()
 
+	sqlFiles := []string{
+		// database
+		"../database/settings.sql",
+
+		// tables
+		"../database/tables/USER.sql",
+		"../database/tables/DECK.sql",
+		"../database/tables/CARD.sql",
+		"../database/tables/LOBBY.sql",
+		"../database/tables/DRAW_PILE.sql",
+		"../database/tables/PLAYER.sql",
+		"../database/tables/HAND.sql",
+		"../database/tables/JUDGE.sql",
+		"../database/tables/BOARD.sql",
+		"../database/tables/WIN.sql",
+		"../database/tables/USER_ACCESS_DECK.sql",
+		"../database/tables/USER_ACCESS_LOBBY.sql",
+		"../database/tables/LOGIN_ATTEMPT.sql",
+		"../database/tables/LOG_DRAW.sql",
+		"../database/tables/LOG_DISCARD.sql",
+		"../database/tables/LOG_PLAY.sql",
+		"../database/tables/LOG_SKIP.sql",
+		"../database/tables/LOG_WIN.sql",
+
+		// functions
+		"../database/functions/FN_USER_HAS_DECK_ACCESS.sql",
+		"../database/functions/FN_USER_HAS_LOBBY_ACCESS.sql",
+		"../database/functions/FN_GET_RANDOM_LOBBY_PLAYER.sql",
+		"../database/functions/FN_GET_RANDOM_PROMPT_CARD.sql",
+		"../database/functions/FN_GET_LOGIN_ATTEMPT_IS_ALLOWED.sql",
+
+		// procedures
+		"../database/procedures/SP_GET_READABLE_DECKS.sql",
+		"../database/procedures/SP_SET_PLAYER_ACTIVE.sql",
+		"../database/procedures/SP_SET_PLAYER_INACTIVE.sql",
+		"../database/procedures/SP_SET_JUDGE.sql",
+		"../database/procedures/SP_SET_MISSING_JUDGE.sql",
+		"../database/procedures/SP_DRAW_HAND.sql",
+		"../database/procedures/SP_SKIP_PROMPT.sql",
+		"../database/procedures/SP_PLAY_CARD.sql",
+		"../database/procedures/SP_PLAY_STEAL_CARD.sql",
+		"../database/procedures/SP_PLAY_SURPRISE_CARD.sql",
+		"../database/procedures/SP_PLAY_WILD_CARD.sql",
+		"../database/procedures/SP_WITHDRAWAL_CARD.sql",
+		"../database/procedures/SP_DISCARD_HAND.sql",
+		"../database/procedures/SP_DISCARD_CARD.sql",
+		"../database/procedures/SP_PICK_WINNER.sql",
+
+		// events
+		"../database/events/EVT_CLEAN_LOGIN_ATTEMPTS.sql",
+
+		// triggers
+		"../database/triggers/TR_USER_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_DECK_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_CARD_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_LOBBY_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_PLAYER_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_HAND_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_JUDGE_BF_UP_SET_CHANGED_ON_DATE.sql",
+		"../database/triggers/TR_DECK_AF_UP_REVOKE_ACCESS.sql",
+		"../database/triggers/TR_LOBBY_AF_UP_REVOKE_ACCESS.sql",
+		"../database/triggers/TR_PLAYER_AF_IN_DRAW_HAND.sql",
+		"../database/triggers/TR_PLAYER_AF_IN_SET_MISSING_JUDGE.sql",
+		"../database/triggers/TR_PLAYER_AF_UP_SET_MISSING_JUDGE.sql",
+		"../database/triggers/TR_PLAYER_AF_DL_SET_MISSING_JUDGE.sql",
+		"../database/triggers/TR_WIN_AF_IN_SET_JUDGE.sql",
+
+		// populate
+		"../database/populate/admin.sql",
+		"../database/populate/deck.sql",
+	}
+	for _, sqlFile := range sqlFiles {
+		err = database.RunFile(sqlFile)
+		if err != nil {
+			log.Fatalln(err)
+			return
+		}
+	}
+
 	// static files
 	http.HandleFunc("GET /static/{fileType}/{fileName}", func(w http.ResponseWriter, r *http.Request) {
 		fileType := r.PathValue("fileType")
