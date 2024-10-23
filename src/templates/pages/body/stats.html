@@ -1,56 +1,64 @@
 {{define "body"}}
+<link rel="stylesheet" href="/static/css/stats.css" />
 <h1>Statistics</h1>
-<h3>Most Wins - By Player</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Win Count</th>
-      <th>Player Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .MostWinsByPlayer}}
-    <tr>
-      <td>{{.WinCount}}</td>
-      <td>{{.Name}}</td>
-    </tr>
-    {{end}}
-  </tbody>
-</table>
-<br />
-<h3>Most Wins - By Card</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Win Count</th>
-      <th>Card Text</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .MostWinsByCard}}
-    <tr>
-      <td>{{.WinCount}}</td>
-      <td>{{.Name}}</td>
-    </tr>
-    {{end}}
-  </tbody>
-</table>
-<br />
-<h3>Most Wins - By Special Category</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Win Count</th>
-      <th>Special Category</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .MostWinsBySpecialCategory}}
-    <tr>
-      <td>{{.WinCount}}</td>
-      <td>{{.Name}}</td>
-    </tr>
-    {{end}}
-  </tbody>
-</table>
+<details>
+  <summary class="summary-level-1">Most Wins</summary>
+  <details>
+    <summary class="summary-level-2">By Player</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Win Count</th>
+          <th>Player Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostWinsByPlayer}}
+        <tr>
+          <td>{{.WinCount}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Card</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Win Count</th>
+          <th>Card Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostWinsByCard}}
+        <tr>
+          <td>{{.WinCount}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Special Category</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Win Count</th>
+          <th>Special Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostWinsBySpecialCategory}}
+        <tr>
+          <td>{{.WinCount}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+</details>
 {{end}}
