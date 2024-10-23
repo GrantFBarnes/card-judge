@@ -99,6 +99,13 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
 
+	mostWinsByCard, err := database.GetMostWinsByCard(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most wins by card"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -109,7 +116,15 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	type data struct {
+		api.BasePageData
+		MostWinsByCard []database.MostWins
+	}
+
+	tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData:   basePageData,
+		MostWinsByCard: mostWinsByCard,
+	})
 }
 
 func Lobbies(w http.ResponseWriter, r *http.Request) {

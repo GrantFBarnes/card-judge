@@ -23,5 +23,5 @@ BEGIN
         RETURN 1;
     END IF;
 
-    RETURN 0;
+    RETURN VAR_DECK_ID IS NULL;
 END;
