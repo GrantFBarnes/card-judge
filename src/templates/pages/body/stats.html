@@ -1,5 +1,23 @@
 {{define "body"}}
 <h1>Statistics</h1>
+<h3>Most Wins - By Player</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Win Count</th>
+      <th>Player Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .MostWinsByPlayer}}
+    <tr>
+      <td>{{.WinCount}}</td>
+      <td>{{.Name}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+<br />
 <h3>Most Wins - By Card</h3>
 <table>
   <thead>
