@@ -42,7 +42,7 @@
   </div>
   <form hx-put="/api/lobby/{{.Lobby.Id}}/name" hx-target="find .htmx-result">
     <h3>Set Lobby Name</h3>
-    <label for="setLobbyName">New Name:</label>
+    <label for="setLobbyName">Name:</label>
     <input
       type="text"
       id="setLobbyName"
@@ -108,7 +108,7 @@
     <br />
     <br />
     <div class="htmx-result"></div>
-    <input type="submit" value="Set Credit Limit" />
+    <input type="submit" value="Set Lobby Credit Limit" />
   </form>
 </dialog>
 <dialog id="wild-card-dialog">
