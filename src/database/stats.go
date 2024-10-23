@@ -20,14 +20,14 @@ type BestWinRatio struct {
 func GetMostWinsByPlayer() ([]MostWins, error) {
 	sqlString := `
 		SELECT
-			COUNT(LW.ID) AS WIN_COUNT,
+			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 			U.NAME AS NAME
 		FROM LOG_WIN AS LW
 			INNER JOIN USER AS U ON U.ID = LW.PLAYER_USER_ID
 		GROUP BY U.ID
 		ORDER BY
-			COUNT(LW.ID) DESC,
-			U.NAME ASC
+			WIN_COUNT DESC,
+			NAME ASC
 		LIMIT 5
 	`
 	rows, err := query(sqlString)
@@ -51,15 +51,15 @@ func GetMostWinsByPlayer() ([]MostWins, error) {
 func GetMostWinsByCard(userId uuid.UUID) ([]MostWins, error) {
 	sqlString := `
 		SELECT
-			COUNT(LW.ID) AS WIN_COUNT,
+			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 			COALESCE(C.TEXT, LW.SPECIAL_CATEGORY, 'Unknown') AS NAME
 		FROM LOG_WIN AS LW
 			LEFT JOIN CARD AS C ON C.ID = LW.CARD_ID
 		WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 		GROUP BY C.ID
 		ORDER BY
-			COUNT(LW.ID) DESC,
-			C.TEXT ASC
+			WIN_COUNT DESC,
+			NAME ASC
 		LIMIT 5
 	`
 	rows, err := query(sqlString, userId)
@@ -83,13 +83,13 @@ func GetMostWinsByCard(userId uuid.UUID) ([]MostWins, error) {
 func GetMostWinsBySpecialCategory() ([]MostWins, error) {
 	sqlString := `
 		SELECT
-			COUNT(LW.ID) AS WIN_COUNT,
+			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
 		FROM LOG_WIN AS LW
 		GROUP BY LW.SPECIAL_CATEGORY
 		ORDER BY
-			COUNT(LW.ID) DESC,
-			LW.SPECIAL_CATEGORY ASC
+			WIN_COUNT DESC,
+			NAME ASC
 		LIMIT 5
 	`
 	rows, err := query(sqlString)
