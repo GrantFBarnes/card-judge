@@ -74,3 +74,33 @@ func GetMostWinsByCard(userId uuid.UUID) ([]MostWins, error) {
 
 	return result, nil
 }
+
+func GetMostWinsBySpecialCategory() ([]MostWins, error) {
+	sqlString := `
+		SELECT
+			COUNT(LW.ID) AS WIN_COUNT,
+			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+		FROM LOG_WIN AS LW
+		GROUP BY LW.SPECIAL_CATEGORY
+		ORDER BY
+			COUNT(LW.ID) DESC,
+			LW.SPECIAL_CATEGORY ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]MostWins, 0)
+	for rows.Next() {
+		var mw MostWins
+		if err := rows.Scan(&mw.WinCount, &mw.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, mw)
+	}
+
+	return result, nil
+}

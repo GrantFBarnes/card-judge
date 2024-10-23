@@ -35,4 +35,22 @@
     {{end}}
   </tbody>
 </table>
+<br />
+<h3>Most Wins - By Special Category</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Win Count</th>
+      <th>Special Category</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .MostWinsBySpecialCategory}}
+    <tr>
+      <td>{{.WinCount}}</td>
+      <td>{{.Name}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
 {{end}}

@@ -113,6 +113,13 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mostWinsBySpecialCategory, err := database.GetMostWinsBySpecialCategory()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most wins by special category"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -125,14 +132,16 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		MostWinsByPlayer []database.MostWins
-		MostWinsByCard   []database.MostWins
+		MostWinsByPlayer          []database.MostWins
+		MostWinsByCard            []database.MostWins
+		MostWinsBySpecialCategory []database.MostWins
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData:     basePageData,
-		MostWinsByPlayer: mostWinsByPlayer,
-		MostWinsByCard:   mostWinsByCard,
+		BasePageData:              basePageData,
+		MostWinsByPlayer:          mostWinsByPlayer,
+		MostWinsByCard:            mostWinsByCard,
+		MostWinsBySpecialCategory: mostWinsBySpecialCategory,
 	})
 }
 
