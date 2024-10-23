@@ -120,6 +120,13 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	bestWinRatioByPlayer, err := database.GetBestWinRatioByPlayer()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get best win ratio by player"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -135,6 +142,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostWinsByPlayer          []database.MostWins
 		MostWinsByCard            []database.MostWins
 		MostWinsBySpecialCategory []database.MostWins
+		BestWinRatioByPlayer      []database.BestWinRatio
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
@@ -142,6 +150,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostWinsByPlayer:          mostWinsByPlayer,
 		MostWinsByCard:            mostWinsByCard,
 		MostWinsBySpecialCategory: mostWinsBySpecialCategory,
+		BestWinRatioByPlayer:      bestWinRatioByPlayer,
 	})
 }
 

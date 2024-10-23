@@ -12,6 +12,11 @@ type MostWins struct {
 	Name     string
 }
 
+type BestWinRatio struct {
+	WinRatio float64
+	Name     string
+}
+
 func GetMostWinsByPlayer() ([]MostWins, error) {
 	sqlString := `
 		SELECT
@@ -100,6 +105,38 @@ func GetMostWinsBySpecialCategory() ([]MostWins, error) {
 			return result, errors.New("failed to scan row in query results")
 		}
 		result = append(result, mw)
+	}
+
+	return result, nil
+}
+
+func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
+	sqlString := `
+		SELECT
+			(COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0) AS WIN_RATIO,
+			U.NAME AS NAME
+		FROM LOG_WIN AS LW
+			INNER JOIN USER AS U ON U.ID = LW.PLAYER_USER_ID
+			INNER JOIN LOG_PLAY AS LP ON LP.PLAYER_USER_ID = U.ID
+		GROUP BY U.ID
+		ORDER BY
+			WIN_RATIO DESC,
+			NAME ASC
+		LIMIT 5;
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]BestWinRatio, 0)
+	for rows.Next() {
+		var bwr BestWinRatio
+		if err := rows.Scan(&bwr.WinRatio, &bwr.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, bwr)
 	}
 
 	return result, nil
