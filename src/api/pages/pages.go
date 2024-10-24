@@ -197,6 +197,20 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mostSkipsByPlayer, err := database.GetMostSkipsByPlayer()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most skips by player"))
+		return
+	}
+
+	mostSkipsByCard, err := database.GetMostSkipsByCard(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most skips by card"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -223,6 +237,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostDrawsBySpecialCategory    []database.StatCount
 		MostDiscardsByPlayer          []database.StatCount
 		MostDiscardsByCard            []database.StatCount
+		MostSkipsByPlayer             []database.StatCount
+		MostSkipsByCard               []database.StatCount
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
@@ -241,6 +257,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostDrawsBySpecialCategory:    mostDrawsBySpecialCategory,
 		MostDiscardsByPlayer:          mostDiscardsByPlayer,
 		MostDiscardsByCard:            mostDiscardsByCard,
+		MostSkipsByPlayer:             mostSkipsByPlayer,
+		MostSkipsByCard:               mostSkipsByCard,
 	})
 }
 
