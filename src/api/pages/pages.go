@@ -99,6 +99,27 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
 
+	mostPlaysByPlayer, err := database.GetMostPlaysByPlayer()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most plays by player"))
+		return
+	}
+
+	mostPlaysByCard, err := database.GetMostPlaysByCard(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most plays by card"))
+		return
+	}
+
+	mostPlaysBySpecialCategory, err := database.GetMostPlaysBySpecialCategory()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most plays by special category"))
+		return
+	}
+
 	mostWinsByPlayer, err := database.GetMostWinsByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -153,6 +174,9 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
+		MostPlaysByPlayer             []database.MostPlays
+		MostPlaysByCard               []database.MostPlays
+		MostPlaysBySpecialCategory    []database.MostPlays
 		MostWinsByPlayer              []database.MostWins
 		MostWinsByCard                []database.MostWins
 		MostWinsBySpecialCategory     []database.MostWins
@@ -163,6 +187,9 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData:                  basePageData,
+		MostPlaysByPlayer:             mostPlaysByPlayer,
+		MostPlaysByCard:               mostPlaysByCard,
+		MostPlaysBySpecialCategory:    mostPlaysBySpecialCategory,
 		MostWinsByPlayer:              mostWinsByPlayer,
 		MostWinsByCard:                mostWinsByCard,
 		MostWinsBySpecialCategory:     mostWinsBySpecialCategory,

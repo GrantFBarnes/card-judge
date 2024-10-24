@@ -7,6 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type MostPlays struct {
+	PlayCount int
+	Name      string
+}
+
 type MostWins struct {
 	WinCount int
 	Name     string
@@ -17,6 +22,99 @@ type BestWinRatio struct {
 	WinCount  int
 	WinRatio  float64
 	Name      string
+}
+
+func GetMostPlaysByPlayer() ([]MostPlays, error) {
+	sqlString := `
+		SELECT
+			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+			U.NAME AS NAME
+		FROM LOG_PLAY AS LP
+			INNER JOIN USER AS U ON U.ID = LP.PLAYER_USER_ID
+		GROUP BY U.ID
+		ORDER BY
+			PLAY_COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]MostPlays, 0)
+	for rows.Next() {
+		var mw MostPlays
+		if err := rows.Scan(&mw.PlayCount, &mw.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, mw)
+	}
+
+	return result, nil
+}
+
+func GetMostPlaysByCard(userId uuid.UUID) ([]MostPlays, error) {
+	sqlString := `
+		SELECT
+			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+			COALESCE(C.TEXT, LP.SPECIAL_CATEGORY, 'UNKNOWN') AS NAME
+		FROM LOG_PLAY AS LP
+			LEFT JOIN CARD AS C ON C.ID = LP.CARD_ID
+		WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+		GROUP BY C.ID
+		ORDER BY
+			PLAY_COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]MostPlays, 0)
+	for rows.Next() {
+		var mw MostPlays
+		if err := rows.Scan(&mw.PlayCount, &mw.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, mw)
+	}
+
+	return result, nil
+}
+
+func GetMostPlaysBySpecialCategory() ([]MostPlays, error) {
+	sqlString := `
+		SELECT
+			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+			COALESCE(LP.SPECIAL_CATEGORY, 'NONE') AS NAME
+		FROM LOG_PLAY AS LP
+		GROUP BY LP.SPECIAL_CATEGORY
+		ORDER BY
+			PLAY_COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]MostPlays, 0)
+	for rows.Next() {
+		var mw MostPlays
+		if err := rows.Scan(&mw.PlayCount, &mw.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, mw)
+	}
+
+	return result, nil
 }
 
 func GetMostWinsByPlayer() ([]MostWins, error) {
