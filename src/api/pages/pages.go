@@ -174,15 +174,15 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		MostPlaysByPlayer             []database.MostPlays
-		MostPlaysByCard               []database.MostPlays
-		MostPlaysBySpecialCategory    []database.MostPlays
-		MostWinsByPlayer              []database.MostWins
-		MostWinsByCard                []database.MostWins
-		MostWinsBySpecialCategory     []database.MostWins
-		BestWinRatioByPlayer          []database.BestWinRatio
-		BestWinRatioByCard            []database.BestWinRatio
-		BestWinRatioBySpecialCategory []database.BestWinRatio
+		MostPlaysByPlayer             []database.StatCount
+		MostPlaysByCard               []database.StatCount
+		MostPlaysBySpecialCategory    []database.StatCount
+		MostWinsByPlayer              []database.StatCount
+		MostWinsByCard                []database.StatCount
+		MostWinsBySpecialCategory     []database.StatCount
+		BestWinRatioByPlayer          []database.StatWinRatio
+		BestWinRatioByCard            []database.StatWinRatio
+		BestWinRatioBySpecialCategory []database.StatWinRatio
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{

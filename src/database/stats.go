@@ -7,24 +7,19 @@ import (
 	"github.com/google/uuid"
 )
 
-type MostPlays struct {
-	PlayCount int
-	Name      string
+type StatCount struct {
+	Count int
+	Name  string
 }
 
-type MostWins struct {
-	WinCount int
-	Name     string
-}
-
-type BestWinRatio struct {
+type StatWinRatio struct {
 	PlayCount int
 	WinCount  int
 	WinRatio  float64
 	Name      string
 }
 
-func GetMostPlaysByPlayer() ([]MostPlays, error) {
+func GetMostPlaysByPlayer() ([]StatCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -42,20 +37,20 @@ func GetMostPlaysByPlayer() ([]MostPlays, error) {
 		return nil, err
 	}
 
-	result := make([]MostPlays, 0)
+	result := make([]StatCount, 0)
 	for rows.Next() {
-		var mw MostPlays
-		if err := rows.Scan(&mw.PlayCount, &mw.Name); err != nil {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, mw)
+		result = append(result, sc)
 	}
 
 	return result, nil
 }
 
-func GetMostPlaysByCard(userId uuid.UUID) ([]MostPlays, error) {
+func GetMostPlaysByCard(userId uuid.UUID) ([]StatCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -74,20 +69,20 @@ func GetMostPlaysByCard(userId uuid.UUID) ([]MostPlays, error) {
 		return nil, err
 	}
 
-	result := make([]MostPlays, 0)
+	result := make([]StatCount, 0)
 	for rows.Next() {
-		var mw MostPlays
-		if err := rows.Scan(&mw.PlayCount, &mw.Name); err != nil {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, mw)
+		result = append(result, sc)
 	}
 
 	return result, nil
 }
 
-func GetMostPlaysBySpecialCategory() ([]MostPlays, error) {
+func GetMostPlaysBySpecialCategory() ([]StatCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -104,20 +99,20 @@ func GetMostPlaysBySpecialCategory() ([]MostPlays, error) {
 		return nil, err
 	}
 
-	result := make([]MostPlays, 0)
+	result := make([]StatCount, 0)
 	for rows.Next() {
-		var mw MostPlays
-		if err := rows.Scan(&mw.PlayCount, &mw.Name); err != nil {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, mw)
+		result = append(result, sc)
 	}
 
 	return result, nil
 }
 
-func GetMostWinsByPlayer() ([]MostWins, error) {
+func GetMostWinsByPlayer() ([]StatCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
@@ -135,20 +130,20 @@ func GetMostWinsByPlayer() ([]MostWins, error) {
 		return nil, err
 	}
 
-	result := make([]MostWins, 0)
+	result := make([]StatCount, 0)
 	for rows.Next() {
-		var mw MostWins
-		if err := rows.Scan(&mw.WinCount, &mw.Name); err != nil {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, mw)
+		result = append(result, sc)
 	}
 
 	return result, nil
 }
 
-func GetMostWinsByCard(userId uuid.UUID) ([]MostWins, error) {
+func GetMostWinsByCard(userId uuid.UUID) ([]StatCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
@@ -167,20 +162,20 @@ func GetMostWinsByCard(userId uuid.UUID) ([]MostWins, error) {
 		return nil, err
 	}
 
-	result := make([]MostWins, 0)
+	result := make([]StatCount, 0)
 	for rows.Next() {
-		var mw MostWins
-		if err := rows.Scan(&mw.WinCount, &mw.Name); err != nil {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, mw)
+		result = append(result, sc)
 	}
 
 	return result, nil
 }
 
-func GetMostWinsBySpecialCategory() ([]MostWins, error) {
+func GetMostWinsBySpecialCategory() ([]StatCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
@@ -197,20 +192,20 @@ func GetMostWinsBySpecialCategory() ([]MostWins, error) {
 		return nil, err
 	}
 
-	result := make([]MostWins, 0)
+	result := make([]StatCount, 0)
 	for rows.Next() {
-		var mw MostWins
-		if err := rows.Scan(&mw.WinCount, &mw.Name); err != nil {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, mw)
+		result = append(result, sc)
 	}
 
 	return result, nil
 }
 
-func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
+func GetBestWinRatioByPlayer() ([]StatWinRatio, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -231,24 +226,24 @@ func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
 		return nil, err
 	}
 
-	result := make([]BestWinRatio, 0)
+	result := make([]StatWinRatio, 0)
 	for rows.Next() {
-		var bwr BestWinRatio
+		var swr StatWinRatio
 		if err := rows.Scan(
-			&bwr.PlayCount,
-			&bwr.WinCount,
-			&bwr.WinRatio,
-			&bwr.Name); err != nil {
+			&swr.PlayCount,
+			&swr.WinCount,
+			&swr.WinRatio,
+			&swr.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, bwr)
+		result = append(result, swr)
 	}
 
 	return result, nil
 }
 
-func GetBestWinRatioByCard(userId uuid.UUID) ([]BestWinRatio, error) {
+func GetBestWinRatioByCard(userId uuid.UUID) ([]StatWinRatio, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -270,24 +265,24 @@ func GetBestWinRatioByCard(userId uuid.UUID) ([]BestWinRatio, error) {
 		return nil, err
 	}
 
-	result := make([]BestWinRatio, 0)
+	result := make([]StatWinRatio, 0)
 	for rows.Next() {
-		var bwr BestWinRatio
+		var swr StatWinRatio
 		if err := rows.Scan(
-			&bwr.PlayCount,
-			&bwr.WinCount,
-			&bwr.WinRatio,
-			&bwr.Name); err != nil {
+			&swr.PlayCount,
+			&swr.WinCount,
+			&swr.WinRatio,
+			&swr.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, bwr)
+		result = append(result, swr)
 	}
 
 	return result, nil
 }
 
-func GetBestWinRatioBySpecialCategory() ([]BestWinRatio, error) {
+func GetBestWinRatioBySpecialCategory() ([]StatWinRatio, error) {
 	sqlString := `
 		SELECT
 			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -308,18 +303,18 @@ func GetBestWinRatioBySpecialCategory() ([]BestWinRatio, error) {
 		return nil, err
 	}
 
-	result := make([]BestWinRatio, 0)
+	result := make([]StatWinRatio, 0)
 	for rows.Next() {
-		var bwr BestWinRatio
+		var swr StatWinRatio
 		if err := rows.Scan(
-			&bwr.PlayCount,
-			&bwr.WinCount,
-			&bwr.WinRatio,
-			&bwr.Name); err != nil {
+			&swr.PlayCount,
+			&swr.WinCount,
+			&swr.WinRatio,
+			&swr.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
-		result = append(result, bwr)
+		result = append(result, swr)
 	}
 
 	return result, nil
