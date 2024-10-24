@@ -254,10 +254,10 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer          []database.StatWinRatio
 		BestWinRatioByCard            []database.StatWinRatio
 		BestWinRatioBySpecialCategory []database.StatWinRatio
-		MostPicksByPlayerPicker       []database.StatPickCount
-		MostPicksByPlayerPicked       []database.StatPickCount
-		MostPicksByCardPicker         []database.StatPickCount
-		MostPicksByCardPicked         []database.StatPickCount
+		MostPicksByPlayerPicker       []database.StatCount
+		MostPicksByPlayerPicked       []database.StatCount
+		MostPicksByCardPicker         []database.StatCount
+		MostPicksByCardPicked         []database.StatCount
 		MostPlaysByPlayer             []database.StatCount
 		MostPlaysByCard               []database.StatCount
 		MostPlaysBySpecialCategory    []database.StatCount

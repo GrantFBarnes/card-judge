@@ -78,42 +78,38 @@
   <details>
     <summary class="summary-level-2">By Player</summary>
     <details open>
-      <summary class="summary-level-3">User Was Picker</summary>
+      <summary class="summary-level-3">You Were Judge</summary>
       <table>
         <thead>
           <tr>
-            <th>Pick Count</th>
-            <th>Picker</th>
-            <th>Picked</th>
+            <th>Count</th>
+            <th>Name</th>
           </tr>
         </thead>
         <tbody>
           {{range .MostPicksByPlayerPicker}}
           <tr>
-            <td>{{.PickCount}}</td>
-            <td>{{.PickerName}}</td>
-            <td>{{.PickedName}}</td>
+            <td>{{.Count}}</td>
+            <td>{{.Name}}</td>
           </tr>
           {{end}}
         </tbody>
       </table>
     </details>
     <details open>
-      <summary class="summary-level-3">User Was Picked</summary>
+      <summary class="summary-level-3">You Were Winning Player</summary>
       <table>
         <thead>
           <tr>
-            <th>Pick Count</th>
-            <th>Picker</th>
-            <th>Picked</th>
+            <th>Count</th>
+            <th>Name</th>
           </tr>
         </thead>
         <tbody>
           {{range .MostPicksByPlayerPicked}}
           <tr>
-            <td>{{.PickCount}}</td>
-            <td>{{.PickerName}}</td>
-            <td>{{.PickedName}}</td>
+            <td>{{.Count}}</td>
+            <td>{{.Name}}</td>
           </tr>
           {{end}}
         </tbody>
@@ -123,42 +119,38 @@
   <details>
     <summary class="summary-level-2">By Card</summary>
     <details open>
-      <summary class="summary-level-3">User Was Picker</summary>
+      <summary class="summary-level-3">You Were Judge</summary>
       <table>
         <thead>
           <tr>
-            <th>Pick Count</th>
-            <th>Picker</th>
-            <th>Picked</th>
+            <th>Count</th>
+            <th>Name</th>
           </tr>
         </thead>
         <tbody>
           {{range .MostPicksByCardPicker}}
           <tr>
-            <td>{{.PickCount}}</td>
-            <td>{{.PickerName}}</td>
-            <td>{{.PickedName}}</td>
+            <td>{{.Count}}</td>
+            <td>{{.Name}}</td>
           </tr>
           {{end}}
         </tbody>
       </table>
     </details>
     <details open>
-      <summary class="summary-level-3">User Was Picked</summary>
+      <summary class="summary-level-3">You Were Winning Player</summary>
       <table>
         <thead>
           <tr>
-            <th>Pick Count</th>
-            <th>Picker</th>
-            <th>Picked</th>
+            <th>Count</th>
+            <th>Name</th>
           </tr>
         </thead>
         <tbody>
           {{range .MostPicksByCardPicked}}
           <tr>
-            <td>{{.PickCount}}</td>
-            <td>{{.PickerName}}</td>
-            <td>{{.PickedName}}</td>
+            <td>{{.Count}}</td>
+            <td>{{.Name}}</td>
           </tr>
           {{end}}
         </tbody>
