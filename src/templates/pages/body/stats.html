@@ -74,6 +74,51 @@
   </details>
 </details>
 <details>
+  <summary class="summary-level-1">Most Picks</summary>
+  <details>
+    <summary class="summary-level-2">By Judge</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Pick Count</th>
+          <th>Judge Name</th>
+          <th>Player Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostPicksByJudge}}
+        <tr>
+          <td>{{.PickCount}}</td>
+          <td>{{.JudgeName}}</td>
+          <td>{{.PlayerName}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Player</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Pick Count</th>
+          <th>Judge Name</th>
+          <th>Player Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostPicksByPlayer}}
+        <tr>
+          <td>{{.PickCount}}</td>
+          <td>{{.JudgeName}}</td>
+          <td>{{.PlayerName}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+</details>
+<details>
   <summary class="summary-level-1">Most Plays</summary>
   <details>
     <summary class="summary-level-2">By Player</summary>

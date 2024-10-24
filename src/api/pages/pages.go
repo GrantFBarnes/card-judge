@@ -120,6 +120,20 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mostPicksByJudge, err := database.GetMostPicksByJudge(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most picks by judge"))
+		return
+	}
+
+	mostPicksByPlayer, err := database.GetMostPicksByPlayer(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most picks by player"))
+		return
+	}
+
 	mostPlaysByPlayer, err := database.GetMostPlaysByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -226,6 +240,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer          []database.StatWinRatio
 		BestWinRatioByCard            []database.StatWinRatio
 		BestWinRatioBySpecialCategory []database.StatWinRatio
+		MostPicksByJudge              []database.StatPickCount
+		MostPicksByPlayer             []database.StatPickCount
 		MostPlaysByPlayer             []database.StatCount
 		MostPlaysByCard               []database.StatCount
 		MostPlaysBySpecialCategory    []database.StatCount
@@ -246,6 +262,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer:          bestWinRatioByPlayer,
 		BestWinRatioByCard:            bestWinRatioByCard,
 		BestWinRatioBySpecialCategory: bestWinRatioBySpecialCategory,
+		MostPicksByJudge:              mostPicksByJudge,
+		MostPicksByPlayer:             mostPicksByPlayer,
 		MostPlaysByPlayer:             mostPlaysByPlayer,
 		MostPlaysByCard:               mostPlaysByCard,
 		MostPlaysBySpecialCategory:    mostPlaysBySpecialCategory,
