@@ -68,6 +68,8 @@
     <table>
       <thead>
         <tr>
+          <th>Play Count</th>
+          <th>Win Count</th>
           <th>Win Ratio</th>
           <th>Player Name</th>
         </tr>
@@ -75,6 +77,8 @@
       <tbody>
         {{range .BestWinRatioByPlayer}}
         <tr>
+          <td>{{.PlayCount}}</td>
+          <td>{{.WinCount}}</td>
           <td>{{.WinRatio}}</td>
           <td>{{.Name}}</td>
         </tr>
@@ -87,6 +91,8 @@
     <table>
       <thead>
         <tr>
+          <th>Play Count</th>
+          <th>Win Count</th>
           <th>Win Ratio</th>
           <th>Card Text</th>
         </tr>
@@ -94,6 +100,8 @@
       <tbody>
         {{range .BestWinRatioByCard}}
         <tr>
+          <td>{{.PlayCount}}</td>
+          <td>{{.WinCount}}</td>
           <td>{{.WinRatio}}</td>
           <td>{{.Name}}</td>
         </tr>
@@ -106,6 +114,8 @@
     <table>
       <thead>
         <tr>
+          <th>Play Count</th>
+          <th>Win Count</th>
           <th>Win Ratio</th>
           <th>Special Category</th>
         </tr>
@@ -113,6 +123,8 @@
       <tbody>
         {{range .BestWinRatioBySpecialCategory}}
         <tr>
+          <td>{{.PlayCount}}</td>
+          <td>{{.WinCount}}</td>
           <td>{{.WinRatio}}</td>
           <td>{{.Name}}</td>
         </tr>

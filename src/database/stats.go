@@ -13,8 +13,10 @@ type MostWins struct {
 }
 
 type BestWinRatio struct {
-	WinRatio float64
-	Name     string
+	PlayCount int
+	WinCount  int
+	WinRatio  float64
+	Name      string
 }
 
 func GetMostWinsByPlayer() ([]MostWins, error) {
@@ -113,6 +115,8 @@ func GetMostWinsBySpecialCategory() ([]MostWins, error) {
 func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
 	sqlString := `
 		SELECT
+			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 			(COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0) AS WIN_RATIO,
 			U.NAME AS NAME
 		FROM LOG_WIN AS LW
@@ -132,7 +136,11 @@ func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
 	result := make([]BestWinRatio, 0)
 	for rows.Next() {
 		var bwr BestWinRatio
-		if err := rows.Scan(&bwr.WinRatio, &bwr.Name); err != nil {
+		if err := rows.Scan(
+			&bwr.PlayCount,
+			&bwr.WinCount,
+			&bwr.WinRatio,
+			&bwr.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
@@ -145,6 +153,8 @@ func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
 func GetBestWinRatioByCard(userId uuid.UUID) ([]BestWinRatio, error) {
 	sqlString := `
 		SELECT
+			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 			(COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0) AS WIN_RATIO,
 			COALESCE(C.TEXT, LW.SPECIAL_CATEGORY, 'Unknown') AS NAME
 		FROM LOG_WIN AS LW
@@ -165,7 +175,11 @@ func GetBestWinRatioByCard(userId uuid.UUID) ([]BestWinRatio, error) {
 	result := make([]BestWinRatio, 0)
 	for rows.Next() {
 		var bwr BestWinRatio
-		if err := rows.Scan(&bwr.WinRatio, &bwr.Name); err != nil {
+		if err := rows.Scan(
+			&bwr.PlayCount,
+			&bwr.WinCount,
+			&bwr.WinRatio,
+			&bwr.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
@@ -178,6 +192,8 @@ func GetBestWinRatioByCard(userId uuid.UUID) ([]BestWinRatio, error) {
 func GetBestWinRatioBySpecialCategory() ([]BestWinRatio, error) {
 	sqlString := `
 		SELECT
+			COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+			COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 			(COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0) AS WIN_RATIO,
 			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
 		FROM LOG_WIN AS LW
@@ -196,7 +212,11 @@ func GetBestWinRatioBySpecialCategory() ([]BestWinRatio, error) {
 	result := make([]BestWinRatio, 0)
 	for rows.Next() {
 		var bwr BestWinRatio
-		if err := rows.Scan(&bwr.WinRatio, &bwr.Name); err != nil {
+		if err := rows.Scan(
+			&bwr.PlayCount,
+			&bwr.WinCount,
+			&bwr.WinRatio,
+			&bwr.Name); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
