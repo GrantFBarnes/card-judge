@@ -82,5 +82,43 @@
       </tbody>
     </table>
   </details>
+  <details>
+    <summary class="summary-level-2">By Card</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Win Ratio</th>
+          <th>Card Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .BestWinRatioByCard}}
+        <tr>
+          <td>{{.WinRatio}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Special Category</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Win Ratio</th>
+          <th>Special Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .BestWinRatioBySpecialCategory}}
+        <tr>
+          <td>{{.WinRatio}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
 </details>
 {{end}}

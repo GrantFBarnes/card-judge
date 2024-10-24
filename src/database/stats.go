@@ -122,7 +122,71 @@ func GetBestWinRatioByPlayer() ([]BestWinRatio, error) {
 		ORDER BY
 			WIN_RATIO DESC,
 			NAME ASC
-		LIMIT 5;
+		LIMIT 5
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]BestWinRatio, 0)
+	for rows.Next() {
+		var bwr BestWinRatio
+		if err := rows.Scan(&bwr.WinRatio, &bwr.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, bwr)
+	}
+
+	return result, nil
+}
+
+func GetBestWinRatioByCard(userId uuid.UUID) ([]BestWinRatio, error) {
+	sqlString := `
+		SELECT
+			(COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0) AS WIN_RATIO,
+			COALESCE(C.TEXT, LW.SPECIAL_CATEGORY, 'Unknown') AS NAME
+		FROM LOG_WIN AS LW
+			LEFT JOIN CARD AS C ON C.ID = LW.CARD_ID
+			LEFT JOIN LOG_PLAY AS LP ON LP.CARD_ID = C.ID
+		WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+		GROUP BY C.ID
+		ORDER BY
+			WIN_RATIO DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]BestWinRatio, 0)
+	for rows.Next() {
+		var bwr BestWinRatio
+		if err := rows.Scan(&bwr.WinRatio, &bwr.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, bwr)
+	}
+
+	return result, nil
+}
+
+func GetBestWinRatioBySpecialCategory() ([]BestWinRatio, error) {
+	sqlString := `
+		SELECT
+			(COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0) AS WIN_RATIO,
+			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+		FROM LOG_WIN AS LW
+			LEFT JOIN LOG_PLAY AS LP ON LP.CARD_ID = LW.CARD_ID OR LP.CARD_ID IS NULL
+		GROUP BY LW.SPECIAL_CATEGORY
+		ORDER BY
+			WIN_RATIO DESC,
+			NAME ASC
+		LIMIT 5
 	`
 	rows, err := query(sqlString)
 	if err != nil {
