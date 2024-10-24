@@ -135,7 +135,7 @@ type StatPickCount struct {
 	PlayerName string
 }
 
-func GetMostPicksByJudge(userId uuid.UUID) ([]StatPickCount, error) {
+func GetMostPicksByPlayerUserJudge(userId uuid.UUID) ([]StatPickCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(LW.ID) AS PICK_COUNT,
@@ -172,7 +172,7 @@ func GetMostPicksByJudge(userId uuid.UUID) ([]StatPickCount, error) {
 	return result, nil
 }
 
-func GetMostPicksByPlayer(userId uuid.UUID) ([]StatPickCount, error) {
+func GetMostPicksByPlayerUserPlayer(userId uuid.UUID) ([]StatPickCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(LW.ID) AS PICK_COUNT,
