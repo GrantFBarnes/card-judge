@@ -8,7 +8,7 @@
     <table>
       <thead>
         <tr>
-          <th>Play Count</th>
+          <th>Count</th>
           <th>Player Name</th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@
     <table>
       <thead>
         <tr>
-          <th>Play Count</th>
+          <th>Count</th>
           <th>Card Text</th>
         </tr>
       </thead>
@@ -46,7 +46,7 @@
     <table>
       <thead>
         <tr>
-          <th>Play Count</th>
+          <th>Count</th>
           <th>Special Category</th>
         </tr>
       </thead>
@@ -68,7 +68,7 @@
     <table>
       <thead>
         <tr>
-          <th>Win Count</th>
+          <th>Count</th>
           <th>Player Name</th>
         </tr>
       </thead>
@@ -87,7 +87,7 @@
     <table>
       <thead>
         <tr>
-          <th>Win Count</th>
+          <th>Count</th>
           <th>Card Text</th>
         </tr>
       </thead>
@@ -106,7 +106,7 @@
     <table>
       <thead>
         <tr>
-          <th>Win Count</th>
+          <th>Count</th>
           <th>Special Category</th>
         </tr>
       </thead>
@@ -186,6 +186,66 @@
           <td>{{.PlayCount}}</td>
           <td>{{.WinCount}}</td>
           <td>{{.WinRatio}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+</details>
+<details>
+  <summary class="summary-level-1">Most Draws</summary>
+  <details>
+    <summary class="summary-level-2">By Player</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Count</th>
+          <th>Player Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostDrawsByPlayer}}
+        <tr>
+          <td>{{.Count}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Card</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Count</th>
+          <th>Card Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostDrawsByCard}}
+        <tr>
+          <td>{{.Count}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Special Category</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Count</th>
+          <th>Special Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostDrawsBySpecialCategory}}
+        <tr>
+          <td>{{.Count}}</td>
           <td>{{.Name}}</td>
         </tr>
         {{end}}

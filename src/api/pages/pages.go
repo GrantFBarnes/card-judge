@@ -162,6 +162,27 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mostDrawsByPlayer, err := database.GetMostDrawsByPlayer()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most draws by player"))
+		return
+	}
+
+	mostDrawsByCard, err := database.GetMostDrawsByCard(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most draws by card"))
+		return
+	}
+
+	mostDrawsBySpecialCategory, err := database.GetMostDrawsBySpecialCategory()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most draws by special category"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -183,6 +204,9 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer          []database.StatWinRatio
 		BestWinRatioByCard            []database.StatWinRatio
 		BestWinRatioBySpecialCategory []database.StatWinRatio
+		MostDrawsByPlayer             []database.StatCount
+		MostDrawsByCard               []database.StatCount
+		MostDrawsBySpecialCategory    []database.StatCount
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
@@ -196,6 +220,9 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer:          bestWinRatioByPlayer,
 		BestWinRatioByCard:            bestWinRatioByCard,
 		BestWinRatioBySpecialCategory: bestWinRatioBySpecialCategory,
+		MostDrawsByPlayer:             mostDrawsByPlayer,
+		MostDrawsByCard:               mostDrawsByCard,
+		MostDrawsBySpecialCategory:    mostDrawsBySpecialCategory,
 	})
 }
 
