@@ -20,11 +20,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func About(w http.ResponseWriter, r *http.Request) {
@@ -37,11 +37,11 @@ func About(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -54,11 +54,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Manage(w http.ResponseWriter, r *http.Request) {
@@ -71,11 +71,11 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Admin(w http.ResponseWriter, r *http.Request) {
@@ -88,11 +88,11 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Stats(w http.ResponseWriter, r *http.Request) {
@@ -102,154 +102,154 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	bestWinRatioByPlayer, err := database.GetBestWinRatioByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get best win ratio by player"))
+		_, _ = w.Write([]byte("failed to get best win ratio by player"))
 		return
 	}
 
 	bestWinRatioByCard, err := database.GetBestWinRatioByCard(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get best win ratio by card"))
+		_, _ = w.Write([]byte("failed to get best win ratio by card"))
 		return
 	}
 
 	bestWinRatioBySpecialCategory, err := database.GetBestWinRatioBySpecialCategory()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get best win ratio by special category"))
+		_, _ = w.Write([]byte("failed to get best win ratio by special category"))
 		return
 	}
 
 	mostPicksByPlayerPicker, err := database.GetMostPicksByPlayerPicker(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by player picker"))
+		_, _ = w.Write([]byte("failed to get most picks by player picker"))
 		return
 	}
 
 	mostPicksByPlayerPicked, err := database.GetMostPicksByPlayerPicked(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by player picked"))
+		_, _ = w.Write([]byte("failed to get most picks by player picked"))
 		return
 	}
 
 	mostPicksByCardPicker, err := database.GetMostPicksByCardPicker(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by card picker"))
+		_, _ = w.Write([]byte("failed to get most picks by card picker"))
 		return
 	}
 
 	mostPicksByCardPicked, err := database.GetMostPicksByCardPicked(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by card picked"))
+		_, _ = w.Write([]byte("failed to get most picks by card picked"))
 		return
 	}
 
 	mostPicksBySpecialCategoryPicker, err := database.GetMostPicksBySpecialCategoryPicker(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by special category picker"))
+		_, _ = w.Write([]byte("failed to get most picks by special category picker"))
 		return
 	}
 
 	mostPicksBySpecialCategoryPicked, err := database.GetMostPicksBySpecialCategoryPicked(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by special category picked"))
+		_, _ = w.Write([]byte("failed to get most picks by special category picked"))
 		return
 	}
 
 	mostPlaysByPlayer, err := database.GetMostPlaysByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most plays by player"))
+		_, _ = w.Write([]byte("failed to get most plays by player"))
 		return
 	}
 
 	mostPlaysByCard, err := database.GetMostPlaysByCard(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most plays by card"))
+		_, _ = w.Write([]byte("failed to get most plays by card"))
 		return
 	}
 
 	mostPlaysBySpecialCategory, err := database.GetMostPlaysBySpecialCategory()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most plays by special category"))
+		_, _ = w.Write([]byte("failed to get most plays by special category"))
 		return
 	}
 
 	mostWinsByPlayer, err := database.GetMostWinsByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most wins by player"))
+		_, _ = w.Write([]byte("failed to get most wins by player"))
 		return
 	}
 
 	mostWinsByCard, err := database.GetMostWinsByCard(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most wins by card"))
+		_, _ = w.Write([]byte("failed to get most wins by card"))
 		return
 	}
 
 	mostWinsBySpecialCategory, err := database.GetMostWinsBySpecialCategory()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most wins by special category"))
+		_, _ = w.Write([]byte("failed to get most wins by special category"))
 		return
 	}
 
 	mostDrawsByPlayer, err := database.GetMostDrawsByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most draws by player"))
+		_, _ = w.Write([]byte("failed to get most draws by player"))
 		return
 	}
 
 	mostDrawsByCard, err := database.GetMostDrawsByCard(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most draws by card"))
+		_, _ = w.Write([]byte("failed to get most draws by card"))
 		return
 	}
 
 	mostDrawsBySpecialCategory, err := database.GetMostDrawsBySpecialCategory()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most draws by special category"))
+		_, _ = w.Write([]byte("failed to get most draws by special category"))
 		return
 	}
 
 	mostDiscardsByPlayer, err := database.GetMostDiscardsByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most discards by player"))
+		_, _ = w.Write([]byte("failed to get most discards by player"))
 		return
 	}
 
 	mostDiscardsByCard, err := database.GetMostDiscardsByCard(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most discards by card"))
+		_, _ = w.Write([]byte("failed to get most discards by card"))
 		return
 	}
 
 	mostSkipsByPlayer, err := database.GetMostSkipsByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most skips by player"))
+		_, _ = w.Write([]byte("failed to get most skips by player"))
 		return
 	}
 
 	mostSkipsByCard, err := database.GetMostSkipsByCard(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most skips by card"))
+		_, _ = w.Write([]byte("failed to get most skips by card"))
 		return
 	}
 
@@ -259,7 +259,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -289,7 +289,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostSkipsByCard                  []database.StatCount
 	}
 
-	tmpl.ExecuteTemplate(w, "base", data{
+	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData:                     basePageData,
 		BestWinRatioByPlayer:             bestWinRatioByPlayer,
 		BestWinRatioByCard:               bestWinRatioByCard,
@@ -323,7 +323,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	decks, err := database.GetReadableDecks(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get user decks"))
+		_, _ = w.Write([]byte("failed to get user decks"))
 		return
 	}
 
@@ -333,7 +333,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -342,7 +342,7 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		Decks []database.Deck
 	}
 
-	tmpl.ExecuteTemplate(w, "base", data{
+	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Decks:        decks,
 	})
@@ -373,7 +373,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	hasLobbyAccess, err := database.UserHasLobbyAccess(basePageData.User.Id, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to check lobby access"))
+		_, _ = w.Write([]byte("failed to check lobby access"))
 		return
 	}
 
@@ -388,14 +388,14 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
 	playerId, err := database.AddUserToLobby(lobbyId, basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to join lobby"))
+		_, _ = w.Write([]byte("failed to join lobby"))
 		return
 	}
 
@@ -405,7 +405,7 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		PlayerId uuid.UUID
 	}
 
-	tmpl.ExecuteTemplate(w, "base", data{
+	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Lobby:        lobby,
 		PlayerId:     playerId,
@@ -437,7 +437,7 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 	hasLobbyAccess, err := database.UserHasLobbyAccess(basePageData.User.Id, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to check lobby access"))
+		_, _ = w.Write([]byte("failed to check lobby access"))
 		return
 	}
 
@@ -452,7 +452,7 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -461,7 +461,7 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 		Lobby database.Lobby
 	}
 
-	tmpl.ExecuteTemplate(w, "base", data{
+	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Lobby:        lobby,
 	})
@@ -477,11 +477,11 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "base", basePageData)
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
@@ -509,7 +509,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	hasDeckAccess, err := database.UserHasDeckAccess(basePageData.User.Id, deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to check deck access"))
+		_, _ = w.Write([]byte("failed to check deck access"))
 		return
 	}
 
@@ -524,7 +524,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -533,7 +533,7 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		Deck database.Deck
 	}
 
-	tmpl.ExecuteTemplate(w, "base", data{
+	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Deck:         deck,
 	})
@@ -564,7 +564,7 @@ func DeckAccess(w http.ResponseWriter, r *http.Request) {
 	hasDeckAccess, err := database.UserHasDeckAccess(basePageData.User.Id, deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to check deck access"))
+		_, _ = w.Write([]byte("failed to check deck access"))
 		return
 	}
 
@@ -579,7 +579,7 @@ func DeckAccess(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse HTML"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
 		return
 	}
 
@@ -588,7 +588,7 @@ func DeckAccess(w http.ResponseWriter, r *http.Request) {
 		Deck database.Deck
 	}
 
-	tmpl.ExecuteTemplate(w, "base", data{
+	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Deck:         deck,
 	})

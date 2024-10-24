@@ -1,6 +1,6 @@
 {{define "body"}}
 <form hx-put="/api/user/{{.User.Id}}/name" hx-target="find .htmx-result">
-  <h3>Set User Name</h3>
+  <h3>Set Name</h3>
   <p>Current Name: {{.User.Name}}</p>
   <label for="setUserName">New Name:</label>
   <input
@@ -9,16 +9,16 @@
     name="name"
     maxlength="255"
     placeholder="Enter Name"
-    required="true"
+    required="required"
     autocomplete="off"
   />
   <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Set User Name" />
+  <input type="submit" value="Set Name" />
 </form>
 <form hx-put="/api/user/{{.User.Id}}/password" hx-target="find .htmx-result">
-  <h3>Set User Password</h3>
+  <h3>Set Password</h3>
   <label for="newUserPassword">New Password:</label>
   <input
     type="password"
@@ -26,7 +26,7 @@
     name="password"
     maxlength="255"
     placeholder="Enter Password"
-    required="true"
+    required="required"
     autocomplete="new-password"
   />
   <br />
@@ -37,13 +37,13 @@
     name="passwordConfirm"
     maxlength="255"
     placeholder="Enter Password"
-    required="true"
+    required="required"
     autocomplete="off"
   />
   <br />
   <br />
   <div class="htmx-result"></div>
-  <input type="submit" value="Set User Password" />
+  <input type="submit" value="Set Password" />
 </form>
 <form hx-put="/api/user/{{.User.Id}}/color-theme" hx-target="find .htmx-result">
   <h3>Set Color Theme</h3>

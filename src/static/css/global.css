@@ -1,6 +1,6 @@
 :root {
-  --topbar-height: 20px;
-  --topbar-padding: 15px;
+  --top-bar-height: 20px;
+  --top-bar-padding: 15px;
   --content-margin: 20px;
 }
 
@@ -72,19 +72,19 @@ summary {
   float: right;
 }
 
-#topbar {
-  color: var(--topbar-text);
-  background-color: var(--topbar-bg);
-  height: var(--topbar-height);
-  padding: var(--topbar-padding);
+#top-bar {
+  color: var(--top-bar-text);
+  background-color: var(--top-bar-bg);
+  height: var(--top-bar-height);
+  padding: var(--top-bar-padding);
   display: grid;
   grid-auto-flow: column;
   overflow: hidden;
 }
 
-#topbar-menu {
-  color: var(--topbar-text);
-  background-color: var(--topbar-bg);
+#top-bar-menu {
+  color: var(--top-bar-text);
+  background-color: var(--top-bar-bg);
   text-align: right;
   position: absolute;
   right: 0;
@@ -94,29 +94,29 @@ summary {
   display: none;
 }
 
-#topbar-menu div:first-child {
+#top-bar-menu div:first-child {
   border-top: 2px dashed black;
 }
 
-#topbar-menu div {
+#top-bar-menu div {
   border-bottom: 2px solid black;
   border-left: 2px solid black;
   padding: 10px;
 }
 
-#topbar-menu .topbar-menu-link {
+#top-bar-menu .top-bar-menu-link {
   cursor: pointer;
 }
 
-#topbar-menu .topbar-menu-link:hover {
-  background-color: var(--topbar-hover);
+#top-bar-menu .top-bar-menu-link:hover {
+  background-color: var(--top-bar-hover);
 }
 
 #content {
   margin: var(--content-margin);
   height: calc(
-    100% - (2 * var(--content-margin)) - (2 * var(--topbar-padding)) -
-      var(--topbar-height)
+    100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) -
+      var(--top-bar-height)
   );
 }
 

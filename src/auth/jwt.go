@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 const claimKey string = "value"
 
-var jwtSecret []byte = []byte(os.Getenv("CARD_JUDGE_JWT_SECRET"))
+var jwtSecret = []byte(os.Getenv("CARD_JUDGE_JWT_SECRET"))
 
 func getValueTokenString(value string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

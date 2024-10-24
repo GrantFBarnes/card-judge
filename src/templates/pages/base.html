@@ -20,7 +20,7 @@
     {{else}}
     <body class="dark-theme">
       {{end}}
-      <div id="topbar">
+      <div id="top-bar">
         <div style="text-align: left">
           <span
             class="clickable"
@@ -32,30 +32,30 @@
         </div>
         <div style="text-align: right">
           <span
-            id="topbar-menu-toggle"
+            id="top-bar-menu-toggle"
             class="clickable"
-            onclick="toggleTopbarMenu()"
+            onclick="toggleTopBarMenu()"
             title="Menu Toggle"
           >
             &#9776;
           </span>
         </div>
       </div>
-      <div id="topbar-menu">
+      <div id="top-bar-menu">
         {{if .LoggedIn}}
-        <div class="topbar-menu-item">Playing As: {{.User.Name}}</div>
-        <div class="topbar-menu-link" onclick="location.href='/manage'">
+        <div class="top-bar-menu-item">Playing As: {{.User.Name}}</div>
+        <div class="top-bar-menu-link" onclick="location.href='/manage'">
           &#128295; Manage Account
         </div>
         <div
-          class="topbar-menu-link"
+          class="top-bar-menu-link"
           hx-post="/api/user/logout"
           hx-confirm="Are you sure you want to logout?"
         >
           Logout
         </div>
         {{else}}
-        <div class="topbar-menu-link" onclick="location.href='/login'">
+        <div class="top-bar-menu-link" onclick="location.href='/login'">
           Login
         </div>
         {{end}}

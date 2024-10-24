@@ -1,5 +1,5 @@
 document.addEventListener("htmx:afterSwap", function (event) {
-  if (event.target.id == "deck-card-export-content") {
+  if (event.target.id === "deck-card-export-content") {
     downloadCSV("card-judge-cards.csv", event.target.innerHTML);
   }
 });

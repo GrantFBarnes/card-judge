@@ -40,7 +40,7 @@
           id="category{{.Id}}"
           name="category"
           autocomplete="off"
-          required="true"
+          required="required"
         >
           {{if eq .Category "PROMPT"}}
           <option value="PROMPT" selected>Prompt</option>
@@ -70,7 +70,7 @@
           name="text"
           maxlength="510"
           placeholder="Enter Card Text"
-          required="true"
+          required="required"
           cols="40"
           rows="10"
           autocomplete="off"

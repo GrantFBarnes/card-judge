@@ -16,7 +16,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to parse form."))
+		_, _ = w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -29,7 +29,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse deck id."))
+				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "category" {
@@ -40,7 +40,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			pageNumber, err = strconv.Atoi(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse page."))
+				_, _ = w.Write([]byte("Failed to parse page."))
 				return
 			}
 		}
@@ -51,7 +51,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	cards, err := database.SearchCardsInDeck(deckId, categorySearch, textSearch, pageNumber)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -60,18 +60,18 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to parse HTML."))
+		_, _ = w.Write([]byte("Failed to parse HTML."))
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "card-table-rows", cards)
+	_ = tmpl.ExecuteTemplate(w, "card-table-rows", cards)
 }
 
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to parse form."))
+		_, _ = w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -83,7 +83,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse deck id."))
+				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "category" {
@@ -95,54 +95,54 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	if text == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("No text found."))
+		_, _ = w.Write([]byte("No text found."))
 		return
 	}
 
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
+		_, _ = w.Write([]byte("Failed to get user id."))
 		return
 	}
 
 	existingCardId, err := database.GetCardId(deckId, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	if existingCardId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Card text already exists."))
+		_, _ = w.Write([]byte("Card text already exists."))
 		return
 	}
 
 	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to check deck access."))
+		_, _ = w.Write([]byte("Failed to check deck access."))
 		return
 	}
 
 	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
+		_, _ = w.Write([]byte("User does not have access."))
 		return
 	}
 
 	text, err = processCardText(text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	_, err = database.CreateCard(deckId, category, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -155,14 +155,14 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get card id from path."))
+		_, _ = w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to parse form."))
+		_, _ = w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -173,7 +173,7 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse deck id."))
+				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "category" {
@@ -184,27 +184,27 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
+		_, _ = w.Write([]byte("Failed to get user id."))
 		return
 	}
 
 	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to check deck access."))
+		_, _ = w.Write([]byte("Failed to check deck access."))
 		return
 	}
 
 	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
+		_, _ = w.Write([]byte("User does not have access."))
 		return
 	}
 
 	err = database.SetCardCategory(cardId, category)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -217,14 +217,14 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get card id from path."))
+		_, _ = w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to parse form."))
+		_, _ = w.Write([]byte("Failed to parse form."))
 		return
 	}
 
@@ -235,7 +235,7 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Failed to parse deck id."))
+				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
 		} else if key == "text" {
@@ -245,54 +245,54 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 
 	if text == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("No text found."))
+		_, _ = w.Write([]byte("No text found."))
 		return
 	}
 
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
+		_, _ = w.Write([]byte("Failed to get user id."))
 		return
 	}
 
 	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to check deck access."))
+		_, _ = w.Write([]byte("Failed to check deck access."))
 		return
 	}
 
 	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
+		_, _ = w.Write([]byte("User does not have access."))
 		return
 	}
 
 	existingCardId, err := database.GetCardId(deckId, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	if existingCardId != uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Card text already exists."))
+		_, _ = w.Write([]byte("Card text already exists."))
 		return
 	}
 
 	text, err = processCardText(text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	err = database.SetCardText(cardId, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -305,41 +305,41 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get card id from path."))
+		_, _ = w.Write([]byte("Failed to get card id from path."))
 		return
 	}
 
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get user id."))
+		_, _ = w.Write([]byte("Failed to get user id."))
 		return
 	}
 
 	card, err := database.GetCard(cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to get card."))
+		_, _ = w.Write([]byte("Failed to get card."))
 		return
 	}
 
 	hasDeckAccess, err := database.UserHasDeckAccess(userId, card.DeckId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to check deck access."))
+		_, _ = w.Write([]byte("Failed to check deck access."))
 		return
 	}
 
 	if !hasDeckAccess {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("User does not have access."))
+		_, _ = w.Write([]byte("User does not have access."))
 		return
 	}
 
 	err = database.DeleteCard(cardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -348,7 +348,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func processCardText(text string) (string, error) {
-	var normalizedText string = text
+	normalizedText := text
 
 	blankRegExp, err := regexp.Compile(`__+`)
 	if err != nil {

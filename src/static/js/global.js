@@ -32,11 +32,11 @@ function removeClassFromTarget(className, targetElement) {
   }
 }
 
-function toggleTopbarMenu() {
-  const topbarMenu = document.getElementById("topbar-menu");
-  if (topbarMenu.style.display === "block") {
-    topbarMenu.style.display = "none";
+function toggleTopBarMenu() {
+  const topBarMenu = document.getElementById("top-bar-menu");
+  if (topBarMenu.style.display === "block") {
+    topBarMenu.style.display = "none";
   } else {
-    topbarMenu.style.display = "block";
+    topBarMenu.style.display = "block";
   }
 }

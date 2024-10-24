@@ -1,6 +1,6 @@
 window.onload = () => {
   let wsProtocol = "wss://";
-  if (document.location.protocol == "http:") {
+  if (document.location.protocol === "http:") {
     wsProtocol = "ws://";
   }
 
@@ -30,7 +30,7 @@ window.onload = () => {
   };
 
   conn.onmessage = (event) => {
-    if (event.data == "refresh") {
+    if (event.data === "refresh") {
       htmx.ajax(
         "GET",
         "/api" + document.location.pathname + "/game-interface",
