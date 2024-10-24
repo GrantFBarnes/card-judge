@@ -148,6 +148,20 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mostPicksBySpecialCategoryPicker, err := database.GetMostPicksBySpecialCategoryPicker(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most picks by special category picker"))
+		return
+	}
+
+	mostPicksBySpecialCategoryPicked, err := database.GetMostPicksBySpecialCategoryPicked(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most picks by special category picked"))
+		return
+	}
+
 	mostPlaysByPlayer, err := database.GetMostPlaysByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -251,50 +265,54 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		BestWinRatioByPlayer          []database.StatWinRatio
-		BestWinRatioByCard            []database.StatWinRatio
-		BestWinRatioBySpecialCategory []database.StatWinRatio
-		MostPicksByPlayerPicker       []database.StatCount
-		MostPicksByPlayerPicked       []database.StatCount
-		MostPicksByCardPicker         []database.StatCount
-		MostPicksByCardPicked         []database.StatCount
-		MostPlaysByPlayer             []database.StatCount
-		MostPlaysByCard               []database.StatCount
-		MostPlaysBySpecialCategory    []database.StatCount
-		MostWinsByPlayer              []database.StatCount
-		MostWinsByCard                []database.StatCount
-		MostWinsBySpecialCategory     []database.StatCount
-		MostDrawsByPlayer             []database.StatCount
-		MostDrawsByCard               []database.StatCount
-		MostDrawsBySpecialCategory    []database.StatCount
-		MostDiscardsByPlayer          []database.StatCount
-		MostDiscardsByCard            []database.StatCount
-		MostSkipsByPlayer             []database.StatCount
-		MostSkipsByCard               []database.StatCount
+		BestWinRatioByPlayer             []database.StatWinRatio
+		BestWinRatioByCard               []database.StatWinRatio
+		BestWinRatioBySpecialCategory    []database.StatWinRatio
+		MostPicksByPlayerPicker          []database.StatCount
+		MostPicksByPlayerPicked          []database.StatCount
+		MostPicksByCardPicker            []database.StatCount
+		MostPicksByCardPicked            []database.StatCount
+		MostPicksBySpecialCategoryPicker []database.StatCount
+		MostPicksBySpecialCategoryPicked []database.StatCount
+		MostPlaysByPlayer                []database.StatCount
+		MostPlaysByCard                  []database.StatCount
+		MostPlaysBySpecialCategory       []database.StatCount
+		MostWinsByPlayer                 []database.StatCount
+		MostWinsByCard                   []database.StatCount
+		MostWinsBySpecialCategory        []database.StatCount
+		MostDrawsByPlayer                []database.StatCount
+		MostDrawsByCard                  []database.StatCount
+		MostDrawsBySpecialCategory       []database.StatCount
+		MostDiscardsByPlayer             []database.StatCount
+		MostDiscardsByCard               []database.StatCount
+		MostSkipsByPlayer                []database.StatCount
+		MostSkipsByCard                  []database.StatCount
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData:                  basePageData,
-		BestWinRatioByPlayer:          bestWinRatioByPlayer,
-		BestWinRatioByCard:            bestWinRatioByCard,
-		BestWinRatioBySpecialCategory: bestWinRatioBySpecialCategory,
-		MostPicksByPlayerPicker:       mostPicksByPlayerPicker,
-		MostPicksByPlayerPicked:       mostPicksByPlayerPicked,
-		MostPicksByCardPicker:         mostPicksByCardPicker,
-		MostPicksByCardPicked:         mostPicksByCardPicked,
-		MostPlaysByPlayer:             mostPlaysByPlayer,
-		MostPlaysByCard:               mostPlaysByCard,
-		MostPlaysBySpecialCategory:    mostPlaysBySpecialCategory,
-		MostWinsByPlayer:              mostWinsByPlayer,
-		MostWinsByCard:                mostWinsByCard,
-		MostWinsBySpecialCategory:     mostWinsBySpecialCategory,
-		MostDrawsByPlayer:             mostDrawsByPlayer,
-		MostDrawsByCard:               mostDrawsByCard,
-		MostDrawsBySpecialCategory:    mostDrawsBySpecialCategory,
-		MostDiscardsByPlayer:          mostDiscardsByPlayer,
-		MostDiscardsByCard:            mostDiscardsByCard,
-		MostSkipsByPlayer:             mostSkipsByPlayer,
-		MostSkipsByCard:               mostSkipsByCard,
+		BasePageData:                     basePageData,
+		BestWinRatioByPlayer:             bestWinRatioByPlayer,
+		BestWinRatioByCard:               bestWinRatioByCard,
+		BestWinRatioBySpecialCategory:    bestWinRatioBySpecialCategory,
+		MostPicksByPlayerPicker:          mostPicksByPlayerPicker,
+		MostPicksByPlayerPicked:          mostPicksByPlayerPicked,
+		MostPicksByCardPicker:            mostPicksByCardPicker,
+		MostPicksByCardPicked:            mostPicksByCardPicked,
+		MostPicksBySpecialCategoryPicker: mostPicksBySpecialCategoryPicker,
+		MostPicksBySpecialCategoryPicked: mostPicksBySpecialCategoryPicked,
+		MostPlaysByPlayer:                mostPlaysByPlayer,
+		MostPlaysByCard:                  mostPlaysByCard,
+		MostPlaysBySpecialCategory:       mostPlaysBySpecialCategory,
+		MostWinsByPlayer:                 mostWinsByPlayer,
+		MostWinsByCard:                   mostWinsByCard,
+		MostWinsBySpecialCategory:        mostWinsBySpecialCategory,
+		MostDrawsByPlayer:                mostDrawsByPlayer,
+		MostDrawsByCard:                  mostDrawsByCard,
+		MostDrawsBySpecialCategory:       mostDrawsBySpecialCategory,
+		MostDiscardsByPlayer:             mostDiscardsByPlayer,
+		MostDiscardsByCard:               mostDiscardsByCard,
+		MostSkipsByPlayer:                mostSkipsByPlayer,
+		MostSkipsByCard:                  mostSkipsByCard,
 	})
 }
 

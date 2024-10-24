@@ -266,6 +266,70 @@ func GetMostPicksByCardPicked(userId uuid.UUID) ([]StatCount, error) {
 	return result, nil
 }
 
+func GetMostPicksBySpecialCategoryPicker(userId uuid.UUID) ([]StatCount, error) {
+	sqlString := `
+		SELECT
+			COUNT(LW.ID) AS COUNT,
+			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+		FROM LOG_WIN AS LW
+			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+		WHERE UJ.ID = ?
+		GROUP BY LW.JUDGE_USER_ID, LW.SPECIAL_CATEGORY
+		ORDER BY
+			COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]StatCount, 0)
+	for rows.Next() {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, sc)
+	}
+
+	return result, nil
+}
+
+func GetMostPicksBySpecialCategoryPicked(userId uuid.UUID) ([]StatCount, error) {
+	sqlString := `
+		SELECT
+			COUNT(LW.ID) AS COUNT,
+			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+		FROM LOG_WIN AS LW
+			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+		WHERE UP.ID = ?
+		GROUP BY LW.SPECIAL_CATEGORY, LW.PLAYER_USER_ID
+		ORDER BY
+			COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]StatCount, 0)
+	for rows.Next() {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, sc)
+	}
+
+	return result, nil
+}
+
 func GetMostPlaysByPlayer() ([]StatCount, error) {
 	sqlString := `
 		SELECT

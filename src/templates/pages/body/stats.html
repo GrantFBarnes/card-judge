@@ -157,6 +157,47 @@
       </table>
     </details>
   </details>
+  <details>
+    <summary class="summary-level-2">By Special Category</summary>
+    <details open>
+      <summary class="summary-level-3">You Were Judge</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Count</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .MostPicksBySpecialCategoryPicker}}
+          <tr>
+            <td>{{.Count}}</td>
+            <td>{{.Name}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </details>
+    <details open>
+      <summary class="summary-level-3">You Were Winning Player</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Count</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .MostPicksBySpecialCategoryPicked}}
+          <tr>
+            <td>{{.Count}}</td>
+            <td>{{.Name}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </details>
+  </details>
 </details>
 <details>
   <summary class="summary-level-1">Most Plays</summary>
