@@ -21,6 +21,11 @@
     <div>
       <button onclick="window.location.href='/about'">About</button>
     </div>
+    {{if .User.IsAdmin}}
+    <div>
+      <button onclick="window.location.href='/admin'">Admin</button>
+    </div>
+    {{end}}
   </div>
 </div>
 {{end}}
