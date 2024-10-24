@@ -412,3 +412,66 @@ func GetMostDrawsBySpecialCategory() ([]StatCount, error) {
 
 	return result, nil
 }
+
+func GetMostDiscardsByPlayer() ([]StatCount, error) {
+	sqlString := `
+		SELECT
+			COUNT(DISTINCT LD.ID) AS COUNT,
+			U.NAME AS NAME
+		FROM LOG_DISCARD AS LD
+			INNER JOIN USER AS U ON U.ID = LD.PLAYER_USER_ID
+		GROUP BY U.ID
+		ORDER BY
+			COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]StatCount, 0)
+	for rows.Next() {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, sc)
+	}
+
+	return result, nil
+}
+
+func GetMostDiscardsByCard(userId uuid.UUID) ([]StatCount, error) {
+	sqlString := `
+		SELECT
+			COUNT(DISTINCT LD.ID) AS COUNT,
+			COALESCE(C.TEXT, 'UNKNOWN') AS NAME
+		FROM LOG_DISCARD AS LD
+			LEFT JOIN CARD AS C ON C.ID = LD.CARD_ID
+		WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+		GROUP BY C.ID
+		ORDER BY
+			COUNT DESC,
+			NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]StatCount, 0)
+	for rows.Next() {
+		var sc StatCount
+		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, sc)
+	}
+
+	return result, nil
+}

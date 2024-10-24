@@ -253,4 +253,45 @@
     </table>
   </details>
 </details>
+<details>
+  <summary class="summary-level-1">Most Discards</summary>
+  <details>
+    <summary class="summary-level-2">By Player</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Count</th>
+          <th>Player Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostDiscardsByPlayer}}
+        <tr>
+          <td>{{.Count}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Card</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Count</th>
+          <th>Card Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MostDiscardsByCard}}
+        <tr>
+          <td>{{.Count}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+</details>
 {{end}}

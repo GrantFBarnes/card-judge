@@ -183,6 +183,20 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mostDiscardsByPlayer, err := database.GetMostDiscardsByPlayer()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most discards by player"))
+		return
+	}
+
+	mostDiscardsByCard, err := database.GetMostDiscardsByCard(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get most discards by card"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -207,6 +221,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostDrawsByPlayer             []database.StatCount
 		MostDrawsByCard               []database.StatCount
 		MostDrawsBySpecialCategory    []database.StatCount
+		MostDiscardsByPlayer          []database.StatCount
+		MostDiscardsByCard            []database.StatCount
 	}
 
 	tmpl.ExecuteTemplate(w, "base", data{
@@ -223,6 +239,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		MostDrawsByPlayer:             mostDrawsByPlayer,
 		MostDrawsByCard:               mostDrawsByCard,
 		MostDrawsBySpecialCategory:    mostDrawsBySpecialCategory,
+		MostDiscardsByPlayer:          mostDiscardsByPlayer,
+		MostDiscardsByCard:            mostDiscardsByCard,
 	})
 }
 
