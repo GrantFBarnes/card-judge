@@ -2,6 +2,78 @@
 <link rel="stylesheet" href="/static/css/stats.css" />
 <h1>Statistics</h1>
 <details>
+  <summary class="summary-level-1">Best Win Ratio</summary>
+  <details>
+    <summary class="summary-level-2">By Player</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Play Count</th>
+          <th>Win Count</th>
+          <th>Win Ratio</th>
+          <th>Player Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .BestWinRatioByPlayer}}
+        <tr>
+          <td>{{.PlayCount}}</td>
+          <td>{{.WinCount}}</td>
+          <td>{{.WinRatio}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Card</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Play Count</th>
+          <th>Win Count</th>
+          <th>Win Ratio</th>
+          <th>Card Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .BestWinRatioByCard}}
+        <tr>
+          <td>{{.PlayCount}}</td>
+          <td>{{.WinCount}}</td>
+          <td>{{.WinRatio}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+  <details>
+    <summary class="summary-level-2">By Special Category</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Play Count</th>
+          <th>Win Count</th>
+          <th>Win Ratio</th>
+          <th>Special Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .BestWinRatioBySpecialCategory}}
+        <tr>
+          <td>{{.PlayCount}}</td>
+          <td>{{.WinCount}}</td>
+          <td>{{.WinRatio}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </details>
+</details>
+<details>
   <summary class="summary-level-1">Most Plays</summary>
   <details>
     <summary class="summary-level-2">By Player</summary>
@@ -114,78 +186,6 @@
         {{range .MostWinsBySpecialCategory}}
         <tr>
           <td>{{.Count}}</td>
-          <td>{{.Name}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
-  </details>
-</details>
-<details>
-  <summary class="summary-level-1">Best Win Ratio</summary>
-  <details>
-    <summary class="summary-level-2">By Player</summary>
-    <table>
-      <thead>
-        <tr>
-          <th>Play Count</th>
-          <th>Win Count</th>
-          <th>Win Ratio</th>
-          <th>Player Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .BestWinRatioByPlayer}}
-        <tr>
-          <td>{{.PlayCount}}</td>
-          <td>{{.WinCount}}</td>
-          <td>{{.WinRatio}}</td>
-          <td>{{.Name}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
-  </details>
-  <details>
-    <summary class="summary-level-2">By Card</summary>
-    <table>
-      <thead>
-        <tr>
-          <th>Play Count</th>
-          <th>Win Count</th>
-          <th>Win Ratio</th>
-          <th>Card Text</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .BestWinRatioByCard}}
-        <tr>
-          <td>{{.PlayCount}}</td>
-          <td>{{.WinCount}}</td>
-          <td>{{.WinRatio}}</td>
-          <td>{{.Name}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
-  </details>
-  <details>
-    <summary class="summary-level-2">By Special Category</summary>
-    <table>
-      <thead>
-        <tr>
-          <th>Play Count</th>
-          <th>Win Count</th>
-          <th>Win Ratio</th>
-          <th>Special Category</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .BestWinRatioBySpecialCategory}}
-        <tr>
-          <td>{{.PlayCount}}</td>
-          <td>{{.WinCount}}</td>
-          <td>{{.WinRatio}}</td>
           <td>{{.Name}}</td>
         </tr>
         {{end}}

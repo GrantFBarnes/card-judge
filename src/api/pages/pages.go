@@ -99,6 +99,27 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
 
+	bestWinRatioByPlayer, err := database.GetBestWinRatioByPlayer()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get best win ratio by player"))
+		return
+	}
+
+	bestWinRatioByCard, err := database.GetBestWinRatioByCard(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get best win ratio by card"))
+		return
+	}
+
+	bestWinRatioBySpecialCategory, err := database.GetBestWinRatioBySpecialCategory()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed to get best win ratio by special category"))
+		return
+	}
+
 	mostPlaysByPlayer, err := database.GetMostPlaysByPlayer()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -138,27 +159,6 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to get most wins by special category"))
-		return
-	}
-
-	bestWinRatioByPlayer, err := database.GetBestWinRatioByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get best win ratio by player"))
-		return
-	}
-
-	bestWinRatioByCard, err := database.GetBestWinRatioByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get best win ratio by card"))
-		return
-	}
-
-	bestWinRatioBySpecialCategory, err := database.GetBestWinRatioBySpecialCategory()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get best win ratio by special category"))
 		return
 	}
 
@@ -223,15 +223,15 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
+		BestWinRatioByPlayer          []database.StatWinRatio
+		BestWinRatioByCard            []database.StatWinRatio
+		BestWinRatioBySpecialCategory []database.StatWinRatio
 		MostPlaysByPlayer             []database.StatCount
 		MostPlaysByCard               []database.StatCount
 		MostPlaysBySpecialCategory    []database.StatCount
 		MostWinsByPlayer              []database.StatCount
 		MostWinsByCard                []database.StatCount
 		MostWinsBySpecialCategory     []database.StatCount
-		BestWinRatioByPlayer          []database.StatWinRatio
-		BestWinRatioByCard            []database.StatWinRatio
-		BestWinRatioBySpecialCategory []database.StatWinRatio
 		MostDrawsByPlayer             []database.StatCount
 		MostDrawsByCard               []database.StatCount
 		MostDrawsBySpecialCategory    []database.StatCount
@@ -243,15 +243,15 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData:                  basePageData,
+		BestWinRatioByPlayer:          bestWinRatioByPlayer,
+		BestWinRatioByCard:            bestWinRatioByCard,
+		BestWinRatioBySpecialCategory: bestWinRatioBySpecialCategory,
 		MostPlaysByPlayer:             mostPlaysByPlayer,
 		MostPlaysByCard:               mostPlaysByCard,
 		MostPlaysBySpecialCategory:    mostPlaysBySpecialCategory,
 		MostWinsByPlayer:              mostWinsByPlayer,
 		MostWinsByCard:                mostWinsByCard,
 		MostWinsBySpecialCategory:     mostWinsBySpecialCategory,
-		BestWinRatioByPlayer:          bestWinRatioByPlayer,
-		BestWinRatioByCard:            bestWinRatioByCard,
-		BestWinRatioBySpecialCategory: bestWinRatioBySpecialCategory,
 		MostDrawsByPlayer:             mostDrawsByPlayer,
 		MostDrawsByCard:               mostDrawsByCard,
 		MostDrawsBySpecialCategory:    mostDrawsBySpecialCategory,
