@@ -209,6 +209,80 @@ func GetMostPicksByPlayerPicked(userId uuid.UUID) ([]StatPickCount, error) {
 	return result, nil
 }
 
+func GetMostPicksByCardPicker(userId uuid.UUID) ([]StatPickCount, error) {
+	sqlString := `
+		SELECT
+			COUNT(LW.ID) AS PICK_COUNT,
+			UJ.NAME AS PICKER_NAME,
+			CP.TEXT AS PICKED_NAME
+		FROM LOG_WIN AS LW
+			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+			INNER JOIN CARD AS CP ON CP.ID = LW.CARD_ID
+		WHERE UJ.ID = ?
+		GROUP BY LW.JUDGE_USER_ID, LW.CARD_ID
+		ORDER BY
+			PICK_COUNT DESC,
+			PICKED_NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]StatPickCount, 0)
+	for rows.Next() {
+		var spc StatPickCount
+		if err := rows.Scan(
+			&spc.PickCount,
+			&spc.PickerName,
+			&spc.PickedName); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, spc)
+	}
+
+	return result, nil
+}
+
+func GetMostPicksByCardPicked(userId uuid.UUID) ([]StatPickCount, error) {
+	sqlString := `
+		SELECT
+			COUNT(LW.ID) AS PICK_COUNT,
+			CJ.TEXT AS PICKER_NAME,
+			UP.NAME AS PICKED_NAME
+		FROM LOG_WIN AS LW
+			INNER JOIN CARD AS CJ ON CJ.ID = LW.CARD_ID
+			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+		WHERE UP.ID = ?
+		GROUP BY LW.CARD_ID, LW.PLAYER_USER_ID
+		ORDER BY
+			PICK_COUNT DESC,
+			PICKER_NAME ASC
+		LIMIT 5
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]StatPickCount, 0)
+	for rows.Next() {
+		var spc StatPickCount
+		if err := rows.Scan(
+			&spc.PickCount,
+			&spc.PickerName,
+			&spc.PickedName); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+		result = append(result, spc)
+	}
+
+	return result, nil
+}
+
 type StatCount struct {
 	Count int
 	Name  string

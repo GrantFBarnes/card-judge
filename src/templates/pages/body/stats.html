@@ -120,6 +120,51 @@
       </table>
     </details>
   </details>
+  <details>
+    <summary class="summary-level-2">By Card</summary>
+    <details open>
+      <summary class="summary-level-3">User Was Picker</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Pick Count</th>
+            <th>Picker</th>
+            <th>Picked</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .MostPicksByCardPicker}}
+          <tr>
+            <td>{{.PickCount}}</td>
+            <td>{{.PickerName}}</td>
+            <td>{{.PickedName}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </details>
+    <details open>
+      <summary class="summary-level-3">User Was Picked</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Pick Count</th>
+            <th>Picker</th>
+            <th>Picked</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .MostPicksByCardPicked}}
+          <tr>
+            <td>{{.PickCount}}</td>
+            <td>{{.PickerName}}</td>
+            <td>{{.PickedName}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </details>
+  </details>
 </details>
 <details>
   <summary class="summary-level-1">Most Plays</summary>
