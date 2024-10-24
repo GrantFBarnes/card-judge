@@ -78,42 +78,42 @@
   <details>
     <summary class="summary-level-2">By Player</summary>
     <details open>
-      <summary class="summary-level-3">User Judge</summary>
+      <summary class="summary-level-3">User Was Picker</summary>
       <table>
         <thead>
           <tr>
             <th>Pick Count</th>
-            <th>Judge Name</th>
-            <th>Player Name</th>
+            <th>Picker</th>
+            <th>Picked</th>
           </tr>
         </thead>
         <tbody>
-          {{range .MostPicksByPlayerUserJudge}}
+          {{range .MostPicksByPlayerPicker}}
           <tr>
             <td>{{.PickCount}}</td>
-            <td>{{.JudgeName}}</td>
-            <td>{{.PlayerName}}</td>
+            <td>{{.PickerName}}</td>
+            <td>{{.PickedName}}</td>
           </tr>
           {{end}}
         </tbody>
       </table>
     </details>
     <details open>
-      <summary class="summary-level-3">User Player</summary>
+      <summary class="summary-level-3">User Was Picked</summary>
       <table>
         <thead>
           <tr>
             <th>Pick Count</th>
-            <th>Judge Name</th>
-            <th>Player Name</th>
+            <th>Picker</th>
+            <th>Picked</th>
           </tr>
         </thead>
         <tbody>
-          {{range .MostPicksByPlayerUserPlayer}}
+          {{range .MostPicksByPlayerPicked}}
           <tr>
             <td>{{.PickCount}}</td>
-            <td>{{.JudgeName}}</td>
-            <td>{{.PlayerName}}</td>
+            <td>{{.PickerName}}</td>
+            <td>{{.PickedName}}</td>
           </tr>
           {{end}}
         </tbody>

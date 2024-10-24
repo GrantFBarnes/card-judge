@@ -120,17 +120,17 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mostPicksByPlayerUserJudge, err := database.GetMostPicksByPlayerUserJudge(basePageData.User.Id)
+	mostPicksByPlayerPicker, err := database.GetMostPicksByPlayerPicker(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by judge"))
+		w.Write([]byte("failed to get most picks by player picker"))
 		return
 	}
 
-	mostPicksByPlayerUserPlayer, err := database.GetMostPicksByPlayerUserPlayer(basePageData.User.Id)
+	mostPicksByPlayerPicked, err := database.GetMostPicksByPlayerPicked(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to get most picks by player"))
+		w.Write([]byte("failed to get most picks by player picked"))
 		return
 	}
 
@@ -240,8 +240,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer          []database.StatWinRatio
 		BestWinRatioByCard            []database.StatWinRatio
 		BestWinRatioBySpecialCategory []database.StatWinRatio
-		MostPicksByPlayerUserJudge    []database.StatPickCount
-		MostPicksByPlayerUserPlayer   []database.StatPickCount
+		MostPicksByPlayerPicker       []database.StatPickCount
+		MostPicksByPlayerPicked       []database.StatPickCount
 		MostPlaysByPlayer             []database.StatCount
 		MostPlaysByCard               []database.StatCount
 		MostPlaysBySpecialCategory    []database.StatCount
@@ -262,8 +262,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		BestWinRatioByPlayer:          bestWinRatioByPlayer,
 		BestWinRatioByCard:            bestWinRatioByCard,
 		BestWinRatioBySpecialCategory: bestWinRatioBySpecialCategory,
-		MostPicksByPlayerUserJudge:    mostPicksByPlayerUserJudge,
-		MostPicksByPlayerUserPlayer:   mostPicksByPlayerUserPlayer,
+		MostPicksByPlayerPicker:       mostPicksByPlayerPicker,
+		MostPicksByPlayerPicked:       mostPicksByPlayerPicked,
 		MostPlaysByPlayer:             mostPlaysByPlayer,
 		MostPlaysByCard:               mostPlaysByCard,
 		MostPlaysBySpecialCategory:    mostPlaysBySpecialCategory,

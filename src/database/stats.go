@@ -131,16 +131,16 @@ func GetBestWinRatioBySpecialCategory() ([]StatWinRatio, error) {
 
 type StatPickCount struct {
 	PickCount  int
-	JudgeName  string
-	PlayerName string
+	PickerName string
+	PickedName string
 }
 
-func GetMostPicksByPlayerUserJudge(userId uuid.UUID) ([]StatPickCount, error) {
+func GetMostPicksByPlayerPicker(userId uuid.UUID) ([]StatPickCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(LW.ID) AS PICK_COUNT,
-			UJ.NAME AS JUDGE_NAME,
-			UP.NAME AS PLAYER_NAME
+			UJ.NAME AS PICKER_NAME,
+			UP.NAME AS PICKED_NAME
 		FROM LOG_WIN AS LW
 			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
 			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
@@ -148,7 +148,7 @@ func GetMostPicksByPlayerUserJudge(userId uuid.UUID) ([]StatPickCount, error) {
 		GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
 		ORDER BY
 			PICK_COUNT DESC,
-			PLAYER_NAME ASC
+			PICKED_NAME ASC
 		LIMIT 5
 	`
 	rows, err := query(sqlString, userId)
@@ -161,8 +161,8 @@ func GetMostPicksByPlayerUserJudge(userId uuid.UUID) ([]StatPickCount, error) {
 		var spc StatPickCount
 		if err := rows.Scan(
 			&spc.PickCount,
-			&spc.JudgeName,
-			&spc.PlayerName); err != nil {
+			&spc.PickerName,
+			&spc.PickedName); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
@@ -172,12 +172,12 @@ func GetMostPicksByPlayerUserJudge(userId uuid.UUID) ([]StatPickCount, error) {
 	return result, nil
 }
 
-func GetMostPicksByPlayerUserPlayer(userId uuid.UUID) ([]StatPickCount, error) {
+func GetMostPicksByPlayerPicked(userId uuid.UUID) ([]StatPickCount, error) {
 	sqlString := `
 		SELECT
 			COUNT(LW.ID) AS PICK_COUNT,
-			UJ.NAME AS JUDGE_NAME,
-			UP.NAME AS PLAYER_NAME
+			UJ.NAME AS PICKER_NAME,
+			UP.NAME AS PICKED_NAME
 		FROM LOG_WIN AS LW
 			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
 			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
@@ -185,7 +185,7 @@ func GetMostPicksByPlayerUserPlayer(userId uuid.UUID) ([]StatPickCount, error) {
 		GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
 		ORDER BY
 			PICK_COUNT DESC,
-			JUDGE_NAME ASC
+			PICKER_NAME ASC
 		LIMIT 5
 	`
 	rows, err := query(sqlString, userId)
@@ -198,8 +198,8 @@ func GetMostPicksByPlayerUserPlayer(userId uuid.UUID) ([]StatPickCount, error) {
 		var spc StatPickCount
 		if err := rows.Scan(
 			&spc.PickCount,
-			&spc.JudgeName,
-			&spc.PlayerName); err != nil {
+			&spc.PickerName,
+			&spc.PickedName); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
