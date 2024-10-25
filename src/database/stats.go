@@ -17,11 +17,6 @@ type StatPersonal struct {
 	SkipCount    int
 }
 
-type StatCount struct {
-	Count int
-	Name  string
-}
-
 func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 	var result StatPersonal
 
@@ -370,6 +365,122 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
+	case "picked-judge":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Player Name")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(LW.ID) AS COUNT,
+					UP.NAME AS NAME
+				FROM LOG_WIN AS LW
+					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				WHERE UJ.ID = ?
+				GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "card":
+			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Card Text")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(LW.ID) AS COUNT,
+					CP.TEXT AS NAME
+				FROM LOG_WIN AS LW
+					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+					INNER JOIN CARD AS CP ON CP.ID = LW.CARD_ID
+				WHERE UJ.ID = ?
+				GROUP BY LW.JUDGE_USER_ID, LW.CARD_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "special-category":
+			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Special Category")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(LW.ID) AS COUNT,
+					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_WIN AS LW
+					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+				WHERE UJ.ID = ?
+				GROUP BY LW.JUDGE_USER_ID, LW.SPECIAL_CATEGORY
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "picked-player":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Player Name")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(LW.ID) AS COUNT,
+					UJ.NAME AS NAME
+				FROM LOG_WIN AS LW
+					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				WHERE UP.ID = ?
+				GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "card":
+			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Card Text")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(LW.ID) AS COUNT,
+					CJ.TEXT AS NAME
+				FROM LOG_WIN AS LW
+					INNER JOIN CARD AS CJ ON CJ.ID = LW.CARD_ID
+					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				WHERE UP.ID = ?
+				GROUP BY LW.CARD_ID, LW.PLAYER_USER_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "special-category":
+			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Special Category")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(LW.ID) AS COUNT,
+					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_WIN AS LW
+					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				WHERE UP.ID = ?
+				GROUP BY LW.SPECIAL_CATEGORY, LW.PLAYER_USER_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	default:
 		return resultHeaders, resultRows, errors.New("invalid topic provided")
 	}
@@ -398,200 +509,4 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 	}
 
 	return resultHeaders, resultRows, nil
-}
-
-func GetMostPicksByPlayerPicker(userId uuid.UUID) ([]StatCount, error) {
-	sqlString := `
-		SELECT
-			COUNT(LW.ID) AS COUNT,
-			UP.NAME AS NAME
-		FROM LOG_WIN AS LW
-			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
-		WHERE UJ.ID = ?
-		GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
-		ORDER BY
-			COUNT DESC,
-			NAME ASC
-		LIMIT 5
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]StatCount, 0)
-	for rows.Next() {
-		var sc StatCount
-		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-		result = append(result, sc)
-	}
-
-	return result, nil
-}
-
-func GetMostPicksByPlayerPicked(userId uuid.UUID) ([]StatCount, error) {
-	sqlString := `
-		SELECT
-			COUNT(LW.ID) AS COUNT,
-			UJ.NAME AS NAME
-		FROM LOG_WIN AS LW
-			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
-		WHERE UP.ID = ?
-		GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
-		ORDER BY
-			COUNT DESC,
-			NAME ASC
-		LIMIT 5
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]StatCount, 0)
-	for rows.Next() {
-		var sc StatCount
-		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-		result = append(result, sc)
-	}
-
-	return result, nil
-}
-
-func GetMostPicksByCardPicker(userId uuid.UUID) ([]StatCount, error) {
-	sqlString := `
-		SELECT
-			COUNT(LW.ID) AS COUNT,
-			CP.TEXT AS NAME
-		FROM LOG_WIN AS LW
-			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-			INNER JOIN CARD AS CP ON CP.ID = LW.CARD_ID
-		WHERE UJ.ID = ?
-		GROUP BY LW.JUDGE_USER_ID, LW.CARD_ID
-		ORDER BY
-			COUNT DESC,
-			NAME ASC
-		LIMIT 5
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]StatCount, 0)
-	for rows.Next() {
-		var sc StatCount
-		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-		result = append(result, sc)
-	}
-
-	return result, nil
-}
-
-func GetMostPicksByCardPicked(userId uuid.UUID) ([]StatCount, error) {
-	sqlString := `
-		SELECT
-			COUNT(LW.ID) AS COUNT,
-			CJ.TEXT AS NAME
-		FROM LOG_WIN AS LW
-			INNER JOIN CARD AS CJ ON CJ.ID = LW.CARD_ID
-			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
-		WHERE UP.ID = ?
-		GROUP BY LW.CARD_ID, LW.PLAYER_USER_ID
-		ORDER BY
-			COUNT DESC,
-			NAME ASC
-		LIMIT 5
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]StatCount, 0)
-	for rows.Next() {
-		var sc StatCount
-		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-		result = append(result, sc)
-	}
-
-	return result, nil
-}
-
-func GetMostPicksBySpecialCategoryPicker(userId uuid.UUID) ([]StatCount, error) {
-	sqlString := `
-		SELECT
-			COUNT(LW.ID) AS COUNT,
-			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
-		FROM LOG_WIN AS LW
-			INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-		WHERE UJ.ID = ?
-		GROUP BY LW.JUDGE_USER_ID, LW.SPECIAL_CATEGORY
-		ORDER BY
-			COUNT DESC,
-			NAME ASC
-		LIMIT 5
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]StatCount, 0)
-	for rows.Next() {
-		var sc StatCount
-		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-		result = append(result, sc)
-	}
-
-	return result, nil
-}
-
-func GetMostPicksBySpecialCategoryPicked(userId uuid.UUID) ([]StatCount, error) {
-	sqlString := `
-		SELECT
-			COUNT(LW.ID) AS COUNT,
-			COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
-		FROM LOG_WIN AS LW
-			INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
-		WHERE UP.ID = ?
-		GROUP BY LW.SPECIAL_CATEGORY, LW.PLAYER_USER_ID
-		ORDER BY
-			COUNT DESC,
-			NAME ASC
-		LIMIT 5
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	result := make([]StatCount, 0)
-	for rows.Next() {
-		var sc StatCount
-		if err := rows.Scan(&sc.Count, &sc.Name); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-		result = append(result, sc)
-	}
-
-	return result, nil
 }

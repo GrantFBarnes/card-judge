@@ -106,48 +106,6 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mostPicksByPlayerPicker, err := database.GetMostPicksByPlayerPicker(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most picks by player picker"))
-		return
-	}
-
-	mostPicksByPlayerPicked, err := database.GetMostPicksByPlayerPicked(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most picks by player picked"))
-		return
-	}
-
-	mostPicksByCardPicker, err := database.GetMostPicksByCardPicker(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most picks by card picker"))
-		return
-	}
-
-	mostPicksByCardPicked, err := database.GetMostPicksByCardPicked(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most picks by card picked"))
-		return
-	}
-
-	mostPicksBySpecialCategoryPicker, err := database.GetMostPicksBySpecialCategoryPicker(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most picks by special category picker"))
-		return
-	}
-
-	mostPicksBySpecialCategoryPicked, err := database.GetMostPicksBySpecialCategoryPicked(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most picks by special category picked"))
-		return
-	}
-
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -160,24 +118,12 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		PersonalStats                    database.StatPersonal
-		MostPicksByPlayerPicker          []database.StatCount
-		MostPicksByPlayerPicked          []database.StatCount
-		MostPicksByCardPicker            []database.StatCount
-		MostPicksByCardPicked            []database.StatCount
-		MostPicksBySpecialCategoryPicker []database.StatCount
-		MostPicksBySpecialCategoryPicked []database.StatCount
+		PersonalStats database.StatPersonal
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData:                     basePageData,
-		PersonalStats:                    personalStats,
-		MostPicksByPlayerPicker:          mostPicksByPlayerPicker,
-		MostPicksByPlayerPicked:          mostPicksByPlayerPicked,
-		MostPicksByCardPicker:            mostPicksByCardPicker,
-		MostPicksByCardPicked:            mostPicksByCardPicked,
-		MostPicksBySpecialCategoryPicker: mostPicksBySpecialCategoryPicker,
-		MostPicksBySpecialCategoryPicked: mostPicksBySpecialCategoryPicked,
+		BasePageData:  basePageData,
+		PersonalStats: personalStats,
 	})
 }
 
