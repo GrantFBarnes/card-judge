@@ -6,28 +6,28 @@
   <table>
     <tbody>
       <tr>
-        <td>Win Ratio</td>
-        <td>{{.PersonalStats.WinRatio}}</td>
+        <td>Round Win Ratio</td>
+        <td>{{.PersonalStats.RoundWinRatio}}</td>
       </tr>
       <tr>
-        <td>Total Wins</td>
-        <td>{{.PersonalStats.WinCount}}</td>
+        <td>Total Round Wins</td>
+        <td>{{.PersonalStats.RoundWinCount}}</td>
       </tr>
       <tr>
-        <td>Total Played</td>
-        <td>{{.PersonalStats.PlayCount}}</td>
+        <td>Total Cards Played</td>
+        <td>{{.PersonalStats.CardPlayCount}}</td>
       </tr>
       <tr>
-        <td>Total Drawn</td>
-        <td>{{.PersonalStats.DrawCount}}</td>
+        <td>Total Cards Drawn</td>
+        <td>{{.PersonalStats.CardDrawCount}}</td>
       </tr>
       <tr>
-        <td>Total Discarded</td>
-        <td>{{.PersonalStats.DiscardCount}}</td>
+        <td>Total Cards Discarded</td>
+        <td>{{.PersonalStats.CardDiscardCount}}</td>
       </tr>
       <tr>
-        <td>Total Skipped</td>
-        <td>{{.PersonalStats.SkipCount}}</td>
+        <td>Total Cards Skipped</td>
+        <td>{{.PersonalStats.CardSkipCount}}</td>
       </tr>
     </tbody>
   </table>
@@ -40,12 +40,12 @@
 >
   <label for="leaderboardTopic">Topic:</label>
   <select id="leaderboardTopic" name="topic" autocomplete="off">
-    <option value="win-ratio" selected>Best Win Ratio</option>
-    <option value="win">Most Wins</option>
-    <option value="play">Most Plays</option>
-    <option value="draw">Most Draws</option>
-    <option value="discard">Most Discards</option>
-    <option value="skip">Most Skips</option>
+    <option value="round-win-ratio" selected>Best Round Win Ratio</option>
+    <option value="round-win">Most Round Wins</option>
+    <option value="card-play">Most Card Plays</option>
+    <option value="card-draw">Most Card Draws</option>
+    <option value="card-discard">Most Card Discards</option>
+    <option value="card-skip">Most Card Skips</option>
     <option value="picked-judge">Most Picked (judge)</option>
     <option value="picked-player">Most Picked (winner)</option>
   </select>

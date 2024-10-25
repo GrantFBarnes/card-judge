@@ -9,12 +9,12 @@ import (
 )
 
 type StatPersonal struct {
-	WinRatio     float64
-	WinCount     int
-	PlayCount    int
-	DrawCount    int
-	DiscardCount int
-	SkipCount    int
+	RoundWinRatio    float64
+	RoundWinCount    int
+	CardPlayCount    int
+	CardDrawCount    int
+	CardDiscardCount int
+	CardSkipCount    int
 }
 
 func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
@@ -30,12 +30,12 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 				WHERE LW.PLAYER_USER_ID = U.ID
 					AND LP.PLAYER_USER_ID = U.ID
 				GROUP BY LP.PLAYER_USER_ID
-			) AS WIN_RATIO,
-			(SELECT COUNT(*) FROM LOG_WIN WHERE PLAYER_USER_ID = U.ID) AS WIN_COUNT,
-			(SELECT COUNT(*) FROM LOG_PLAY WHERE PLAYER_USER_ID = U.ID) AS PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_DRAW WHERE PLAYER_USER_ID = U.ID) AS DRAW_COUNT,
-			(SELECT COUNT(*) FROM LOG_DISCARD WHERE PLAYER_USER_ID = U.ID) AS DISCARD_COUNT,
-			(SELECT COUNT(*) FROM LOG_SKIP WHERE PLAYER_USER_ID = U.ID) AS SKIP_COUNT
+			) AS ROUND_WIN_RATIO,
+			(SELECT COUNT(*) FROM LOG_WIN WHERE PLAYER_USER_ID = U.ID) AS ROUND_WIN_COUNT,
+			(SELECT COUNT(*) FROM LOG_PLAY WHERE PLAYER_USER_ID = U.ID) AS CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_DRAW WHERE PLAYER_USER_ID = U.ID) AS CARD_DRAW_COUNT,
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE PLAYER_USER_ID = U.ID) AS CARD_DISCARD_COUNT,
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE PLAYER_USER_ID = U.ID) AS CARD_SKIP_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
 	`
@@ -46,12 +46,12 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(
-			&result.WinRatio,
-			&result.WinCount,
-			&result.PlayCount,
-			&result.DrawCount,
-			&result.DiscardCount,
-			&result.SkipCount); err != nil {
+			&result.RoundWinRatio,
+			&result.RoundWinCount,
+			&result.CardPlayCount,
+			&result.CardDrawCount,
+			&result.CardDiscardCount,
+			&result.CardSkipCount); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
@@ -67,13 +67,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 
 	var sqlString string
 	switch topic {
-	case "win-ratio":
+	case "round-win-ratio":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Play Count")
-			resultHeaders = append(resultHeaders, "Win Count")
+			resultHeaders = append(resultHeaders, "Rounds Played")
+			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
@@ -90,10 +90,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Play Count")
-			resultHeaders = append(resultHeaders, "Win Count")
+			resultHeaders = append(resultHeaders, "Rounds Played")
+			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
@@ -112,8 +112,8 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "special-category":
-			resultHeaders = append(resultHeaders, "Play Count")
-			resultHeaders = append(resultHeaders, "Win Count")
+			resultHeaders = append(resultHeaders, "Rounds Played")
+			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
@@ -134,11 +134,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "win":
+	case "round-win":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Win Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Rounds Won")
+			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LW.ID) AS COUNT,
@@ -152,8 +152,8 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Win Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Rounds Won")
+			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
@@ -169,7 +169,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "special-category":
-			resultHeaders = append(resultHeaders, "Win Count")
+			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
 				SELECT
@@ -185,11 +185,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "play":
+	case "card-play":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Play Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Cards Played")
+			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LP.ID) AS COUNT,
@@ -203,8 +203,8 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Play Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Cards Played")
+			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
@@ -220,7 +220,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "special-category":
-			resultHeaders = append(resultHeaders, "Play Count")
+			resultHeaders = append(resultHeaders, "Cards Played")
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
 				SELECT
@@ -236,11 +236,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "draw":
+	case "card-draw":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Draw Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Cards Drawn")
+			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LD.ID) AS COUNT,
@@ -254,8 +254,8 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Draw Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Cards Drawn")
+			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
@@ -271,7 +271,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "special-category":
-			resultHeaders = append(resultHeaders, "Draw Count")
+			resultHeaders = append(resultHeaders, "Cards Drawn")
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
 				SELECT
@@ -287,11 +287,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "discard":
+	case "card-discard":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Discard Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Cards Discarded")
+			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LD.ID) AS COUNT,
@@ -305,8 +305,8 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Discard Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Cards Discarded")
+			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
@@ -326,11 +326,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "skip":
+	case "card-skip":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Skip Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Cards Skipped")
+			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LS.ID) AS COUNT,
@@ -344,8 +344,8 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Skip Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Cards Skipped")
+			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
