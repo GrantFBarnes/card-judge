@@ -11,6 +11,7 @@ import (
 	apiDeck "github.com/grantfbarnes/card-judge/api/deck"
 	apiLobby "github.com/grantfbarnes/card-judge/api/lobby"
 	apiPages "github.com/grantfbarnes/card-judge/api/pages"
+	apiStats "github.com/grantfbarnes/card-judge/api/stats"
 	apiUser "github.com/grantfbarnes/card-judge/api/user"
 	"github.com/grantfbarnes/card-judge/database"
 	"github.com/grantfbarnes/card-judge/websocket"
@@ -183,6 +184,9 @@ func main() {
 	// access
 	http.Handle("POST /api/access/lobby/{lobbyId}", api.MiddlewareForAPIs(http.HandlerFunc(apiAccess.Lobby)))
 	http.Handle("POST /api/access/deck/{deckId}", api.MiddlewareForAPIs(http.HandlerFunc(apiAccess.Deck)))
+
+	// stats
+	http.Handle("POST /api/stats/leaderboard", api.MiddlewareForAPIs(http.HandlerFunc(apiStats.GetLeaderboard)))
 
 	// websocket
 	http.HandleFunc("GET /ws/lobby/{lobbyId}", websocket.ServeWs)

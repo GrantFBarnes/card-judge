@@ -99,27 +99,6 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
 
-	bestWinRatioByPlayer, err := database.GetBestWinRatioByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get best win ratio by player"))
-		return
-	}
-
-	bestWinRatioByCard, err := database.GetBestWinRatioByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get best win ratio by card"))
-		return
-	}
-
-	bestWinRatioBySpecialCategory, err := database.GetBestWinRatioBySpecialCategory()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get best win ratio by special category"))
-		return
-	}
-
 	mostPicksByPlayerPicker, err := database.GetMostPicksByPlayerPicker(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -162,97 +141,6 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mostPlaysByPlayer, err := database.GetMostPlaysByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most plays by player"))
-		return
-	}
-
-	mostPlaysByCard, err := database.GetMostPlaysByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most plays by card"))
-		return
-	}
-
-	mostPlaysBySpecialCategory, err := database.GetMostPlaysBySpecialCategory()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most plays by special category"))
-		return
-	}
-
-	mostWinsByPlayer, err := database.GetMostWinsByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most wins by player"))
-		return
-	}
-
-	mostWinsByCard, err := database.GetMostWinsByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most wins by card"))
-		return
-	}
-
-	mostWinsBySpecialCategory, err := database.GetMostWinsBySpecialCategory()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most wins by special category"))
-		return
-	}
-
-	mostDrawsByPlayer, err := database.GetMostDrawsByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most draws by player"))
-		return
-	}
-
-	mostDrawsByCard, err := database.GetMostDrawsByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most draws by card"))
-		return
-	}
-
-	mostDrawsBySpecialCategory, err := database.GetMostDrawsBySpecialCategory()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most draws by special category"))
-		return
-	}
-
-	mostDiscardsByPlayer, err := database.GetMostDiscardsByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most discards by player"))
-		return
-	}
-
-	mostDiscardsByCard, err := database.GetMostDiscardsByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most discards by card"))
-		return
-	}
-
-	mostSkipsByPlayer, err := database.GetMostSkipsByPlayer()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most skips by player"))
-		return
-	}
-
-	mostSkipsByCard, err := database.GetMostSkipsByCard(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get most skips by card"))
-		return
-	}
-
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/stats.html",
@@ -265,54 +153,22 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		BestWinRatioByPlayer             []database.StatWinRatio
-		BestWinRatioByCard               []database.StatWinRatio
-		BestWinRatioBySpecialCategory    []database.StatWinRatio
 		MostPicksByPlayerPicker          []database.StatCount
 		MostPicksByPlayerPicked          []database.StatCount
 		MostPicksByCardPicker            []database.StatCount
 		MostPicksByCardPicked            []database.StatCount
 		MostPicksBySpecialCategoryPicker []database.StatCount
 		MostPicksBySpecialCategoryPicked []database.StatCount
-		MostPlaysByPlayer                []database.StatCount
-		MostPlaysByCard                  []database.StatCount
-		MostPlaysBySpecialCategory       []database.StatCount
-		MostWinsByPlayer                 []database.StatCount
-		MostWinsByCard                   []database.StatCount
-		MostWinsBySpecialCategory        []database.StatCount
-		MostDrawsByPlayer                []database.StatCount
-		MostDrawsByCard                  []database.StatCount
-		MostDrawsBySpecialCategory       []database.StatCount
-		MostDiscardsByPlayer             []database.StatCount
-		MostDiscardsByCard               []database.StatCount
-		MostSkipsByPlayer                []database.StatCount
-		MostSkipsByCard                  []database.StatCount
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData:                     basePageData,
-		BestWinRatioByPlayer:             bestWinRatioByPlayer,
-		BestWinRatioByCard:               bestWinRatioByCard,
-		BestWinRatioBySpecialCategory:    bestWinRatioBySpecialCategory,
 		MostPicksByPlayerPicker:          mostPicksByPlayerPicker,
 		MostPicksByPlayerPicked:          mostPicksByPlayerPicked,
 		MostPicksByCardPicker:            mostPicksByCardPicker,
 		MostPicksByCardPicked:            mostPicksByCardPicked,
 		MostPicksBySpecialCategoryPicker: mostPicksBySpecialCategoryPicker,
 		MostPicksBySpecialCategoryPicked: mostPicksBySpecialCategoryPicked,
-		MostPlaysByPlayer:                mostPlaysByPlayer,
-		MostPlaysByCard:                  mostPlaysByCard,
-		MostPlaysBySpecialCategory:       mostPlaysBySpecialCategory,
-		MostWinsByPlayer:                 mostWinsByPlayer,
-		MostWinsByCard:                   mostWinsByCard,
-		MostWinsBySpecialCategory:        mostWinsBySpecialCategory,
-		MostDrawsByPlayer:                mostDrawsByPlayer,
-		MostDrawsByCard:                  mostDrawsByCard,
-		MostDrawsBySpecialCategory:       mostDrawsBySpecialCategory,
-		MostDiscardsByPlayer:             mostDiscardsByPlayer,
-		MostDiscardsByCard:               mostDiscardsByCard,
-		MostSkipsByPlayer:                mostSkipsByPlayer,
-		MostSkipsByCard:                  mostSkipsByCard,
 	})
 }
 
