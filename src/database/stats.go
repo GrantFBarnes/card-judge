@@ -9,6 +9,7 @@ import (
 )
 
 type StatPersonal struct {
+	GameWinCount     int
 	RoundWinRatio    float64
 	RoundWinCount    int
 	CardPlayCount    int
@@ -22,6 +23,19 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 
 	sqlString := `
 		SELECT
+			(
+				SELECT
+					COUNT(*)
+				FROM (SELECT
+						LW.LOBBY_ID,
+						LW.PLAYER_USER_ID,
+						COUNT(LW.ID) AS ROUND_WIN_COUNT,
+						RANK() OVER (PARTITION BY LW.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANK
+					FROM LOG_WIN AS LW
+					GROUP BY LW.LOBBY_ID, LW.PLAYER_USER_ID) AS ROUND_WINS
+				WHERE PLAYER_USER_ID = U.ID
+					AND RANK = 1
+			) AS GAME_WIN_COUNT,
 			(
 				SELECT
 					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0),0.0)
@@ -46,6 +60,7 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(
+			&result.GameWinCount,
 			&result.RoundWinRatio,
 			&result.RoundWinCount,
 			&result.CardPlayCount,
