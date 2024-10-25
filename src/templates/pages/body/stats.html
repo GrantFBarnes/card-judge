@@ -1,6 +1,37 @@
 {{define "body"}}
 <link rel="stylesheet" href="/static/css/stats.css" />
 <h1>Statistics</h1>
+<h2>{{.User.Name}}</h2>
+<div>
+  <table>
+    <tbody>
+      <tr>
+        <td>Win Ratio</td>
+        <td>{{.PersonalStats.WinRatio}}</td>
+      </tr>
+      <tr>
+        <td>Total Wins</td>
+        <td>{{.PersonalStats.WinCount}}</td>
+      </tr>
+      <tr>
+        <td>Total Played</td>
+        <td>{{.PersonalStats.PlayCount}}</td>
+      </tr>
+      <tr>
+        <td>Total Drawn</td>
+        <td>{{.PersonalStats.DrawCount}}</td>
+      </tr>
+      <tr>
+        <td>Total Discarded</td>
+        <td>{{.PersonalStats.DiscardCount}}</td>
+      </tr>
+      <tr>
+        <td>Total Skipped</td>
+        <td>{{.PersonalStats.SkipCount}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <h2>Leaderboard</h2>
 <form
   hx-post="/api/stats/leaderboard"

@@ -99,6 +99,13 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
 
+	personalStats, err := database.GetPersonalStats(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get personal stats"))
+		return
+	}
+
 	mostPicksByPlayerPicker, err := database.GetMostPicksByPlayerPicker(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -153,6 +160,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
+		PersonalStats                    database.StatPersonal
 		MostPicksByPlayerPicker          []database.StatCount
 		MostPicksByPlayerPicked          []database.StatCount
 		MostPicksByCardPicker            []database.StatCount
@@ -163,6 +171,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData:                     basePageData,
+		PersonalStats:                    personalStats,
 		MostPicksByPlayerPicker:          mostPicksByPlayerPicker,
 		MostPicksByPlayerPicked:          mostPicksByPlayerPicked,
 		MostPicksByCardPicker:            mostPicksByCardPicker,

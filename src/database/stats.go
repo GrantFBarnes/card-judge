@@ -8,12 +8,64 @@ import (
 	"github.com/google/uuid"
 )
 
+type StatPersonal struct {
+	WinRatio     float64
+	WinCount     int
+	PlayCount    int
+	DrawCount    int
+	DiscardCount int
+	SkipCount    int
+}
+
 type StatCount struct {
 	Count int
 	Name  string
 }
 
-func GetLeaderboard(userId uuid.UUID, topic string, subject string) ([]string, [][]string, error) {
+func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
+	var result StatPersonal
+
+	sqlString := `
+		SELECT
+			(
+				SELECT
+					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0),0.0)
+				FROM LOG_WIN AS LW
+					INNER JOIN LOG_PLAY AS LP ON LP.PLAYER_USER_ID = U.ID
+				WHERE LW.PLAYER_USER_ID = U.ID
+					AND LP.PLAYER_USER_ID = U.ID
+				GROUP BY LP.PLAYER_USER_ID
+			) AS WIN_RATIO,
+			(SELECT COUNT(*) FROM LOG_WIN WHERE PLAYER_USER_ID = U.ID) AS WIN_COUNT,
+			(SELECT COUNT(*) FROM LOG_PLAY WHERE PLAYER_USER_ID = U.ID) AS PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_DRAW WHERE PLAYER_USER_ID = U.ID) AS DRAW_COUNT,
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE PLAYER_USER_ID = U.ID) AS DISCARD_COUNT,
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE PLAYER_USER_ID = U.ID) AS SKIP_COUNT
+		FROM USER AS U
+		WHERE U.ID = ?
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return result, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&result.WinRatio,
+			&result.WinCount,
+			&result.PlayCount,
+			&result.DrawCount,
+			&result.DiscardCount,
+			&result.SkipCount); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return result, nil
+}
+
+func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]string, [][]string, error) {
 	resultHeaders := make([]string, 0)
 	resultRows := make([][]string, 0)
 	params := make([]any, 0)
