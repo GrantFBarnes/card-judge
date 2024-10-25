@@ -368,13 +368,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 	case "picked-judge":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Pick Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Judge Picking")
+			resultHeaders = append(resultHeaders, "Player")
+			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(LW.ID) AS COUNT,
-					UP.NAME AS NAME
+					UJ.NAME AS JUDGE_NAME,
+					UP.NAME AS NAME,
+					COUNT(LW.ID) AS COUNT
 				FROM LOG_WIN AS LW
 					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
 					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
@@ -386,13 +388,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Pick Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Judge Picking")
+			resultHeaders = append(resultHeaders, "Card")
+			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(LW.ID) AS COUNT,
-					CP.TEXT AS NAME
+					UJ.NAME AS JUDGE_NAME,
+					CP.TEXT AS NAME,
+					COUNT(LW.ID) AS COUNT
 				FROM LOG_WIN AS LW
 					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
 					INNER JOIN CARD AS CP ON CP.ID = LW.CARD_ID
@@ -404,13 +408,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "special-category":
-			resultHeaders = append(resultHeaders, "Pick Count")
+			resultHeaders = append(resultHeaders, "Judge Picking")
 			resultHeaders = append(resultHeaders, "Special Category")
+			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(LW.ID) AS COUNT,
-					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+					UJ.NAME AS JUDGE_NAME,
+					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME,
+					COUNT(LW.ID) AS COUNT
 				FROM LOG_WIN AS LW
 					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
 				WHERE UJ.ID = ?
@@ -426,13 +432,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 	case "picked-player":
 		switch subject {
 		case "player":
-			resultHeaders = append(resultHeaders, "Pick Count")
-			resultHeaders = append(resultHeaders, "Player Name")
+			resultHeaders = append(resultHeaders, "Winner")
+			resultHeaders = append(resultHeaders, "Judge Who Picked")
+			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(LW.ID) AS COUNT,
-					UJ.NAME AS NAME
+					UP.NAME AS PLAYER_NAME,
+					UJ.NAME AS NAME,
+					COUNT(LW.ID) AS COUNT
 				FROM LOG_WIN AS LW
 					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
 					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
@@ -444,13 +452,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "card":
-			resultHeaders = append(resultHeaders, "Pick Count")
-			resultHeaders = append(resultHeaders, "Card Text")
+			resultHeaders = append(resultHeaders, "Winner")
+			resultHeaders = append(resultHeaders, "Card Played")
+			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(LW.ID) AS COUNT,
-					CJ.TEXT AS NAME
+					UP.NAME AS PLAYER_NAME,
+					CJ.TEXT AS NAME,
+					COUNT(LW.ID) AS COUNT
 				FROM LOG_WIN AS LW
 					INNER JOIN CARD AS CJ ON CJ.ID = LW.CARD_ID
 					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
@@ -462,13 +472,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				LIMIT 5
 			`
 		case "special-category":
-			resultHeaders = append(resultHeaders, "Pick Count")
-			resultHeaders = append(resultHeaders, "Special Category")
+			resultHeaders = append(resultHeaders, "Winner")
+			resultHeaders = append(resultHeaders, "Special Category Played")
+			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(LW.ID) AS COUNT,
-					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
+					UP.NAME AS PLAYER_NAME,
+					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME,
+					COUNT(LW.ID) AS COUNT
 				FROM LOG_WIN AS LW
 					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
 				WHERE UP.ID = ?
