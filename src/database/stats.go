@@ -82,6 +82,33 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 
 	var sqlString string
 	switch topic {
+	case "game-win":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Games Won")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(*) AS COUNT,
+					U.NAME AS NAME
+				FROM (SELECT
+						LW.LOBBY_ID,
+						LW.PLAYER_USER_ID,
+						COUNT(LW.ID) AS ROUND_WIN_COUNT,
+						RANK() OVER (PARTITION BY LW.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANK
+					FROM LOG_WIN AS LW
+					GROUP BY LW.LOBBY_ID, LW.PLAYER_USER_ID) AS RW
+					INNER JOIN USER AS U ON U.ID = RW.PLAYER_USER_ID
+				WHERE RW.RANK = 1
+				GROUP BY RW.PLAYER_USER_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	case "round-win-ratio":
 		switch subject {
 		case "player":
@@ -336,8 +363,6 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					NAME ASC
 				LIMIT 5
 			`
-		case "special-category":
-			return resultHeaders, resultRows, errors.New("cannot combine discard with special category")
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -375,8 +400,6 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					NAME ASC
 				LIMIT 5
 			`
-		case "special-category":
-			return resultHeaders, resultRows, errors.New("cannot combine skip with special category")
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
