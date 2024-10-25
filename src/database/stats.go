@@ -150,6 +150,26 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
+	case "game-play":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Games Played")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LOBBY_ID) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_PLAY AS LP
+					INNER JOIN USER AS U ON U.ID = LP.PLAYER_USER_ID
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	case "round-win-ratio":
 		switch subject {
 		case "player":
