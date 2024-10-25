@@ -41,10 +41,12 @@ BEGIN
     WHERE P.ID = VAR_PLAYER_ID;
 
     INSERT INTO LOG_DRAW (
+        LOBBY_ID,
         PLAYER_USER_ID,
         CARD_ID
     )
     SELECT
+        P.LOBBY_ID,
         P.USER_ID AS PLAYER_USER_ID,
         H.CARD_ID
     FROM HAND AS H
