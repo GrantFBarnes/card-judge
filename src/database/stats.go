@@ -10,7 +10,7 @@ import (
 
 type StatPersonal struct {
 	GameWinCount     int
-	RoundWinRatio    float64
+	GamePlayCount    int
 	RoundWinCount    int
 	CardPlayCount    int
 	CardDrawCount    int
@@ -38,13 +38,10 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			) AS GAME_WIN_COUNT,
 			(
 				SELECT
-					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0),0.0)
-				FROM LOG_WIN AS LW
-					INNER JOIN LOG_PLAY AS LP ON LP.PLAYER_USER_ID = U.ID
-				WHERE LW.PLAYER_USER_ID = U.ID
-					AND LP.PLAYER_USER_ID = U.ID
-				GROUP BY LP.PLAYER_USER_ID
-			) AS ROUND_WIN_RATIO,
+					COUNT(DISTINCT LOBBY_ID)
+				FROM LOG_PLAY
+				WHERE PLAYER_USER_ID = U.ID
+			) AS GAME_PLAY_COUNT,
 			(SELECT COUNT(*) FROM LOG_WIN WHERE PLAYER_USER_ID = U.ID) AS ROUND_WIN_COUNT,
 			(SELECT COUNT(*) FROM LOG_PLAY WHERE PLAYER_USER_ID = U.ID) AS CARD_PLAY_COUNT,
 			(SELECT COUNT(*) FROM LOG_DRAW WHERE PLAYER_USER_ID = U.ID) AS CARD_DRAW_COUNT,
@@ -61,7 +58,7 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 	for rows.Next() {
 		if err := rows.Scan(
 			&result.GameWinCount,
-			&result.RoundWinRatio,
+			&result.GamePlayCount,
 			&result.RoundWinCount,
 			&result.CardPlayCount,
 			&result.CardDrawCount,
@@ -82,6 +79,50 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 
 	var sqlString string
 	switch topic {
+	case "game-win-ratio":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Games Played")
+			resultHeaders = append(resultHeaders, "Games Won")
+			resultHeaders = append(resultHeaders, "Win Ratio")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					GP.GAME_PLAY_COUNT AS PLAY_COUNT,
+					COALESCE(GW.GAME_WIN_COUNT, 0) AS WIN_COUNT,
+					COALESCE((GW.GAME_WIN_COUNT * 1.0) / (GP.GAME_PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
+					U.NAME AS NAME
+				FROM USER AS U
+						INNER JOIN (
+							SELECT
+								PLAYER_USER_ID,
+								COUNT(DISTINCT LOBBY_ID) AS GAME_PLAY_COUNT
+							FROM LOG_PLAY
+							GROUP BY PLAYER_USER_ID
+						) AS GP ON GP.PLAYER_USER_ID = U.ID
+						LEFT JOIN (
+							SELECT
+								PLAYER_USER_ID,
+								COUNT(*) AS GAME_WIN_COUNT
+							FROM (
+								SELECT
+									PLAYER_USER_ID,
+									COUNT(ID) AS ROUND_WIN_COUNT,
+									RANK() OVER (PARTITION BY LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANK
+								FROM LOG_WIN
+								GROUP BY LOBBY_ID, PLAYER_USER_ID
+							) AS GAME_RANK
+							WHERE RANK = 1
+							GROUP BY PLAYER_USER_ID
+						) AS GW ON GW.PLAYER_USER_ID = U.ID
+				ORDER BY
+					WIN_RATIO DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	case "game-win":
 		switch subject {
 		case "player":

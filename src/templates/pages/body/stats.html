@@ -6,31 +6,31 @@
   <table>
     <tbody>
       <tr>
-        <td>Total Game Wins</td>
+        <td>Games Won</td>
         <td>{{.PersonalStats.GameWinCount}}</td>
       </tr>
       <tr>
-        <td>Round Win Ratio</td>
-        <td>{{.PersonalStats.RoundWinRatio}}</td>
+        <td>Games Played</td>
+        <td>{{.PersonalStats.GamePlayCount}}</td>
       </tr>
       <tr>
-        <td>Total Round Wins</td>
+        <td>Rounds Won</td>
         <td>{{.PersonalStats.RoundWinCount}}</td>
       </tr>
       <tr>
-        <td>Total Cards Played</td>
+        <td>Cards Played</td>
         <td>{{.PersonalStats.CardPlayCount}}</td>
       </tr>
       <tr>
-        <td>Total Cards Drawn</td>
+        <td>Cards Drawn</td>
         <td>{{.PersonalStats.CardDrawCount}}</td>
       </tr>
       <tr>
-        <td>Total Cards Discarded</td>
+        <td>Cards Discarded</td>
         <td>{{.PersonalStats.CardDiscardCount}}</td>
       </tr>
       <tr>
-        <td>Total Cards Skipped</td>
+        <td>Cards Skipped</td>
         <td>{{.PersonalStats.CardSkipCount}}</td>
       </tr>
     </tbody>
@@ -44,7 +44,8 @@
 >
   <label for="leaderboardTopic">Topic:</label>
   <select id="leaderboardTopic" name="topic" autocomplete="off">
-    <option value="game-win" selected>Most Game Wins</option>
+    <option value="game-win-ratio" selected>Best Game Win Ratio</option>
+    <option value="game-win">Most Game Wins</option>
     <option value="round-win-ratio">Best Round Win Ratio</option>
     <option value="round-win">Most Round Wins</option>
     <option value="card-play">Most Card Plays</option>
