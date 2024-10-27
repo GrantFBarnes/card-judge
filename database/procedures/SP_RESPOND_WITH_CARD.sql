@@ -43,7 +43,7 @@ BEGIN
            L.ROUND_ID          AS ROUND_ID,
            R.ID                AS RESPONSE_ID,
            RC.ID               AS RESPONSE_CARD_ID,
-           J.PLAYER_ID         AS JUDGE_USER_ID,
+           JP.USER_ID          AS JUDGE_USER_ID,
            J.CARD_ID           AS JUDGE_CARD_ID,
            P.USER_ID           AS PLAYER_USER_ID,
            RC.CARD_ID          AS PLAYER_CARD_ID,
@@ -53,6 +53,7 @@ BEGIN
              INNER JOIN PLAYER AS P ON P.ID = R.PLAYER_ID
              INNER JOIN LOBBY AS L ON L.ID = P.LOBBY_ID
              INNER JOIN JUDGE AS J ON J.LOBBY_ID = L.ID
+             INNER JOIN PLAYER AS JP ON JP.ID = J.PLAYER_ID
     WHERE RC.ID = VAR_RESPONSE_CARD_ID;
 
     DELETE

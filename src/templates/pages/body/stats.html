@@ -6,12 +6,16 @@
   <table>
     <tbody>
       <tr>
+        <td>Games Played</td>
+        <td>{{.PersonalStats.GamePlayCount}}</td>
+      </tr>
+      <tr>
         <td>Games Won</td>
         <td>{{.PersonalStats.GameWinCount}}</td>
       </tr>
       <tr>
-        <td>Games Played</td>
-        <td>{{.PersonalStats.GamePlayCount}}</td>
+        <td>Rounds Played</td>
+        <td>{{.PersonalStats.RoundPlayCount}}</td>
       </tr>
       <tr>
         <td>Rounds Won</td>
@@ -43,7 +47,7 @@
   hx-target="#leaderboard"
 >
   <label for="leaderboardTopic">Topic:</label>
-  <select id="leaderboardTopic" name="topic" autocomplete="off">
+  <select id="leaderboardTopic" name="topic">
     <option value="game-win-ratio" selected>Best Game Win Ratio</option>
     <option value="game-win">Most Games Won</option>
     <option value="game-play">Most Games Played</option>
@@ -57,7 +61,7 @@
     <option value="picked-player">Most Picked (winner)</option>
   </select>
   <label for="leaderboardSubject">Subject:</label>
-  <select id="leaderboardSubject" name="subject" autocomplete="off">
+  <select id="leaderboardSubject" name="subject">
     <option value="player" selected>Player</option>
     <option value="card">Card</option>
     <option value="special-category">Special Category</option>

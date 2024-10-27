@@ -9,8 +9,9 @@ import (
 )
 
 type StatPersonal struct {
-	GameWinCount     int
 	GamePlayCount    int
+	GameWinCount     int
+	RoundPlayCount   int
 	RoundWinCount    int
 	CardPlayCount    int
 	CardDrawCount    int
@@ -24,29 +25,45 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 	sqlString := `
 		SELECT
 			(
-				SELECT
-					COUNT(*)
-				FROM (SELECT
-						LW.LOBBY_ID,
-						LW.PLAYER_USER_ID,
-						COUNT(LW.ID) AS ROUND_WIN_COUNT,
-						RANK() OVER (PARTITION BY LW.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
-					FROM LOG_WIN AS LW
-					GROUP BY LW.LOBBY_ID, LW.PLAYER_USER_ID) AS ROUND_WINS
-				WHERE PLAYER_USER_ID = U.ID
-					AND RANK = 1
-			) AS GAME_WIN_COUNT,
-			(
-				SELECT
-					COUNT(DISTINCT LOBBY_ID)
-				FROM LOG_PLAY
+				SELECT COUNT(DISTINCT LOBBY_ID)
+				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
 			) AS GAME_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_WIN WHERE PLAYER_USER_ID = U.ID) AS ROUND_WIN_COUNT,
-			(SELECT COUNT(*) FROM LOG_PLAY WHERE PLAYER_USER_ID = U.ID) AS CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_DRAW WHERE PLAYER_USER_ID = U.ID) AS CARD_DRAW_COUNT,
-			(SELECT COUNT(*) FROM LOG_DISCARD WHERE PLAYER_USER_ID = U.ID) AS CARD_DISCARD_COUNT,
-			(SELECT COUNT(*) FROM LOG_SKIP WHERE PLAYER_USER_ID = U.ID) AS CARD_SKIP_COUNT
+			(
+				SELECT
+					COUNT(*)
+				FROM (
+						SELECT
+							LRC.LOBBY_ID,
+							LRC.PLAYER_USER_ID,
+							COUNT(LW.ID) AS ROUND_WIN_COUNT,
+							RANK() OVER (PARTITION BY LRC.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
+						FROM LOG_RESPONSE_CARD AS LRC
+							INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+						GROUP BY LRC.LOBBY_ID, LRC.PLAYER_USER_ID
+					) AS ROUND_WINS
+				WHERE PLAYER_USER_ID = U.ID
+					AND RANKING = 1
+			) AS GAME_WIN_COUNT,
+			(
+				SELECT COUNT(DISTINCT ROUND_ID)
+				FROM LOG_RESPONSE_CARD
+				WHERE PLAYER_USER_ID = U.ID
+			) AS ROUND_PLAY_COUNT,
+			(
+				SELECT COUNT(DISTINCT LW.ID)
+				FROM LOG_RESPONSE_CARD AS LRC
+						INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+				WHERE LRC.PLAYER_USER_ID = U.ID
+			) AS ROUND_WIN_COUNT,
+			(
+				SELECT COUNT(*)
+				FROM LOG_RESPONSE_CARD
+				WHERE PLAYER_USER_ID = U.ID
+			) AS CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_DRAW WHERE USER_ID = U.ID) AS CARD_DRAW_COUNT,
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS CARD_DISCARD_COUNT,
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS CARD_SKIP_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
 	`
@@ -57,8 +74,9 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(
-			&result.GameWinCount,
 			&result.GamePlayCount,
+			&result.GameWinCount,
+			&result.RoundPlayCount,
 			&result.RoundWinCount,
 			&result.CardPlayCount,
 			&result.CardDrawCount,
@@ -97,7 +115,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 							SELECT
 								PLAYER_USER_ID,
 								COUNT(DISTINCT LOBBY_ID) AS GAME_PLAY_COUNT
-							FROM LOG_PLAY
+							FROM LOG_RESPONSE_CARD
 							GROUP BY PLAYER_USER_ID
 						) AS GP ON GP.PLAYER_USER_ID = U.ID
 						LEFT JOIN (
@@ -106,13 +124,14 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 								COUNT(*) AS GAME_WIN_COUNT
 							FROM (
 								SELECT
-									PLAYER_USER_ID,
-									COUNT(ID) AS ROUND_WIN_COUNT,
-									RANK() OVER (PARTITION BY LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
-								FROM LOG_WIN
-								GROUP BY LOBBY_ID, PLAYER_USER_ID
+									LRC.PLAYER_USER_ID,
+									COUNT(LRC.ID) AS ROUND_WIN_COUNT,
+									RANK() OVER (PARTITION BY LRC.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
+								FROM LOG_RESPONSE_CARD AS LRC
+									INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+								GROUP BY LRC.LOBBY_ID, LRC.PLAYER_USER_ID
 							) AS GAME_RANK
-							WHERE RANK = 1
+							WHERE RANKING = 1
 							GROUP BY PLAYER_USER_ID
 						) AS GW ON GW.PLAYER_USER_ID = U.ID
 				ORDER BY
@@ -132,15 +151,18 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					COUNT(*) AS COUNT,
 					U.NAME AS NAME
-				FROM (SELECT
-						LW.LOBBY_ID,
-						LW.PLAYER_USER_ID,
-						COUNT(LW.ID) AS ROUND_WIN_COUNT,
-						RANK() OVER (PARTITION BY LW.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
-					FROM LOG_WIN AS LW
-					GROUP BY LW.LOBBY_ID, LW.PLAYER_USER_ID) AS RW
+				FROM (
+						SELECT
+							LRC.LOBBY_ID,
+							LRC.PLAYER_USER_ID,
+							COUNT(LW.ID) AS ROUND_WIN_COUNT,
+							RANK() OVER (PARTITION BY LRC.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
+						FROM LOG_RESPONSE_CARD AS LRC
+							INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+						GROUP BY LRC.LOBBY_ID, LRC.PLAYER_USER_ID
+					) AS RW
 					INNER JOIN USER AS U ON U.ID = RW.PLAYER_USER_ID
-				WHERE RW.RANK = 1
+				WHERE RW.RANKING = 1
 				GROUP BY RW.PLAYER_USER_ID
 				ORDER BY
 					COUNT DESC,
@@ -157,11 +179,40 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LOBBY_ID) AS COUNT,
+					COUNT(DISTINCT LRC.LOBBY_ID) AS COUNT,
 					U.NAME AS NAME
-				FROM LOG_PLAY AS LP
-					INNER JOIN USER AS U ON U.ID = LP.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "card":
+			resultHeaders = append(resultHeaders, "Games Played")
+			resultHeaders = append(resultHeaders, "Card")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.LOBBY_ID) AS COUNT,
+					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
+				GROUP BY C.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "special-category":
+			resultHeaders = append(resultHeaders, "Games Played")
+			resultHeaders = append(resultHeaders, "Special Category")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.LOBBY_ID) AS COUNT,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -179,13 +230,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+					COUNT(DISTINCT LRC.ID) AS PLAY_COUNT,
 					COUNT(DISTINCT LW.ID) AS WIN_COUNT,
-					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0),0.0) AS WIN_RATIO,
+					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LRC.ID)*1.0),0.0) AS WIN_RATIO,
 					U.NAME AS NAME
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS U ON U.ID = LW.PLAYER_USER_ID
-					INNER JOIN LOG_PLAY AS LP ON LP.PLAYER_USER_ID = U.ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
 				ORDER BY
 					WIN_RATIO DESC,
@@ -200,13 +251,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+					COUNT(DISTINCT LRC.ID) AS PLAY_COUNT,
 					COUNT(DISTINCT LW.ID) AS WIN_COUNT,
-					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0),0.0) AS WIN_RATIO,
-					COALESCE(C.TEXT, LW.SPECIAL_CATEGORY, 'Unknown') AS NAME
-				FROM LOG_WIN AS LW
-					LEFT JOIN CARD AS C ON C.ID = LW.CARD_ID
-					LEFT JOIN LOG_PLAY AS LP ON LP.CARD_ID = C.ID
+					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LRC.ID)*1.0),0.0) AS WIN_RATIO,
+					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY
@@ -221,14 +272,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LP.ID) AS PLAY_COUNT,
+					COUNT(DISTINCT LRC.ID) AS PLAY_COUNT,
 					COUNT(DISTINCT LW.ID) AS WIN_COUNT,
-					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LP.ID)*1.0),0.0) AS WIN_RATIO,
-					COALESCE(LP.SPECIAL_CATEGORY, 'NONE') AS NAME
-				FROM LOG_PLAY AS LP
-					INNER JOIN LOG_WIN AS LW ON (LW.SPECIAL_CATEGORY = LP.SPECIAL_CATEGORY) OR
-												(LW.SPECIAL_CATEGORY IS NULL AND LP.SPECIAL_CATEGORY IS NULL)
-				GROUP BY LP.SPECIAL_CATEGORY
+					COALESCE((COUNT(DISTINCT LW.ID)*1.0) / (COUNT(DISTINCT LRC.ID)*1.0),0.0) AS WIN_RATIO,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY
 					WIN_RATIO DESC,
 					NAME ASC
@@ -244,10 +294,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LW.ID) AS COUNT,
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					U.NAME AS NAME
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS U ON U.ID = LW.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
 				ORDER BY
 					COUNT DESC,
@@ -260,10 +311,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LW.ID) AS COUNT,
-					COALESCE(C.TEXT, LW.SPECIAL_CATEGORY, 'Unknown') AS NAME
-				FROM LOG_WIN AS LW
-					LEFT JOIN CARD AS C ON C.ID = LW.CARD_ID
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY
@@ -276,10 +328,62 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LW.ID) AS COUNT,
-					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME
-				FROM LOG_WIN AS LW
-				GROUP BY LW.SPECIAL_CATEGORY
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+				GROUP BY LRC.SPECIAL_CATEGORY
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "round-play":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Rounds Played")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "card":
+			resultHeaders = append(resultHeaders, "Rounds Played")
+			resultHeaders = append(resultHeaders, "Card")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
+				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				GROUP BY C.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 5
+			`
+		case "special-category":
+			resultHeaders = append(resultHeaders, "Rounds Played")
+			resultHeaders = append(resultHeaders, "Special Category")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -295,10 +399,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LP.ID) AS COUNT,
+					COUNT(DISTINCT LRC.ID) AS COUNT,
 					U.NAME AS NAME
-				FROM LOG_PLAY AS LP
-					INNER JOIN USER AS U ON U.ID = LP.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
 				ORDER BY
 					COUNT DESC,
@@ -311,10 +415,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			params = append(params, userId)
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LP.ID) AS COUNT,
-					COALESCE(C.TEXT, LP.SPECIAL_CATEGORY, 'Unknown') AS NAME
-				FROM LOG_PLAY AS LP
-					LEFT JOIN CARD AS C ON C.ID = LP.CARD_ID
+					COUNT(DISTINCT LRC.ID) AS COUNT,
+					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY
@@ -327,10 +431,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Special Category")
 			sqlString = `
 				SELECT
-					COUNT(DISTINCT LP.ID) AS COUNT,
-					COALESCE(LP.SPECIAL_CATEGORY, 'NONE') AS NAME
-				FROM LOG_PLAY AS LP
-				GROUP BY LP.SPECIAL_CATEGORY
+					COUNT(DISTINCT LRC.ID) AS COUNT,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -349,7 +453,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COUNT(DISTINCT LD.ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_DRAW AS LD
-					INNER JOIN USER AS U ON U.ID = LD.PLAYER_USER_ID
+					INNER JOIN USER AS U ON U.ID = LD.USER_ID
 				GROUP BY U.ID
 				ORDER BY
 					COUNT DESC,
@@ -363,25 +467,11 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			sqlString = `
 				SELECT
 					COUNT(DISTINCT LD.ID) AS COUNT,
-					COALESCE(C.TEXT, LD.SPECIAL_CATEGORY, 'Unknown') AS NAME
+					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_DRAW AS LD
 					LEFT JOIN CARD AS C ON C.ID = LD.CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
-					NAME ASC
-				LIMIT 5
-			`
-		case "special-category":
-			resultHeaders = append(resultHeaders, "Cards Drawn")
-			resultHeaders = append(resultHeaders, "Special Category")
-			sqlString = `
-				SELECT
-					COUNT(DISTINCT LD.ID) AS COUNT,
-					COALESCE(LD.SPECIAL_CATEGORY, 'NONE') AS NAME
-				FROM LOG_DRAW AS LD
-				GROUP BY LD.SPECIAL_CATEGORY
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -400,7 +490,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COUNT(DISTINCT LD.ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_DISCARD AS LD
-					INNER JOIN USER AS U ON U.ID = LD.PLAYER_USER_ID
+					INNER JOIN USER AS U ON U.ID = LD.USER_ID
 				GROUP BY U.ID
 				ORDER BY
 					COUNT DESC,
@@ -437,7 +527,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COUNT(DISTINCT LS.ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_SKIP AS LS
-					INNER JOIN USER AS U ON U.ID = LS.PLAYER_USER_ID
+					INNER JOIN USER AS U ON U.ID = LS.USER_ID
 				GROUP BY U.ID
 				ORDER BY
 					COUNT DESC,
@@ -476,11 +566,12 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					UJ.NAME AS JUDGE_NAME,
 					UP.NAME AS NAME,
 					COUNT(LW.ID) AS COUNT
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
+					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UJ.ID = ?
-				GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
+				GROUP BY LRC.JUDGE_USER_ID, LRC.PLAYER_USER_ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -496,11 +587,12 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					UJ.NAME AS JUDGE_NAME,
 					CP.TEXT AS NAME,
 					COUNT(LW.ID) AS COUNT
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-					INNER JOIN CARD AS CP ON CP.ID = LW.CARD_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
+					INNER JOIN CARD AS CP ON CP.ID = LRC.PLAYER_CARD_ID
 				WHERE UJ.ID = ?
-				GROUP BY LW.JUDGE_USER_ID, LW.CARD_ID
+				GROUP BY LRC.JUDGE_USER_ID, LRC.PLAYER_CARD_ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -514,12 +606,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			sqlString = `
 				SELECT
 					UJ.NAME AS JUDGE_NAME,
-					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME,
 					COUNT(LW.ID) AS COUNT
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 				WHERE UJ.ID = ?
-				GROUP BY LW.JUDGE_USER_ID, LW.SPECIAL_CATEGORY
+				GROUP BY LRC.JUDGE_USER_ID, LRC.SPECIAL_CATEGORY
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -540,11 +633,12 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					UP.NAME AS PLAYER_NAME,
 					UJ.NAME AS NAME,
 					COUNT(LW.ID) AS COUNT
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS UJ ON UJ.ID = LW.JUDGE_USER_ID
-					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
+					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
-				GROUP BY LW.JUDGE_USER_ID, LW.PLAYER_USER_ID
+				GROUP BY LRC.JUDGE_USER_ID, LRC.PLAYER_USER_ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -560,11 +654,12 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					UP.NAME AS PLAYER_NAME,
 					CJ.TEXT AS NAME,
 					COUNT(LW.ID) AS COUNT
-				FROM LOG_WIN AS LW
-					INNER JOIN CARD AS CJ ON CJ.ID = LW.CARD_ID
-					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN CARD AS CJ ON CJ.ID = LRC.PLAYER_CARD_ID
+					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
-				GROUP BY LW.CARD_ID, LW.PLAYER_USER_ID
+				GROUP BY LRC.PLAYER_CARD_ID, LRC.PLAYER_USER_ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
@@ -578,12 +673,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			sqlString = `
 				SELECT
 					UP.NAME AS PLAYER_NAME,
-					COALESCE(LW.SPECIAL_CATEGORY, 'NONE') AS NAME,
+					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME,
 					COUNT(LW.ID) AS COUNT
-				FROM LOG_WIN AS LW
-					INNER JOIN USER AS UP ON UP.ID = LW.PLAYER_USER_ID
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
-				GROUP BY LW.SPECIAL_CATEGORY, LW.PLAYER_USER_ID
+				GROUP BY LRC.SPECIAL_CATEGORY, LRC.PLAYER_USER_ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
