@@ -178,16 +178,19 @@ func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
 	return id, nil
 }
 
-func GetCardTextStart(id uuid.UUID) (string, error) {
+func GetResponseCardTextStart(responseId uuid.UUID) (string, error) {
 	var text string
 
 	sqlString := `
-		SELECT
-			TEXT
-		FROM CARD
-		WHERE ID = ?
+		SELECT C.TEXT
+		FROM RESPONSE AS R
+				INNER JOIN RESPONSE_CARD AS RC ON RC.RESPONSE_ID = R.ID
+				INNER JOIN CARD AS C ON C.ID = RC.CARD_ID
+		WHERE R.ID = ?
+		ORDER BY RC.CREATED_ON_DATE
+		LIMIT 1
 	`
-	rows, err := query(sqlString, id)
+	rows, err := query(sqlString, responseId)
 	if err != nil {
 		return text, err
 	}

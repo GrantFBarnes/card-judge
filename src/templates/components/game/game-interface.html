@@ -205,62 +205,63 @@
   {{if .PromptCardText.Valid}}
   <br />
   {{if .BoardIsReady}}
-  <div id="board-cards">
-    <table id="board-cards-table">
+  <div id="board-responses">
+    <table id="board-responses-table">
       <tbody>
-        {{range .BoardPlays}}
-        <tr>
-          <td><hr /></td>
-        </tr>
-        {{range .Cards}}
-        <tr>
-          <td style="padding: 20px">
-            {{if $.PlayerIsJudge}}
-            <span
-              class="clickable wrap-new-lines"
-              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/pick-winner"
-              hx-confirm="Are you sure you want to pick this card as the winner?"
-              >{{.Text}}</span
-            >
-            {{else}}
-            <span class="wrap-new-lines">{{.Text}}</span>
+        {{range .BoardResponses}}
+        <tr
+          {{if
+          $.PlayerIsJudge}}
+          class="clickable"
+          hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
+          hx-confirm="Are you sure you want to pick this response as the winner?"
+          {{end}}
+        >
+          <td>
+            <hr />
+            {{range .ResponseCards}}
+            <p style="padding: 20px">
+              <span class="wrap-new-lines">{{.Text}}</span>
+            </p>
             {{end}}
           </td>
         </tr>
-        {{end}} {{end}}
+        {{end}}
       </tbody>
     </table>
   </div>
   {{else}}
-  <div id="player-plays">
-    <table id="player-plays-table">
+  <div id="player-responses">
+    <table id="player-responses-table">
       <tbody>
-        {{range .PlayerPlays}}
+        {{range .PlayerResponses}}
         <tr>
           <td>
-            {{if not .SpecialCategory.Valid}}
-            <span
-              title="Withdrawal"
-              class="clickable"
-              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/withdrawal"
-            >
-              &#8998;
-            </span>
+            {{range .ResponseCards}}
+            <p style="padding: 20px">
+              {{if not .SpecialCategory.Valid}}
+              <span
+                title="Withdraw"
+                class="clickable"
+                hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
+              >
+                &#8998;
+              </span>
+              {{end}} {{if eq .SpecialCategory.String "SURPRISE"}}
+              <span>[***SURPRISE CARD PLAYED!***]</span> {{else}}
+              <span class="wrap-new-lines">{{.Text}}</span>
+              {{end}}
+            </p>
             {{end}}
           </td>
-          {{if eq .SpecialCategory.String "SURPRISE"}}
-          <td>[***SURPRISE CARD PLAYED!***]</td>
-          {{else}}
-          <td class="wrap-new-lines">{{.Text}}</td>
-          {{end}}
         </tr>
         {{end}}
       </tbody>
     </table>
   </div>
   <br />
-  <div id="players-played">
-    <table id="players-played-table">
+  <div id="players-responded">
+    <table id="players-responded-table">
       <thead>
         <tr>
           <th style="padding: 20px">Player</th>
@@ -268,11 +269,11 @@
         </tr>
       </thead>
       <tbody>
-        {{range .BoardPlays}}
+        {{range .BoardResponses}}
         <tr>
           <td>{{.PlayerUserName}}</td>
           <td style="text-align: center">
-            {{len .Cards}}/{{$.CardsToPlayCount}}
+            {{len .ResponseCards}}/{{$.CardsToPlayCount}}
           </td>
         </tr>
         {{end}}
