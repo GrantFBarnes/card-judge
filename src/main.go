@@ -59,7 +59,6 @@ func main() {
 		// functions
 		"../database/functions/FN_GET_LOBBY_JUDGE_PLAYER_ID.sql",
 		"../database/functions/FN_GET_LOGIN_ATTEMPT_IS_ALLOWED.sql",
-		"../database/functions/FN_GET_RANDOM_PROMPT_CARD.sql",
 		"../database/functions/FN_USER_HAS_DECK_ACCESS.sql",
 		"../database/functions/FN_USER_HAS_LOBBY_ACCESS.sql",
 
@@ -73,10 +72,10 @@ func main() {
 		"../database/procedures/SP_RESPOND_WITH_STEAL_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_SURPRISE_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_WILD_CARD.sql",
-		"../database/procedures/SP_SET_MISSING_JUDGE.sql",
-		"../database/procedures/SP_SET_MISSING_PROMPT.sql",
-		"../database/procedures/SP_SET_NEXT_JUDGE.sql",
-		"../database/procedures/SP_SET_NEXT_PROMPT.sql",
+		"../database/procedures/SP_SET_MISSING_JUDGE_CARD.sql",
+		"../database/procedures/SP_SET_MISSING_JUDGE_PLAYER.sql",
+		"../database/procedures/SP_SET_NEXT_JUDGE_CARD.sql",
+		"../database/procedures/SP_SET_NEXT_JUDGE_PLAYER.sql",
 		"../database/procedures/SP_SET_PLAYER_ACTIVE.sql",
 		"../database/procedures/SP_SET_PLAYER_INACTIVE.sql",
 		"../database/procedures/SP_SKIP_PROMPT.sql",
@@ -101,10 +100,10 @@ func main() {
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_LOBBY.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_PLAYER.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_USER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_AF_DL_PLAYER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_AF_IN_PLAYER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_AF_UP_PLAYER.sql",
-		"../database/triggers/TR_SET_MISSING_PROMPT_AF_IN_PLAYER.sql",
+		"../database/triggers/TR_SET_MISSING_JUDGE_CARD_AF_IN_PLAYER.sql",
+		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_DL_PLAYER.sql",
+		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_IN_PLAYER.sql",
+		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_UP_PLAYER.sql",
 
 		// populate
 		"../database/populate/admin.sql",
