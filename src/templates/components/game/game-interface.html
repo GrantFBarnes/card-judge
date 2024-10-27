@@ -288,6 +288,9 @@
   <table>
     <thead>
       <tr>
+        <th colspan="2">Scoreboard</th>
+      </tr>
+      <tr>
         <th>Player</th>
         <th>Wins</th>
       </tr>
@@ -297,6 +300,22 @@
       <tr>
         <td>{{.UserName}}</td>
         <td>{{.WinCount}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  <br />
+  <br />
+  <table>
+    <thead>
+      <tr>
+        <th>Upcoming Judges</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .UpcomingJudges}}
+      <tr>
+        <td>{{.}}</td>
       </tr>
       {{end}}
     </tbody>
