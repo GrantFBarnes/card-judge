@@ -3,6 +3,21 @@
   <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
   <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
   <td class="wrap-new-lines">{{.Name}}</td>
+  <td style="text-align: center">
+    {{if .IsApproved}}
+    <span title="User Account Approved">&#9989;</span>
+    {{else}}
+    <span
+      title="Not Approved. Click to Approve."
+      class="clickable"
+      hx-put="/api/user/{{.Id}}/approve"
+      hx-confirm="Are you sure you want to approve User {{.Name}}?"
+      hx-target="closest td"
+    >
+      &#9940;
+    </span>
+    {{end}}
+  </td>
   <td>
     <select
       name="isAdmin"

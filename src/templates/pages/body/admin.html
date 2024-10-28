@@ -1,6 +1,6 @@
 {{define "body"}}
 <h1>Admin</h1>
-<form hx-post="/api/user/create/default" hx-target="find .htmx-result">
+<form hx-post="/api/user/create/admin" hx-target="find .htmx-result">
   <h3>Create a New User</h3>
   <label for="createUserName">Name:</label>
   <input
@@ -62,6 +62,7 @@
           hx-target="#user-table-rows"
         />
       </th>
+      <th>Is Approved</th>
       <th>Is Admin</th>
       <th>Password Reset</th>
       <th>Delete</th>
