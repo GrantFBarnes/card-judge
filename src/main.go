@@ -104,6 +104,7 @@ func main() {
 		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_DL_PLAYER.sql",
 		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_IN_PLAYER.sql",
 		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_UP_PLAYER.sql",
+		"../database/triggers/TR_SET_RESPONSES_AF_UP_JUDGE.sql",
 
 		// populate
 		"../database/populate/admin.sql",
