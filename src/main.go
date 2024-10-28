@@ -97,6 +97,7 @@ func main() {
 		"../database/triggers/TR_LOBBY_AFTER_UPDATE.sql",
 		"../database/triggers/TR_PLAYER_AFTER_INSERT.sql",
 		"../database/triggers/TR_PLAYER_AFTER_UPDATE.sql",
+		"../database/triggers/TR_PLAYER_BEFORE_INSERT.sql",
 		"../database/triggers/TR_REVOKE_ACCESS_AF_UP_DECK.sql",
 		"../database/triggers/TR_REVOKE_ACCESS_AF_UP_LOBBY.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_CARD.sql",
