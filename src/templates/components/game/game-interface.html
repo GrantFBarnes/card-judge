@@ -30,7 +30,7 @@
   </table>
 </div>
 <div id="lobby-player-data">
-  {{if not .PromptCardText.Valid}}
+  {{if not .JudgeCardText.Valid}}
   <div class="lobby-player-data-message">[NO PROMPT CARD]</div>
   {{else if .PlayerIsJudge}}
   <div class="lobby-player-data-message">You are the Judge.</div>
@@ -186,81 +186,99 @@
 </div>
 <div id="lobby-game-board">
   <h3 id="prompt-card">
-    {{if not .PromptCardText.Valid}}
+    {{if not .JudgeCardText.Valid}}
     <span>[NO PROMPT CARD]</span>
     {{else}}
-    <span class="wrap-new-lines">{{.PromptCardText.String}}</span>
+    <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
+    {{end}}
+  </h3>
+  <span id="judge-settings">
     {{if and .PlayerIsJudge .BoardIsEmpty}}
+    <label for="setResponseCount">Responses:</label>
+    <input
+      type="number"
+      id="setResponseCount"
+      name="responseCount"
+      min="1"
+      max="3"
+      value="{{.JudgeResponseCount}}"
+      required="required"
+      hx-put="/api/lobby/{{.LobbyId}}/response-count"
+      hx-trigger="change"
+    />
     <span
       class="clickable"
       style="float: right"
-      title="Skip Current Card"
       hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
       hx-confirm="Are you sure you want to skip this prompt?"
     >
-      &#11118;
+      &#11118; Skip Prompt
     </span>
-    {{end}} {{end}}
-  </h3>
-  {{if .PromptCardText.Valid}}
+    {{end}}
+  </span>
+  {{if .JudgeCardText.Valid}}
   <br />
   {{if .BoardIsReady}}
-  <div id="board-cards">
-    <table id="board-cards-table">
+  <div id="board-responses">
+    <table id="board-responses-table">
       <tbody>
-        {{range .BoardPlays}}
-        <tr>
-          <td><hr /></td>
-        </tr>
-        {{range .Cards}}
-        <tr>
-          <td style="padding: 20px">
-            {{if $.PlayerIsJudge}}
-            <span
-              class="clickable wrap-new-lines"
-              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/pick-winner"
-              hx-confirm="Are you sure you want to pick this card as the winner?"
-              >{{.Text}}</span
-            >
-            {{else}}
-            <span class="wrap-new-lines">{{.Text}}</span>
+        {{range .BoardResponses}}
+        <tr
+          {{if
+          $.PlayerIsJudge}}
+          class="clickable"
+          hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
+          hx-confirm="Are you sure you want to pick this response as the winner?"
+          {{end}}
+        >
+          <td>
+            <hr />
+            {{range .ResponseCards}}
+            <p style="padding: 20px">
+              <span class="wrap-new-lines">{{.Text}}</span>
+            </p>
             {{end}}
           </td>
         </tr>
-        {{end}} {{end}}
+        {{end}}
       </tbody>
     </table>
   </div>
   {{else}}
-  <div id="player-plays">
-    <table id="player-plays-table">
+  <div id="player-responses">
+    <table id="player-responses-table">
       <tbody>
-        {{range .PlayerPlays}}
+        {{range .PlayerResponses}}
         <tr>
           <td>
-            {{if not .SpecialCategory.Valid}}
-            <span
-              title="Withdrawal"
-              class="clickable"
-              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/withdrawal"
-            >
-              &#8998;
-            </span>
+            {{$playerResponseCardCount := len .ResponseCards}} {{if gt
+            $playerResponseCardCount 0}}
+            <hr />
+            {{end}} {{range .ResponseCards}}
+            <p style="padding: 20px">
+              {{if not .SpecialCategory.Valid}}
+              <span
+                title="Withdraw"
+                class="clickable"
+                hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
+              >
+                &#8998;
+              </span>
+              {{end}} {{if eq .SpecialCategory.String "SURPRISE"}}
+              <span>[***SURPRISE CARD PLAYED!***]</span> {{else}}
+              <span class="wrap-new-lines">{{.Text}}</span>
+              {{end}}
+            </p>
             {{end}}
           </td>
-          {{if eq .SpecialCategory.String "SURPRISE"}}
-          <td>[***SURPRISE CARD PLAYED!***]</td>
-          {{else}}
-          <td class="wrap-new-lines">{{.Text}}</td>
-          {{end}}
         </tr>
         {{end}}
       </tbody>
     </table>
   </div>
   <br />
-  <div id="players-played">
-    <table id="players-played-table">
+  <div id="players-responded">
+    <table id="players-responded-table">
       <thead>
         <tr>
           <th style="padding: 20px">Player</th>
@@ -268,11 +286,11 @@
         </tr>
       </thead>
       <tbody>
-        {{range .BoardPlays}}
+        {{range .BoardResponses}}
         <tr>
           <td>{{.PlayerUserName}}</td>
           <td style="text-align: center">
-            {{len .Cards}}/{{$.CardsToPlayCount}}
+            {{len .ResponseCards}}/{{$.JudgeBlankCount}}
           </td>
         </tr>
         {{end}}
@@ -287,6 +305,9 @@
   <table>
     <thead>
       <tr>
+        <th colspan="2">Scoreboard</th>
+      </tr>
+      <tr>
         <th>Player</th>
         <th>Wins</th>
       </tr>
@@ -296,6 +317,22 @@
       <tr>
         <td>{{.UserName}}</td>
         <td>{{.WinCount}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  <br />
+  <br />
+  <table>
+    <thead>
+      <tr>
+        <th>Upcoming Judges</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .UpcomingJudges}}
+      <tr>
+        <td>{{.}}</td>
       </tr>
       {{end}}
     </tbody>

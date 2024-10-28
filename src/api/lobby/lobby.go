@@ -364,7 +364,7 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func WithdrawalCard(w http.ResponseWriter, r *http.Request) {
+func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -373,22 +373,22 @@ func WithdrawalCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
+	responseCardIdString := r.PathValue("responseCardId")
+	responseCardId, err := uuid.Parse(responseCardIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
+		_, _ = w.Write([]byte("Failed to get response card id from path."))
 		return
 	}
 
-	player, err := getLobbyRequestPlayer(r, lobbyId)
+	_, err = getLobbyRequestPlayer(r, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = database.WithdrawalCard(player.Id, cardId)
+	err = database.WithdrawCard(responseCardId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -510,11 +510,11 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
+	responseIdString := r.PathValue("responseId")
+	responseId, err := uuid.Parse(responseIdString)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
+		_, _ = w.Write([]byte("Failed to get response id from path."))
 		return
 	}
 
@@ -525,7 +525,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cardTextStart, err := database.GetCardTextStart(cardId)
+	cardTextStart, err := database.GetResponseCardTextStart(responseId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -534,7 +534,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winning Card: %s", cardTextStart))
 
-	winnerName, err := database.PickWinner(lobbyId, cardId)
+	winnerName, err := database.PickWinner(responseId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -792,6 +792,62 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby credit limit set to %d", player.Name, creditLimit))
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetResponseCount(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	_, err = getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var responseCount int
+	for key, val := range r.Form {
+		if key == "responseCount" {
+			responseCount, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse response count."))
+				return
+			}
+		}
+	}
+
+	if responseCount < 1 {
+		responseCount = 1
+	}
+
+	if responseCount > 3 {
+		responseCount = 3
+	}
+
+	err = database.SetJudgeResponseCount(lobbyId, responseCount)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
