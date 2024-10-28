@@ -798,6 +798,62 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("success"))
 }
 
+func SetResponseCount(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	_, err = getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var responseCount int
+	for key, val := range r.Form {
+		if key == "responseCount" {
+			responseCount, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse response count."))
+				return
+			}
+		}
+	}
+
+	if responseCount < 1 {
+		responseCount = 1
+	}
+
+	if responseCount > 3 {
+		responseCount = 3
+	}
+
+	err = database.SetJudgeResponseCount(lobbyId, responseCount)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
 func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player, error) {
 	var player database.Player
 

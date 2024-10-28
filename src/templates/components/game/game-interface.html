@@ -30,7 +30,7 @@
   </table>
 </div>
 <div id="lobby-player-data">
-  {{if not .PromptCardText.Valid}}
+  {{if not .JudgeCardText.Valid}}
   <div class="lobby-player-data-message">[NO PROMPT CARD]</div>
   {{else if .PlayerIsJudge}}
   <div class="lobby-player-data-message">You are the Judge.</div>
@@ -186,23 +186,37 @@
 </div>
 <div id="lobby-game-board">
   <h3 id="prompt-card">
-    {{if not .PromptCardText.Valid}}
+    {{if not .JudgeCardText.Valid}}
     <span>[NO PROMPT CARD]</span>
     {{else}}
-    <span class="wrap-new-lines">{{.PromptCardText.String}}</span>
+    <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
+    {{end}}
+  </h3>
+  <span id="judge-settings">
     {{if and .PlayerIsJudge .BoardIsEmpty}}
+    <label for="setResponseCount">Responses:</label>
+    <input
+      type="number"
+      id="setResponseCount"
+      name="responseCount"
+      min="1"
+      max="3"
+      value="{{.JudgeResponseCount}}"
+      required="required"
+      hx-put="/api/lobby/{{.LobbyId}}/response-count"
+      hx-trigger="change"
+    />
     <span
       class="clickable"
       style="float: right"
-      title="Skip Current Card"
       hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
       hx-confirm="Are you sure you want to skip this prompt?"
     >
-      &#11118;
+      &#11118; Skip Prompt
     </span>
-    {{end}} {{end}}
-  </h3>
-  {{if .PromptCardText.Valid}}
+    {{end}}
+  </span>
+  {{if .JudgeCardText.Valid}}
   <br />
   {{if .BoardIsReady}}
   <div id="board-responses">
@@ -237,7 +251,10 @@
         {{range .PlayerResponses}}
         <tr>
           <td>
-            {{range .ResponseCards}}
+            {{$playerResponseCardCount := len .ResponseCards}} {{if gt
+            $playerResponseCardCount 0}}
+            <hr />
+            {{end}} {{range .ResponseCards}}
             <p style="padding: 20px">
               {{if not .SpecialCategory.Valid}}
               <span
@@ -273,7 +290,7 @@
         <tr>
           <td>{{.PlayerUserName}}</td>
           <td style="text-align: center">
-            {{len .ResponseCards}}/{{$.CardsToPlayCount}}
+            {{len .ResponseCards}}/{{$.JudgeBlankCount}}
           </td>
         </tr>
         {{end}}
