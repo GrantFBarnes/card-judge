@@ -122,20 +122,36 @@
     </tbody>
   </table>
   <hr />
-  <table id="special-card-table">
+  <table id="special-table">
     <thead>
       <tr>
-        <td colspan="2">Credits: {{.PlayerCredits}}</td>
+        <td colspan="2">Credits: {{.PlayerCreditsRemaining}}</td>
       </tr>
       <tr>
-        <th>Special Card</th>
+        <th>Special</th>
         <th>Cost</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>
-          {{if and (not .PlayerIsReady) (ge .PlayerCredits 1)}}
+          {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
+          <button
+            title="Get an extra response for the round."
+            hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
+            hx-confirm="Are you sure you want to use an extra response?"
+          >
+            Extra Response
+          </button>
+          {{else}}
+          <i>Extra Response</i>
+          {{end}}
+        </td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>
+          {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
           <button
             title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
             hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
@@ -151,7 +167,7 @@
       </tr>
       <tr>
         <td>
-          {{if and (not .PlayerIsReady) (ge .PlayerCredits 1)}}
+          {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
           <button
             title="Draw a random card from the draw pile.&#010;You will not know which card you played."
             hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
@@ -167,7 +183,7 @@
       </tr>
       <tr>
         <td>
-          {{if and (not .PlayerIsReady) (ge .PlayerCredits 2)}}
+          {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 2)}}
           <button
             title="Provide any text you want to play as a card."
             onclick="document.getElementById('wild-card-dialog').showModal()"
