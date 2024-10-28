@@ -74,6 +74,7 @@ func main() {
 		"../database/procedures/SP_RESPOND_WITH_STEAL_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_SURPRISE_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_WILD_CARD.sql",
+		"../database/procedures/SP_SET_LOSING_STREAK.sql",
 		"../database/procedures/SP_SET_MISSING_JUDGE_CARD.sql",
 		"../database/procedures/SP_SET_MISSING_JUDGE_PLAYER.sql",
 		"../database/procedures/SP_SET_NEXT_JUDGE_CARD.sql",
