@@ -192,8 +192,8 @@
     <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
     {{end}}
   </h3>
+  {{if .PlayerIsJudge}}
   <span id="judge-settings">
-    {{if and .PlayerIsJudge .BoardIsEmpty}}
     <label for="setResponseCount">Responses:</label>
     <input
       type="number"
@@ -214,9 +214,8 @@
     >
       &#11118; Skip Prompt
     </span>
-    {{end}}
   </span>
-  {{if .JudgeCardText.Valid}}
+  {{end}} {{if .JudgeCardText.Valid}}
   <br />
   {{if .BoardIsReady}}
   <div id="board-responses">
@@ -238,6 +237,18 @@
               <span class="wrap-new-lines">{{.Text}}</span>
             </p>
             {{end}}
+          </td>
+        </tr>
+        {{end}} {{if .PlayerIsJudge}}
+        <tr>
+          <td>
+            <hr />
+            <button
+              hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
+              hx-confirm="Are you sure you want to pick a random winner?"
+            >
+              Random Winner
+            </button>
           </td>
         </tr>
         {{end}}

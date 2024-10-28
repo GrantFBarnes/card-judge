@@ -67,6 +67,7 @@ func main() {
 		"../database/procedures/SP_DISCARD_HAND.sql",
 		"../database/procedures/SP_DRAW_HAND.sql",
 		"../database/procedures/SP_GET_READABLE_DECKS.sql",
+		"../database/procedures/SP_PICK_RANDOM_WINNER.sql",
 		"../database/procedures/SP_PICK_WINNER.sql",
 		"../database/procedures/SP_RESPOND_WITH_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_STEAL_CARD.sql",
@@ -78,19 +79,23 @@ func main() {
 		"../database/procedures/SP_SET_NEXT_JUDGE_PLAYER.sql",
 		"../database/procedures/SP_SET_PLAYER_ACTIVE.sql",
 		"../database/procedures/SP_SET_PLAYER_INACTIVE.sql",
+		"../database/procedures/SP_SET_RESPONSE_COUNT.sql",
+		"../database/procedures/SP_SET_RESPONSES_LOBBY.sql",
+		"../database/procedures/SP_SET_RESPONSES_PLAYER.sql",
 		"../database/procedures/SP_SKIP_PROMPT.sql",
 		"../database/procedures/SP_START_NEW_ROUND.sql",
 		"../database/procedures/SP_WITHDRAW_CARD.sql",
+		"../database/procedures/SP_WITHDRAW_LOBBY.sql",
+		"../database/procedures/SP_WITHDRAW_RESPONSE.sql",
 
 		// events
 		"../database/events/EVT_CLEAN_LOGIN_ATTEMPTS.sql",
 
 		// triggers
-		"../database/triggers/TR_ADD_JUDGE_AF_IN_LOBBY.sql",
-		"../database/triggers/TR_ADD_RESPONSE_AF_IN_PLAYER.sql",
-		"../database/triggers/TR_ADD_RESPONSE_AF_UP_PLAYER.sql",
-		"../database/triggers/TR_DRAW_HAND_AF_IN_PLAYER.sql",
-		"../database/triggers/TR_DRAW_HAND_AF_UP_LOBBY.sql",
+		"../database/triggers/TR_LOBBY_AFTER_INSERT.sql",
+		"../database/triggers/TR_LOBBY_AFTER_UPDATE.sql",
+		"../database/triggers/TR_PLAYER_AFTER_INSERT.sql",
+		"../database/triggers/TR_PLAYER_AFTER_UPDATE.sql",
 		"../database/triggers/TR_REVOKE_ACCESS_AF_UP_DECK.sql",
 		"../database/triggers/TR_REVOKE_ACCESS_AF_UP_LOBBY.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_CARD.sql",
@@ -100,11 +105,6 @@ func main() {
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_LOBBY.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_PLAYER.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_USER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_CARD_AF_IN_PLAYER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_DL_PLAYER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_IN_PLAYER.sql",
-		"../database/triggers/TR_SET_MISSING_JUDGE_PLAYER_AF_UP_PLAYER.sql",
-		"../database/triggers/TR_SET_RESPONSES_AF_UP_JUDGE.sql",
 
 		// populate
 		"../database/populate/admin.sql",
@@ -182,6 +182,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/lock", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.LockCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/unlock", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.UnlockCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/pick-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickWinner)))
+	http.Handle("POST /api/lobby/{lobbyId}/pick-random-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickRandomWinner)))
 	http.Handle("POST /api/lobby/{lobbyId}/discard-hand", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DiscardHand)))
 	http.Handle("POST /api/lobby/{lobbyId}/flip", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.FlipTable)))
 	http.Handle("POST /api/lobby/{lobbyId}/skip-prompt", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SkipPrompt)))
