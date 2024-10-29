@@ -50,6 +50,15 @@
   padding: 10px;
 }
 
+#player-values-table {
+  width: 100%;
+  text-align: center;
+}
+
+#player-values-table tr:hover {
+  background-color: transparent;
+}
+
 #special-table {
   width: 100%;
   text-align: center;
