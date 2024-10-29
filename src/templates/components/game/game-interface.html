@@ -154,6 +154,7 @@
       <tr>
         <th>Special</th>
         <th>Cost</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -161,7 +162,6 @@
         <td>
           {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
           <button
-            title="Get an extra response for the round."
             hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
             hx-confirm="Are you sure you want to use an extra response?"
           >
@@ -172,12 +172,12 @@
           {{end}}
         </td>
         <td>1</td>
+        <td title="Get an extra response for the round.">&#9432;</td>
       </tr>
       <tr>
         <td>
           {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
           <button
-            title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
             hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
             hx-confirm="Are you sure you want to use a Steal Card?"
           >
@@ -188,12 +188,16 @@
           {{end}}
         </td>
         <td>1</td>
+        <td
+          title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
+        >
+          &#9432;
+        </td>
       </tr>
       <tr>
         <td>
           {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
           <button
-            title="Draw a random card from the draw pile.&#010;You will not know which card you played."
             hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
             hx-confirm="Are you sure you want to use a Surprise Card?"
           >
@@ -204,12 +208,16 @@
           {{end}}
         </td>
         <td>1</td>
+        <td
+          title="Draw a random card from the draw pile.&#010;You will not know which card you played."
+        >
+          &#9432;
+        </td>
       </tr>
       <tr>
         <td>
           {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 2)}}
           <button
-            title="Provide any text you want to play as a card."
             onclick="document.getElementById('wild-card-dialog').showModal()"
           >
             Wild Card
@@ -219,6 +227,7 @@
           {{end}}
         </td>
         <td>2</td>
+        <td title="Provide any text you want to play as a card.">&#9432;</td>
       </tr>
     </tbody>
   </table>
