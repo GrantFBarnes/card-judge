@@ -186,6 +186,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/discard", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DiscardCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/lock", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.LockCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/unlock", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.UnlockCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/reveal", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.RevealResponse)))
 	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/pick-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickWinner)))
 	http.Handle("POST /api/lobby/{lobbyId}/pick-random-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickRandomWinner)))
 	http.Handle("POST /api/lobby/{lobbyId}/discard-hand", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DiscardHand)))

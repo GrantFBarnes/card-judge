@@ -238,7 +238,7 @@
   <div id="board-responses">
     <table id="board-responses-table">
       <tbody>
-        {{range .BoardResponses}}
+        {{range .BoardResponses}} {{if .IsRevealed}}
         <tr
           {{if
           $.PlayerIsJudge}}
@@ -257,7 +257,26 @@
             {{end}}
           </td>
         </tr>
-        {{end}} {{if .PlayerIsJudge}}
+        {{else}}
+        <tr
+          {{if
+          $.PlayerIsJudge}}
+          class="clickable"
+          hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal"
+          {{end}}
+        >
+          <td>
+            <hr />
+            <p style="padding: 20px">
+              {{if $.PlayerIsJudge}}
+              <span>Click to Reveal</span>
+              {{else}}
+              <span>Waiting to be revealed...</span>
+              {{end}}
+            </p>
+          </td>
+        </tr>
+        {{end}} {{end}} {{if .PlayerIsJudge}}
         <tr>
           <td>
             <hr />
