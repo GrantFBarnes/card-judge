@@ -123,11 +123,34 @@
     </tbody>
   </table>
   <hr />
-  <table id="special-table">
+  <table id="player-values-table">
     <thead>
       <tr>
-        <td colspan="2">Credits: {{.PlayerCreditsRemaining}}</td>
+        <th>Value</th>
+        <th>Amount</th>
+        <th></th>
       </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Credits</td>
+        <td>{{.PlayerCreditsRemaining}}</td>
+        <td title="Credits are used to purchase specials.">&#9432;</td>
+      </tr>
+      <tr>
+        <td>Losing Streak</td>
+        <td>{{.PlayerLosingStreak}}</td>
+        <td
+          title="If your losing streak hits 5, you will be awarded an additional credit and your streak will be reset."
+        >
+          &#9432;
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <hr />
+  <table id="special-table">
+    <thead>
       <tr>
         <th>Special</th>
         <th>Cost</th>
@@ -406,20 +429,6 @@
         <td>{{.}}</td>
       </tr>
       {{end}}
-    </tbody>
-  </table>
-  <br />
-  <br />
-  <table>
-    <thead>
-      <tr>
-        <th>Losing Streak</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{.PlayerLosingStreak}}</td>
-      </tr>
     </tbody>
   </table>
 </div>
