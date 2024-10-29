@@ -47,6 +47,7 @@ func main() {
 		"../database/tables/RESPONSE.sql",
 		"../database/tables/RESPONSE_CARD.sql",
 		"../database/tables/WIN.sql",
+		"../database/tables/KICK.sql",
 		"../database/tables/USER_ACCESS_DECK.sql",
 		"../database/tables/USER_ACCESS_LOBBY.sql",
 		"../database/tables/LOGIN_ATTEMPT.sql",
@@ -55,6 +56,7 @@ func main() {
 		"../database/tables/LOG_SKIP.sql",
 		"../database/tables/LOG_RESPONSE_CARD.sql",
 		"../database/tables/LOG_WIN.sql",
+		"../database/tables/LOG_KICK.sql",
 
 		// functions
 		"../database/functions/FN_GET_LOBBY_JUDGE_PLAYER_ID.sql",
@@ -86,6 +88,8 @@ func main() {
 		"../database/procedures/SP_SET_RESPONSES_PLAYER.sql",
 		"../database/procedures/SP_SKIP_PROMPT.sql",
 		"../database/procedures/SP_START_NEW_ROUND.sql",
+		"../database/procedures/SP_VOTE_TO_KICK.sql",
+		"../database/procedures/SP_VOTE_TO_KICK_UNDO.sql",
 		"../database/procedures/SP_WITHDRAW_CARD.sql",
 		"../database/procedures/SP_WITHDRAW_LOBBY.sql",
 		"../database/procedures/SP_WITHDRAW_RESPONSE.sql",
@@ -186,6 +190,8 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/discard", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DiscardCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/lock", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.LockCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/unlock", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.UnlockCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/kick", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.VoteToKick)))
+	http.Handle("POST /api/lobby/{lobbyId}/player/{playerId}/kick/undo", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.VoteToKickUndo)))
 	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/reveal", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.RevealResponse)))
 	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/pick-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickWinner)))
 	http.Handle("POST /api/lobby/{lobbyId}/pick-random-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickRandomWinner)))

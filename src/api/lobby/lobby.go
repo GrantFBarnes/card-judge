@@ -531,6 +531,99 @@ func UnlockCard(w http.ResponseWriter, r *http.Request) {
 	writeGameInterfaceHtml(w, player.Id)
 }
 
+func VoteToKick(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	subjectPlayerIdString := r.PathValue("playerId")
+	subjectPlayerId, err := uuid.Parse(subjectPlayerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	subjectPlayer, err := database.GetPlayer(subjectPlayerId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	isKicked, err := database.VoteToKick(player.Id, subjectPlayer.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Voted to kick %s", player.Name, subjectPlayer.Name))
+
+	if isKicked {
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Player Kicked: %s", subjectPlayer.Name))
+		websocket.PlayerBroadcast(subjectPlayerId, "kick")
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
+}
+
+func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	subjectPlayerIdString := r.PathValue("playerId")
+	subjectPlayerId, err := uuid.Parse(subjectPlayerIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get player id from path."))
+		return
+	}
+
+	subjectPlayer, err := database.GetPlayer(subjectPlayerId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.VoteToKickUndo(player.Id, subjectPlayer.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Removed their vote to kick %s", player.Name, subjectPlayer.Name))
+
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
+}
+
 func RevealResponse(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
@@ -1001,7 +1094,7 @@ func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player,
 		return player, errors.New("failed to get user id")
 	}
 
-	player, err := database.GetPlayer(lobbyId, userId)
+	player, err := database.GetLobbyUserPlayer(lobbyId, userId)
 	if err != nil {
 		return player, err
 	}

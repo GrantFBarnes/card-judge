@@ -17,6 +17,7 @@ type StatPersonal struct {
 	CardDrawCount    int
 	CardDiscardCount int
 	CardSkipCount    int
+	LobbyKickCount   int
 }
 
 func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
@@ -63,7 +64,8 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			) AS CARD_PLAY_COUNT,
 			(SELECT COUNT(*) FROM LOG_DRAW WHERE USER_ID = U.ID) AS CARD_DRAW_COUNT,
 			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS CARD_DISCARD_COUNT,
-			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS CARD_SKIP_COUNT
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS CARD_SKIP_COUNT,
+			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
 	`
@@ -81,7 +83,8 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			&result.CardPlayCount,
 			&result.CardDrawCount,
 			&result.CardDiscardCount,
-			&result.CardSkipCount); err != nil {
+			&result.CardSkipCount,
+			&result.LobbyKickCount); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}

@@ -41,6 +41,12 @@ window.onload = () => {
       );
       return;
     }
+
+    if (event.data === "kick") {
+      document.location.href = "/lobbies";
+      return;
+    }
+
     const message = document.createElement("div");
     message.innerText = event.data;
     lobbyChatMessages.appendChild(message);
