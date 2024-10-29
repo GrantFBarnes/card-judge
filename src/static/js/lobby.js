@@ -53,12 +53,15 @@ window.onload = () => {
 
 let lobbyPlayerDataScrollTop = 0;
 let lobbyGameBoardScrollTop = 0;
+let lobbyGameStatsScrollTop = 0;
 
 document.addEventListener("htmx:beforeSwap", function () {
   const lobbyPlayerData = document.getElementById("lobby-player-data");
   if (lobbyPlayerData) lobbyPlayerDataScrollTop = lobbyPlayerData.scrollTop;
   const lobbyGameBoard = document.getElementById("lobby-game-board");
   if (lobbyGameBoard) lobbyGameBoardScrollTop = lobbyGameBoard.scrollTop;
+  const lobbyGameStats = document.getElementById("lobby-game-stats");
+  if (lobbyGameStats) lobbyGameStatsScrollTop = lobbyGameStats.scrollTop;
 });
 
 document.addEventListener("htmx:afterSwap", function () {
@@ -66,4 +69,6 @@ document.addEventListener("htmx:afterSwap", function () {
   if (lobbyPlayerData) lobbyPlayerData.scrollTop = lobbyPlayerDataScrollTop;
   const lobbyGameBoard = document.getElementById("lobby-game-board");
   if (lobbyGameBoard) lobbyGameBoard.scrollTop = lobbyGameBoardScrollTop;
+  const lobbyGameStats = document.getElementById("lobby-game-stats");
+  if (lobbyGameStats) lobbyGameStats.scrollTop = lobbyGameStatsScrollTop;
 });

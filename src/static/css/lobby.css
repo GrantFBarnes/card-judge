@@ -82,6 +82,7 @@
 
 #lobby-game-stats {
   grid-area: stats;
+  overflow-y: scroll;
 }
 
 #lobby-chat {
