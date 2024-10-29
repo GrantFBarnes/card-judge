@@ -354,9 +354,6 @@
   <table>
     <thead>
       <tr>
-        <th colspan="2">Scoreboard</th>
-      </tr>
-      <tr>
         <th>Player</th>
         <th>Wins</th>
       </tr>
@@ -364,8 +361,26 @@
     <tbody>
       {{range .Wins}}
       <tr>
-        <td>{{.UserName}}</td>
-        <td>{{.WinCount}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.Count}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  <br />
+  <br />
+  <table>
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>Credits</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Credits}}
+      <tr>
+        <td>{{.Name}}</td>
+        <td>{{.Count}}</td>
       </tr>
       {{end}}
     </tbody>
