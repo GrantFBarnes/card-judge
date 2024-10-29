@@ -103,6 +103,7 @@
             >{{.Text}}</span
           >
           {{end}}
+          <span style="float: right" title="{{.DeckName}}">&#9072;</span>
         </td>
         <td style="text-align: center">
           {{if not .IsLocked}}
@@ -251,6 +252,7 @@
             {{range .ResponseCards}}
             <p style="padding: 20px">
               <span class="wrap-new-lines">{{.Text}}</span>
+              <span style="float: right" title="{{.DeckName}}">&#9072;</span>
             </p>
             {{end}}
           </td>
@@ -295,6 +297,7 @@
               <span>[***SURPRISE CARD PLAYED!***]</span> {{else}}
               <span class="wrap-new-lines">{{.Text}}</span>
               {{end}}
+              <span style="float: right" title="{{.DeckName}}">&#9072;</span>
             </p>
             {{end}}
           </td>
