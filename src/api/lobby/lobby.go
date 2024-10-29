@@ -78,6 +78,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var name string
+	var message string
 	var password string
 	var passwordConfirm string
 	var handSize int
@@ -86,6 +87,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	for key, val := range r.Form {
 		if key == "name" {
 			name = val[0]
+		} else if key == "message" {
+			message = val[0]
 		} else if key == "password" {
 			password = val[0]
 		} else if key == "passwordConfirm" {
@@ -170,7 +173,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, password, handSize, creditLimit)
+	lobbyId, err := database.CreateLobby(name, message, password, handSize, creditLimit)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -772,6 +775,49 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby name set to %s", player.Name, name))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetMessage(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var message string
+	for key, val := range r.Form {
+		if key == "message" {
+			message = val[0]
+		}
+	}
+
+	err = database.SetLobbyMessage(lobbyId, message)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby message set to %s", player.Name, message))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))

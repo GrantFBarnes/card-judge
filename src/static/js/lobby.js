@@ -1,4 +1,7 @@
 window.onload = () => {
+  const lobbyMessageDialog = document.getElementById("lobby-message-dialog");
+  if (lobbyMessageDialog) lobbyMessageDialog.showModal();
+
   let wsProtocol = "wss://";
   if (document.location.protocol === "http:") {
     wsProtocol = "ws://";
