@@ -569,10 +569,10 @@ func VoteToKick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Voted to kick %s", player.Name, subjectPlayer.Name))
+	websocket.LobbyBroadcast(lobbyId, "<blue>"+player.Name+"</>: Voted to kick <blue>"+subjectPlayer.Name+"</> out of the lobby")
 
 	if isKicked {
-		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Player Kicked: %s", subjectPlayer.Name))
+		websocket.LobbyBroadcast(lobbyId, "<red>Player Kicked</>: <blue>"+subjectPlayer.Name+"</>")
 		websocket.PlayerBroadcast(subjectPlayerId, "kick")
 	}
 
@@ -618,7 +618,7 @@ func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Removed their vote to kick %s", player.Name, subjectPlayer.Name))
+	websocket.LobbyBroadcast(lobbyId, "<blue>"+player.Name+"</>: Removed their vote to kick <blue>"+subjectPlayer.Name+"</> out of the lobby")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
@@ -690,7 +690,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winning Card: %s", cardTextStart))
+	websocket.LobbyBroadcast(lobbyId, "<green>Winning Card</>: "+cardTextStart)
 
 	winnerName, err := database.PickWinner(responseId)
 	if err != nil {
@@ -699,7 +699,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winner: %s", winnerName))
+	websocket.LobbyBroadcast(lobbyId, "<green>Winner</>: <blue>"+winnerName+"</>")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
@@ -714,14 +714,14 @@ func PickRandomWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = getLobbyRequestPlayer(r, lobbyId)
+	player, err := getLobbyRequestPlayer(r, lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "Random Winner!")
+	websocket.LobbyBroadcast(lobbyId, "<blue>"+player.Name+"</>: Random Winner!")
 
 	winnerName, err := database.PickRandomWinner(lobbyId)
 	if err != nil {
@@ -730,7 +730,7 @@ func PickRandomWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("Winner: %s", winnerName))
+	websocket.LobbyBroadcast(lobbyId, "<green>Winner</>: <blue>"+winnerName+"</>")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
@@ -778,7 +778,7 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: FLIP THE TABLE!", player.Name))
+	websocket.LobbyBroadcast(lobbyId, "<blue>"+player.Name+"</>: FLIP THE TABLE!")
 
 	w.Header().Add("HX-Redirect", "/lobbies")
 	w.WriteHeader(http.StatusOK)
@@ -866,7 +866,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby name set to %s", player.Name, name))
+	websocket.LobbyBroadcast(lobbyId, "<blue>"+player.Name+"</>: Lobby name set to "+name)
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
@@ -910,7 +910,7 @@ func SetMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby message set to %s", player.Name, message))
+	websocket.LobbyBroadcast(lobbyId, "<blue>"+player.Name+"</>: Lobby message set to "+message)
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -966,7 +966,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby hand size set to %d", player.Name, handSize))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<blue>%s</>: Lobby hand size set to %d", player.Name, handSize))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
@@ -1023,7 +1023,7 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("%s: Lobby credit limit set to %d", player.Name, creditLimit))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<blue>%s</>: Lobby credit limit set to %d", player.Name, creditLimit))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)

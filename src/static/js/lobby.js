@@ -33,7 +33,9 @@ window.onload = () => {
   };
 
   conn.onmessage = (event) => {
-    if (event.data === "refresh") {
+    let messageText = event.data;
+
+    if (messageText === "refresh") {
       htmx.ajax(
         "GET",
         "/api" + document.location.pathname + "/game-interface",
@@ -42,13 +44,27 @@ window.onload = () => {
       return;
     }
 
-    if (event.data === "kick") {
+    if (messageText === "kick") {
       document.location.href = "/lobbies";
       return;
     }
 
+    messageText = messageText.replaceAll(
+      "<red>",
+      '<span class="lobby-chat-message-red">'
+    );
+    messageText = messageText.replaceAll(
+      "<green>",
+      '<span class="lobby-chat-message-green">'
+    );
+    messageText = messageText.replaceAll(
+      "<blue>",
+      '<span class="lobby-chat-message-blue">'
+    );
+    messageText = messageText.replaceAll("</>", "</span>");
+
     const message = document.createElement("div");
-    message.innerText = event.data;
+    message.innerHTML = messageText;
     lobbyChatMessages.appendChild(message);
 
     while (lobbyChatMessages.childNodes.length > 100) {
