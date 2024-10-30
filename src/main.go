@@ -55,6 +55,7 @@ func main() {
 		"../database/tables/LOG_DRAW.sql",
 		"../database/tables/LOG_SKIP.sql",
 		"../database/tables/LOG_RESPONSE_CARD.sql",
+		"../database/tables/LOG_WILD.sql",
 		"../database/tables/LOG_WIN.sql",
 		"../database/tables/LOG_KICK.sql",
 
@@ -98,6 +99,7 @@ func main() {
 		"../database/events/EVT_CLEAN_LOGIN_ATTEMPTS.sql",
 
 		// triggers
+		"../database/triggers/TR_LOBBY_AFTER_DELETE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_INSERT.sql",
 		"../database/triggers/TR_LOBBY_AFTER_UPDATE.sql",
 		"../database/triggers/TR_PLAYER_AFTER_INSERT.sql",
@@ -112,10 +114,6 @@ func main() {
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_LOBBY.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_PLAYER.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_USER.sql",
-
-		// populate
-		"../database/populate/admin.sql",
-		"../database/populate/deck.sql",
 	}
 	for _, sqlFile := range sqlFiles {
 		err = database.RunFile(sqlFile)

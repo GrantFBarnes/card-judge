@@ -370,7 +370,7 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	existingCardId, err := database.GetCardId(uuid.Nil, text)
+	existingCardId, err := database.GetCardId(lobbyId, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
