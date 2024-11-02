@@ -89,6 +89,10 @@
   width: 100%;
 }
 
+#player-responses-table {
+  width: 100%;
+}
+
 #lobby-game-stats {
   grid-area: stats;
   overflow-y: scroll;
