@@ -1,127 +1,127 @@
 :root {
-  --top-bar-height: 20px;
-  --top-bar-padding: 15px;
-  --content-margin: 20px;
+    --top-bar-height: 20px;
+    --top-bar-padding: 15px;
+    --content-margin: 20px;
 }
 
 html,
 body {
-  margin: 0;
-  font-family: "Courier New", Courier, monospace;
-  height: 100%;
+    margin: 0;
+    font-family: "Courier New", Courier, monospace;
+    height: 100%;
 }
 
 table {
-  border-collapse: collapse;
+    border-collapse: collapse;
 }
 
 th,
 td {
-  padding: 5px;
+    padding: 5px;
 }
 
 dialog::backdrop {
-  background-color: black;
-  opacity: 0.8;
+    background-color: black;
+    opacity: 0.8;
 }
 
 input {
-  padding: 5px;
-  margin: 5px;
+    padding: 5px;
+    margin: 5px;
 }
 
 input[type="checkbox"] {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 input[type="submit"] {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 textarea {
-  padding: 5px;
-  margin: 5px;
+    padding: 5px;
+    margin: 5px;
 }
 
 select {
-  padding: 5px;
-  margin: 5px;
-  cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
 }
 
 button {
-  padding: 5px;
-  margin: 5px;
-  cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
 }
 
 summary {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .clickable {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .wrap-new-lines {
-  white-space: pre-wrap;
+    white-space: pre-wrap;
 }
 
 .close-button {
-  cursor: pointer;
-  float: right;
+    cursor: pointer;
+    float: right;
 }
 
 #top-bar {
-  color: var(--top-bar-text);
-  background-color: var(--top-bar-bg);
-  height: var(--top-bar-height);
-  padding: var(--top-bar-padding);
-  display: grid;
-  grid-auto-flow: column;
-  overflow: hidden;
+    color: var(--top-bar-text);
+    background-color: var(--top-bar-bg);
+    height: var(--top-bar-height);
+    padding: var(--top-bar-padding);
+    display: grid;
+    grid-auto-flow: column;
+    overflow: hidden;
 }
 
 #top-bar-menu {
-  color: var(--top-bar-text);
-  background-color: var(--top-bar-bg);
-  text-align: right;
-  position: absolute;
-  right: 0;
-  min-width: 50px;
+    color: var(--top-bar-text);
+    background-color: var(--top-bar-bg);
+    text-align: right;
+    position: absolute;
+    right: 0;
+    min-width: 50px;
 
-  /* will toggle to block */
-  display: none;
+    /* will toggle to block */
+    display: none;
 }
 
 #top-bar-menu div:first-child {
-  border-top: 2px dashed black;
+    border-top: 2px dashed black;
 }
 
 #top-bar-menu div {
-  border-bottom: 2px solid black;
-  border-left: 2px solid black;
-  padding: 10px;
+    border-bottom: 2px solid black;
+    border-left: 2px solid black;
+    padding: 10px;
 }
 
 #top-bar-menu .top-bar-menu-link {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 #top-bar-menu .top-bar-menu-link:hover {
-  background-color: var(--top-bar-hover);
+    background-color: var(--top-bar-hover);
 }
 
 #content {
-  margin: var(--content-margin);
-  height: calc(
-    100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) -
-      var(--top-bar-height)
-  );
+    margin: var(--content-margin);
+    height: calc(
+            100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) -
+            var(--top-bar-height)
+    );
 }
 
 #body {
-  max-width: 1920px;
-  margin: auto;
-  height: 100%;
+    max-width: 1920px;
+    margin: auto;
+    height: 100%;
 }
