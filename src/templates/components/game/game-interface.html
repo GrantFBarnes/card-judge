@@ -239,7 +239,9 @@
     <span>[NO PROMPT CARD]</span>
     {{else}}
     <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
-    {{end}}
+    {{if .JudgeCardDeck.Valid}}
+    <span style="float: right" title="{{.JudgeCardDeck.String}}">&#9432;</span>
+    {{end}} {{end}}
   </h3>
   {{if .PlayerIsJudge}}
   <span id="judge-settings">
