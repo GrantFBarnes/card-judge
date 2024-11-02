@@ -63,6 +63,9 @@ window.onload = () => {
     );
     messageText = messageText.replaceAll("</>", "</span>");
 
+    const now = new Date();
+    messageText = now.getHours() + ":" + now.getMinutes() + " " + messageText;
+
     const message = document.createElement("div");
     message.innerHTML = messageText;
     lobbyChatMessages.appendChild(message);
