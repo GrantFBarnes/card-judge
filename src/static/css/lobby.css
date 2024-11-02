@@ -102,10 +102,18 @@
 
 #lobby-chat-messages {
   height: calc(100% - 75px);
+  max-width: 1850px;
   overflow-y: scroll;
   overflow-x: hidden !important;
   padding-left: calc(5px + 1em);
   text-indent: -1em;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 1920px) {
+  #lobby-chat-messages {
+    max-width: 90vw;
+  }
 }
 
 #lobby-chat-form {
