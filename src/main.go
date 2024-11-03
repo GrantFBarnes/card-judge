@@ -168,7 +168,6 @@ func main() {
 	http.Handle("DELETE /api/deck/{deckId}", api.MiddlewareForAPIs(http.HandlerFunc(apiDeck.Delete)))
 
 	// card
-	http.Handle("GET /api/card/{cardId}/image", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.GetCardImage)))
 	http.Handle("POST /api/card/search", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Search)))
 	http.Handle("POST /api/card/create", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Create)))
 	http.Handle("PUT /api/card/{cardId}/category", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetCategory)))

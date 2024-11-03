@@ -1,7 +1,6 @@
 package apiCard
 
 import (
-	"encoding/base64"
 	"io"
 	"net/http"
 	"regexp"
@@ -362,9 +361,9 @@ func SetImage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if len(imageBytes) > 100000 {
+		if len(imageBytes) > 65000 {
 			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte("Image cannot be over 100 KB in size"))
+			_, _ = w.Write([]byte("Image cannot be over 65 KB in size"))
 			return
 		}
 	}
@@ -378,49 +377,6 @@ func SetImage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
-}
-
-func GetCardImage(w http.ResponseWriter, r *http.Request) {
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
-		return
-	}
-
-	card, err := database.GetCard(cardId)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card."))
-		return
-	}
-
-	userId := api.GetUserId(r)
-	if userId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	hasDeckAccess, err := database.UserHasDeckAccess(userId, card.DeckId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to check deck access."))
-		return
-	}
-
-	if !hasDeckAccess {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte("User does not have access."))
-		return
-	}
-
-	imageSrc := base64.StdEncoding.EncodeToString(card.Image)
-	imageHtml := "<img src=\"data:image;base64," + imageSrc + "\"></img>"
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(imageHtml))
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {

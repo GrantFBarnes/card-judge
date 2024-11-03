@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+	"encoding/base64"
 	"errors"
 	"log"
 	"time"
@@ -16,8 +18,7 @@ type Card struct {
 	DeckId   uuid.UUID
 	Category string
 	Text     string
-	HasImage bool
-	Image    []byte
+	Image    sql.NullString
 }
 
 func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
@@ -45,7 +46,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			C.DECK_ID,
 			C.CATEGORY,
 			C.TEXT,
-			IF(C.IMAGE IS NOT NULL, 1, 0) AS HAS_IMAGE
+			C.IMAGE
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
 			AND C.CATEGORY LIKE ?
@@ -64,6 +65,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 	result := make([]Card, 0)
 	for rows.Next() {
 		var card Card
+		var imageBytes []byte
 		if err := rows.Scan(
 			&card.Id,
 			&card.CreatedOnDate,
@@ -71,10 +73,16 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			&card.DeckId,
 			&card.Category,
 			&card.Text,
-			&card.HasImage); err != nil {
+			&imageBytes); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
+		}
+
 		result = append(result, card)
 	}
 	return result, nil
@@ -119,7 +127,6 @@ func GetCard(id uuid.UUID) (Card, error) {
 			DECK_ID,
 			CATEGORY,
 			TEXT,
-			IF(IMAGE IS NOT NULL, 1, 0) AS HAS_IMAGE,
 			IMAGE
 		FROM CARD
 		WHERE ID = ?
@@ -130,6 +137,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	}
 
 	for rows.Next() {
+		var imageBytes []byte
 		if err := rows.Scan(
 			&card.Id,
 			&card.CreatedOnDate,
@@ -137,10 +145,14 @@ func GetCard(id uuid.UUID) (Card, error) {
 			&card.DeckId,
 			&card.Category,
 			&card.Text,
-			&card.HasImage,
-			&card.Image); err != nil {
+			&imageBytes); err != nil {
 			log.Println(err)
 			return card, errors.New("failed to scan row in query results")
+		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
 		}
 	}
 
