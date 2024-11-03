@@ -413,6 +413,37 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
+	case "round-time":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Avg. Seconds")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					AVG(TIMESTAMPDIFF(SECOND, PREV_WIN_TIME.CREATED_ON_DATE, PLAY_TIME.CREATED_ON_DATE)) AS AVG_SECONDS,
+					U.NAME
+				FROM (SELECT ROUND_ID,
+							LAG(ROUND_ID) OVER (PARTITION BY LOBBY_ID ORDER BY CREATED_ON_DATE) AS PREV_ROUND_ID
+					FROM LOG_RESPONSE_CARD
+					GROUP BY ROUND_ID) AS PREV_ROUND
+						INNER JOIN (SELECT PLAYER_USER_ID, ROUND_ID, CREATED_ON_DATE
+									FROM (SELECT PLAYER_USER_ID,
+												ROUND_ID,
+												CREATED_ON_DATE,
+												RANK() OVER (PARTITION BY PLAYER_USER_ID, ROUND_ID ORDER BY CREATED_ON_DATE DESC) AS PLAY_ORDER
+										FROM LOG_RESPONSE_CARD) AS PO
+									WHERE PLAY_ORDER = 1) AS PLAY_TIME ON PLAY_TIME.ROUND_ID = PREV_ROUND.ROUND_ID
+						INNER JOIN (SELECT LRC.ROUND_ID, LRC.CREATED_ON_DATE
+									FROM LOG_WIN AS LW
+											INNER JOIN LOG_RESPONSE_CARD AS LRC ON LRC.RESPONSE_ID = LW.RESPONSE_ID
+									GROUP BY LRC.RESPONSE_ID) AS PREV_WIN_TIME ON PREV_WIN_TIME.ROUND_ID = PREV_ROUND.PREV_ROUND_ID
+						INNER JOIN USER AS U ON U.ID = PLAY_TIME.PLAYER_USER_ID
+				GROUP BY PLAY_TIME.PLAYER_USER_ID
+				ORDER BY AVG_SECONDS, NAME;
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	case "card-play":
 		switch subject {
 		case "player":
