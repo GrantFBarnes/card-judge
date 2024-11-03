@@ -16,6 +16,8 @@ type Card struct {
 	DeckId   uuid.UUID
 	Category string
 	Text     string
+	HasImage bool
+	Image    []byte
 }
 
 func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
@@ -42,7 +44,8 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			C.CHANGED_ON_DATE,
 			C.DECK_ID,
 			C.CATEGORY,
-			C.TEXT
+			C.TEXT,
+			IF(C.IMAGE IS NOT NULL, 1, 0) AS HAS_IMAGE
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
 			AND C.CATEGORY LIKE ?
@@ -67,7 +70,8 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			&card.ChangedOnDate,
 			&card.DeckId,
 			&card.Category,
-			&card.Text); err != nil {
+			&card.Text,
+			&card.HasImage); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
@@ -114,7 +118,9 @@ func GetCard(id uuid.UUID) (Card, error) {
 			CHANGED_ON_DATE,
 			DECK_ID,
 			CATEGORY,
-			TEXT
+			TEXT,
+			IF(IMAGE IS NOT NULL, 1, 0) AS HAS_IMAGE,
+			IMAGE
 		FROM CARD
 		WHERE ID = ?
 	`
@@ -130,7 +136,9 @@ func GetCard(id uuid.UUID) (Card, error) {
 			&card.ChangedOnDate,
 			&card.DeckId,
 			&card.Category,
-			&card.Text); err != nil {
+			&card.Text,
+			&card.HasImage,
+			&card.Image); err != nil {
 			log.Println(err)
 			return card, errors.New("failed to scan row in query results")
 		}
@@ -226,6 +234,15 @@ func SetCardText(id uuid.UUID, text string) error {
 		WHERE ID = ?
 	`
 	return execute(sqlString, text, id)
+}
+
+func SetCardImage(id uuid.UUID, imageBytes []byte) error {
+	sqlString := `
+		UPDATE CARD
+		SET IMAGE = ?
+		WHERE ID = ?
+	`
+	return execute(sqlString, imageBytes, id)
 }
 
 func DeleteCard(id uuid.UUID) error {
