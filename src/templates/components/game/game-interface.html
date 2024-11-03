@@ -245,6 +245,11 @@
                 {{if .JudgeCardDeck.Valid}}
                     <span style="float: right" title="{{.JudgeCardDeck.String}}">&#9432;</span>
                 {{end}}
+                {{if .JudgeCardImage.Valid}}
+                    <br/>
+                    <br/>
+                    <img src="data:image;base64,{{.JudgeCardImage.String}}" alt="Card Image"/>
+                {{end}}
             {{end}}
         </h3>
         {{if .PlayerIsJudge}}
