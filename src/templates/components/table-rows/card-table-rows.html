@@ -5,6 +5,7 @@
             <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
             <td>{{if eq .Category "PROMPT"}} Prompt {{else}} Response {{end}}</td>
             <td class="wrap-new-lines">{{.Text}}</td>
+            <td>{{if .Image.Valid}} &#128444; {{end}}</td>
             <td>
                 <div
                         title="Edit"
@@ -80,6 +81,32 @@
                         <br/>
                         <div class="htmx-result"></div>
                         <input type="submit" value="Set Card Text"/>
+                    </form>
+                    <form enctype="multipart/form-data" hx-put="/api/card/{{.Id}}/image" hx-target="find .htmx-result">
+                        <h3>Set Card Image</h3>
+                        <input
+                                type="file"
+                                id="deckId{{.Id}}"
+                                name="deckId"
+                                value="{{.DeckId}}"
+                                hidden
+                        />
+                        {{if .Image.Valid}}
+                            <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                            <br/>
+                        {{end}}
+                        <label for="image{{.Id}}">Image:</label>
+                        <input
+                                type="file"
+                                id="image{{.Id}}"
+                                name="image"
+                                accept="image/*"
+                                autocomplete="off"
+                        />
+                        <br/>
+                        <br/>
+                        <div class="htmx-result"></div>
+                        <input type="submit" value="Set Image"/>
                     </form>
                 </dialog>
             </td>

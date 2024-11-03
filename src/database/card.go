@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+	"encoding/base64"
 	"errors"
 	"log"
 	"time"
@@ -16,6 +18,7 @@ type Card struct {
 	DeckId   uuid.UUID
 	Category string
 	Text     string
+	Image    sql.NullString
 }
 
 func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
@@ -42,7 +45,8 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			C.CHANGED_ON_DATE,
 			C.DECK_ID,
 			C.CATEGORY,
-			C.TEXT
+			C.TEXT,
+			C.IMAGE
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
 			AND C.CATEGORY LIKE ?
@@ -61,16 +65,24 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 	result := make([]Card, 0)
 	for rows.Next() {
 		var card Card
+		var imageBytes []byte
 		if err := rows.Scan(
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
 			&card.DeckId,
 			&card.Category,
-			&card.Text); err != nil {
+			&card.Text,
+			&imageBytes); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
+		}
+
 		result = append(result, card)
 	}
 	return result, nil
@@ -114,7 +126,8 @@ func GetCard(id uuid.UUID) (Card, error) {
 			CHANGED_ON_DATE,
 			DECK_ID,
 			CATEGORY,
-			TEXT
+			TEXT,
+			IMAGE
 		FROM CARD
 		WHERE ID = ?
 	`
@@ -124,15 +137,22 @@ func GetCard(id uuid.UUID) (Card, error) {
 	}
 
 	for rows.Next() {
+		var imageBytes []byte
 		if err := rows.Scan(
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
 			&card.DeckId,
 			&card.Category,
-			&card.Text); err != nil {
+			&card.Text,
+			&imageBytes); err != nil {
 			log.Println(err)
 			return card, errors.New("failed to scan row in query results")
+		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
 		}
 	}
 
@@ -226,6 +246,15 @@ func SetCardText(id uuid.UUID, text string) error {
 		WHERE ID = ?
 	`
 	return execute(sqlString, text, id)
+}
+
+func SetCardImage(id uuid.UUID, imageBytes []byte) error {
+	sqlString := `
+		UPDATE CARD
+		SET IMAGE = ?
+		WHERE ID = ?
+	`
+	return execute(sqlString, imageBytes, id)
 }
 
 func DeleteCard(id uuid.UUID) error {

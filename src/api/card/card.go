@@ -1,6 +1,7 @@
 package apiCard
 
 import (
+	"io"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -290,6 +291,84 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = database.SetCardText(cardId, text)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
+func SetImage(w http.ResponseWriter, r *http.Request) {
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get card id from path."))
+		return
+	}
+
+	err = r.ParseMultipartForm(32 << 20) // 32 MB max memory
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var deckId uuid.UUID
+	for key, val := range r.Form {
+		if key == "deckId" {
+			deckId, err = uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse deck id."))
+				return
+			}
+		}
+	}
+
+	userId := api.GetUserId(r)
+	if userId == uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get user id."))
+		return
+	}
+
+	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to check deck access."))
+		return
+	}
+
+	if !hasDeckAccess {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte("User does not have access."))
+		return
+	}
+
+	var imageBytes []byte
+	imageFile, _, err := r.FormFile("image")
+	if err == nil {
+		defer imageFile.Close()
+
+		imageBytes, err = io.ReadAll(imageFile)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte("Failed to get image bytes."))
+			return
+		}
+
+		if len(imageBytes) > 65000 {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte("Image cannot be over 65 KB in size"))
+			return
+		}
+	}
+
+	err = database.SetCardImage(cardId, imageBytes)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

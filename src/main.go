@@ -172,6 +172,7 @@ func main() {
 	http.Handle("POST /api/card/create", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Create)))
 	http.Handle("PUT /api/card/{cardId}/category", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetCategory)))
 	http.Handle("PUT /api/card/{cardId}/text", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetText)))
+	http.Handle("PUT /api/card/{cardId}/image", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetImage)))
 	http.Handle("DELETE /api/card/{cardId}", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Delete)))
 
 	// lobby

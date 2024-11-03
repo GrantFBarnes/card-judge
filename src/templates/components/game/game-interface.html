@@ -96,17 +96,21 @@
                                 </span>
                             {{end}}
                         </td>
-                        <td style="padding: 20px">
-                            {{if $.PlayerIsReady}}
-                                <span class="wrap-new-lines">{{.Text}}</span>
-                            {{else}}
-                                <span
-                                        class="clickable wrap-new-lines"
-                                        hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
-                                        hx-confirm="Are you sure you want to play this card?"
-                                >{{.Text}}</span>
-                            {{end}}
+                        <td
+                                style="padding: 20px"
+                                {{if not $.PlayerIsReady}}
+                                    class="clickable"
+                                    hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
+                                    hx-confirm="Are you sure you want to play this card?"
+                                {{end}}
+                        >
+                            <span class="wrap-new-lines">{{.Text}}</span>
                             <span style="float: right" title="{{.DeckName}}">&#9432;</span>
+                            {{if .Image.Valid}}
+                                <br/>
+                                <br/>
+                                <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                            {{end}}
                         </td>
                         <td style="text-align: center">
                             {{if not .IsLocked}}
@@ -245,6 +249,11 @@
                 {{if .JudgeCardDeck.Valid}}
                     <span style="float: right" title="{{.JudgeCardDeck.String}}">&#9432;</span>
                 {{end}}
+                {{if .JudgeCardImage.Valid}}
+                    <br/>
+                    <br/>
+                    <img src="data:image;base64,{{.JudgeCardImage.String}}" alt="Card Image"/>
+                {{end}}
             {{end}}
         </h3>
         {{if .PlayerIsJudge}}
@@ -292,6 +301,11 @@
                                             <p style="padding: 20px">
                                                 <span class="wrap-new-lines">{{.Text}}</span>
                                                 <span style="float: right" title="{{.DeckName}}">&#9432;</span>
+                                                {{if .Image.Valid}}
+                                                    <br/>
+                                                    <br/>
+                                                    <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                                                {{end}}
                                             </p>
                                         {{end}}
                                     </td>
@@ -355,10 +369,16 @@
                                                 </span>
                                             {{end}}
                                             {{if eq .SpecialCategory.String "SURPRISE"}}
-                                                <span>[***SURPRISE CARD PLAYED!***]</span> {{else}}
+                                                <span>[***SURPRISE CARD PLAYED!***]</span>
+                                            {{else}}
                                                 <span class="wrap-new-lines">{{.Text}}</span>
                                             {{end}}
                                             <span style="float: right" title="{{.DeckName}}">&#9432;</span>
+                                            {{if .Image.Valid}}
+                                                <br/>
+                                                <br/>
+                                                <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                                            {{end}}
                                         </p>
                                     {{end}}
                                 </td>
