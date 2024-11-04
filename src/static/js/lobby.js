@@ -49,7 +49,7 @@ window.onload = () => {
         messageText = messageText.replaceAll("</>", "</span>");
 
         const now = new Date();
-        messageText = now.getHours() + ":" + now.getMinutes() + " " + messageText;
+        messageText = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0") + " " + messageText;
 
         const message = document.createElement("div");
         message.innerHTML = messageText;
