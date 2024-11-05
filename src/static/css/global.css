@@ -77,8 +77,6 @@ summary {
 }
 
 #top-bar {
-    color: var(--top-bar-text);
-    background-color: var(--top-bar-bg);
     height: var(--top-bar-height);
     padding: var(--top-bar-padding);
     display: grid;
@@ -87,8 +85,6 @@ summary {
 }
 
 #top-bar-menu {
-    color: var(--top-bar-text);
-    background-color: var(--top-bar-bg);
     text-align: right;
     position: absolute;
     right: 0;
@@ -110,10 +106,6 @@ summary {
 
 #top-bar-menu .top-bar-menu-link {
     cursor: pointer;
-}
-
-#top-bar-menu .top-bar-menu-link:hover {
-    background-color: var(--top-bar-hover);
 }
 
 #content {

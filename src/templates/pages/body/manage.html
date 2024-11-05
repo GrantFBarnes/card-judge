@@ -45,7 +45,7 @@
         <div class="htmx-result"></div>
         <input type="submit" value="Set Password"/>
     </form>
-    <form hx-put="/api/user/{{.User.Id}}/color-theme" hx-target="find .htmx-result">
+    <form hx-put="/api/user/{{.User.Id}}/color-theme" hx-target="find .htmx-result" hx-trigger="change">
         <h3>Set Color Theme</h3>
         <label for="setUserColorTheme">Color Theme:</label>
         <select id="setUserColorTheme" name="colorTheme" autocomplete="off" required>
@@ -63,15 +63,29 @@
             >
                 Light
             </option>
-            <option value="nordic-theme"
-                    {{if eq .User.ColorTheme.String "nordic-theme"}}
+            <option value="nord-polar-night-theme"
+                    {{if eq .User.ColorTheme.String "nord-polar-night-theme"}}
                         selected
                     {{end}}
             >
-                Nordic
+                Nord Polar Night
             </option>
-            <option value="tokyo-night-theme"
-                    {{if eq .User.ColorTheme.String "tokyo-night-theme"}}
+            <option value="dracula-theme"
+                    {{if eq .User.ColorTheme.String "dracula-theme"}}
+                        selected
+                    {{end}}
+            >
+                Dracula
+            </option>
+            <option value="purple-theme"
+                    {{if eq .User.ColorTheme.String "purple-theme"}}
+                        selected
+                    {{end}}
+            >
+                Purple
+            </option>
+            <option value="tokyo-night-dark-theme"
+                    {{if eq .User.ColorTheme.String "tokyo-night-dark-theme"}}
                         selected
                     {{end}}
             >
@@ -95,7 +109,6 @@
         <br/>
         <br/>
         <div class="htmx-result"></div>
-        <input type="submit" value="Set Color Theme"/>
     </form>
     <br/>
     <details>
