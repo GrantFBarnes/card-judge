@@ -853,7 +853,8 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	if existingLobbyId != uuid.Nil {
+
+	if existingLobbyId != uuid.Nil && existingLobbyId != lobbyId {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Lobby name already exists."))
 		return

@@ -277,7 +277,7 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if existingCardId != uuid.Nil {
+	if existingCardId != uuid.Nil && existingCardId != cardId {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Card text already exists."))
 		return
