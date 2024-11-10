@@ -139,6 +139,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 						) AS GW ON GW.PLAYER_USER_ID = U.ID
 				ORDER BY
 					WIN_RATIO DESC,
+					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 5
 			`
@@ -249,6 +250,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					) AS T
 				ORDER BY
 					WIN_RATIO DESC,
+					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 5
 			`
@@ -277,6 +279,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					) AS T
 				ORDER BY
 					WIN_RATIO DESC,
+					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 5
 			`
@@ -302,6 +305,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					) AS T
 				ORDER BY
 					WIN_RATIO DESC,
+					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 5
 			`
