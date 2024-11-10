@@ -287,18 +287,50 @@
                     <table id="board-responses-table">
                         <tbody>
                         {{range .BoardResponses}}
-                            {{if .IsRevealed}}
-                                <tr
-                                        {{if $.PlayerIsJudge}}
+                            <tr>
+                                {{if $.PlayerIsJudge}}
+                                    <td style="width: 30px">
+                                        {{if not .IsRevealed}}
+                                            <span title="Reveal Response"
+                                                  class="clickable"
+                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal">
+                                                &#10160;
+                                            </span>
+                                        {{else}}
+                                            <span title="Toggle Rule Out"
+                                                  class="clickable"
+                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out">
+                                                {{if .IsRuledOut}}
+                                                    &#8635;
+                                                {{else}}
+                                                    &#10060;
+                                                {{end}}
+                                            </span>
+                                        {{end}}
+                                    </td>
+                                {{end}}
+                                <td
+                                        {{if and $.PlayerIsJudge $.BoardIsAllRevealed (not .IsRuledOut)}}
                                             class="clickable"
                                             hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
                                             hx-confirm="Are you sure you want to pick this response as the winner?"
                                         {{end}}
                                 >
-                                    <td>
-                                        <hr/>
+                                    <hr/>
+                                    {{if not .IsRevealed}}
+                                        <p style="padding: 20px">
+                                            <span>&#9203; Waiting to be revealed...</span>
+                                        </p>
+                                    {{else}}
+                                        {{$isRuledOut := .IsRuledOut}}
                                         {{range .ResponseCards}}
-                                            <p style="padding: 20px">
+                                            <p
+                                                    {{if $isRuledOut}}
+                                                        style="padding: 20px; text-decoration: line-through; opacity: 0.4;"
+                                                    {{else}}
+                                                        style="padding: 20px;"
+                                                    {{end}}
+                                            >
                                                 <span class="wrap-new-lines">{{.Text}}</span>
                                                 <span style="float: right" title="{{.DeckName}}">&#9432;</span>
                                                 {{if .Image.Valid}}
@@ -308,38 +340,19 @@
                                                 {{end}}
                                             </p>
                                         {{end}}
-                                    </td>
-                                </tr>
-                            {{else}}
-                                <tr
-                                        {{if $.PlayerIsJudge}}
-                                            class="clickable"
-                                            hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal"
-                                        {{end}}
-                                >
-                                    <td>
-                                        <hr/>
-                                        <p style="padding: 20px">
-                                            {{if $.PlayerIsJudge}}
-                                                <span>Click to Reveal</span>
-                                            {{else}}
-                                                <span>Waiting to be revealed...</span>
-                                            {{end}}
-                                        </p>
-                                    </td>
-                                </tr>
-                            {{end}}
+                                    {{end}}
+                                </td>
+                            </tr>
                         {{end}}
-                        {{if .PlayerIsJudge}}
-                            <tr>
-                                <td>
+                        {{if and .PlayerIsJudge .BoardIsAllRevealed (not .BoardIsAllRuledOut)}}
+                            <tr class="clickable"
+                                hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
+                                hx-confirm="Are you sure you want to pick a random winner?">
+                                <td colspan="2">
                                     <hr/>
-                                    <button
-                                            hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
-                                            hx-confirm="Are you sure you want to pick a random winner?"
-                                    >
-                                        Random Winner
-                                    </button>
+                                    <p style="padding: 20px">
+                                        &#10067; Random Winner &#10067;
+                                    </p>
                                 </td>
                             </tr>
                         {{end}}
