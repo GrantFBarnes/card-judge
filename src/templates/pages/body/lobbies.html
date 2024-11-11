@@ -8,12 +8,9 @@
                 <h3>Create Lobby</h3>
             </div>
             <div>
-                <div
-                        class="close-button"
-                        onclick="document.getElementById('lobby-create-dialog').close()"
-                >
-                    &#10060;
-                </div>
+                <i class="bi bi-x-lg close-button"
+                   onclick="document.getElementById('lobby-create-dialog').close()"
+                ></i>
             </div>
         </div>
         <form hx-post="/api/lobby/create" hx-target="find .htmx-result">

@@ -6,17 +6,14 @@
             <td class="wrap-new-lines">{{.Name}}</td>
             <td style="text-align: center">
                 {{if .IsApproved}}
-                    <span title="User Account Approved">&#9989;</span>
+                    <i title="User Account Approved" class="bi bi-check-square"></i>
                 {{else}}
-                    <span
-                            title="Not Approved. Click to Approve."
-                            class="clickable"
-                            hx-put="/api/user/{{.Id}}/approve"
-                            hx-confirm="Are you sure you want to approve User {{.Name}}?"
-                            hx-target="closest td"
-                    >
-                        &#9940;
-                    </span>
+                    <i title="Not Approved. Click to Approve."
+                       class="bi bi-dash-square clickable"
+                       hx-put="/api/user/{{.Id}}/approve"
+                       hx-confirm="Are you sure you want to approve User {{.Name}}?"
+                       hx-target="closest td"
+                    ></i>
                 {{end}}
             </td>
             <td>
@@ -37,26 +34,20 @@
                 </select>
             </td>
             <td style="text-align: center">
-                <span
-                        title="Reset Password"
-                        class="clickable"
-                        hx-put="/api/user/{{.Id}}/password/reset"
-                        hx-confirm="Are you sure you want to reset the password for User {{.Name}}?"
-                        hx-target="closest td"
-                >
-                    &#8634;
-                </span>
+                <i title="Reset Password"
+                   class="bi bi-arrow-counterclockwise clickable"
+                   hx-put="/api/user/{{.Id}}/password/reset"
+                   hx-confirm="Are you sure you want to reset the password for User {{.Name}}?"
+                   hx-target="closest td"
+                ></i>
             </td>
             <td style="text-align: center">
-                <span
-                        title="Delete"
-                        class="clickable"
-                        hx-delete="/api/user/{{.Id}}"
-                        hx-confirm="Are you sure you want to delete User {{.Name}}?"
-                        hx-target="closest td"
-                >
-                    &#128465;
-                </span>
+                <i title="Delete"
+                   class="bi bi-trash clickable"
+                   hx-delete="/api/user/{{.Id}}"
+                   hx-confirm="Are you sure you want to delete User {{.Name}}?"
+                   hx-target="closest td"
+                ></i>
             </td>
         </tr>
     {{end}}

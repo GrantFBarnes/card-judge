@@ -5,7 +5,7 @@
             <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
             <td class="wrap-new-lines"><a href="/deck/{{.Id}}">{{.Name}}</a></td>
             <td>{{.CardCount}}</td>
-            <td>{{if .IsPublicReadOnly}} Public {{else}} Private &#128274; {{end}}</td>
+            <td>{{if .IsPublicReadOnly}} Public {{else}} <i class="bi bi-lock">Private</i> {{end}}</td>
         </tr>
     {{end}}
 {{end}}

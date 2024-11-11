@@ -5,27 +5,21 @@
             <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
             <td>{{if eq .Category "PROMPT"}} Prompt {{else}} Response {{end}}</td>
             <td class="wrap-new-lines">{{.Text}}</td>
-            <td>{{if .Image.Valid}} &#128444; {{end}}</td>
+            <td>{{if .Image.Valid}} <i class="bi bi-card-image"></i> {{end}}</td>
             <td>
-                <div
-                        title="Edit"
-                        class="clickable"
-                        onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
-                >
-                    &#128393;
-                </div>
+                <i title="Edit"
+                   class="bi bi-pencil clickable"
+                   onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
+                ></i>
                 <dialog id="card-{{.Id}}-update-dialog">
                     <div style="display: grid; grid-auto-flow: column">
                         <div>
                             <h3>Edit Card</h3>
                         </div>
                         <div>
-                            <div
-                                    class="close-button"
-                                    onclick="document.getElementById('card-{{.Id}}-update-dialog').close()"
-                            >
-                                &#10060;
-                            </div>
+                            <i class="bi bi-x-lg close-button"
+                               onclick="document.getElementById('card-{{.Id}}-update-dialog').close()"
+                            ></i>
                         </div>
                     </div>
                     <form hx-put="/api/card/{{.Id}}/category" hx-target="find .htmx-result">
@@ -111,14 +105,11 @@
                 </dialog>
             </td>
             <td>
-                <div
-                        title="Delete"
-                        class="clickable"
-                        hx-delete="/api/card/{{.Id}}"
-                        hx-confirm="Are you sure you want to delete this card?"
-                >
-                    &#128465;
-                </div>
+                <i title="Delete"
+                   class="bi bi-trash clickable"
+                   hx-delete="/api/card/{{.Id}}"
+                   hx-confirm="Are you sure you want to delete this card?"
+                ></i>
             </td>
         </tr>
     {{end}}
