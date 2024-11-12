@@ -34,9 +34,9 @@
                     <p>{{.Lobby.Message.String}}</p>
                 </div>
                 <div>
-                    <i class="bi bi-x-lg close-button"
-                       onclick="document.getElementById('lobby-message-dialog').close()"
-                    ></i>
+                    <span class="bi bi-x-lg close-button"
+                          onclick="document.getElementById('lobby-message-dialog').close()"
+                    ></span>
                 </div>
             </div>
         </dialog>
@@ -47,9 +47,9 @@
                 <h3>Edit Lobby</h3>
             </div>
             <div>
-                <i class="bi bi-x-lg close-button"
-                   onclick="document.getElementById('lobby-update-dialog').close()"
-                ></i>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('lobby-update-dialog').close()"
+                ></span>
             </div>
         </div>
         <form hx-put="/api/lobby/{{.Lobby.Id}}/name" hx-target="find .htmx-result">
@@ -146,9 +146,9 @@
                 <h5><i>A temporary card played for this round only</i></h5>
             </div>
             <div>
-                <i class="bi bi-x-lg close-button"
-                   onclick="document.getElementById('wild-card-dialog').close()"
-                ></i>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('wild-card-dialog').close()"
+                ></span>
             </div>
         </div>
         <form

@@ -10,9 +10,9 @@
                 <h3>Edit Deck</h3>
             </div>
             <div>
-                <i class="bi bi-x-lg close-button"
-                   onclick="document.getElementById('deck-update-dialog').close()"
-                ></i>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('deck-update-dialog').close()"
+                ></span>
             </div>
         </div>
         <form hx-put="/api/deck/{{.Deck.Id}}/name" hx-target="find .htmx-result">
@@ -113,9 +113,9 @@
                 <h3>Create Card</h3>
             </div>
             <div>
-                <i class="bi bi-x-lg close-button"
-                   onclick="document.getElementById('card-create-dialog').close()"
-                ></i>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('card-create-dialog').close()"
+                ></span>
             </div>
         </div>
         <form hx-post="/api/card/create" hx-target="find .htmx-result">

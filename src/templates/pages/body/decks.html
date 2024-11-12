@@ -8,9 +8,9 @@
                 <h3>Create Deck</h3>
             </div>
             <div>
-                <i class="bi bi-x-lg close-button"
-                   onclick="document.getElementById('deck-create-dialog').close()"
-                ></i>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('deck-create-dialog').close()"
+                ></span>
             </div>
         </div>
         <form hx-post="/api/deck/create" hx-target="find .htmx-result">

@@ -8,9 +8,9 @@
                 <h3>Create Lobby</h3>
             </div>
             <div>
-                <i class="bi bi-x-lg close-button"
-                   onclick="document.getElementById('lobby-create-dialog').close()"
-                ></i>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('lobby-create-dialog').close()"
+                ></span>
             </div>
         </div>
         <form hx-post="/api/lobby/create" hx-target="find .htmx-result">

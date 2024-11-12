@@ -12,8 +12,9 @@
             <tr>
                 <td>
                     {{.LobbyName}}
-                    <i class="bi bi-pencil clickable"
-                       onclick="document.getElementById('lobby-update-dialog').showModal()"></i>
+                    <span class="bi bi-pencil clickable"
+                          onclick="document.getElementById('lobby-update-dialog').showModal()"
+                    ></span>
                 </td>
                 <td>
                     {{if .JudgeName.Valid}}
@@ -73,17 +74,17 @@
                     <tr style="border-top: 2px solid black">
                         <td style="text-align: center">
                             {{if .IsLocked}}
-                                <i title="Unlock"
-                                   class="bi bi-unlock clickable"
-                                   hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
-                                   hx-target="#lobby-grid-interface"
-                                ></i>
+                                <span title="Unlock"
+                                      class="bi bi-unlock clickable"
+                                      hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
+                                      hx-target="#lobby-grid-interface"
+                                ></span>
                             {{else}}
-                                <i title="Lock"
-                                   class="bi bi-lock clickable"
-                                   hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
-                                   hx-target="#lobby-grid-interface"
-                                ></i>
+                                <span title="Lock"
+                                      class="bi bi-lock clickable"
+                                      hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
+                                      hx-target="#lobby-grid-interface"
+                                ></span>
                             {{end}}
                         </td>
                         <td
@@ -95,7 +96,7 @@
                                 {{end}}
                         >
                             <span class="wrap-new-lines">{{.Text}}</span>
-                            <i class="bi bi-info-circle" style="float: right" title="{{.DeckName}}"></i>
+                            <span class="bi bi-info-circle" style="float: right" title="{{.DeckName}}"></span>
                             {{if .Image.Valid}}
                                 <br/>
                                 <br/>
@@ -104,12 +105,12 @@
                         </td>
                         <td style="text-align: center">
                             {{if not .IsLocked}}
-                                <i title="Discard"
-                                   class="bi bi-trash clickable"
-                                   hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
-                                   hx-target="#lobby-grid-interface"
-                                   hx-confirm="Are you sure you want to discard this card?"
-                                ></i>
+                                <span title="Discard"
+                                      class="bi bi-trash clickable"
+                                      hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
+                                      hx-target="#lobby-grid-interface"
+                                      hx-confirm="Are you sure you want to discard this card?"
+                                ></span>
                             {{end}}
                         </td>
                     </tr>
@@ -130,15 +131,16 @@
                     <td>Credits</td>
                     <td>{{.PlayerCreditsRemaining}}</td>
                     <td>
-                        <i class="bi bi-info-circle" title="Credits are used to purchase specials."></i>
+                        <span class="bi bi-info-circle" title="Credits are used to purchase specials."></span>
                     </td>
                 </tr>
                 <tr>
                     <td>Losing Streak</td>
                     <td>{{.PlayerLosingStreak}}</td>
                     <td>
-                        <i class="bi bi-info-circle"
-                           title="If your losing streak hits 5, you will be awarded an additional credit and your streak will be reset."></i>
+                        <span class="bi bi-info-circle"
+                              title="If your losing streak hits 5, you will be awarded an additional credit and your streak will be reset."
+                        ></span>
                     </td>
                 </tr>
                 </tbody>
@@ -168,7 +170,7 @@
                     </td>
                     <td>1</td>
                     <td>
-                        <i class="bi bi-info-circle" title="Get an extra response for the round."></i>
+                        <span class="bi bi-info-circle" title="Get an extra response for the round."></span>
                     </td>
                 </tr>
                 <tr>
@@ -186,8 +188,9 @@
                     </td>
                     <td>1</td>
                     <td>
-                        <i class="bi bi-info-circle"
-                           title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."></i>
+                        <span class="bi bi-info-circle"
+                              title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
+                        ></span>
                     </td>
                 </tr>
                 <tr>
@@ -205,8 +208,9 @@
                     </td>
                     <td>1</td>
                     <td>
-                        <i class="bi bi-info-circle"
-                           title="Draw a random card from the draw pile.&#010;You will not know which card you played."></i>
+                        <span class="bi bi-info-circle"
+                              title="Draw a random card from the draw pile.&#010;You will not know which card you played."
+                        ></span>
                     </td>
                 </tr>
                 <tr>
@@ -223,7 +227,7 @@
                     </td>
                     <td>2</td>
                     <td>
-                        <i class="bi bi-info-circle" title="Provide any text you want to play as a card."></i>
+                        <span class="bi bi-info-circle" title="Provide any text you want to play as a card."></span>
                     </td>
                 </tr>
                 </tbody>
@@ -237,7 +241,7 @@
             {{else}}
                 <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
                 {{if .JudgeCardDeck.Valid}}
-                    <i class="bi bi-info-circle" style="float: right" title="{{.JudgeCardDeck.String}}"></i>
+                    <span class="bi bi-info-circle" style="float: right" title="{{.JudgeCardDeck.String}}"></span>
                 {{end}}
                 {{if .JudgeCardImage.Valid}}
                     <br/>
@@ -260,13 +264,13 @@
                         hx-put="/api/lobby/{{.LobbyId}}/response-count"
                         hx-trigger="change"
                 />
-                <i class="bi bi-skip-forward-circle clickable"
-                   style="float: right"
-                   hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
-                   hx-confirm="Are you sure you want to skip this prompt?"
+                <span class="bi bi-skip-forward-circle clickable"
+                      style="float: right"
+                      hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
+                      hx-confirm="Are you sure you want to skip this prompt?"
                 >
                     Skip Prompt
-                </i>
+                </span>
             </span>
         {{end}}
         {{if .JudgeCardText.Valid}}
@@ -277,52 +281,61 @@
                         <tbody>
                         {{range .BoardResponses}}
                             <tr>
-                                {{if $.PlayerIsJudge}}
-                                    <td style="width: 30px">
-                                        {{if not .IsRevealed}}
-                                            <i title="Reveal Response"
-                                               class="bi bi-phone-flip clickable"
-                                               hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal">
-                                            </i>
+                                {{if and $.PlayerIsJudge $.BoardIsAllRevealed}}
+                                    <td style="width: 1em">
+                                        {{if .IsRuledOut}}
+                                            <span title="Undo Rule Out of Response"
+                                                  class="bi bi-arrow-counterclockwise clickable"
+                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                                            ></span>
                                         {{else}}
-                                            {{if .IsRuledOut}}
-                                                <i title="Undo Rule Out"
-                                                   class="bi bi-arrow-counterclockwise clickable"
-                                                   hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"></i>
-                                            {{else}}
-                                                <i title="Rule Out"
-                                                   class="bi bi-trash clickable"
-                                                   hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"></i>
-                                            {{end}}
+                                            <span title="Rule Out Response"
+                                                  class="bi bi-trash clickable"
+                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                                            ></span>
                                         {{end}}
                                     </td>
                                 {{end}}
                                 <td
-                                        {{if and $.PlayerIsJudge $.BoardIsAllRevealed (not .IsRuledOut)}}
-                                            class="clickable"
-                                            hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
-                                            hx-confirm="Are you sure you want to pick this response as the winner?"
+                                        {{if $.PlayerIsJudge}}
+                                            {{if not .IsRevealed}}
+                                                class="clickable"
+                                                hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal"
+                                            {{else if and $.BoardIsAllRevealed (not .IsRuledOut)}}
+                                                class="clickable"
+                                                hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
+                                                hx-confirm="Are you sure you want to pick this response as the winner?"
+                                            {{end}}
                                         {{end}}
                                 >
                                     <hr/>
                                     {{if not .IsRevealed}}
                                         <p style="padding: 20px">
-                                            <i class="bi bi-hourglass-split">Waiting to be revealed...</i>
+                                            {{if $.PlayerIsJudge}}
+                                                <span class="bi bi-hand-index">
+                                                    Click to reveal...
+                                                </span>
+                                            {{else}}
+                                                <span class="bi bi-hourglass-split">
+                                                    Waiting to be revealed...
+                                                </span>
+                                            {{end}}
                                         </p>
                                     {{else}}
                                         {{$isRuledOut := .IsRuledOut}}
                                         {{range .ResponseCards}}
                                             <p
                                                     {{if $isRuledOut}}
-                                                        style="padding: 20px; text-decoration: line-through; opacity: 0.4;"
+                                                        style="padding: 20px; text-decoration: line-through; opacity: 0.3;"
                                                     {{else}}
                                                         style="padding: 20px;"
                                                     {{end}}
                                             >
                                                 <span class="wrap-new-lines">{{.Text}}</span>
-                                                <i class="bi bi-info-circle"
-                                                   style="float: right"
-                                                   title="{{.DeckName}}"></i>
+                                                <span class="bi bi-info-circle"
+                                                      style="float: right"
+                                                      title="{{.DeckName}}"
+                                                ></span>
                                                 {{if .Image.Valid}}
                                                     <br/>
                                                     <br/>
@@ -335,13 +348,15 @@
                             </tr>
                         {{end}}
                         {{if and .PlayerIsJudge .BoardIsAllRevealed (not .BoardIsAllRuledOut)}}
-                            <tr class="clickable"
-                                hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
-                                hx-confirm="Are you sure you want to pick a random winner?">
-                                <td colspan="2">
+                            <tr>
+                                <td>
+                                    <span class="bi bi-shuffle"></span>
+                                </td>
+                                <td class="clickable"
+                                    hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
+                                    hx-confirm="Are you sure you want to pick a random winner?">
                                     <hr/>
                                     <p style="padding: 20px">
-                                        <i class="bi bi-shuffle"></i>
                                         Random Winner
                                     </p>
                                 </td>
@@ -364,19 +379,20 @@
                                     {{range .ResponseCards}}
                                         <p style="padding: 20px">
                                             {{if not .SpecialCategory.Valid}}
-                                                <i title="Withdraw"
-                                                   class="bi bi-backspace clickable"
-                                                   hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
-                                                ></i>
+                                                <span title="Withdraw"
+                                                      class="bi bi-backspace clickable"
+                                                      hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
+                                                ></span>
                                             {{end}}
                                             {{if eq .SpecialCategory.String "SURPRISE"}}
                                                 <span>[***SURPRISE CARD PLAYED!***]</span>
                                             {{else}}
                                                 <span class="wrap-new-lines">{{.Text}}</span>
                                             {{end}}
-                                            <i class="bi bi-info-circle"
-                                               style="float: right"
-                                               title="{{.DeckName}}"></i>
+                                            <span class="bi bi-info-circle"
+                                                  style="float: right"
+                                                  title="{{.DeckName}}"
+                                            ></span>
                                             {{if .Image.Valid}}
                                                 <br/>
                                                 <br/>
@@ -472,24 +488,24 @@
                     <tr>
                         {{if .Voted}}
                             <td>
-                                <i title="Undo Vote to Kick"
-                                   class="bi bi-arrow-counterclockwise clickable"
-                                   hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick/undo"
-                                   hx-target="#lobby-grid-interface"
+                                <span title="Undo Vote to Kick"
+                                      class="bi bi-arrow-counterclockwise clickable"
+                                      hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick/undo"
+                                      hx-target="#lobby-grid-interface"
                                 >
                                     Undo
-                                </i>
+                                </span>
                             </td>
                         {{else}}
                             <td>
-                                <i title="Vote to Kick"
-                                   class="bi bi-door-open clickable"
-                                   hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick"
-                                   hx-confirm="Are you sure you want to vote to kick {{.UserName}}?"
-                                   hx-target="#lobby-grid-interface"
+                                <span title="Vote to Kick"
+                                      class="bi bi-door-open clickable"
+                                      hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick"
+                                      hx-confirm="Are you sure you want to vote to kick {{.UserName}}?"
+                                      hx-target="#lobby-grid-interface"
                                 >
                                     Kick
-                                </i>
+                                </span>
                             </td>
                         {{end}}
                         <td>{{.UserName}}</td>
