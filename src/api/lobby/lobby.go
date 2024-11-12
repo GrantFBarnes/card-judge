@@ -259,6 +259,28 @@ func PlayCard(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func PurchaseCredits(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Attempted to purchase credits for an unfair advantage...")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("<b>Shame on you.</b><br/><br/>This action has been reported in the lobby chat."))
+}
+
 func AddExtraResponse(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
