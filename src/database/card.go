@@ -52,8 +52,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			AND C.CATEGORY LIKE ?
 			AND C.TEXT LIKE ?
 		ORDER BY
-			C.CATEGORY ASC,
-			TO_DAYS(C.CHANGED_ON_DATE) DESC,
+			C.CHANGED_ON_DATE DESC,
 			C.TEXT ASC
 		LIMIT ? OFFSET ?
 	`
