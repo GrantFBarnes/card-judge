@@ -159,6 +159,25 @@
                 <tbody>
                 <tr>
                     <td>
+                        {{if ge .PlayerCreditsRemaining 1}}
+                            <button
+                                    hx-post="/api/lobby/{{$.LobbyId}}/gamble-credit"
+                                    hx-confirm="Are you sure you want to gamble a credit?"
+                                    hx-target="#lobby-grid-interface"
+                            >
+                                Gamble Credit
+                            </button>
+                        {{else}}
+                            <i>Gamble Credit</i>
+                        {{end}}
+                    </td>
+                    <td>1</td>
+                    <td>
+                        <span class="bi bi-info-circle" title="Spend a credit to have a 33% chance to earn 2 back."></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         {{if and (not .BoardIsReady) (ge .PlayerCreditsRemaining 1)}}
                             <button
                                     hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
