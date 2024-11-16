@@ -33,8 +33,6 @@
     <div id="lobby-player-data">
         {{if not .JudgeCardText.Valid}}
             <div class="lobby-player-data-message">[NO PROMPT CARD]</div>
-        {{else if .PlayerIsJudge}}
-            <div class="lobby-player-data-message">You are the Judge.</div>
         {{else}}
             <table id="player-hand-table">
                 {{$handSize := len .PlayerHand}}
@@ -87,7 +85,7 @@
                         </td>
                         <td
                                 style="padding: 20px"
-                                {{if not $.PlayerIsReady}}
+                                {{if and (not $.PlayerIsJudge) (not $.PlayerIsReady)}}
                                     class="clickable"
                                     hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
                                     hx-confirm="Are you sure you want to play this card?"
@@ -144,6 +142,7 @@
                 </tbody>
             </table>
             <hr/>
+            {{if not .PlayerIsJudge}}
             <table id="special-table">
                 <thead>
                 <tr>
@@ -235,6 +234,7 @@
                 </tr>
                 </tbody>
             </table>
+            {{end}}
         {{end}}
     </div>
     <div id="lobby-game-board">
