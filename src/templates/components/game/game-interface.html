@@ -160,7 +160,7 @@
                 <tbody>
                 <tr>
                     <td>
-                        {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
+                        {{if and (not .BoardIsReady) (ge .PlayerCreditsRemaining 1)}}
                             <button
                                     hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
                                     hx-confirm="Are you sure you want to use an extra response?"
