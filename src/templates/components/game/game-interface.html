@@ -284,18 +284,20 @@
                         <tbody>
                         {{range .BoardResponses}}
                             <tr>
-                                {{if and $.PlayerIsJudge $.BoardIsAllRevealed}}
+                                {{if $.PlayerIsJudge}}
                                     <td style="width: 1em">
-                                        {{if .IsRuledOut}}
-                                            <span title="Undo Rule Out of Response"
-                                                  class="bi bi-arrow-counterclockwise clickable"
-                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
-                                            ></span>
-                                        {{else}}
-                                            <span title="Rule Out Response"
-                                                  class="bi bi-trash clickable"
-                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
-                                            ></span>
+                                        {{if .IsRevealed}}
+                                            {{if .IsRuledOut}}
+                                                <span title="Undo Rule Out of Response"
+                                                    class="bi bi-arrow-counterclockwise clickable"
+                                                    hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                                                ></span>
+                                            {{else}}
+                                                <span title="Rule Out Response"
+                                                    class="bi bi-trash clickable"
+                                                    hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                                                ></span>
+                                            {{end}}
                                         {{end}}
                                     </td>
                                 {{end}}
