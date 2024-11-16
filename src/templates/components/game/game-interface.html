@@ -35,8 +35,6 @@
             <div class="lobby-player-data-message">[NO PROMPT CARD]</div>
         {{else if .PlayerIsJudge}}
             <div class="lobby-player-data-message">You are the Judge.</div>
-        {{else if .BoardIsReady}}
-            <div class="lobby-player-data-message">The board is being judged...</div>
         {{else}}
             <table id="player-hand-table">
                 {{$handSize := len .PlayerHand}}
