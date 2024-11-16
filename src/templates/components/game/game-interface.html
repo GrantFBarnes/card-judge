@@ -75,13 +75,13 @@
                         <td style="text-align: center">
                             {{if .IsLocked}}
                                 <span title="Unlock"
-                                      class="bi bi-unlock clickable"
+                                      class="bi bi-lock clickable"
                                       hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
                                       hx-target="#lobby-grid-interface"
                                 ></span>
                             {{else}}
                                 <span title="Lock"
-                                      class="bi bi-lock clickable"
+                                      class="bi bi-unlock clickable"
                                       hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
                                       hx-target="#lobby-grid-interface"
                                 ></span>
@@ -153,7 +153,7 @@
                     <th>Cost</th>
                     <th>
                         <span title="Purchase Credits"
-                              class="bi bi-bag clickable"
+                              class="bi bi-cart4 clickable"
                               onclick="document.getElementById('purchase-credits-dialog').showModal()"
                         ></span>
                     </th>
