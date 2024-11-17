@@ -281,7 +281,7 @@ func PurchaseCredits(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("<b>Shame on you.</b><br/><br/>This action has been reported in the lobby chat."))
 }
 
-func GambleCredit(w http.ResponseWriter, r *http.Request) {
+func GambleCredits(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -297,14 +297,54 @@ func GambleCredit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.GambleCredit(player.Id)
+	lobby, err := database.GetLobby(lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var credits int
+	for key, val := range r.Form {
+		if key == "credits" {
+			credits, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse credits."))
+				return
+			}
+		}
+	}
+
+	if credits < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("No credits provided."))
+		return
+	}
+
+	if lobby.CreditLimit-player.CreditsSpent < credits {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("You do not have that many credits to gamble."))
+		return
+	}
+
+	err = database.GambleCredits(player.Id, credits)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(player.Id, "refresh")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
 }
 
 func BetOnWin(w http.ResponseWriter, r *http.Request) {
@@ -343,25 +383,31 @@ func BetOnWin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var bet int
+	var credits int
 	for key, val := range r.Form {
-		if key == "bet" {
-			bet, err = strconv.Atoi(val[0])
+		if key == "credits" {
+			credits, err = strconv.Atoi(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse bet."))
+				_, _ = w.Write([]byte("Failed to parse credits."))
 				return
 			}
 		}
 	}
 
-	if lobby.CreditLimit-player.CreditsSpent < bet {
+	if credits < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("No credits provided."))
+		return
+	}
+
+	if lobby.CreditLimit-player.CreditsSpent < credits {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("You do not have that many credits to bet."))
 		return
 	}
 
-	err = database.BetOnWin(player.Id, bet)
+	err = database.BetOnWin(player.Id, credits)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

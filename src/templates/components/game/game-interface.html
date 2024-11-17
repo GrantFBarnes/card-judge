@@ -160,20 +160,16 @@
                 <tr>
                     <td>
                         {{if ge .PlayerCreditsRemaining 1}}
-                            <button
-                                    hx-post="/api/lobby/{{$.LobbyId}}/gamble-credit"
-                                    hx-confirm="Are you sure you want to gamble a credit?"
-                                    hx-target="#lobby-grid-interface"
-                            >
-                                Gamble Credit
+                            <button onclick="document.getElementById('gamble-credits-dialog').showModal()">
+                                Gamble Credits
                             </button>
                         {{else}}
-                            <i>Gamble Credit</i>
+                            <i>Gamble Credits</i>
                         {{end}}
                     </td>
-                    <td>1</td>
+                    <td><i class="bi bi-patch-question"></i></td>
                     <td>
-                        <span class="bi bi-info-circle" title="Spend a credit to have a 33% chance to earn 2 back."></span>
+                        <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
                     </td>
                 </tr>
                 <tr>

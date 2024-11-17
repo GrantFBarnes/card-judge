@@ -161,6 +161,75 @@
             </button>
         </p>
     </dialog>
+    <dialog id="gamble-credits-dialog">
+        <div style="display: grid; grid-auto-flow: column">
+            <div>
+                <h3>Gamble Credits</h3>
+                <h5><i>Choose how many credits to gamble.</i></h5>
+            </div>
+            <div>
+                <span class="bi bi-x-lg close-button"
+                      onclick="document.getElementById('gamble-credits-dialog').close()"
+                ></span>
+            </div>
+        </div>
+        <div>
+            <p>The chance of winning is <code>((1 / (CREDITS * 2)) * 0.9)</code></p>
+            <table>
+                <head>
+                    <tr>
+                        <th colspan="3">Examples</th>
+                    </tr>
+                    <tr>
+                        <th>Gamble</th>
+                        <th>Win</th>
+                        <th>Chance</th>
+                    </tr>
+                </head>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>45%</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>4</td>
+                        <td>22.5%</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">...</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>20</td>
+                        <td>4.5%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br/>
+        <form
+                hx-post="/api/lobby/{{.Lobby.Id}}/gamble-credits"
+                hx-confirm="Are you sure you want to gamble these credits?"
+                hx-target="find .htmx-result"
+        >
+            <label for="gambleAmount">Credits:</label>
+            <input
+                    id="gambleAmount"
+                    name="credits"
+                    type="number"
+                    min="1"
+                    max="10"
+                    required="required"
+                    value="1"
+            />
+            <br/>
+            <br/>
+            <div class="htmx-result"></div>
+            <input type="submit" value="Gamble" />
+        </form>
+    </dialog>
     <dialog id="bet-on-win-dialog">
         <div style="display: grid; grid-auto-flow: column">
             <div>
@@ -181,7 +250,7 @@
             <label for="betOnWinAmount">Credits:</label>
             <input
                     id="betOnWinAmount"
-                    name="bet"
+                    name="credits"
                     type="number"
                     min="1"
                     max="10"
