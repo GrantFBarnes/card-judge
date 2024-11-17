@@ -178,7 +178,28 @@
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .BoardIsReady) (ge .PlayerCreditsRemaining 1)}}
+                        {{if .PlayerBetOnWin}}
+                            <i>Bet Placed</i>
+                        {{else if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 1)}}
+                            <button
+                                    hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win"
+                                    hx-confirm="Are you sure you want to bet on winning?"
+                                    hx-target="#lobby-grid-interface"
+                            >
+                                Bet On Win
+                            </button>
+                        {{else}}
+                            <i>Bet On Win</i>
+                        {{end}}
+                    </td>
+                    <td>1</td>
+                    <td>
+                        <span class="bi bi-info-circle" title="Bet a credit you will win this round. Earn 2 credits back if correct."></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 1)}}
                             <button
                                     hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
                                     hx-confirm="Are you sure you want to use an extra response?"

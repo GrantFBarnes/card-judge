@@ -67,6 +67,7 @@ func main() {
 
 		// procedures
 		"../database/procedures/SP_ADD_EXTRA_RESPONSE.sql",
+		"../database/procedures/SP_BET_ON_WIN.sql",
 		"../database/procedures/SP_DISCARD_CARD.sql",
 		"../database/procedures/SP_DISCARD_HAND.sql",
 		"../database/procedures/SP_DRAW_HAND.sql",
@@ -184,6 +185,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/purchase-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PurchaseCredits)))
 	http.Handle("POST /api/lobby/{lobbyId}/gamble-credit", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GambleCredit)))
+	http.Handle("POST /api/lobby/{lobbyId}/bet-on-win", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.BetOnWin)))
 	http.Handle("POST /api/lobby/{lobbyId}/add-extra-response", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.AddExtraResponse)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/steal/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayStealCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/surprise/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlaySurpriseCard)))
