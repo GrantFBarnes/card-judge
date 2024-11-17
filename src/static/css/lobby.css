@@ -72,6 +72,16 @@
     width: 100%;
 }
 
+#gamble-credits-chance-table th {
+    text-align: center;
+    border: 1px solid;
+}
+
+#gamble-credits-chance-table td {
+    text-align: right;
+    border: 1px solid;
+}
+
 #lobby-game-board {
     grid-area: board;
     overflow-y: scroll;
