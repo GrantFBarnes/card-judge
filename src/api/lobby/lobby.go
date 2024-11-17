@@ -323,14 +323,54 @@ func BetOnWin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.BetOnWin(player.Id)
+	if player.BetOnWin > 0 {
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, _ = w.Write([]byte(fmt.Sprintf("A bet of %d has already been placed.", player.BetOnWin)))
+		return
+	}
+
+	lobby, err := database.GetLobby(lobbyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var bet int
+	for key, val := range r.Form {
+		if key == "bet" {
+			bet, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse bet."))
+				return
+			}
+		}
+	}
+
+	if lobby.CreditLimit-player.CreditsSpent < bet {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("You do not have that many credits to bet."))
+		return
+	}
+
+	err = database.BetOnWin(player.Id, bet)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(player.Id, "refresh")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
 }
 
 func AddExtraResponse(w http.ResponseWriter, r *http.Request) {

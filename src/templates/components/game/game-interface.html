@@ -178,23 +178,19 @@
                 </tr>
                 <tr>
                     <td>
-                        {{if .PlayerBetOnWin}}
-                            <i>Bet Placed</i>
+                        {{if gt .PlayerBetOnWin 0}}
+                            <i>Bet Placed: {{.PlayerBetOnWin}}</i>
                         {{else if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 1)}}
-                            <button
-                                    hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win"
-                                    hx-confirm="Are you sure you want to bet on winning?"
-                                    hx-target="#lobby-grid-interface"
-                            >
+                            <button onclick="document.getElementById('bet-on-win-dialog').showModal()">
                                 Bet On Win
                             </button>
                         {{else}}
                             <i>Bet On Win</i>
                         {{end}}
                     </td>
-                    <td>1</td>
+                    <td><i class="bi bi-patch-question"></i></td>
                     <td>
-                        <span class="bi bi-info-circle" title="Bet a credit you will win this round. Earn 2 credits back if correct."></span>
+                        <span class="bi bi-info-circle" title="Bet credits you will win this round. Earn double credits back if correct."></span>
                     </td>
                 </tr>
                 <tr>
