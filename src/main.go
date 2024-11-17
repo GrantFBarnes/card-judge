@@ -111,10 +111,6 @@ func main() {
 		"../database/triggers/TR_REVOKE_ACCESS_AF_UP_LOBBY.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_CARD.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_DECK.sql",
-		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_HAND.sql",
-		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_JUDGE.sql",
-		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_LOBBY.sql",
-		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_PLAYER.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_USER.sql",
 	}
 	for _, sqlFile := range sqlFiles {
