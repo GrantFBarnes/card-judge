@@ -167,7 +167,7 @@
                             <i>Gamble Credits</i>
                         {{end}}
                     </td>
-                    <td><i class="bi bi-patch-question"></i></td>
+                    <td><i class="bi bi-question-circle"></i></td>
                     <td>
                         <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
                     </td>
@@ -184,14 +184,14 @@
                             <i>Bet On Win</i>
                         {{end}}
                     </td>
-                    <td><i class="bi bi-patch-question"></i></td>
+                    <td><i class="bi bi-question-circle"></i></td>
                     <td>
                         <span class="bi bi-info-circle" title="Bet credits you will win this round. Earn double credits back if correct."></span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 1)}}
+                        {{if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 2)}}
                             <button
                                     hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
                                     hx-confirm="Are you sure you want to use an extra response?"
@@ -202,7 +202,7 @@
                             <i>Extra Response</i>
                         {{end}}
                     </td>
-                    <td>1</td>
+                    <td><i class="bi bi-2-circle"></i></td>
                     <td>
                         <span class="bi bi-info-circle" title="Get an extra response for the round."></span>
                     </td>
@@ -220,7 +220,7 @@
                             <i>Steal Card</i>
                         {{end}}
                     </td>
-                    <td>1</td>
+                    <td><i class="bi bi-1-circle"></i></td>
                     <td>
                         <span class="bi bi-info-circle"
                               title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
@@ -240,7 +240,7 @@
                             <i>Surprise Card</i>
                         {{end}}
                     </td>
-                    <td>1</td>
+                    <td><i class="bi bi-1-circle"></i></td>
                     <td>
                         <span class="bi bi-info-circle"
                               title="Draw a random card from the draw pile.&#010;You will not know which card you played."
@@ -249,7 +249,7 @@
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 2)}}
+                        {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 3)}}
                             <button
                                     onclick="document.getElementById('wild-card-dialog').showModal()"
                             >
@@ -259,7 +259,7 @@
                             <i>Wild Card</i>
                         {{end}}
                     </td>
-                    <td>2</td>
+                    <td><i class="bi bi-3-circle"></i></td>
                     <td>
                         <span class="bi bi-info-circle" title="Provide any text you want to play as a card."></span>
                     </td>
