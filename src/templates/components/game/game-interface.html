@@ -168,15 +168,17 @@
                 <tbody>
                 <tr>
                     <td>
-                        {{if ge .PlayerCreditsRemaining 1}}
-                            <button onclick="document.getElementById('gamble-credits-dialog').showModal()">
-                                Gamble Credits
-                            </button>
-                        {{else}}
-                            <i>Gamble Credits</i>
-                        {{end}}
+                        <button
+                            onclick="document.getElementById('gamble-credits-dialog').showModal()"
+                            {{if lt .PlayerCreditsRemaining 1}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Gamble Credits
+                        </button>
                     </td>
-                    <td><i class="bi bi-question-circle"></i></td>
+                    <td>1-10</td>
                     <td>
                         <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
                     </td>
@@ -185,51 +187,55 @@
                     <td>
                         {{if gt .PlayerBetOnWin 0}}
                             <i>Bet Placed: {{.PlayerBetOnWin}}</i>
-                        {{else if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 1)}}
-                            <button onclick="document.getElementById('bet-on-win-dialog').showModal()">
+                        {{else}}
+                            <button
+                                onclick="document.getElementById('bet-on-win-dialog').showModal()"
+                                {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
+                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    disabled
+                                {{end}}
+                            >
                                 Bet On Win
                             </button>
-                        {{else}}
-                            <i>Bet On Win</i>
                         {{end}}
                     </td>
-                    <td><i class="bi bi-question-circle"></i></td>
+                    <td>1-10</td>
                     <td>
                         <span class="bi bi-info-circle" title="Bet credits you will win this round. Earn double credits back if correct."></span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .BoardHasAnyRevealed) (ge .PlayerCreditsRemaining 2)}}
-                            <button
-                                    hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
-                                    hx-confirm="Are you sure you want to use an extra response?"
-                            >
-                                Extra Response
-                            </button>
-                        {{else}}
-                            <i>Extra Response</i>
-                        {{end}}
+                        <button
+                            hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
+                            hx-confirm="Are you sure you want to use an extra response?"
+                            {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 2)}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Extra Response
+                        </button>
                     </td>
-                    <td><i class="bi bi-2-circle"></i></td>
+                    <td>2</td>
                     <td>
                         <span class="bi bi-info-circle" title="Get an extra response for the round."></span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
-                            <button
-                                    hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
-                                    hx-confirm="Are you sure you want to use a Steal Card?"
-                            >
-                                Steal Card
-                            </button>
-                        {{else}}
-                            <i>Steal Card</i>
-                        {{end}}
+                        <button
+                            hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
+                            hx-confirm="Are you sure you want to use a Steal Card?"
+                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Steal Card
+                        </button>
                     </td>
-                    <td><i class="bi bi-1-circle"></i></td>
+                    <td>1</td>
                     <td>
                         <span class="bi bi-info-circle"
                               title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
@@ -238,18 +244,18 @@
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 1)}}
-                            <button
-                                    hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
-                                    hx-confirm="Are you sure you want to use a Surprise Card?"
-                            >
-                                Surprise Card
-                            </button>
-                        {{else}}
-                            <i>Surprise Card</i>
-                        {{end}}
+                        <button
+                            hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
+                            hx-confirm="Are you sure you want to use a Surprise Card?"
+                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Surprise Card
+                        </button>
                     </td>
-                    <td><i class="bi bi-1-circle"></i></td>
+                    <td>1</td>
                     <td>
                         <span class="bi bi-info-circle"
                               title="Draw a random card from the draw pile.&#010;You will not know which card you played."
@@ -258,17 +264,17 @@
                 </tr>
                 <tr>
                     <td>
-                        {{if and (not .PlayerIsReady) (ge .PlayerCreditsRemaining 3)}}
-                            <button
-                                    onclick="document.getElementById('wild-card-dialog').showModal()"
-                            >
-                                Wild Card
-                            </button>
-                        {{else}}
-                            <i>Wild Card</i>
-                        {{end}}
+                        <button
+                            onclick="document.getElementById('wild-card-dialog').showModal()"
+                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 3)}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Wild Card
+                        </button>
                     </td>
-                    <td><i class="bi bi-3-circle"></i></td>
+                    <td>3</td>
                     <td>
                         <span class="bi bi-info-circle" title="Provide any text you want to play as a card."></span>
                     </td>
