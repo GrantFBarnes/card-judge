@@ -89,6 +89,7 @@ func main() {
 		"../database/procedures/SP_SET_RESPONSE_COUNT.sql",
 		"../database/procedures/SP_SET_RESPONSES_LOBBY.sql",
 		"../database/procedures/SP_SET_RESPONSES_PLAYER.sql",
+		"../database/procedures/SP_SET_WINNING_STREAK.sql",
 		"../database/procedures/SP_SKIP_PROMPT.sql",
 		"../database/procedures/SP_START_NEW_ROUND.sql",
 		"../database/procedures/SP_VOTE_TO_KICK.sql",
