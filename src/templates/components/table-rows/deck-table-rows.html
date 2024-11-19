@@ -1,8 +1,6 @@
 {{define "deck-table-rows"}}
     {{range .}}
         <tr>
-            <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
-            <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
             <td class="wrap-new-lines"><a href="/deck/{{.Id}}">{{.Name}}</a></td>
             <td>{{.CardCount}}</td>
             <td>{{if .IsPublicReadOnly}} Public {{else}} <span class="bi bi-lock">Private</span> {{end}}</td>
