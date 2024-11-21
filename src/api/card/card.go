@@ -68,6 +68,48 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	_ = tmpl.ExecuteTemplate(w, "card-table-rows", cards)
 }
 
+func Find(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var lobbyId uuid.UUID
+	var textSearch string
+	for key, val := range r.Form {
+		if key == "lobbyId" {
+			lobbyId, err = uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse lobby id."))
+				return
+			}
+		} else if key == "text" {
+			textSearch = val[0]
+		}
+	}
+
+	cards, err := database.FindDrawPileCard(lobbyId, textSearch)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/table-rows/find-card-table-rows.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "find-card-table-rows", cards)
+}
+
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {

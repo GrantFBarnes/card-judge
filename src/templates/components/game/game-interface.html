@@ -265,6 +265,23 @@
                 <tr>
                     <td>
                         <button
+                            onclick="document.getElementById('find-card-dialog').showModal()"
+                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 2)}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Find Card
+                        </button>
+                    </td>
+                    <td>2</td>
+                    <td>
+                        <span class="bi bi-info-circle" title="Find a card from the draw pile."></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button
                             onclick="document.getElementById('wild-card-dialog').showModal()"
                             {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 3)}}
                                 style="opacity: 0.3; cursor: not-allowed;"

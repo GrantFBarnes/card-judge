@@ -76,6 +76,7 @@ func main() {
 		"../database/procedures/SP_PICK_RANDOM_WINNER.sql",
 		"../database/procedures/SP_PICK_WINNER.sql",
 		"../database/procedures/SP_RESPOND_WITH_CARD.sql",
+		"../database/procedures/SP_RESPOND_WITH_FIND_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_STEAL_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_SURPRISE_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_WILD_CARD.sql",
@@ -168,6 +169,7 @@ func main() {
 
 	// card
 	http.Handle("POST /api/card/search", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Search)))
+	http.Handle("POST /api/card/find", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Find)))
 	http.Handle("POST /api/card/create", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Create)))
 	http.Handle("PUT /api/card/{cardId}/category", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetCategory)))
 	http.Handle("PUT /api/card/{cardId}/text", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetText)))
@@ -186,6 +188,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/add-extra-response", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.AddExtraResponse)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/steal/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayStealCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/surprise/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlaySurpriseCard)))
+	http.Handle("POST /api/lobby/{lobbyId}/card/find/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayFindCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/wild/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayWildCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/response-card/{responseCardId}/withdraw", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.WithdrawCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/discard", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DiscardCard)))

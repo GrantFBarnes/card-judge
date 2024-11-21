@@ -1,11 +1,16 @@
 CREATE TABLE IF NOT EXISTS RESPONSE_CARD
 (
-    ID               UUID                             NOT NULL DEFAULT UUID(),
-    CREATED_ON_DATE  DATETIME                         NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    ID               UUID     NOT NULL DEFAULT UUID(),
+    CREATED_ON_DATE  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
-    RESPONSE_ID      UUID                             NOT NULL,
-    CARD_ID          UUID                             NOT NULL,
-    SPECIAL_CATEGORY ENUM ('STEAL','SURPRISE','WILD') NULL     DEFAULT NULL,
+    RESPONSE_ID      UUID     NOT NULL,
+    CARD_ID          UUID     NOT NULL,
+    SPECIAL_CATEGORY ENUM (
+        'STEAL',
+        'SURPRISE',
+        'FIND',
+        'WILD'
+        )                     NULL     DEFAULT NULL,
 
     PRIMARY KEY (ID),
     FOREIGN KEY (RESPONSE_ID) REFERENCES RESPONSE (ID) ON DELETE CASCADE,

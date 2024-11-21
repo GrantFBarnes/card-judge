@@ -21,6 +21,11 @@ type Card struct {
 	Image    sql.NullString
 }
 
+type LobbyCard struct {
+	LobbyId uuid.UUID
+	Card
+}
+
 func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
 	if categorySearch == "" {
 		categorySearch = "%"
@@ -66,6 +71,69 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 		var card Card
 		var imageBytes []byte
 		if err := rows.Scan(
+			&card.Id,
+			&card.CreatedOnDate,
+			&card.ChangedOnDate,
+			&card.DeckId,
+			&card.Category,
+			&card.Text,
+			&imageBytes); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
+		}
+
+		result = append(result, card)
+	}
+	return result, nil
+}
+
+func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error) {
+	sqlString := `
+		SELECT
+			LOBBY_ID,
+			ID,
+			CREATED_ON_DATE,
+			CHANGED_ON_DATE,
+			DECK_ID,
+			CATEGORY,
+			TEXT,
+			IMAGE
+		FROM (
+			SELECT
+				MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE) AS SCORE,
+				DP.LOBBY_ID,
+				C.ID,
+				C.CREATED_ON_DATE,
+				C.CHANGED_ON_DATE,
+				C.DECK_ID,
+				C.CATEGORY,
+				C.TEXT,
+				C.IMAGE
+			FROM CARD AS C
+				INNER JOIN DRAW_PILE AS DP ON DP.CARD_ID = C.ID
+			WHERE DP.LOBBY_ID = ?
+				AND C.CATEGORY = 'RESPONSE'
+				AND MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE)
+		) AS T
+		ORDER BY SCORE DESC
+		LIMIT 10
+	`
+	rows, err := query(sqlString, textSearch, lobbyId, textSearch)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]LobbyCard, 0)
+	for rows.Next() {
+		var card LobbyCard
+		var imageBytes []byte
+		if err := rows.Scan(
+			&card.LobbyId,
 			&card.Id,
 			&card.CreatedOnDate,
 			&card.ChangedOnDate,
