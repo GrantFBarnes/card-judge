@@ -17,11 +17,19 @@ img {
 
 table {
     border-collapse: collapse;
+    display: block;
+    overflow: auto;
 }
 
 th,
 td {
     padding: 5px;
+}
+
+dialog {
+    max-width: 80vw;
+    max-height: 80vh;
+    overflow: auto;
 }
 
 dialog::backdrop {
@@ -45,6 +53,7 @@ input[type="submit"] {
 textarea {
     padding: 5px;
     margin: 5px;
+    max-width: 70vw;
 }
 
 select {
@@ -89,6 +98,7 @@ summary {
     position: absolute;
     right: 0;
     min-width: 50px;
+    z-index: 10;
 
     /* will toggle to block */
     display: none;
@@ -111,7 +121,7 @@ summary {
 #content {
     margin: var(--content-margin);
     height: calc(
-            100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) -
+        100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) -
             var(--top-bar-height)
     );
 }

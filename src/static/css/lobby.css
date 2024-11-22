@@ -4,9 +4,17 @@
     grid-template-columns: auto;
     grid-template-rows: auto 200px;
     grid-template-areas:
-    "interface"
-    "chat";
+        "interface"
+        "chat";
     gap: 4px;
+}
+
+@media screen and (max-width: 1080px) {
+    #lobby-grid-container {
+        height: auto;
+        width: calc(100vw - 40px);
+        grid-template-columns: calc(100vw - 40px);
+    }
 }
 
 #lobby-grid-interface {
@@ -18,9 +26,27 @@
     grid-template-columns: 400px auto 200px;
     grid-template-rows: 80px auto;
     grid-template-areas:
-    "info info info"
-    "player board stats";
+        "info info info"
+        "player board stats";
     gap: 4px;
+}
+
+@media screen and (max-width: 1080px) {
+    #lobby-grid-interface {
+        height: auto;
+        width: calc(100vw - 40px);
+        grid-template-columns: calc(100vw - 40px);
+        grid-template-rows: auto;
+        grid-template-areas:
+            "info"
+            "player"
+            "board"
+            "stats";
+    }
+}
+
+table {
+    display: table;
 }
 
 #lobby-grid-interface > div {
@@ -85,7 +111,6 @@
 #lobby-game-board {
     grid-area: board;
     overflow-y: scroll;
-    min-width: 400px;
 }
 
 #prompt-card {
