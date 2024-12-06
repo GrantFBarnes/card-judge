@@ -53,7 +53,6 @@
             </div>
         </div>
         <form hx-put="/api/lobby/{{.Lobby.Id}}/name" hx-target="find .htmx-result">
-            <h3>Set Lobby Name</h3>
             <label for="setLobbyName">Name:</label>
             <input
                     type="text"
@@ -64,13 +63,10 @@
                     required="required"
                     autocomplete="off"
             />
-            <br/>
-            <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Lobby Name"/>
         </form>
         <form hx-put="/api/lobby/{{.Lobby.Id}}/message" hx-target="find .htmx-result">
-            <h3>Set Lobby Message</h3>
             <label for="setLobbyMessage">Message:</label>
             <input
                     type="text"
@@ -80,8 +76,6 @@
                     placeholder="Enter Message"
                     autocomplete="off"
             />
-            <br/>
-            <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Lobby Message"/>
         </form>
@@ -89,7 +83,6 @@
                 hx-put="/api/lobby/{{.Lobby.Id}}/hand-size"
                 hx-target="find .htmx-result"
         >
-            <h3>Set Lobby Hand Size</h3>
             <label for="setLobbyHandSize">Hand Size:</label>
             <select
                     id="setLobbyHandSize"
@@ -104,8 +97,6 @@
                 <option value="14">14</option>
                 <option value="16">16</option>
             </select>
-            <br/>
-            <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Lobby Hand Size"/>
         </form>
@@ -113,7 +104,6 @@
                 hx-put="/api/lobby/{{.Lobby.Id}}/credit-limit"
                 hx-target="find .htmx-result"
         >
-            <h3>Set Lobby Credit Limit</h3>
             <label for="setLobbyCreditLimit">Credit Limit:</label>
             <select
                     id="setLobbyCreditLimit"
@@ -133,10 +123,48 @@
                 <option value="9">9</option>
                 <option value="10">10</option>
             </select>
-            <br/>
-            <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Lobby Credit Limit"/>
+        </form>
+        <form
+                hx-put="/api/lobby/{{.Lobby.Id}}/win-streak-threshold"
+                hx-target="find .htmx-result"
+        >
+            <label for="setLobbyWinStreakThreshold">Win Streak Threshold:</label>
+            <select
+                    id="setLobbyWinStreakThreshold"
+                    name="winStreakThreshold"
+                    autocomplete="off"
+                    required="required"
+            >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <div class="htmx-result"></div>
+            <input type="submit" value="Set Lobby Win Streak Threshold"/>
+        </form>
+        <form
+                hx-put="/api/lobby/{{.Lobby.Id}}/lose-streak-threshold"
+                hx-target="find .htmx-result"
+        >
+            <label for="setLobbyLoseStreakThreshold">Lose Streak Threshold:</label>
+            <select
+                    id="setLobbyLoseStreakThreshold"
+                    name="loseStreakThreshold"
+                    autocomplete="off"
+                    required="required"
+            >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <div class="htmx-result"></div>
+            <input type="submit" value="Set Lobby Lose Streak Threshold"/>
         </form>
     </dialog>
     <dialog id="purchase-credits-dialog">

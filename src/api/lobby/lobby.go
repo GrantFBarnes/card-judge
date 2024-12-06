@@ -83,6 +83,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var passwordConfirm string
 	var handSize int
 	var creditLimit int
+	var winStreakThreshold int
+	var loseStreakThreshold int
 	var deckIds = make([]uuid.UUID, 0)
 	for key, val := range r.Form {
 		if key == "name" {
@@ -105,6 +107,20 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse credit limit."))
+				return
+			}
+		} else if key == "winStreakThreshold" {
+			winStreakThreshold, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse win streak threshold."))
+				return
+			}
+		} else if key == "loseStreakThreshold" {
+			loseStreakThreshold, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse lose streak threshold."))
 				return
 			}
 		} else if strings.HasPrefix(key, "deckId") {
@@ -148,6 +164,22 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		creditLimit = 10
 	}
 
+	if winStreakThreshold < 1 {
+		winStreakThreshold = 1
+	}
+
+	if winStreakThreshold > 5 {
+		winStreakThreshold = 5
+	}
+
+	if loseStreakThreshold < 1 {
+		loseStreakThreshold = 1
+	}
+
+	if loseStreakThreshold > 5 {
+		loseStreakThreshold = 5
+	}
+
 	if len(deckIds) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("At least one deck is required."))
@@ -173,7 +205,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, message, password, handSize, creditLimit)
+	lobbyId, err := database.CreateLobby(name, message, password, handSize, creditLimit, winStreakThreshold, loseStreakThreshold)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1272,6 +1304,120 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby credit limit set to %d", player.Name, creditLimit))
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetWinStreakThreshold(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var winStreakThreshold int
+	for key, val := range r.Form {
+		if key == "winStreakThreshold" {
+			winStreakThreshold, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse win streak threshold."))
+				return
+			}
+		}
+	}
+
+	if winStreakThreshold < 1 {
+		winStreakThreshold = 1
+	}
+
+	if winStreakThreshold > 5 {
+		winStreakThreshold = 5
+	}
+
+	err = database.SetLobbyWinStreakThreshold(lobbyId, winStreakThreshold)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby win streak threshold set to %d", player.Name, winStreakThreshold))
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetLoseStreakThreshold(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var loseStreakThreshold int
+	for key, val := range r.Form {
+		if key == "loseStreakThreshold" {
+			loseStreakThreshold, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse lose streak threshold."))
+				return
+			}
+		}
+	}
+
+	if loseStreakThreshold < 1 {
+		loseStreakThreshold = 1
+	}
+
+	if loseStreakThreshold > 5 {
+		loseStreakThreshold = 5
+	}
+
+	err = database.SetLobbyLoseStreakThreshold(lobbyId, loseStreakThreshold)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby lose streak threshold set to %d", player.Name, loseStreakThreshold))
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)

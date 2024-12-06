@@ -96,6 +96,34 @@
                     <option value="9">9</option>
                     <option value="10">10</option>
                 </select>
+                <br/>
+                <label for="createLobbyWinStreakThreshold">Win Streak Threshold:</label>
+                <select
+                        id="createLobbyWinStreakThreshold"
+                        name="winStreakThreshold"
+                        autocomplete="off"
+                        required="required"
+                >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <br/>
+                <label for="createLobbyLoseStreakThreshold">Lose Streak Threshold:</label>
+                <select
+                        id="createLobbyLoseStreakThreshold"
+                        name="loseStreakThreshold"
+                        autocomplete="off"
+                        required="required"
+                >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
             </details>
             {{$deckCount := len .Decks}}
             {{if gt $deckCount 0}}

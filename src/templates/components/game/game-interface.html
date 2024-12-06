@@ -135,7 +135,7 @@
                     <td>{{.PlayerWinningStreak}}</td>
                     <td>
                         <span class="bi bi-info-circle"
-                              title="If your winning streak hits 3, you have a credit removed and your streak will be reset."
+                        title="If your winning streak hits {{.LobbyWinStreakThreshold}}, you have a credit removed and your streak will be reset."
                         ></span>
                     </td>
                 </tr>
@@ -144,7 +144,7 @@
                     <td>{{.PlayerLosingStreak}}</td>
                     <td>
                         <span class="bi bi-info-circle"
-                              title="If your losing streak hits 5, you will be awarded an additional credit and your streak will be reset."
+                              title="If your losing streak hits {{.LobbyLoseStreakThreshold}}, you will be awarded an additional credit and your streak will be reset."
                         ></span>
                     </td>
                 </tr>
