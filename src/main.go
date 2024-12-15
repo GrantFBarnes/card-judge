@@ -75,6 +75,7 @@ func main() {
 		"../database/procedures/SP_GET_READABLE_DECKS.sql",
 		"../database/procedures/SP_PICK_RANDOM_WINNER.sql",
 		"../database/procedures/SP_PICK_WINNER.sql",
+		"../database/procedures/SP_PURCHASE_CREDITS.sql",
 		"../database/procedures/SP_RESPOND_WITH_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_FIND_CARD.sql",
 		"../database/procedures/SP_RESPOND_WITH_STEAL_CARD.sql",
