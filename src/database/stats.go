@@ -141,7 +141,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -171,7 +171,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -191,7 +191,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Games Played")
@@ -206,7 +206,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Games Played")
@@ -220,7 +220,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -252,7 +252,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Rounds Played")
@@ -281,7 +281,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Rounds Played")
@@ -307,7 +307,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -328,7 +328,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Rounds Won")
@@ -346,7 +346,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Rounds Won")
@@ -361,7 +361,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -381,7 +381,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Rounds Played")
@@ -398,7 +398,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Rounds Played")
@@ -412,7 +412,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -490,7 +490,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Played")
@@ -507,7 +507,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Cards Played")
@@ -521,7 +521,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -541,7 +541,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Drawn")
@@ -558,7 +558,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -578,7 +578,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Discarded")
@@ -595,7 +595,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -615,7 +615,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Skipped")
@@ -632,7 +632,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -658,7 +658,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Judge Picking")
@@ -679,7 +679,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Judge Picking")
@@ -699,7 +699,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -725,7 +725,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "card":
 			resultHeaders = append(resultHeaders, "Winner")
@@ -746,7 +746,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Winner")
@@ -766,7 +766,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY
 					COUNT DESC,
 					NAME ASC
-				LIMIT 5
+				LIMIT 10
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
