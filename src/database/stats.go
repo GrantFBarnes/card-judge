@@ -9,15 +9,17 @@ import (
 )
 
 type StatPersonal struct {
-	GamePlayCount    int
-	GameWinCount     int
-	RoundPlayCount   int
-	RoundWinCount    int
-	CardPlayCount    int
-	CardDrawCount    int
-	CardDiscardCount int
-	CardSkipCount    int
-	LobbyKickCount   int
+	GamePlayCount      int
+	GameWinCount       int
+	RoundPlayCount     int
+	RoundWinCount      int
+	CardPlayCount      int
+	CardDrawCount      int
+	CardDiscardCount   int
+	CardSkipCount      int
+	CreditsSpentCount  int
+	CreditsEarnedCount int
+	LobbyKickCount     int
 }
 
 func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
@@ -65,6 +67,18 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			(SELECT COUNT(*) FROM LOG_DRAW WHERE USER_ID = U.ID) AS CARD_DRAW_COUNT,
 			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS CARD_DISCARD_COUNT,
 			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS CARD_SKIP_COUNT,
+			(
+				SELECT SUM(AMOUNT)
+				FROM LOG_CREDITS_SPENT
+				WHERE USER_ID = U.ID
+					AND AMOUNT > 0
+			) AS CREDITS_SPENT_COUNT,
+			(
+				SELECT SUM(AMOUNT) * -1
+				FROM LOG_CREDITS_SPENT
+				WHERE USER_ID = U.ID
+					AND AMOUNT < 0
+			) AS CREDITS_EARNED_COUNT,
 			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
@@ -84,6 +98,8 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			&result.CardDrawCount,
 			&result.CardDiscardCount,
 			&result.CardSkipCount,
+			&result.CreditsSpentCount,
+			&result.CreditsEarnedCount,
 			&result.LobbyKickCount); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
@@ -763,6 +779,242 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
 				GROUP BY LRC.SPECIAL_CATEGORY, LRC.PLAYER_USER_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "credits-spent":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Credits Spent")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					SUM(LCS.AMOUNT) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.AMOUNT > 0
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "credits-earned":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Credits Earned")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					SUM(LCS.AMOUNT) * -1 AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.AMOUNT < 0
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "credits-spent-category":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Credits Spent")
+			resultHeaders = append(resultHeaders, "Category")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					SUM(LCS.AMOUNT) AS COUNT,
+					LCS.CATEGORY AS CATEGORY,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.AMOUNT > 0
+				GROUP BY U.ID, LCS.CATEGORY
+				ORDER BY
+					COUNT DESC,
+					NAME ASC,
+					CATEGORY ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "credits-earned-category":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Credits Earned")
+			resultHeaders = append(resultHeaders, "Category")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					SUM(LCS.AMOUNT) * -1 AS COUNT,
+					LCS.CATEGORY AS CATEGORY,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.AMOUNT < 0
+				GROUP BY U.ID, LCS.CATEGORY
+				ORDER BY
+					COUNT DESC,
+					NAME ASC,
+					CATEGORY ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "credits-spent-game":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Credits Spent in a Game")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					SUM(LCS.AMOUNT) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.AMOUNT > 0
+				GROUP BY U.ID, LCS.LOBBY_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "credits-earned-game":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Credits Earned in a Game")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					SUM(LCS.AMOUNT) * -1 AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.AMOUNT < 0
+				GROUP BY U.ID, LCS.LOBBY_ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "gamble":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Gamble")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					MAX(LCS.AMOUNT) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.CATEGORY = 'GAMBLE'
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "gamble-win":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Gamble Win")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					MIN(LCS.AMOUNT) * -1 AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.CATEGORY = 'GAMBLE-WIN'
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "bet":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Bet")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					MAX(LCS.AMOUNT) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.CATEGORY = 'BET'
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "bet-win":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Bet Win")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					MIN(LCS.AMOUNT) * -1 AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_CREDITS_SPENT AS LCS
+					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
+				WHERE LCS.CATEGORY = 'BET-WIN'
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "kick":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Kicked")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(*) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_KICK AS LK
+					INNER JOIN USER AS U ON U.ID = LK.USER_ID
+				GROUP BY U.ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC

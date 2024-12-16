@@ -23,6 +23,15 @@ BEGIN
         SET CREDITS_SPENT = CREDITS_SPENT + 2
         WHERE ID = VAR_PLAYER_ID;
 
+        INSERT INTO LOG_CREDITS_SPENT (LOBBY_ID, USER_ID, AMOUNT, CATEGORY)
+        SELECT
+            LOBBY_ID,
+            USER_ID,
+            2,
+            'FIND'
+        FROM PLAYER
+        WHERE ID = VAR_PLAYER_ID;
+
         CALL SP_RESPOND_WITH_CARD(VAR_PLAYER_ID, VAR_CARD_ID, 'FIND');
     END IF;
 END;
