@@ -151,7 +151,6 @@
                 </tbody>
             </table>
             <hr/>
-            {{if not .PlayerIsJudge}}
             <table id="special-table">
                 <thead>
                 <tr>
@@ -183,6 +182,7 @@
                         <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
                     </td>
                 </tr>
+                {{if not .PlayerIsJudge}}
                 <tr>
                     <td>
                         {{if gt .PlayerBetOnWin 0}}
@@ -296,9 +296,9 @@
                         <span class="bi bi-info-circle" title="Provide any text you want to play as a card."></span>
                     </td>
                 </tr>
+                {{end}}
                 </tbody>
             </table>
-            {{end}}
         {{end}}
     </div>
     <div id="lobby-game-board">
