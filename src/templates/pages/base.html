@@ -41,17 +41,25 @@
     </div>
     <div id="top-bar-menu">
         {{if .LoggedIn}}
-            <div class="top-bar-menu-item">Playing As: {{.User.Name}}</div>
-            <div class="top-bar-menu-link" onclick="location.href='/manage'">Manage Account</div>
+            <div class="top-bar-menu-item">
+                Playing As: {{.User.Name}}
+                <i class="bi bi-person"></i>
+            </div>
+            <div class="top-bar-menu-link" onclick="location.href='/manage'">
+                Manage Account
+                <i class="bi bi-gear"></i>
+            </div>
             <div class="top-bar-menu-link"
                  hx-post="/api/user/logout"
                  hx-confirm="Are you sure you want to logout?"
             >
                 Logout
+                <i class="bi bi-box-arrow-left"></i>
             </div>
         {{else}}
             <div class="top-bar-menu-link" onclick="location.href='/login'">
                 Login
+                <i class="bi bi-box-arrow-in-left"></i>
             </div>
         {{end}}
     </div>
