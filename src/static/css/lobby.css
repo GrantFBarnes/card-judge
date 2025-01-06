@@ -76,6 +76,10 @@ table {
     padding: 10px;
 }
 
+#player-hand-table {
+    width: 100%;
+}
+
 #player-values-table {
     width: 100%;
     text-align: center;
