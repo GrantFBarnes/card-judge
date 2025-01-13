@@ -54,6 +54,7 @@
                     </th>
                     <th>
                         {{if gt $handSize 0}}
+                        {{if .PlayerIsJudge}}
                             <button
                                     hx-post="/api/lobby/{{.LobbyId}}/discard-hand"
                                     hx-target="#lobby-grid-interface"
@@ -61,6 +62,7 @@
                             >
                                 Discard
                             </button>
+                        {{end}}
                         {{end}}
                     </th>
                 </tr>
@@ -101,12 +103,14 @@
                         </td>
                         <td style="text-align: center">
                             {{if not .IsLocked}}
+                            {{if .PlayerIsJudge}}
                                 <span title="Discard"
                                       class="bi bi-trash clickable"
                                       hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
                                       hx-target="#lobby-grid-interface"
                                       hx-confirm="Are you sure you want to discard this card?"
                                 ></span>
+                            {{end}}
                             {{end}}
                         </td>
                     </tr>
