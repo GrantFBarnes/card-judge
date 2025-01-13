@@ -620,6 +620,27 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
+	case "card-discard-round":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Avg. Cards Discarded Per Round")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LD.ID)/COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					U.NAME AS NAME
+				FROM USER AS U
+					INNER JOIN LOG_RESPONSE_CARD AS LRC ON LRC.PLAYER_USER_ID = U.ID
+					INNER JOIN LOG_DISCARD AS LD ON LD.USER_ID = U.ID
+				GROUP BY U.ID
+				ORDER BY
+					COUNT ASC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	case "card-skip":
 		switch subject {
 		case "player":
