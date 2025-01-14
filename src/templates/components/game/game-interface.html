@@ -103,7 +103,7 @@
                         </td>
                         <td style="text-align: center">
                             {{if not .IsLocked}}
-                            {{if .PlayerIsJudge}}
+                            {{if $.PlayerIsJudge}}
                                 <span title="Discard"
                                       class="bi bi-trash clickable"
                                       hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
@@ -154,6 +154,7 @@
                 </tr>
                 </tbody>
             </table>
+            {{if not .PlayerIsWinning}}
             <hr/>
             <table id="special-table">
                 <thead>
@@ -303,6 +304,7 @@
                 {{end}}
                 </tbody>
             </table>
+            {{end}}
         {{end}}
     </div>
     <div id="lobby-game-board">
