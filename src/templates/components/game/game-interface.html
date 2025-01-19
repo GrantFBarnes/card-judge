@@ -212,6 +212,13 @@
                     <td>
                         {{if gt .PlayerBetOnWin 0}}
                             <i>Bet Placed: {{.PlayerBetOnWin}}</i>
+                            {{if not .BoardHasAnyRevealed}}
+                                <span
+                                    title="Undo Bet"
+                                    class="bi bi-arrow-counterclockwise clickable"
+                                    hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win/undo"
+                                ></span>
+                            {{end}}
                         {{else}}
                             <button
                                 onclick="document.getElementById('bet-on-win-dialog').showModal()"
