@@ -213,11 +213,14 @@
                         {{if gt .PlayerBetOnWin 0}}
                             <i>Bet Placed: {{.PlayerBetOnWin}}</i>
                             {{if not .BoardHasAnyRevealed}}
+                                <br/>
                                 <span
                                     title="Undo Bet"
                                     class="bi bi-arrow-counterclockwise clickable"
                                     hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win/undo"
-                                ></span>
+                                >
+                                    <i>Undo Bet</i>
+                                </span>
                             {{end}}
                         {{else}}
                             <button
@@ -248,6 +251,15 @@
                         >
                             Extra Response
                         </button>
+                        {{if and (gt .PlayerExtraResponses 0) (not .BoardHasAnyRevealed)}}
+                            <span
+                                title="Undo Extra Response"
+                                class="bi bi-arrow-counterclockwise clickable"
+                                hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response/undo"
+                            >
+                                <i>Undo Extra Response</i>
+                            </span>
+                        {{end}}
                     </td>
                     <td>2</td>
                     <td>
