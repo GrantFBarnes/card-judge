@@ -343,7 +343,7 @@
                 {{end}}
             {{end}}
         </h3>
-        {{if .PlayerIsJudge}}
+        {{if and .PlayerIsJudge (not .BoardHasAnySpecial) (not .BoardHasAnyRevealed)}}
             <span id="judge-settings">
                 <label for="setResponseCount">Responses:</label>
                 <input
