@@ -94,6 +94,7 @@ func main() {
 		"../database/procedures/SP_SET_RESPONSES_LOBBY.sql",
 		"../database/procedures/SP_SET_RESPONSES_PLAYER.sql",
 		"../database/procedures/SP_SET_WINNING_STREAK.sql",
+		"../database/procedures/SP_SKIP_JUDGE.sql",
 		"../database/procedures/SP_SKIP_PROMPT.sql",
 		"../database/procedures/SP_START_NEW_ROUND.sql",
 		"../database/procedures/SP_VOTE_TO_KICK.sql",
@@ -186,6 +187,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/draw-hand", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DrawHand)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/purchase-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PurchaseCredits)))
+	http.Handle("POST /api/lobby/{lobbyId}/skip-judge", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SkipJudge)))
 	http.Handle("POST /api/lobby/{lobbyId}/gamble-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GambleCredits)))
 	http.Handle("POST /api/lobby/{lobbyId}/bet-on-win", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.BetOnWin)))
 	http.Handle("POST /api/lobby/{lobbyId}/add-extra-response", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.AddExtraResponse)))

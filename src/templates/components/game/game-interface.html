@@ -170,6 +170,26 @@
                 </tr>
                 </thead>
                 <tbody>
+                {{if .PlayerIsJudge}}
+                <tr>
+                    <td>
+                        <button
+                            hx-post="/api/lobby/{{$.LobbyId}}/skip-judge"
+                            hx-confirm="Are you sure you want to skip being judge?"
+                            {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 5)}}
+                                style="opacity: 0.3; cursor: not-allowed;"
+                                disabled
+                            {{end}}
+                        >
+                            Skip Being Judge
+                        </button>
+                    </td>
+                    <td>5</td>
+                    <td>
+                        <span class="bi bi-info-circle" title="Skip your turn as judge."></span>
+                    </td>
+                </tr>
+                {{end}}
                 <tr>
                     <td>
                         <button
