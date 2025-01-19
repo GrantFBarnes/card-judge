@@ -30,6 +30,7 @@ dialog {
     max-width: 80vw;
     max-height: 80vh;
     overflow: auto;
+    border-radius: 4px;
 }
 
 dialog::backdrop {
@@ -40,6 +41,7 @@ dialog::backdrop {
 input {
     padding: 5px;
     margin: 5px;
+    border-radius: 4px;
 }
 
 input[type="checkbox"] {
@@ -54,18 +56,21 @@ textarea {
     padding: 5px;
     margin: 5px;
     max-width: 70vw;
+    border-radius: 4px;
 }
 
 select {
     padding: 5px;
     margin: 5px;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 button {
     padding: 5px;
     margin: 5px;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 summary {
