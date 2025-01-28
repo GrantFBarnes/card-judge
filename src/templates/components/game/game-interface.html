@@ -54,15 +54,15 @@
                     </th>
                     <th>
                         {{if gt $handSize 0}}
-                        {{if .PlayerIsJudge}}
-                            <button
-                                    hx-post="/api/lobby/{{.LobbyId}}/discard-hand"
-                                    hx-target="#lobby-grid-interface"
-                                    hx-confirm="Are you sure you want to discard your hand?"
-                            >
-                                Discard
-                            </button>
-                        {{end}}
+                            {{if .PlayerIsJudge}}
+                                <button
+                                        hx-post="/api/lobby/{{.LobbyId}}/discard-hand"
+                                        hx-target="#lobby-grid-interface"
+                                        hx-confirm="Are you sure you want to discard your hand?"
+                                >
+                                    Discard
+                                </button>
+                            {{end}}
                         {{end}}
                     </th>
                 </tr>
@@ -103,14 +103,14 @@
                         </td>
                         <td style="text-align: center">
                             {{if not .IsLocked}}
-                            {{if $.PlayerIsJudge}}
-                                <span title="Discard"
-                                      class="bi bi-trash clickable"
-                                      hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
-                                      hx-target="#lobby-grid-interface"
-                                      hx-confirm="Are you sure you want to discard this card?"
-                                ></span>
-                            {{end}}
+                                {{if $.PlayerIsJudge}}
+                                    <span title="Discard"
+                                          class="bi bi-trash clickable"
+                                          hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
+                                          hx-target="#lobby-grid-interface"
+                                          hx-confirm="Are you sure you want to discard this card?"
+                                    ></span>
+                                {{end}}
                             {{end}}
                         </td>
                     </tr>
@@ -139,7 +139,7 @@
                     <td>{{.PlayerWinningStreak}}</td>
                     <td>
                         <span class="bi bi-info-circle"
-                        title="If your winning streak hits {{.LobbyWinStreakThreshold}}, you have a credit removed and your streak will be reset."
+                              title="If your winning streak hits {{.LobbyWinStreakThreshold}}, you have a credit removed and your streak will be reset."
                         ></span>
                     </td>
                 </tr>
@@ -155,194 +155,196 @@
                 </tbody>
             </table>
             {{if not .PlayerIsWinning}}
-            <hr/>
-            <table id="special-table">
-                <thead>
-                <tr>
-                    <th>Special</th>
-                    <th>Cost</th>
-                    <th>
+                <hr/>
+                <table id="special-table">
+                    <thead>
+                    <tr>
+                        <th>Special</th>
+                        <th>Cost</th>
+                        <th>
                         <span title="Purchase Credits"
                               class="bi bi-cart4 clickable"
                               onclick="document.getElementById('purchase-credits-dialog').showModal()"
                         ></span>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {{if .PlayerIsJudge}}
-                <tr>
-                    <td>
-                        <button
-                            hx-post="/api/lobby/{{$.LobbyId}}/skip-judge"
-                            hx-confirm="Are you sure you want to skip being judge?"
-                            {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 5)}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Skip Being Judge
-                        </button>
-                    </td>
-                    <td>5</td>
-                    <td>
-                        <span class="bi bi-info-circle" title="Skip your turn as judge."></span>
-                    </td>
-                </tr>
-                {{end}}
-                <tr>
-                    <td>
-                        <button
-                            onclick="document.getElementById('gamble-credits-dialog').showModal()"
-                            {{if lt .PlayerCreditsRemaining 1}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Gamble Credits
-                        </button>
-                    </td>
-                    <td>1+</td>
-                    <td>
-                        <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
-                    </td>
-                </tr>
-                {{if not .PlayerIsJudge}}
-                <tr>
-                    <td>
-                        {{if gt .PlayerBetOnWin 0}}
-                            <i>Bet Placed: {{.PlayerBetOnWin}}</i>
-                            {{if not .BoardHasAnyRevealed}}
-                                <br/>
-                                <span
-                                    title="Undo Bet"
-                                    class="bi bi-arrow-counterclockwise clickable"
-                                    hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win/undo"
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{if .PlayerIsJudge}}
+                        <tr>
+                            <td>
+                                <button
+                                        hx-post="/api/lobby/{{$.LobbyId}}/skip-judge"
+                                        hx-confirm="Are you sure you want to skip being judge?"
+                                        {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 5)}}
+                                            style="opacity: 0.3; cursor: not-allowed;"
+                                            disabled
+                                        {{end}}
                                 >
+                                    Skip Being Judge
+                                </button>
+                            </td>
+                            <td>5</td>
+                            <td>
+                                <span class="bi bi-info-circle" title="Skip your turn as judge."></span>
+                            </td>
+                        </tr>
+                    {{end}}
+                    <tr>
+                        <td>
+                            <button
+                                    onclick="document.getElementById('gamble-credits-dialog').showModal()"
+                                    {{if lt .PlayerCreditsRemaining 1}}
+                                        style="opacity: 0.3; cursor: not-allowed;"
+                                        disabled
+                                    {{end}}
+                            >
+                                Gamble Credits
+                            </button>
+                        </td>
+                        <td>1+</td>
+                        <td>
+                            <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
+                        </td>
+                    </tr>
+                    {{if not .PlayerIsJudge}}
+                        <tr>
+                            <td>
+                                {{if gt .PlayerBetOnWin 0}}
+                                    <i>Bet Placed: {{.PlayerBetOnWin}}</i>
+                                    {{if not .BoardHasAnyRevealed}}
+                                        <br/>
+                                        <span
+                                                title="Undo Bet"
+                                                class="bi bi-arrow-counterclockwise clickable"
+                                                hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win/undo"
+                                        >
                                     <i>Undo Bet</i>
                                 </span>
-                            {{end}}
-                        {{else}}
-                            <button
-                                onclick="document.getElementById('bet-on-win-dialog').showModal()"
-                                {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
-                                    disabled
+                                    {{end}}
+                                {{else}}
+                                    <button
+                                            onclick="document.getElementById('bet-on-win-dialog').showModal()"
+                                            {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
+                                                style="opacity: 0.3; cursor: not-allowed;"
+                                                disabled
+                                            {{end}}
+                                    >
+                                        Bet On Win
+                                    </button>
                                 {{end}}
-                            >
-                                Bet On Win
-                            </button>
-                        {{end}}
-                    </td>
-                    <td>1+</td>
-                    <td>
-                        <span class="bi bi-info-circle" title="Bet credits you will win this round. Earn double credits back if correct."></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button
-                            hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
-                            hx-confirm="Are you sure you want to use an extra response?"
-                            {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 2)}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Extra Response
-                        </button>
-                        {{if and (gt .PlayerExtraResponses 0) (not .BoardHasAnyRevealed)}}
-                            <span
-                                title="Undo Extra Response"
-                                class="bi bi-arrow-counterclockwise clickable"
-                                hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response/undo"
-                            >
+                            </td>
+                            <td>1+</td>
+                            <td>
+                                <span class="bi bi-info-circle"
+                                      title="Bet credits you will win this round. Earn double credits back if correct."></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button
+                                        hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
+                                        hx-confirm="Are you sure you want to use an extra response?"
+                                        {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 2)}}
+                                            style="opacity: 0.3; cursor: not-allowed;"
+                                            disabled
+                                        {{end}}
+                                >
+                                    Extra Response
+                                </button>
+                                {{if and (gt .PlayerExtraResponses 0) (not .BoardHasAnyRevealed)}}
+                                    <span
+                                            title="Undo Extra Response"
+                                            class="bi bi-arrow-counterclockwise clickable"
+                                            hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response/undo"
+                                    >
                                 <i>Undo Extra Response</i>
                             </span>
-                        {{end}}
-                    </td>
-                    <td>2</td>
-                    <td>
-                        <span class="bi bi-info-circle" title="Get an extra response for the round."></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button
-                            hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
-                            hx-confirm="Are you sure you want to use a Steal Card?"
-                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Steal Card
-                        </button>
-                    </td>
-                    <td>1</td>
-                    <td>
+                                {{end}}
+                            </td>
+                            <td>2</td>
+                            <td>
+                                <span class="bi bi-info-circle" title="Get an extra response for the round."></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button
+                                        hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
+                                        hx-confirm="Are you sure you want to use a Steal Card?"
+                                        {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
+                                            style="opacity: 0.3; cursor: not-allowed;"
+                                            disabled
+                                        {{end}}
+                                >
+                                    Steal Card
+                                </button>
+                            </td>
+                            <td>1</td>
+                            <td>
                         <span class="bi bi-info-circle"
                               title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
                         ></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button
-                            hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
-                            hx-confirm="Are you sure you want to use a Surprise Card?"
-                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Surprise Card
-                        </button>
-                    </td>
-                    <td>1</td>
-                    <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button
+                                        hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
+                                        hx-confirm="Are you sure you want to use a Surprise Card?"
+                                        {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
+                                            style="opacity: 0.3; cursor: not-allowed;"
+                                            disabled
+                                        {{end}}
+                                >
+                                    Surprise Card
+                                </button>
+                            </td>
+                            <td>1</td>
+                            <td>
                         <span class="bi bi-info-circle"
                               title="Draw a random card from the draw pile.&#010;You will not know which card you played."
                         ></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button
-                            onclick="document.getElementById('find-card-dialog').showModal()"
-                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 2)}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Find Card
-                        </button>
-                    </td>
-                    <td>2</td>
-                    <td>
-                        <span class="bi bi-info-circle" title="Find a card from the draw pile."></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button
-                            onclick="document.getElementById('wild-card-dialog').showModal()"
-                            {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 3)}}
-                                style="opacity: 0.3; cursor: not-allowed;"
-                                disabled
-                            {{end}}
-                        >
-                            Wild Card
-                        </button>
-                    </td>
-                    <td>3</td>
-                    <td>
-                        <span class="bi bi-info-circle" title="Provide any text you want to play as a card."></span>
-                    </td>
-                </tr>
-                {{end}}
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button
+                                        onclick="document.getElementById('find-card-dialog').showModal()"
+                                        {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 2)}}
+                                            style="opacity: 0.3; cursor: not-allowed;"
+                                            disabled
+                                        {{end}}
+                                >
+                                    Find Card
+                                </button>
+                            </td>
+                            <td>2</td>
+                            <td>
+                                <span class="bi bi-info-circle" title="Find a card from the draw pile."></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button
+                                        onclick="document.getElementById('wild-card-dialog').showModal()"
+                                        {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 3)}}
+                                            style="opacity: 0.3; cursor: not-allowed;"
+                                            disabled
+                                        {{end}}
+                                >
+                                    Wild Card
+                                </button>
+                            </td>
+                            <td>3</td>
+                            <td>
+                                <span class="bi bi-info-circle"
+                                      title="Provide any text you want to play as a card."></span>
+                            </td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
             {{end}}
         {{end}}
     </div>
@@ -398,13 +400,13 @@
                                         {{if .IsRevealed}}
                                             {{if .IsRuledOut}}
                                                 <span title="Undo Rule Out of Response"
-                                                    class="bi bi-arrow-counterclockwise clickable"
-                                                    hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                                                      class="bi bi-arrow-counterclockwise clickable"
+                                                      hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
                                                 ></span>
                                             {{else}}
                                                 <span title="Rule Out Response"
-                                                    class="bi bi-trash clickable"
-                                                    hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                                                      class="bi bi-trash clickable"
+                                                      hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
                                                 ></span>
                                             {{end}}
                                         {{end}}

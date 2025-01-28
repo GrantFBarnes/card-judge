@@ -16,11 +16,13 @@
         <link rel="stylesheet" href="/static/css/colors.css"/>
         <link rel="stylesheet" href="/static/css/global.css"/>
     </head>
-    {{if .User.ColorTheme.Valid}}
-    <body class="{{.User.ColorTheme.String}}">
-    {{else}}
-    <body class="dark-theme">
-    {{end}}
+    <body
+            {{if .User.ColorTheme.Valid}}
+                class="{{.User.ColorTheme.String}}"
+            {{else}}
+                class="dark-theme"
+            {{end}}
+    >
     <div id="top-bar">
         <div style="text-align: left">
           <span
@@ -62,7 +64,8 @@
                 <i class="bi bi-box-arrow-in-left"></i>
             </div>
         {{end}}
-        <div class="top-bar-menu-link" onclick="window.open('https://www.paypal.com/donate/?business=E3XMFGH4CR3G2&no_recurring=0&currency_code=USD', '_blank');">
+        <div class="top-bar-menu-link"
+             onclick="window.open('https://www.paypal.com/donate/?business=E3XMFGH4CR3G2&no_recurring=0&currency_code=USD', '_blank');">
             Donate
             <i class="bi bi-gift"></i>
         </div>
