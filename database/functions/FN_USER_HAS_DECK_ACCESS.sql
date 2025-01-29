@@ -4,7 +4,8 @@ CREATE FUNCTION IF NOT EXISTS FN_USER_HAS_DECK_ACCESS(
 ) RETURNS BOOLEAN
 BEGIN
     -- USER IS ADMIN
-    IF EXISTS(SELECT ID
+    IF EXISTS(SELECT
+                  ID
               FROM USER
               WHERE ID = VAR_USER_ID
                 AND IS_ADMIN = 1) THEN
@@ -12,7 +13,8 @@ BEGIN
     END IF;
 
     -- USER HAS ACCESS
-    IF EXISTS(SELECT ID
+    IF EXISTS(SELECT
+                  ID
               FROM USER_ACCESS_DECK
               WHERE USER_ID = VAR_USER_ID
                 AND DECK_ID = VAR_DECK_ID) THEN

@@ -4,18 +4,24 @@ CREATE PROCEDURE IF NOT EXISTS SP_SKIP_PROMPT(
 BEGIN
     DECLARE VAR_JUDGE_CARD_ID UUID;
 
-    SELECT CARD_ID
+    SELECT
+        CARD_ID
     INTO VAR_JUDGE_CARD_ID
     FROM JUDGE
     WHERE LOBBY_ID = VAR_LOBBY_ID;
 
     IF VAR_JUDGE_CARD_ID IS NOT NULL THEN
-        INSERT INTO LOG_SKIP (LOBBY_ID,
-                              USER_ID,
-                              CARD_ID)
-        SELECT P.LOBBY_ID,
-               P.USER_ID,
-               J.CARD_ID
+        INSERT
+        INTO LOG_SKIP
+            (
+                LOBBY_ID,
+                USER_ID,
+                CARD_ID
+            )
+        SELECT
+            P.LOBBY_ID,
+            P.USER_ID,
+            J.CARD_ID
         FROM PLAYER AS P
                  INNER JOIN JUDGE AS J ON J.LOBBY_ID = P.LOBBY_ID
         WHERE P.LOBBY_ID = VAR_LOBBY_ID

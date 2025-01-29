@@ -8,27 +8,54 @@ BEGIN
 
     SET VAR_CARD_ID = UUID();
 
-    SELECT LOBBY_ID
+    SELECT
+        LOBBY_ID
     INTO VAR_LOBBY_ID
     FROM PLAYER
     WHERE ID = VAR_PLAYER_ID;
 
-    INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT)
-    SELECT VAR_CARD_ID   AS ID,
-           D.ID          AS DECK_ID,
-           'RESPONSE'    AS CATEGORY,
-           VAR_CARD_TEXT AS TEXT
+    INSERT
+    INTO CARD
+        (
+            ID,
+            DECK_ID,
+            CATEGORY,
+            TEXT
+        )
+    SELECT
+        VAR_CARD_ID   AS ID,
+        D.ID          AS DECK_ID,
+        'RESPONSE'    AS CATEGORY,
+        VAR_CARD_TEXT AS TEXT
     FROM DECK AS D
     WHERE D.ID = VAR_LOBBY_ID
       AND D.IS_LOBBY_WILD_DECK = TRUE;
 
-    INSERT INTO LOG_WILD (CARD_ID, CARD_TEXT) VALUE (VAR_CARD_ID, VAR_CARD_TEXT);
+    INSERT
+    INTO LOG_WILD
+        (
+            CARD_ID,
+            CARD_TEXT
+        )
+    VALUES
+        (
+            VAR_CARD_ID,
+            VAR_CARD_TEXT
+        );
 
     UPDATE PLAYER
-    SET CREDITS_SPENT = CREDITS_SPENT + 3
+    SET
+        CREDITS_SPENT = CREDITS_SPENT + 3
     WHERE ID = VAR_PLAYER_ID;
 
-    INSERT INTO LOG_CREDITS_SPENT (LOBBY_ID, USER_ID, AMOUNT, CATEGORY)
+    INSERT
+    INTO LOG_CREDITS_SPENT
+        (
+            LOBBY_ID,
+            USER_ID,
+            AMOUNT,
+            CATEGORY
+        )
     SELECT
         LOBBY_ID,
         USER_ID,

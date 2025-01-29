@@ -4,10 +4,18 @@ CREATE PROCEDURE IF NOT EXISTS SP_GAMBLE_CREDITS(
 )
 BEGIN
     UPDATE PLAYER
-    SET CREDITS_SPENT = CREDITS_SPENT + VAR_CREDIT_AMOUNT
+    SET
+        CREDITS_SPENT = CREDITS_SPENT + VAR_CREDIT_AMOUNT
     WHERE ID = VAR_PLAYER_ID;
 
-    INSERT INTO LOG_CREDITS_SPENT (LOBBY_ID, USER_ID, AMOUNT, CATEGORY)
+    INSERT
+    INTO LOG_CREDITS_SPENT
+        (
+            LOBBY_ID,
+            USER_ID,
+            AMOUNT,
+            CATEGORY
+        )
     SELECT
         LOBBY_ID,
         USER_ID,
@@ -18,10 +26,18 @@ BEGIN
 
     IF RAND() > 0.5 THEN
         UPDATE PLAYER
-        SET CREDITS_SPENT = CREDITS_SPENT - (VAR_CREDIT_AMOUNT * 2)
+        SET
+            CREDITS_SPENT = CREDITS_SPENT - (VAR_CREDIT_AMOUNT * 2)
         WHERE ID = VAR_PLAYER_ID;
 
-        INSERT INTO LOG_CREDITS_SPENT (LOBBY_ID, USER_ID, AMOUNT, CATEGORY)
+        INSERT
+        INTO LOG_CREDITS_SPENT
+            (
+                LOBBY_ID,
+                USER_ID,
+                AMOUNT,
+                CATEGORY
+            )
         SELECT
             LOBBY_ID,
             USER_ID,

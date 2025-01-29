@@ -6,9 +6,10 @@ BEGIN
     DECLARE VAR_CARD_ID UUID;
     DECLARE VAR_PLAYER_ID UUID;
 
-    SELECT RC.RESPONSE_ID,
-           RC.CARD_ID,
-           R.PLAYER_ID
+    SELECT
+        RC.RESPONSE_ID,
+        RC.CARD_ID,
+        R.PLAYER_ID
     INTO
         VAR_RESPONSE_ID,
         VAR_CARD_ID,
@@ -18,12 +19,22 @@ BEGIN
     WHERE RC.ID = VAR_RESPONSE_CARD_ID;
 
     UPDATE RESPONSE
-    SET IS_REVEALED = 0,
+    SET
+        IS_REVEALED = 0,
         IS_RULEDOUT = 0
     WHERE ID = VAR_RESPONSE_ID;
 
-    INSERT INTO HAND (PLAYER_ID, CARD_ID)
-    VALUES (VAR_PLAYER_ID, VAR_CARD_ID);
+    INSERT
+    INTO HAND
+        (
+            PLAYER_ID,
+            CARD_ID
+        )
+    VALUES
+        (
+            VAR_PLAYER_ID,
+            VAR_CARD_ID
+        );
 
     DELETE
     FROM RESPONSE_CARD

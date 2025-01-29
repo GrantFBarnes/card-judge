@@ -8,7 +8,8 @@ BEGIN
             DECLARE VAR_LOOP_DONE BOOLEAN DEFAULT FALSE;
             DECLARE VAR_PLAYER_ID UUID;
             DECLARE VAR_PLAYER_CURSOR CURSOR FOR
-                SELECT ID
+                SELECT
+                    ID
                 FROM PLAYER
                 WHERE LOBBY_ID = NEW.ID;
             DECLARE CONTINUE HANDLER FOR NOT FOUND SET VAR_LOOP_DONE = TRUE;
