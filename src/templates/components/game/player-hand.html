@@ -1,0 +1,42 @@
+{{define "player-hand"}}
+    <table id="player-hand-table">
+        {{$handSize := len .PlayerHand}}
+        <thead>
+        <tr>
+            <th colspan="2">Cards in Hand</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .PlayerHand}}
+            <tr style="border-top: 2px solid black">
+                <td
+                        style="padding: 20px"
+                        {{if and (not $.PlayerIsJudge) (not $.PlayerIsReady)}}
+                            class="clickable"
+                            hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/play"
+                            hx-confirm="Are you sure you want to play this card?"
+                        {{end}}
+                >
+                    <span class="wrap-new-lines">{{.Text}}</span>
+                    <span class="bi bi-info-circle" style="float: right" title="{{.DeckName}}"></span>
+                    {{if .Image.Valid}}
+                        <br/>
+                        <br/>
+                        <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                    {{end}}
+                </td>
+                <td style="text-align: center">
+                    {{if $.PlayerIsJudge}}
+                        <span title="Discard"
+                              class="bi bi-trash clickable"
+                              hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
+                              hx-target="#player-hand"
+                              hx-confirm="Are you sure you want to discard this card?"
+                        ></span>
+                    {{end}}
+                </td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+{{end}}

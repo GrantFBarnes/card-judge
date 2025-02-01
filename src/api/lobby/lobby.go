@@ -45,6 +45,25 @@ func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
 	writeLobbyGameInfoHtml(w, lobbyId)
 }
 
+func GetPlayerHandHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	writePlayerHandHtml(w, player.Id)
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -850,7 +869,7 @@ func DiscardCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	writePlayerHandHtml(w, player.Id)
 }
 
 func VoteToKick(w http.ResponseWriter, r *http.Request) {
@@ -1559,7 +1578,7 @@ func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player,
 }
 
 func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	gameData, err := database.GetPlayerGameData(playerId)
+	data, err := database.GetPlayerGameData(playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1575,7 +1594,7 @@ func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
 		return
 	}
 
-	_ = tmpl.ExecuteTemplate(w, "game-interface", gameData)
+	_ = tmpl.ExecuteTemplate(w, "game-interface", data)
 }
 
 func writeLobbyGameInfoHtml(w http.ResponseWriter, lobbyId uuid.UUID) {
@@ -1596,4 +1615,24 @@ func writeLobbyGameInfoHtml(w http.ResponseWriter, lobbyId uuid.UUID) {
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "lobby-game-info", data)
+}
+
+func writePlayerHandHtml(w http.ResponseWriter, playerId uuid.UUID) {
+	data, err := database.GetPlayerHandData(playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-hand.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "player-hand", data)
 }

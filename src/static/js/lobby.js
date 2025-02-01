@@ -43,6 +43,11 @@ window.onload = () => {
             return;
         }
 
+        if (messageText === "refresh-player-hand") {
+            htmx.ajax("GET", "/api" + document.location.pathname + "/html/player-hand", {target: "#player-hand"});
+            return;
+        }
+
         if (messageText.startsWith("alert")) {
             const alertData = messageText.split(";;");
             if (alertData.length === 4) {
