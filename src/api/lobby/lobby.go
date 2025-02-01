@@ -50,7 +50,23 @@ func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeLobbyGameInfoHtml(w, lobbyId)
+	data, err := database.GetLobbyGameInfo(lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-info.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-info", data)
 }
 
 func GetPlayerHandHTML(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +85,23 @@ func GetPlayerHandHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writePlayerHandHtml(w, player.Id)
+	data, err := database.GetPlayerHandData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-hand.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "player-hand", data)
 }
 
 func GetPlayerSpecialsHTML(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +120,23 @@ func GetPlayerSpecialsHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writePlayerSpecialsHtml(w, player.Id)
+	data, err := database.GetPlayerSpecialsData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-specials.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "player-specials", data)
 }
 
 func GetLobbyGameBoardHTML(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +155,23 @@ func GetLobbyGameBoardHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeLobbyGameBoardHtml(w, player.Id)
+	data, err := database.GetLobbyGameBoardData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-board.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-board", data)
 }
 
 func GetLobbyGameStatsHTML(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +190,23 @@ func GetLobbyGameStatsHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeLobbyGameStatsHtml(w, player.Id)
+	data, err := database.GetLobbyGameStatsData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-stats.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-stats", data)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
@@ -934,7 +1014,8 @@ func DiscardCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writePlayerHandHtml(w, player.Id)
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	w.WriteHeader(http.StatusOK)
 }
 
 func VoteToKick(w http.ResponseWriter, r *http.Request) {
@@ -1640,104 +1721,4 @@ func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player,
 	}
 
 	return player, nil
-}
-
-func writeLobbyGameInfoHtml(w http.ResponseWriter, lobbyId uuid.UUID) {
-	data, err := database.GetLobbyGameInfo(lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-game-info.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "lobby-game-info", data)
-}
-
-func writePlayerHandHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	data, err := database.GetPlayerHandData(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-hand.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "player-hand", data)
-}
-
-func writePlayerSpecialsHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	data, err := database.GetPlayerSpecialsData(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-specials.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "player-specials", data)
-}
-
-func writeLobbyGameBoardHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	data, err := database.GetLobbyGameBoardData(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-game-board.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "lobby-game-board", data)
-}
-
-func writeLobbyGameStatsHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	data, err := database.GetLobbyGameStatsData(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-game-stats.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "lobby-game-stats", data)
 }
