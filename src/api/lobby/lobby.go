@@ -23,14 +23,22 @@ func GetGameInterfaceHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := getLobbyRequestPlayer(r, lobbyId)
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/game-interface.html",
+	)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	type data struct {
+		LobbyId uuid.UUID
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "game-interface", data{
+		LobbyId: lobbyId,
+	})
 }
 
 func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
@@ -1632,32 +1640,6 @@ func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player,
 	}
 
 	return player, nil
-}
-
-func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	lobbyId, err := database.GetPlayerLobbyId(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-interface.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	type data struct {
-		LobbyId uuid.UUID
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "game-interface", data{
-		LobbyId: lobbyId,
-	})
 }
 
 func writeLobbyGameInfoHtml(w http.ResponseWriter, lobbyId uuid.UUID) {
