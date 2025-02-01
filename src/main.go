@@ -186,6 +186,7 @@ func main() {
 	http.Handle("GET /api/lobby/{lobbyId}/html/game-interface", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GetGameInterfaceHTML)))
 	http.Handle("GET /api/lobby/{lobbyId}/html/lobby-game-info", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GetLobbyGameInfoHTML)))
 	http.Handle("GET /api/lobby/{lobbyId}/html/player-hand", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GetPlayerHandHTML)))
+	http.Handle("GET /api/lobby/{lobbyId}/html/player-specials", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GetPlayerSpecialsHTML)))
 	http.Handle("POST /api/lobby/search", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.Search)))
 	http.Handle("POST /api/lobby/create", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.Create)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayCard)))

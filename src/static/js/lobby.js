@@ -48,6 +48,11 @@ window.onload = () => {
             return;
         }
 
+        if (messageText === "refresh-player-specials") {
+            htmx.ajax("GET", "/api" + document.location.pathname + "/html/player-specials", {target: "#player-specials"});
+            return;
+        }
+
         if (messageText.startsWith("alert")) {
             const alertData = messageText.split(";;");
             if (alertData.length === 4) {
