@@ -194,6 +194,24 @@
                     <tr>
                         <td>
                             <button
+                                    onclick="document.getElementById('alert-lobby-dialog').showModal()"
+                                    {{if lt .PlayerCreditsRemaining 1}}
+                                        style="opacity: 0.3; cursor: not-allowed;"
+                                        disabled
+                                    {{end}}
+                            >
+                                Alert Lobby
+                            </button>
+                        </td>
+                        <td>1+</td>
+                        <td>
+                            <span class="bi bi-info-circle"
+                                  title="Alert the lobby with any text you want."></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button
                                     onclick="document.getElementById('gamble-credits-dialog').showModal()"
                                     {{if lt .PlayerCreditsRemaining 1}}
                                         style="opacity: 0.3; cursor: not-allowed;"

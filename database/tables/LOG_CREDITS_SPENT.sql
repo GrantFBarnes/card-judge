@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS LOG_CREDITS_SPENT
         'LOSING-STREAK',
         'PURCHASE',
         'SKIP-JUDGE',
+        'ALERT',
         'GAMBLE',
         'GAMBLE-WIN',
         'BET',

@@ -38,6 +38,22 @@ window.onload = () => {
             return;
         }
 
+        if (messageText.startsWith("alert")) {
+            const alertData = messageText.split(";;");
+            if (alertData.length === 4) {
+                const alertHeader = document.getElementById("lobby-alert-dialog-header");
+                if (alertHeader) alertHeader.innerText = alertData[2];
+                const alertBody = document.getElementById("lobby-alert-dialog-body");
+                if (alertBody) alertBody.innerText = alertData[3];
+                const alertDialog = document.getElementById("lobby-alert-dialog");
+                if (alertDialog) {
+                    alertDialog.showModal();
+                    setTimeout(() => alertDialog.close(), alertData[1] * 2000);
+                }
+            }
+            return;
+        }
+
         if (messageText === "kick") {
             document.location.href = "/lobbies";
             return;

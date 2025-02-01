@@ -349,6 +349,75 @@ func SkipJudge(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func AlertLobby(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	lobby, err := database.GetLobby(lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var credits int
+	var text string
+	for key, val := range r.Form {
+		if key == "credits" {
+			credits, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse credits."))
+				return
+			}
+		} else if key == "text" {
+			text = val[0]
+		}
+	}
+
+	if credits < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("No credits provided."))
+		return
+	}
+
+	if lobby.CreditLimit-player.CreditsSpent < credits {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("You do not have that many credits to spend."))
+		return
+	}
+
+	err = database.AlertLobby(player.Id, credits)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(player.Id, "refresh")
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("alert;;%d;;%s;;%s", credits, player.Name, text))
+	w.WriteHeader(http.StatusOK)
+}
+
 func GambleCredits(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)

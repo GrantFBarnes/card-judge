@@ -70,6 +70,7 @@ func main() {
 		// procedures
 		"../database/procedures/SP_ADD_EXTRA_RESPONSE.sql",
 		"../database/procedures/SP_ADD_EXTRA_RESPONSE_UNDO.sql",
+		"../database/procedures/SP_ALERT_LOBBY.sql",
 		"../database/procedures/SP_BET_ON_WIN.sql",
 		"../database/procedures/SP_BET_ON_WIN_UNDO.sql",
 		"../database/procedures/SP_DISCARD_CARD.sql",
@@ -190,6 +191,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/purchase-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PurchaseCredits)))
 	http.Handle("POST /api/lobby/{lobbyId}/skip-judge", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SkipJudge)))
+	http.Handle("POST /api/lobby/{lobbyId}/alert", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.AlertLobby)))
 	http.Handle("POST /api/lobby/{lobbyId}/gamble-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GambleCredits)))
 	http.Handle("POST /api/lobby/{lobbyId}/bet-on-win", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.BetOnWin)))
 	http.Handle("POST /api/lobby/{lobbyId}/bet-on-win/undo", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.BetOnWinUndo)))
