@@ -1,36 +1,9 @@
 {{define "game-interface"}}
-    <div id="lobby-game-info">
-        <table id="game-info-table">
-            <thead>
-            <tr>
-                <th style="width: 34%">Lobby</th>
-                <th style="width: 33%">Judge</th>
-                <th style="width: 33%">Draw Pile</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    {{.LobbyName}}
-                    <span class="bi bi-pencil clickable"
-                          onclick="document.getElementById('lobby-update-dialog').showModal()"
-                    ></span>
-                </td>
-                <td>
-                    {{if .JudgeName.Valid}}
-                        {{.JudgeName.String}}
-                    {{else}}
-                        (None)
-                    {{end}}
-                </td>
-                <td>
-                    Prompt {{.DrawPilePromptCount}} | Response {{.DrawPileResponseCount}}
-                    <span class="bi bi-info-circle" title="{{.DrawPileDeckNames}}"></span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <div
+            id="lobby-game-info"
+            hx-get="/api/lobby/{{.LobbyId}}/lobby-game-info"
+            hx-trigger="load"
+    ></div>
     <div id="lobby-player-data">
         {{if not .JudgeCardText.Valid}}
             <div class="lobby-player-data-message">[NO PROMPT CARD]</div>

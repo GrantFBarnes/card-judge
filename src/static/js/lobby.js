@@ -38,6 +38,11 @@ window.onload = () => {
             return;
         }
 
+        if (messageText === "refresh-lobby-game-info") {
+            htmx.ajax("GET", "/api" + document.location.pathname + "/lobby-game-info", {target: "#lobby-game-info"});
+            return;
+        }
+
         if (messageText.startsWith("alert")) {
             const alertData = messageText.split(";;");
             if (alertData.length === 4) {

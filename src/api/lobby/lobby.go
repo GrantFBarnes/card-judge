@@ -33,6 +33,18 @@ func GetGameInterface(w http.ResponseWriter, r *http.Request) {
 	writeGameInterfaceHtml(w, player.Id)
 }
 
+func GetLobbyGameInfo(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	writeLobbyGameInfoHtml(w, lobbyId)
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -1313,7 +1325,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Lobby name set to "+name)
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-info")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1684,4 +1696,24 @@ func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "game-interface", gameData)
+}
+
+func writeLobbyGameInfoHtml(w http.ResponseWriter, lobbyId uuid.UUID) {
+	data, err := database.GetLobbyGameInfo(lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-info.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-info", data)
 }
