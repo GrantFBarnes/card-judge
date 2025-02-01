@@ -102,6 +102,25 @@ func GetLobbyGameBoardHTML(w http.ResponseWriter, r *http.Request) {
 	writeLobbyGameBoardHtml(w, player.Id)
 }
 
+func GetLobbyGameStatsHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	writeLobbyGameStatsHtml(w, player.Id)
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -1616,7 +1635,7 @@ func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player,
 }
 
 func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	data, err := database.GetPlayerGameData(playerId)
+	lobbyId, err := database.GetPlayerLobbyId(playerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1632,7 +1651,13 @@ func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
 		return
 	}
 
-	_ = tmpl.ExecuteTemplate(w, "game-interface", data)
+	type data struct {
+		LobbyId uuid.UUID
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "game-interface", data{
+		LobbyId: lobbyId,
+	})
 }
 
 func writeLobbyGameInfoHtml(w http.ResponseWriter, lobbyId uuid.UUID) {
@@ -1713,4 +1738,24 @@ func writeLobbyGameBoardHtml(w http.ResponseWriter, playerId uuid.UUID) {
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "lobby-game-board", data)
+}
+
+func writeLobbyGameStatsHtml(w http.ResponseWriter, playerId uuid.UUID) {
+	data, err := database.GetLobbyGameStatsData(playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-stats.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-stats", data)
 }

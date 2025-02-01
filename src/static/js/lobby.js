@@ -58,6 +58,11 @@ window.onload = () => {
             return;
         }
 
+        if (messageText === "refresh-lobby-game-stats") {
+            htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-stats", {target: "#lobby-game-stats"});
+            return;
+        }
+
         if (messageText.startsWith("alert")) {
             const alertData = messageText.split(";;");
             if (alertData.length === 4) {
