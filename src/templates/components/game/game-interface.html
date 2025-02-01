@@ -1,7 +1,7 @@
 {{define "game-interface"}}
     <div
             id="lobby-game-info"
-            hx-get="/api/lobby/{{.LobbyId}}/lobby-game-info"
+            hx-get="/api/lobby/{{.LobbyId}}/html/lobby-game-info"
             hx-trigger="load"
     ></div>
     <div id="lobby-player-data">

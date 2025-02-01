@@ -14,7 +14,7 @@ import (
 	"github.com/grantfbarnes/card-judge/websocket"
 )
 
-func GetGameInterface(w http.ResponseWriter, r *http.Request) {
+func GetGameInterfaceHTML(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -33,7 +33,7 @@ func GetGameInterface(w http.ResponseWriter, r *http.Request) {
 	writeGameInterfaceHtml(w, player.Id)
 }
 
-func GetLobbyGameInfo(w http.ResponseWriter, r *http.Request) {
+func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {

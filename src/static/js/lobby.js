@@ -34,12 +34,12 @@ window.onload = () => {
         let messageText = event.data;
 
         if (messageText === "refresh") {
-            htmx.ajax("GET", "/api" + document.location.pathname + "/game-interface", {target: "#lobby-grid-interface"});
+            htmx.ajax("GET", "/api" + document.location.pathname + "/html/game-interface", {target: "#lobby-grid-interface"});
             return;
         }
 
         if (messageText === "refresh-lobby-game-info") {
-            htmx.ajax("GET", "/api" + document.location.pathname + "/lobby-game-info", {target: "#lobby-game-info"});
+            htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-info", {target: "#lobby-game-info"});
             return;
         }
 
