@@ -9,27 +9,12 @@
             {{$handSize := len .PlayerHand}}
             <thead>
             <tr>
-                <th colspan="3">Cards in Hand</th>
+                <th colspan="2">Cards in Hand</th>
             </tr>
             </thead>
             <tbody>
             {{range .PlayerHand}}
                 <tr style="border-top: 2px solid black">
-                    <td style="text-align: center">
-                        {{if .IsLocked}}
-                            <span title="Unlock"
-                                  class="bi bi-lock clickable"
-                                  hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/unlock"
-                                  hx-target="#lobby-grid-interface"
-                            ></span>
-                        {{else}}
-                            <span title="Lock"
-                                  class="bi bi-unlock clickable"
-                                  hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/lock"
-                                  hx-target="#lobby-grid-interface"
-                            ></span>
-                        {{end}}
-                    </td>
                     <td
                             style="padding: 20px"
                             {{if and (not $.PlayerIsJudge) (not $.PlayerIsReady)}}
@@ -47,15 +32,13 @@
                         {{end}}
                     </td>
                     <td style="text-align: center">
-                        {{if not .IsLocked}}
-                            {{if $.PlayerIsJudge}}
-                                <span title="Discard"
-                                      class="bi bi-trash clickable"
-                                      hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
-                                      hx-target="#lobby-grid-interface"
-                                      hx-confirm="Are you sure you want to discard this card?"
-                                ></span>
-                            {{end}}
+                        {{if $.PlayerIsJudge}}
+                            <span title="Discard"
+                                    class="bi bi-trash clickable"
+                                    hx-post="/api/lobby/{{$.LobbyId}}/card/{{.Id}}/discard"
+                                    hx-target="#lobby-grid-interface"
+                                    hx-confirm="Are you sure you want to discard this card?"
+                            ></span>
                         {{end}}
                     </td>
                 </tr>

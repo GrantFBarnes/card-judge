@@ -19,8 +19,7 @@ BEGIN
                   ID
               FROM HAND
               WHERE PLAYER_ID = VAR_PLAYER_ID
-                AND CARD_ID = VAR_CARD_ID
-                AND IS_LOCKED = 0) THEN
+                AND CARD_ID = VAR_CARD_ID) THEN
         DELETE
         FROM HAND
         WHERE PLAYER_ID = VAR_PLAYER_ID
