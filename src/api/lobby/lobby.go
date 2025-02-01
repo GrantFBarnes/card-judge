@@ -437,7 +437,9 @@ func PlayCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -465,7 +467,7 @@ func PurchaseCredits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Attempted to purchase credits for an unfair advantage... Everyone else receives a credit as a result.")
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("<b>Shame on you.</b><br/><br/>This action has been reported in the lobby chat and everyone else has received a credit."))
@@ -563,7 +565,7 @@ func AlertLobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.PlayerBroadcast(player.Id, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("alert;;%d;;%s;;%s", credits, player.Name, text))
 	w.WriteHeader(http.StatusOK)
 }
@@ -629,7 +631,7 @@ func GambleCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.PlayerBroadcast(player.Id, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
@@ -701,7 +703,8 @@ func BetOnWin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
@@ -735,7 +738,8 @@ func BetOnWinUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
@@ -763,7 +767,9 @@ func AddExtraResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -790,7 +796,9 @@ func AddExtraResponseUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -817,7 +825,9 @@ func PlayStealCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -844,7 +854,8 @@ func PlaySurpriseCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -890,7 +901,8 @@ func PlayFindCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -944,7 +956,8 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -954,6 +967,13 @@ func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -979,7 +999,8 @@ func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1142,7 +1163,8 @@ func RevealResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1177,7 +1199,7 @@ func ToggleRuleOutResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1309,7 +1331,9 @@ func SkipPrompt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1470,7 +1494,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby hand size set to %d", player.Name, handSize))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1527,7 +1551,7 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby credit limit set to %d", player.Name, creditLimit))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1584,7 +1608,7 @@ func SetWinStreakThreshold(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby win streak threshold set to %d", player.Name, winStreakThreshold))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1641,7 +1665,7 @@ func SetLoseStreakThreshold(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby lose streak threshold set to %d", player.Name, loseStreakThreshold))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1697,7 +1721,9 @@ func SetResponseCount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
