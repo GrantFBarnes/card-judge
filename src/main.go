@@ -74,7 +74,6 @@ func main() {
 		"../database/procedures/SP_BET_ON_WIN.sql",
 		"../database/procedures/SP_BET_ON_WIN_UNDO.sql",
 		"../database/procedures/SP_DISCARD_CARD.sql",
-		"../database/procedures/SP_DISCARD_HAND.sql",
 		"../database/procedures/SP_DRAW_HAND.sql",
 		"../database/procedures/SP_GAMBLE_CREDITS.sql",
 		"../database/procedures/SP_GET_READABLE_DECKS.sql",
@@ -211,7 +210,6 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/toggle-rule-out", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.ToggleRuleOutResponse)))
 	http.Handle("POST /api/lobby/{lobbyId}/response/{responseId}/pick-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickWinner)))
 	http.Handle("POST /api/lobby/{lobbyId}/pick-random-winner", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PickRandomWinner)))
-	http.Handle("POST /api/lobby/{lobbyId}/discard-hand", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.DiscardHand)))
 	http.Handle("POST /api/lobby/{lobbyId}/flip", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.FlipTable)))
 	http.Handle("POST /api/lobby/{lobbyId}/skip-prompt", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SkipPrompt)))
 	http.Handle("PUT /api/lobby/{lobbyId}/name", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetName)))

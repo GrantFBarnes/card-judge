@@ -11,23 +11,6 @@
             <tr>
                 <th colspan="3">Cards in Hand</th>
             </tr>
-            <tr>
-                <th></th>
-                <th></th>
-                <th>
-                    {{if gt $handSize 0}}
-                        {{if .PlayerIsJudge}}
-                            <button
-                                    hx-post="/api/lobby/{{.LobbyId}}/discard-hand"
-                                    hx-target="#lobby-grid-interface"
-                                    hx-confirm="Are you sure you want to discard your hand?"
-                            >
-                                Discard
-                            </button>
-                        {{end}}
-                    {{end}}
-                </th>
-            </tr>
             </thead>
             <tbody>
             {{range .PlayerHand}}
