@@ -53,6 +53,11 @@ window.onload = () => {
             return;
         }
 
+        if (messageText === "refresh-lobby-game-board") {
+            htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-board", {target: "#lobby-game-board"});
+            return;
+        }
+
         if (messageText.startsWith("alert")) {
             const alertData = messageText.split(";;");
             if (alertData.length === 4) {

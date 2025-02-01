@@ -83,6 +83,25 @@ func GetPlayerSpecialsHTML(w http.ResponseWriter, r *http.Request) {
 	writePlayerSpecialsHtml(w, player.Id)
 }
 
+func GetLobbyGameBoardHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	writeLobbyGameBoardHtml(w, player.Id)
+}
+
 func Search(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -1674,4 +1693,24 @@ func writePlayerSpecialsHtml(w http.ResponseWriter, playerId uuid.UUID) {
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "player-specials", data)
+}
+
+func writeLobbyGameBoardHtml(w http.ResponseWriter, playerId uuid.UUID) {
+	data, err := database.GetLobbyGameBoardData(playerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-board.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-board", data)
 }
