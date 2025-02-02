@@ -55,7 +55,6 @@ func main() {
 		"../database/tables/LOG_DISCARD.sql",
 		"../database/tables/LOG_SKIP.sql",
 		"../database/tables/LOG_RESPONSE_CARD.sql",
-		"../database/tables/LOG_WILD.sql",
 		"../database/tables/LOG_WIN.sql",
 		"../database/tables/LOG_KICK.sql",
 

@@ -31,18 +31,6 @@ BEGIN
     WHERE D.ID = VAR_LOBBY_ID
       AND D.IS_LOBBY_WILD_DECK = TRUE;
 
-    INSERT
-    INTO LOG_WILD
-        (
-            CARD_ID,
-            CARD_TEXT
-        )
-    VALUES
-        (
-            VAR_CARD_ID,
-            VAR_CARD_TEXT
-        );
-
     UPDATE PLAYER
     SET
         CREDITS_SPENT = CREDITS_SPENT + 3
