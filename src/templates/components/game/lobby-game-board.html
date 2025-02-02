@@ -91,10 +91,9 @@
                                     {{$isRuledOut := .IsRuledOut}}
                                     {{range .ResponseCards}}
                                         <p
+                                                style="padding: 20px;"
                                                 {{if $isRuledOut}}
-                                                    style="padding: 20px; text-decoration: line-through; opacity: 0.3;"
-                                                {{else}}
-                                                    style="padding: 20px;"
+                                                    class="disabled strike"
                                                 {{end}}
                                         >
                                             <span class="wrap-new-lines">{{.Text}}</span>

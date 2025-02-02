@@ -97,6 +97,18 @@ summary {
     cursor: pointer;
 }
 
+.non-clickable {
+    cursor: not-allowed;
+}
+
+.disabled {
+    opacity: 0.5;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+
 .wrap-new-lines {
     white-space: pre-wrap;
 }

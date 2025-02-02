@@ -58,7 +58,7 @@
                                 hx-post="/api/lobby/{{$.LobbyId}}/skip-judge"
                                 hx-confirm="Are you sure you want to skip being judge?"
                                 {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 5)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    class="disabled non-clickable"
                                     disabled
                                 {{end}}
                         >
@@ -76,7 +76,7 @@
                     <button
                             onclick="document.getElementById('alert-lobby-dialog').showModal()"
                             {{if lt .PlayerCreditsRemaining 1}}
-                                style="opacity: 0.3; cursor: not-allowed;"
+                                class="disabled non-clickable"
                                 disabled
                             {{end}}
                     >
@@ -94,7 +94,7 @@
                     <button
                             onclick="document.getElementById('gamble-credits-dialog').showModal()"
                             {{if lt .PlayerCreditsRemaining 1}}
-                                style="opacity: 0.3; cursor: not-allowed;"
+                                class="disabled non-clickable"
                                 disabled
                             {{end}}
                     >
@@ -125,7 +125,7 @@
                             <button
                                     onclick="document.getElementById('bet-on-win-dialog').showModal()"
                                     {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
-                                        style="opacity: 0.3; cursor: not-allowed;"
+                                        class="disabled non-clickable"
                                         disabled
                                     {{end}}
                             >
@@ -145,7 +145,7 @@
                                 hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
                                 hx-confirm="Are you sure you want to use an extra response?"
                                 {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 2)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    class="disabled non-clickable"
                                     disabled
                                 {{end}}
                         >
@@ -172,7 +172,7 @@
                                 hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
                                 hx-confirm="Are you sure you want to use a Steal Card?"
                                 {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    class="disabled non-clickable"
                                     disabled
                                 {{end}}
                         >
@@ -192,7 +192,7 @@
                                 hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
                                 hx-confirm="Are you sure you want to use a Surprise Card?"
                                 {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    class="disabled non-clickable"
                                     disabled
                                 {{end}}
                         >
@@ -211,7 +211,7 @@
                         <button
                                 onclick="document.getElementById('find-card-dialog').showModal()"
                                 {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 2)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    class="disabled non-clickable"
                                     disabled
                                 {{end}}
                         >
@@ -228,7 +228,7 @@
                         <button
                                 onclick="document.getElementById('wild-card-dialog').showModal()"
                                 {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 3)}}
-                                    style="opacity: 0.3; cursor: not-allowed;"
+                                    class="disabled non-clickable"
                                     disabled
                                 {{end}}
                         >
