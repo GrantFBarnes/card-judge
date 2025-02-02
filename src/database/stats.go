@@ -14,7 +14,6 @@ type StatPersonal struct {
 	RoundPlayCount     int
 	RoundWinCount      int
 	CardPlayCount      int
-	CardDrawCount      int
 	CardDiscardCount   int
 	CardSkipCount      int
 	CreditsSpentCount  int
@@ -64,7 +63,6 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
 			) AS CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_DRAW WHERE USER_ID = U.ID) AS CARD_DRAW_COUNT,
 			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS CARD_DISCARD_COUNT,
 			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS CARD_SKIP_COUNT,
 			COALESCE(
@@ -99,7 +97,6 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			&result.RoundPlayCount,
 			&result.RoundWinCount,
 			&result.CardPlayCount,
-			&result.CardDrawCount,
 			&result.CardDiscardCount,
 			&result.CardSkipCount,
 			&result.CreditsSpentCount,
@@ -538,43 +535,6 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 				GROUP BY LRC.SPECIAL_CATEGORY
-				ORDER BY
-					COUNT DESC,
-					NAME ASC
-				LIMIT 10
-			`
-		default:
-			return resultHeaders, resultRows, errors.New("invalid subject provided")
-		}
-	case "card-draw":
-		switch subject {
-		case "player":
-			resultHeaders = append(resultHeaders, "Cards Drawn")
-			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
-				SELECT
-					COUNT(DISTINCT LD.ID) AS COUNT,
-					U.NAME AS NAME
-				FROM LOG_DRAW AS LD
-					INNER JOIN USER AS U ON U.ID = LD.USER_ID
-				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
-					NAME ASC
-				LIMIT 10
-			`
-		case "card":
-			resultHeaders = append(resultHeaders, "Cards Drawn")
-			resultHeaders = append(resultHeaders, "Card")
-			params = append(params, userId)
-			sqlString = `
-				SELECT
-					COUNT(DISTINCT LD.ID) AS COUNT,
-					COALESCE(C.TEXT, 'Unknown') AS NAME
-				FROM LOG_DRAW AS LD
-					LEFT JOIN CARD AS C ON C.ID = LD.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
-				GROUP BY C.ID
 				ORDER BY
 					COUNT DESC,
 					NAME ASC

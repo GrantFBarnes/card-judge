@@ -67,20 +67,6 @@ BEGIN
             WHERE LOBBY_ID = VAR_LOBBY_ID
               AND CARD_ID = VAR_CARD_ID;
 
-            INSERT
-            INTO LOG_DRAW
-                (
-                    LOBBY_ID,
-                    USER_ID,
-                    CARD_ID
-                )
-            VALUES
-                (
-                    VAR_LOBBY_ID,
-                    VAR_PLAYER_USER_ID,
-                    VAR_CARD_ID
-                );
-
             SELECT
                 COUNT(C.ID)
             INTO VAR_LOBBY_DRAW_PILE_SIZE

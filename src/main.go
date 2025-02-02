@@ -53,7 +53,6 @@ func main() {
 		"../database/tables/LOGIN_ATTEMPT.sql",
 		"../database/tables/LOG_CREDITS_SPENT.sql",
 		"../database/tables/LOG_DISCARD.sql",
-		"../database/tables/LOG_DRAW.sql",
 		"../database/tables/LOG_SKIP.sql",
 		"../database/tables/LOG_RESPONSE_CARD.sql",
 		"../database/tables/LOG_WILD.sql",
