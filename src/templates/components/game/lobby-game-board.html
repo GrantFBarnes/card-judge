@@ -78,13 +78,11 @@
                                 {{if not .IsRevealed}}
                                     <p style="padding: 20px">
                                         {{if $.PlayerIsJudge}}
-                                            <span class="bi bi-hand-index">
-                                                Click to reveal...
-                                            </span>
+                                            <span class="bi bi-hand-index pulse"></span>
+                                            &nbsp;&nbsp;Reveal Response...
                                         {{else}}
-                                            <span class="bi bi-hourglass-split">
-                                                Waiting to be revealed...
-                                            </span>
+                                            <span class="bi bi-hourglass flipflop"></span>
+                                            &nbsp;&nbsp;Waiting to be revealed...
                                         {{end}}
                                     </p>
                                 {{else}}
