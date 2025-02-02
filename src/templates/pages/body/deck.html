@@ -15,72 +15,73 @@
                 ></span>
             </div>
         </div>
+        <h3>Set Deck Name</h3>
         <form hx-put="/api/deck/{{.Deck.Id}}/name" hx-target="find .htmx-result">
-            <h3>Set Deck Name</h3>
-            <p>Current Name: {{.Deck.Name}}</p>
-            <label for="setDeckName">New Name:</label>
-            <input
-                    type="text"
-                    id="setDeckName"
-                    name="name"
-                    maxlength="255"
-                    placeholder="Enter Name"
-                    required="required"
-                    autocomplete="off"
-            />
-            <br/>
+            <div class="form-input">
+                <label for="setDeckName">New Name</label>
+                <input
+                        type="text"
+                        id="setDeckName"
+                        name="name"
+                        maxlength="255"
+                        placeholder="Enter Name"
+                        required="required"
+                        autocomplete="off"
+                />
+            </div>
             <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Deck Name"/>
         </form>
+        <h3>Set Deck Password</h3>
         <form hx-put="/api/deck/{{.Deck.Id}}/password" hx-target="find .htmx-result">
-            <h3>Set Deck Password</h3>
-            <label for="setDeckPassword">New Password:</label>
-            <input
-                    type="password"
-                    id="setDeckPassword"
-                    name="password"
-                    maxlength="255"
-                    placeholder="Enter Password"
-                    autocomplete="new-password"
-                    required="required"
-            />
-            <br/>
-            <label for="setDeckPasswordConfirm">Confirm New Password:</label>
-            <input
-                    type="password"
-                    id="setDeckPasswordConfirm"
-                    name="passwordConfirm"
-                    maxlength="255"
-                    placeholder="Enter Password"
-                    autocomplete="off"
-                    required="required"
-            />
-            <br/>
+            <div class="form-input">
+                <label for="setDeckPassword">New Password</label>
+                <input
+                        type="password"
+                        id="setDeckPassword"
+                        name="password"
+                        maxlength="255"
+                        placeholder="Enter Password"
+                        autocomplete="new-password"
+                        required="required"
+                />
+                <label for="setDeckPasswordConfirm">Confirm New Password</label>
+                <input
+                        type="password"
+                        id="setDeckPasswordConfirm"
+                        name="passwordConfirm"
+                        maxlength="255"
+                        placeholder="Enter Password"
+                        autocomplete="off"
+                        required="required"
+                />
+            </div>
             <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Deck Password"/>
         </form>
+        <h3>Set Is Public Read-Only</h3>
         <form
                 hx-put="/api/deck/{{.Deck.Id}}/is-public-read-only"
                 hx-target="find .htmx-result"
         >
-            <h3>Set Is Public Read-Only</h3>
-            <label for="setDeckIsPublicReadOnly">Is Public Read-Only:</label>
-            <select
-                    id="setDeckIsPublicReadOnly"
-                    name="isPublicReadOnly"
-                    autocomplete="off"
-            >
-                {{if .Deck.IsPublicReadOnly}}
-                    <option value="0">No</option>
-                    <option value="1" selected>Yes</option>
-                {{else}}
-                    <option value="0" selected>No</option>
-                    <option value="1">Yes</option>
-                {{end}}
-            </select>
-            <br/>
+            <div class="form-input">
+                <label for="setDeckIsPublicReadOnly">Is Public Read-Only</label>
+                <select
+                        id="setDeckIsPublicReadOnly"
+                        name="isPublicReadOnly"
+                        autocomplete="off"
+                >
+                    {{if .Deck.IsPublicReadOnly}}
+                        <option value="0">No</option>
+                        <option value="1" selected>Yes</option>
+                    {{else}}
+                        <option value="0" selected>No</option>
+                        <option value="1">Yes</option>
+                    {{end}}
+                </select>
+            </div>
             <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Set Is Public Read-Only"/>
@@ -119,31 +120,31 @@
             </div>
         </div>
         <form hx-post="/api/card/create" hx-target="find .htmx-result">
-            <input
-                    type="text"
-                    id="newCardDeckId"
-                    name="deckId"
-                    value="{{.Deck.Id}}"
-                    hidden
-            />
-            <label for="newCardCategory">Category:</label>
-            <select id="newCardCategory" name="category" autocomplete="off" required>
-                <option value="PROMPT" selected>Prompt</option>
-                <option value="RESPONSE">Response</option>
-            </select>
-            <br/>
-            <label for="newCardText" style="vertical-align: top">Text:</label>
-            <textarea
-                    id="newCardText"
-                    name="text"
-                    maxlength="255"
-                    placeholder="Enter New Card Text"
-                    required="required"
-                    cols="40"
-                    rows="10"
-                    autocomplete="off"
-            ></textarea>
-            <br/>
+            <div class="form-input">
+                <input
+                        type="text"
+                        id="newCardDeckId"
+                        name="deckId"
+                        value="{{.Deck.Id}}"
+                        hidden
+                />
+                <label for="newCardCategory">Category</label>
+                <select id="newCardCategory" name="category" autocomplete="off" required>
+                    <option value="PROMPT" selected>Prompt</option>
+                    <option value="RESPONSE">Response</option>
+                </select>
+                <label for="newCardText" style="vertical-align: top">Text</label>
+                <textarea
+                        id="newCardText"
+                        name="text"
+                        maxlength="255"
+                        placeholder="Enter New Card Text"
+                        required="required"
+                        cols="40"
+                        rows="10"
+                        autocomplete="off"
+                ></textarea>
+            </div>
             <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Create"/>

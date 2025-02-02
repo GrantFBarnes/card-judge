@@ -14,116 +14,115 @@
             </div>
         </div>
         <form hx-post="/api/lobby/create" hx-target="find .htmx-result">
-            <label for="createLobbyName">Name:</label>
-            <input
-                    type="text"
-                    id="createLobbyName"
-                    name="name"
-                    maxlength="255"
-                    placeholder="Enter Lobby Name"
-                    required="required"
-                    autocomplete="off"
-            />
-            <br/>
-            <label for="createLobbyMessage">Message:</label>
-            <input
-                    type="text"
-                    id="createLobbyMessage"
-                    name="message"
-                    maxlength="255"
-                    placeholder="Enter Lobby Message"
-                    autocomplete="off"
-            />
-            <br/>
+            <div class="form-input">
+                <label for="createLobbyName">Name</label>
+                <input
+                        type="text"
+                        id="createLobbyName"
+                        name="name"
+                        maxlength="255"
+                        placeholder="Enter Lobby Name"
+                        required="required"
+                        autocomplete="off"
+                />
+                <label for="createLobbyMessage">Message</label>
+                <input
+                        type="text"
+                        id="createLobbyMessage"
+                        name="message"
+                        maxlength="255"
+                        placeholder="Enter Lobby Message"
+                        autocomplete="off"
+                />
+            </div>
             <br/>
             <details>
                 <summary>Password (optional)</summary>
-                <label for="createLobbyPassword">Password:</label>
-                <input
-                        type="password"
-                        id="createLobbyPassword"
-                        name="password"
-                        maxlength="255"
-                        placeholder="Enter Lobby Password"
-                        autocomplete="off"
-                />
-                <br/>
-                <label for="createLobbyPasswordConfirm">Confirm Password:</label>
-                <input
-                        type="password"
-                        id="createLobbyPasswordConfirm"
-                        name="passwordConfirm"
-                        maxlength="255"
-                        placeholder="Confirm Lobby Password"
-                        autocomplete="off"
-                />
-                <br/>
+                <div class="form-input">
+                    <label for="createLobbyPassword">Password</label>
+                    <input
+                            type="password"
+                            id="createLobbyPassword"
+                            name="password"
+                            maxlength="255"
+                            placeholder="Enter Lobby Password"
+                            autocomplete="off"
+                    />
+                    <label for="createLobbyPasswordConfirm">Confirm Password</label>
+                    <input
+                            type="password"
+                            id="createLobbyPasswordConfirm"
+                            name="passwordConfirm"
+                            maxlength="255"
+                            placeholder="Confirm Lobby Password"
+                            autocomplete="off"
+                    />
+                </div>
             </details>
             <br/>
             <details>
                 <summary>Settings</summary>
-                <label for="createLobbyHandSize">Hand Size:</label>
-                <select
-                        id="createLobbyHandSize"
-                        name="handSize"
-                        autocomplete="off"
-                        required="required"
-                >
-                    <option value="6">6</option>
-                    <option value="8" selected>8</option>
-                    <option value="10">10</option>
-                    <option value="12">12</option>
-                    <option value="14">14</option>
-                    <option value="16">16</option>
-                </select>
-                <br/>
-                <label for="createLobbyCreditLimit">Credit Limit:</label>
-                <select
-                        id="createLobbyCreditLimit"
-                        name="creditLimit"
-                        autocomplete="off"
-                        required="required"
-                >
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                </select>
-                <br/>
-                <label for="createLobbyWinStreakThreshold">Win Streak Threshold:</label>
-                <select
-                        id="createLobbyWinStreakThreshold"
-                        name="winStreakThreshold"
-                        autocomplete="off"
-                        required="required"
-                >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <br/>
-                <label for="createLobbyLoseStreakThreshold">Lose Streak Threshold:</label>
-                <select
-                        id="createLobbyLoseStreakThreshold"
-                        name="loseStreakThreshold"
-                        autocomplete="off"
-                        required="required"
-                >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
+                <div class="form-input">
+                    <label for="createLobbyHandSize">Hand Size</label>
+                    <select
+                            id="createLobbyHandSize"
+                            name="handSize"
+                            autocomplete="off"
+                            required="required"
+                    >
+                        <option value="6">6</option>
+                        <option value="8" selected>8</option>
+                        <option value="10">10</option>
+                        <option value="12">12</option>
+                        <option value="14">14</option>
+                        <option value="16">16</option>
+                    </select>
+                    <label for="createLobbyCreditLimit">Credit Limit</label>
+                    <select
+                            id="createLobbyCreditLimit"
+                            name="creditLimit"
+                            autocomplete="off"
+                            required="required"
+                    >
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                    <label for="createLobbyWinStreakThreshold">Win Streak Threshold</label>
+                    <select
+                            id="createLobbyWinStreakThreshold"
+                            name="winStreakThreshold"
+                            autocomplete="off"
+                            required="required"
+                    >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <label for="createLobbyLoseStreakThreshold">Lose Streak Threshold</label>
+                    <select
+                            id="createLobbyLoseStreakThreshold"
+                            name="loseStreakThreshold"
+                            autocomplete="off"
+                            required="required"
+                    >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
             </details>
             {{$deckCount := len .Decks}}
             {{if gt $deckCount 0}}

@@ -1,41 +1,42 @@
 {{define "body"}}
     <h1>Admin</h1>
+    <h3>Create a New User</h3>
     <form hx-post="/api/user/create/admin" hx-target="find .htmx-result">
-        <h3>Create a New User</h3>
-        <label for="createUserName">Name:</label>
-        <input
-                type="text"
-                id="createUserName"
-                name="name"
-                maxlength="255"
-                placeholder="Enter User Name"
-                required="required"
-                autocomplete="off"
-        />
-        <br/>
+        <div class="form-input">
+            <label for="createUserName">Name</label>
+            <input
+                    type="text"
+                    id="createUserName"
+                    name="name"
+                    maxlength="255"
+                    placeholder="Enter User Name"
+                    required="required"
+                    autocomplete="off"
+            />
+        </div>
         <br/>
         <details>
             <summary>Password (default = <code>password</code>)</summary>
-            <label for="createUserPassword">Password:</label>
-            <input
-                    type="password"
-                    id="createUserPassword"
-                    name="password"
-                    maxlength="255"
-                    placeholder="Enter User Password"
-                    autocomplete="off"
-            />
-            <br/>
-            <label for="createUserPasswordConfirm">Confirm Password:</label>
-            <input
-                    type="password"
-                    id="createUserPasswordConfirm"
-                    name="passwordConfirm"
-                    maxlength="255"
-                    placeholder="Confirm User Password"
-                    autocomplete="off"
-            />
-            <br/>
+            <div class="form-input">
+                <label for="createUserPassword">Password</label>
+                <input
+                        type="password"
+                        id="createUserPassword"
+                        name="password"
+                        maxlength="255"
+                        placeholder="Enter User Password"
+                        autocomplete="off"
+                />
+                <label for="createUserPasswordConfirm">Confirm Password</label>
+                <input
+                        type="password"
+                        id="createUserPasswordConfirm"
+                        name="passwordConfirm"
+                        maxlength="255"
+                        placeholder="Confirm User Password"
+                        autocomplete="off"
+                />
+            </div>
         </details>
         <br/>
         <div class="htmx-result"></div>

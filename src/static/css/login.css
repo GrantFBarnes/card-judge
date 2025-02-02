@@ -5,21 +5,9 @@
     left: calc(50% - 200px);
 }
 
-#login div.form-input {
-    display: grid;
-    grid-template-columns: max-content max-content;
-    grid-gap: 5px;
-}
 
 #login div.form-input label {
-    text-align: right;
     width: 150px;
-    padding: 5px;
-    margin: 5px;
-}
-
-#login div.form-input label:after {
-    content: ":";
 }
 
 #login div.form-input input {

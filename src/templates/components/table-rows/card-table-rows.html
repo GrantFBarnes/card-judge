@@ -22,82 +22,85 @@
                             ></span>
                         </div>
                     </div>
+                    <h3>Set Category</h3>
                     <form hx-put="/api/card/{{.Id}}/category" hx-target="find .htmx-result">
-                        <h3>Set Category</h3>
-                        <input
-                                type="text"
-                                id="categoryDeckId{{.Id}}"
-                                name="deckId"
-                                value="{{.DeckId}}"
-                                hidden
-                        />
-                        <label for="category{{.Id}}">Category:</label>
-                        <select
-                                id="category{{.Id}}"
-                                name="category"
-                                autocomplete="off"
-                                required="required"
-                        >
-                            {{if eq .Category "PROMPT"}}
-                                <option value="PROMPT" selected>Prompt</option>
-                                <option value="RESPONSE">Response</option>
-                            {{else}}
-                                <option value="PROMPT">Prompt</option>
-                                <option value="RESPONSE" selected>Response</option>
-                            {{end}}
-                        </select>
-                        <br/>
+                        <div class="form-input">
+                            <input
+                                    type="text"
+                                    id="categoryDeckId{{.Id}}"
+                                    name="deckId"
+                                    value="{{.DeckId}}"
+                                    hidden
+                            />
+                            <label for="category{{.Id}}">Category</label>
+                            <select
+                                    id="category{{.Id}}"
+                                    name="category"
+                                    autocomplete="off"
+                                    required="required"
+                            >
+                                {{if eq .Category "PROMPT"}}
+                                    <option value="PROMPT" selected>Prompt</option>
+                                    <option value="RESPONSE">Response</option>
+                                {{else}}
+                                    <option value="PROMPT">Prompt</option>
+                                    <option value="RESPONSE" selected>Response</option>
+                                {{end}}
+                            </select>
+                        </div>
                         <br/>
                         <div class="htmx-result"></div>
                         <input type="submit" value="Set Category"/>
                     </form>
+                    <h3>Set Card Text</h3>
                     <form hx-put="/api/card/{{.Id}}/text" hx-target="find .htmx-result">
-                        <h3>Set Card Text</h3>
-                        <input
-                                type="text"
-                                id="textDeckId{{.Id}}"
-                                name="deckId"
-                                value="{{.DeckId}}"
-                                hidden
-                        />
-                        <label for="text{{.Id}}" style="vertical-align: top">Text:</label>
-                        <textarea
-                                id="text{{.Id}}"
-                                name="text"
-                                maxlength="510"
-                                placeholder="Enter Card Text"
-                                required="required"
-                                cols="40"
-                                rows="10"
-                                autocomplete="off"
-                        >{{.Text}}</textarea>
-                        <br/>
+                        <div class="form-input">
+                            <input
+                                    type="text"
+                                    id="textDeckId{{.Id}}"
+                                    name="deckId"
+                                    value="{{.DeckId}}"
+                                    hidden
+                            />
+                            <label for="text{{.Id}}" style="vertical-align: top">Text</label>
+                            <textarea
+                                    id="text{{.Id}}"
+                                    name="text"
+                                    maxlength="510"
+                                    placeholder="Enter Card Text"
+                                    required="required"
+                                    cols="40"
+                                    rows="10"
+                                    autocomplete="off"
+                            >{{.Text}}</textarea>
+                        </div>
                         <br/>
                         <div class="htmx-result"></div>
                         <input type="submit" value="Set Card Text"/>
                     </form>
+                    <h3>Set Card Image</h3>
                     <form enctype="multipart/form-data" hx-put="/api/card/{{.Id}}/image" hx-target="find .htmx-result">
-                        <h3>Set Card Image</h3>
-                        <input
-                                type="file"
-                                id="imageDeckId{{.Id}}"
-                                name="deckId"
-                                value="{{.DeckId}}"
-                                hidden
-                        />
-                        {{if .Image.Valid}}
-                            <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
-                            <br/>
-                        {{end}}
-                        <label for="image{{.Id}}">Image:</label>
-                        <input
-                                type="file"
-                                id="image{{.Id}}"
-                                name="image"
-                                accept="image/*"
-                                autocomplete="off"
-                        />
-                        <br/>
+                        <div class="form-input">
+                            <input
+                                    type="file"
+                                    id="imageDeckId{{.Id}}"
+                                    name="deckId"
+                                    value="{{.DeckId}}"
+                                    hidden
+                            />
+                            {{if .Image.Valid}}
+                                <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                                <br/>
+                            {{end}}
+                            <label for="image{{.Id}}">Image</label>
+                            <input
+                                    type="file"
+                                    id="image{{.Id}}"
+                                    name="image"
+                                    accept="image/*"
+                                    autocomplete="off"
+                            />
+                        </div>
                         <br/>
                         <div class="htmx-result"></div>
                         <input type="submit" value="Set Image"/>

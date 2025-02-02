@@ -38,6 +38,22 @@ dialog::backdrop {
     opacity: 0.8;
 }
 
+div.form-input {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+}
+
+div.form-input label {
+    text-align: right;
+    padding: 5px;
+    margin: 5px;
+}
+
+div.form-input label:after {
+    content: ":";
+}
+
 input {
     padding: 5px;
     margin: 5px;

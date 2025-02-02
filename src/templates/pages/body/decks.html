@@ -14,49 +14,47 @@
             </div>
         </div>
         <form hx-post="/api/deck/create" hx-target="find .htmx-result">
-            <label for="createDeckName">Name:</label>
-            <input
-                    type="text"
-                    id="createDeckName"
-                    name="name"
-                    maxlength="255"
-                    placeholder="Enter Deck Name"
-                    required="required"
-                    autocomplete="off"
-            />
-            <br/>
-            <label for="createDeckPassword">Password:</label>
-            <input
-                    type="password"
-                    id="createDeckPassword"
-                    name="password"
-                    maxlength="255"
-                    placeholder="Enter Deck Password"
-                    autocomplete="off"
-                    required="required"
-            />
-            <br/>
-            <label for="createDeckPasswordConfirm">Confirm Password:</label>
-            <input
-                    type="password"
-                    id="createDeckPasswordConfirm"
-                    name="passwordConfirm"
-                    maxlength="255"
-                    placeholder="Confirm Deck Password"
-                    autocomplete="off"
-                    required="required"
-            />
-            <br/>
-            <label for="createDeckIsPublicReadOnly">Is Public Read-Only:</label>
-            <select
-                    id="createDeckIsPublicReadOnly"
-                    name="isPublicReadOnly"
-                    autocomplete="off"
-            >
-                <option value="0" selected>No</option>
-                <option value="1">Yes</option>
-            </select>
-            <br/>
+            <div class="form-input">
+                <label for="createDeckName">Name</label>
+                <input
+                        type="text"
+                        id="createDeckName"
+                        name="name"
+                        maxlength="255"
+                        placeholder="Enter Deck Name"
+                        required="required"
+                        autocomplete="off"
+                />
+                <label for="createDeckPassword">Password</label>
+                <input
+                        type="password"
+                        id="createDeckPassword"
+                        name="password"
+                        maxlength="255"
+                        placeholder="Enter Deck Password"
+                        autocomplete="off"
+                        required="required"
+                />
+                <label for="createDeckPasswordConfirm">Confirm Password</label>
+                <input
+                        type="password"
+                        id="createDeckPasswordConfirm"
+                        name="passwordConfirm"
+                        maxlength="255"
+                        placeholder="Confirm Deck Password"
+                        autocomplete="off"
+                        required="required"
+                />
+                <label for="createDeckIsPublicReadOnly">Is Public Read-Only</label>
+                <select
+                        id="createDeckIsPublicReadOnly"
+                        name="isPublicReadOnly"
+                        autocomplete="off"
+                >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
             <br/>
             <div class="htmx-result"></div>
             <input type="submit" value="Create Deck"/>
