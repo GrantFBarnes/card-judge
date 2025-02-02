@@ -1,0 +1,75 @@
+{{define "lobby-game-stats"}}
+    <table>
+        <thead>
+        <tr>
+            <th>Player</th>
+            <th>Wins</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Wins}}
+            <tr>
+                <td>{{.Name}}</td>
+                <td>{{.Count}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    <br/>
+    <br/>
+    <table>
+        <thead>
+        <tr>
+            <th>Upcoming Judges</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .UpcomingJudges}}
+            <tr>
+                <td>{{.}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    <br/>
+    <br/>
+    {{$kickVoteCount := len .KickVotes}}
+    {{if gt $kickVoteCount 0}}
+        <table>
+            <thead>
+            <tr>
+                <th colspan="2">Vote to Kick</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .KickVotes}}
+                <tr>
+                    {{if .Voted}}
+                        <td>
+                            <span title="Undo Vote to Kick"
+                                  class="bi bi-arrow-counterclockwise clickable"
+                                  hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick/undo"
+                                  hx-target="#lobby-grid-interface"
+                            >
+                                Undo
+                            </span>
+                        </td>
+                    {{else}}
+                        <td>
+                            <span title="Vote to Kick"
+                                  class="bi bi-door-open clickable"
+                                  hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick"
+                                  hx-confirm="Are you sure you want to vote to kick {{.UserName}}?"
+                                  hx-target="#lobby-grid-interface"
+                            >
+                                Kick
+                            </span>
+                        </td>
+                    {{end}}
+                    <td>{{.UserName}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    {{end}}
+{{end}}

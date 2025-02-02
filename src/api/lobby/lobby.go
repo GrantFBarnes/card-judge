@@ -14,7 +14,62 @@ import (
 	"github.com/grantfbarnes/card-judge/websocket"
 )
 
-func GetGameInterface(w http.ResponseWriter, r *http.Request) {
+func GetGameInterfaceHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/game-interface.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	type data struct {
+		LobbyId uuid.UUID
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "game-interface", data{
+		LobbyId: lobbyId,
+	})
+}
+
+func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	data, err := database.GetLobbyGameInfo(lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-info.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-info", data)
+}
+
+func GetPlayerHandHTML(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -30,7 +85,128 @@ func GetGameInterface(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
+	data, err := database.GetPlayerHandData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-hand.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "player-hand", data)
+}
+
+func GetPlayerSpecialsHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	data, err := database.GetPlayerSpecialsData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/player-specials.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "player-specials", data)
+}
+
+func GetLobbyGameBoardHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	data, err := database.GetLobbyGameBoardData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-board.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-board", data)
+}
+
+func GetLobbyGameStatsHTML(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	data, err := database.GetLobbyGameStatsData(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/components/game/lobby-game-stats.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to parse HTML."))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "lobby-game-stats", data)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
@@ -230,32 +406,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func DrawHand(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	player, err := getLobbyRequestPlayer(r, lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	err = database.DrawHand(player.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	writeGameInterfaceHtml(w, player.Id)
-}
-
 func PlayCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
@@ -287,7 +437,9 @@ func PlayCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -315,7 +467,7 @@ func PurchaseCredits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Attempted to purchase credits for an unfair advantage... Everyone else receives a credit as a result.")
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("<b>Shame on you.</b><br/><br/>This action has been reported in the lobby chat and everyone else has received a credit."))
@@ -413,7 +565,7 @@ func AlertLobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.PlayerBroadcast(player.Id, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("alert;;%d;;%s;;%s", credits, player.Name, text))
 	w.WriteHeader(http.StatusOK)
 }
@@ -479,7 +631,7 @@ func GambleCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.PlayerBroadcast(player.Id, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
@@ -551,7 +703,8 @@ func BetOnWin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
@@ -585,7 +738,8 @@ func BetOnWinUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
@@ -613,7 +767,9 @@ func AddExtraResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -640,7 +796,9 @@ func AddExtraResponseUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -667,7 +825,9 @@ func PlayStealCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -694,7 +854,8 @@ func PlaySurpriseCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -740,7 +901,8 @@ func PlayFindCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -794,7 +956,8 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -804,6 +967,13 @@ func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -829,7 +999,8 @@ func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -864,75 +1035,8 @@ func DiscardCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeGameInterfaceHtml(w, player.Id)
-}
-
-func LockCard(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
-		return
-	}
-
-	player, err := getLobbyRequestPlayer(r, lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	err = database.LockCard(player.Id, cardId, true)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	writeGameInterfaceHtml(w, player.Id)
-}
-
-func UnlockCard(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
-		return
-	}
-
-	player, err := getLobbyRequestPlayer(r, lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	err = database.LockCard(player.Id, cardId, false)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	writeGameInterfaceHtml(w, player.Id)
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	w.WriteHeader(http.StatusOK)
 }
 
 func VoteToKick(w http.ResponseWriter, r *http.Request) {
@@ -1059,7 +1163,8 @@ func RevealResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1094,7 +1199,7 @@ func ToggleRuleOutResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1181,32 +1286,6 @@ func PickRandomWinner(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func DiscardHand(w http.ResponseWriter, r *http.Request) {
-	lobbyIdString := r.PathValue("lobbyId")
-	lobbyId, err := uuid.Parse(lobbyIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get lobby id from path."))
-		return
-	}
-
-	player, err := getLobbyRequestPlayer(r, lobbyId)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	err = database.DiscardHand(player.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	writeGameInterfaceHtml(w, player.Id)
-}
-
 func FlipTable(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
@@ -1252,7 +1331,9 @@ func SkipPrompt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1313,7 +1394,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Lobby name set to "+name)
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-info")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1413,7 +1494,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby hand size set to %d", player.Name, handSize))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1470,7 +1551,7 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby credit limit set to %d", player.Name, creditLimit))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1527,7 +1608,7 @@ func SetWinStreakThreshold(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby win streak threshold set to %d", player.Name, winStreakThreshold))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1584,7 +1665,7 @@ func SetLoseStreakThreshold(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby lose streak threshold set to %d", player.Name, loseStreakThreshold))
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1640,7 +1721,9 @@ func SetResponseCount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1664,24 +1747,4 @@ func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player,
 	}
 
 	return player, nil
-}
-
-func writeGameInterfaceHtml(w http.ResponseWriter, playerId uuid.UUID) {
-	gameData, err := database.GetPlayerGameData(playerId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-interface.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "game-interface", gameData)
 }

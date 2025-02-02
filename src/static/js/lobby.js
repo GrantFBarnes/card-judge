@@ -33,9 +33,52 @@ window.onload = () => {
     conn.onmessage = (event) => {
         let messageText = event.data;
 
-        if (messageText === "refresh") {
-            htmx.ajax("GET", "/api" + document.location.pathname + "/game-interface", {target: "#lobby-grid-interface"});
-            return;
+        switch (messageText) {
+            case "refresh":
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/game-interface", {
+                    source: "#lobby-grid-interface",
+                    target: "#lobby-grid-interface"
+                });
+                return;
+
+            case "refresh-lobby-game-info":
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-info", {
+                    source: "#lobby-game-info",
+                    target: "#lobby-game-info"
+                });
+                return;
+
+            case "refresh-player-hand":
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/player-hand", {
+                    source: "#player-hand",
+                    target: "#player-hand"
+                });
+                return;
+
+            case "refresh-player-specials":
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/player-specials", {
+                    source: "#player-specials",
+                    target: "#player-specials"
+                });
+                return;
+
+            case "refresh-lobby-game-board":
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-board", {
+                    source: "#lobby-game-board",
+                    target: "#lobby-game-board"
+                });
+                return;
+
+            case "refresh-lobby-game-stats":
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-stats", {
+                    source: "#lobby-game-stats",
+                    target: "#lobby-game-stats"
+                });
+                return;
+
+            case "kick":
+                document.location.href = "/lobbies";
+                return;
         }
 
         if (messageText.startsWith("alert")) {
@@ -51,11 +94,6 @@ window.onload = () => {
                     setTimeout(() => alertDialog.close(), alertData[1] * 2000);
                 }
             }
-            return;
-        }
-
-        if (messageText === "kick") {
-            document.location.href = "/lobbies";
             return;
         }
 
