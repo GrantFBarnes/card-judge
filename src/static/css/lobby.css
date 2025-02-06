@@ -72,10 +72,6 @@ table {
     overflow-y: scroll;
 }
 
-.lobby-player-data-message {
-    padding: 10px;
-}
-
 #player-hand-table {
     width: 100%;
 }
@@ -100,6 +96,11 @@ table {
 
 #special-table button {
     width: 100%;
+}
+
+#lobby-alert-dialog-body {
+    white-space-collapse: preserve;
+    font-family: monospace;
 }
 
 #gamble-credits-chance-table th {
