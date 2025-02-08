@@ -35,22 +35,57 @@
         </tr>
         </tbody>
     </table>
-    {{if not .PlayerIsWinning}}
-        <hr/>
-        <table id="special-table">
-            <thead>
-            <tr>
-                <th>Special</th>
-                <th>Cost</th>
-                <th>
-                    <span title="Purchase Credits"
-                          class="bi bi-cart4 clickable"
-                          onclick="document.getElementById('purchase-credits-dialog').showModal()"
-                    ></span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
+    <hr/>
+    <table id="special-table">
+        <thead>
+        <tr>
+            <th>Special</th>
+            <th>Cost</th>
+            <th>
+                <span title="Purchase Credits"
+                      class="bi bi-cart4 clickable"
+                      onclick="document.getElementById('purchase-credits-dialog').showModal()"
+                ></span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <button
+                        onclick="document.getElementById('alert-lobby-dialog').showModal()"
+                        {{if lt .PlayerCreditsRemaining 1}}
+                            class="disabled non-clickable"
+                            disabled
+                        {{end}}
+                >
+                    Alert Lobby
+                </button>
+            </td>
+            <td>1+</td>
+            <td>
+                <span class="bi bi-info-circle"
+                      title="Alert the lobby with any text you want."></span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button
+                        onclick="document.getElementById('gamble-credits-dialog').showModal()"
+                        {{if lt .PlayerCreditsRemaining 1}}
+                            class="disabled non-clickable"
+                            disabled
+                        {{end}}
+                >
+                    Gamble Credits
+                </button>
+            </td>
+            <td>1+</td>
+            <td>
+                <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
+            </td>
+        </tr>
+        {{if not .PlayerIsWinning}}
             {{if .PlayerIsJudge}}
                 <tr>
                     <td>
@@ -70,43 +105,7 @@
                         <span class="bi bi-info-circle" title="Skip your turn as judge."></span>
                     </td>
                 </tr>
-            {{end}}
-            <tr>
-                <td>
-                    <button
-                            onclick="document.getElementById('alert-lobby-dialog').showModal()"
-                            {{if lt .PlayerCreditsRemaining 1}}
-                                class="disabled non-clickable"
-                                disabled
-                            {{end}}
-                    >
-                        Alert Lobby
-                    </button>
-                </td>
-                <td>1+</td>
-                <td>
-                    <span class="bi bi-info-circle"
-                          title="Alert the lobby with any text you want."></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button
-                            onclick="document.getElementById('gamble-credits-dialog').showModal()"
-                            {{if lt .PlayerCreditsRemaining 1}}
-                                class="disabled non-clickable"
-                                disabled
-                            {{end}}
-                    >
-                        Gamble Credits
-                    </button>
-                </td>
-                <td>1+</td>
-                <td>
-                    <span class="bi bi-info-circle" title="Gamble credits with a chance to win more."></span>
-                </td>
-            </tr>
-            {{if not .PlayerIsJudge}}
+            {{else}}
                 <tr>
                     <td>
                         {{if gt .PlayerBetOnWin 0}}
@@ -242,7 +241,7 @@
                     </td>
                 </tr>
             {{end}}
-            </tbody>
-        </table>
-    {{end}}
+        {{end}}
+        </tbody>
+    </table>
 {{end}}
