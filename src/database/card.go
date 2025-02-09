@@ -65,6 +65,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	result := make([]Card, 0)
 	for rows.Next() {
@@ -127,6 +128,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	result := make([]LobbyCard, 0)
 	for rows.Next() {
@@ -170,6 +172,7 @@ func GetCardsInDeckExport(deckId uuid.UUID) ([]Card, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	result := make([]Card, 0)
 	for rows.Next() {
@@ -202,6 +205,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	if err != nil {
 		return card, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var imageBytes []byte
@@ -254,6 +258,7 @@ func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
 	if err != nil {
 		return id, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&id); err != nil {
@@ -281,6 +286,7 @@ func GetResponseCardTextStart(responseId uuid.UUID) (string, error) {
 	if err != nil {
 		return text, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&text); err != nil {

@@ -89,6 +89,7 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 	if err != nil {
 		return result, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(
@@ -995,6 +996,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 	if err != nil {
 		return resultHeaders, resultRows, err
 	}
+	defer rows.Close()
 
 	rowValuePointers := make([]any, len(resultHeaders))
 	for i := range rowValuePointers {
