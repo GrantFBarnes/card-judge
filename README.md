@@ -12,9 +12,13 @@ CARD_JUDGE_SQL_PASSWORD // database username password
 // JWT
 CARD_JUDGE_JWT_SECRET // secret to validate tokens
 
-// Production Only
-CARD_JUDGE_ENV
-CARD_JUDGE_LOG_FILE
-CARD_JUDGE_CERT_FILE
-CARD_JUDGE_KEY_FILE
+// Port
+CARD_JUDGE_PORT // [optional] port to serve (defaults to 2016)
+
+// Redirect Logs
+CARD_JUDGE_LOG_FILE // [optional] path to log file (defaults to stdout)
+
+// HTTPS Certificates
+CARD_JUDGE_CERT_FILE // [optional] path to cert file
+CARD_JUDGE_KEY_FILE // [optional] path to key file
 ```

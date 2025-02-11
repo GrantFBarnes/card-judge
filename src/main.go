@@ -237,30 +237,27 @@ func main() {
 	// websocket
 	http.HandleFunc("GET /ws/lobby/{lobbyId}", websocket.ServeWs)
 
-	if os.Getenv("CARD_JUDGE_ENV") == "PROD" {
-		logFileName := os.Getenv("CARD_JUDGE_LOG_FILE")
-		certFileName := os.Getenv("CARD_JUDGE_CERT_FILE")
-		keyFileName := os.Getenv("CARD_JUDGE_KEY_FILE")
-
-		logFile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if os.Getenv("CARD_JUDGE_LOG_FILE") != "" {
+		logFile, err := os.OpenFile(os.Getenv("CARD_JUDGE_LOG_FILE"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		defer logFile.Close()
 		log.SetOutput(logFile)
+	}
 
-		port := ":443"
-		log.Println("server is running...")
-		err = http.ListenAndServeTLS(port, certFileName, keyFileName, nil)
-		if err != nil {
-			log.Fatalln(err)
-		}
+	port := ":2016"
+	if os.Getenv("CARD_JUDGE_PORT") != "" {
+		port = ":" + os.Getenv("CARD_JUDGE_PORT")
+	}
+
+	log.Println("server is running...")
+	if os.Getenv("CARD_JUDGE_CERT_FILE") != "" && os.Getenv("CARD_JUDGE_KEY_FILE") != "" {
+		err = http.ListenAndServeTLS(port, os.Getenv("CARD_JUDGE_CERT_FILE"), os.Getenv("CARD_JUDGE_KEY_FILE"), nil)
 	} else {
-		port := ":2016"
-		log.Println("server is running...")
 		err = http.ListenAndServe(port, nil)
-		if err != nil {
-			log.Fatalln(err)
-		}
+	}
+	if err != nil {
+		log.Fatalln(err)
 	}
 }
