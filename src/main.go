@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/grantfbarnes/card-judge/api"
 	apiAccess "github.com/grantfbarnes/card-judge/api/access"
@@ -25,6 +26,12 @@ func main() {
 	}()
 
 	db, err := database.CreateDatabaseConnection()
+	dbConnectAttemptCount := 0
+	for err != nil && dbConnectAttemptCount < 6 {
+		time.Sleep(10 * time.Second)
+		dbConnectAttemptCount += 1
+		db, err = database.CreateDatabaseConnection()
+	}
 	if err != nil {
 		log.Fatalln(err)
 		return
