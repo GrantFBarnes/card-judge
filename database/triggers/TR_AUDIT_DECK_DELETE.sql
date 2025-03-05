@@ -3,6 +3,24 @@ CREATE TRIGGER IF NOT EXISTS TR_AUDIT_DECK_DELETE
     ON DECK
     FOR EACH ROW
 BEGIN
+    INSERT INTO AUDIT_CARD (
+        AUDIT_TYPE,
+        CARD_ID,
+        DECK_ID,
+        CATEGORY,
+        TEXT,
+        IMAGE
+    )
+    SELECT
+        'DELETE',
+        ID,
+        DECK_ID,
+        CATEGORY,
+        TEXT,
+        IMAGE
+    FROM CARD
+    WHERE DECK_ID = OLD.ID;
+
     INSERT INTO AUDIT_DECK (
         AUDIT_TYPE,
         DECK_ID,
