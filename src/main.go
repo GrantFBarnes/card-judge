@@ -65,6 +65,8 @@ func main() {
 		"../database/tables/LOG_WIN.sql",
 		"../database/tables/LOG_KICK.sql",
 		"../database/tables/AUDIT_CARD.sql",
+		"../database/tables/AUDIT_DECK.sql",
+		"../database/tables/AUDIT_USER.sql",
 
 		// functions
 		"../database/functions/FN_GET_DRAW_PILE_CARD_ID.sql",
@@ -120,6 +122,8 @@ func main() {
 		// triggers
 		"../database/triggers/TR_CARD_AFTER_DELETE.sql",
 		"../database/triggers/TR_CARD_AFTER_UPDATE.sql",
+		"../database/triggers/TR_DECK_AFTER_DELETE.sql",
+		"../database/triggers/TR_DECK_AFTER_UPDATE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_DELETE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_INSERT.sql",
 		"../database/triggers/TR_LOBBY_AFTER_UPDATE.sql",
@@ -131,6 +135,8 @@ func main() {
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_CARD.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_DECK.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_USER.sql",
+		"../database/triggers/TR_USER_AFTER_DELETE.sql",
+		"../database/triggers/TR_USER_AFTER_UPDATE.sql",
 	}
 	for _, sqlFile := range sqlFiles {
 		err = database.RunFile(sqlFile)
