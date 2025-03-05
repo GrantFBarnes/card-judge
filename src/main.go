@@ -120,10 +120,12 @@ func main() {
 		"../database/events/EVT_CLEAN_LOGIN_ATTEMPTS.sql",
 
 		// triggers
-		"../database/triggers/TR_CARD_AFTER_DELETE.sql",
-		"../database/triggers/TR_CARD_AFTER_UPDATE.sql",
-		"../database/triggers/TR_DECK_AFTER_DELETE.sql",
-		"../database/triggers/TR_DECK_AFTER_UPDATE.sql",
+		"../database/triggers/TR_AUDIT_CARD_DELETE.sql",
+		"../database/triggers/TR_AUDIT_CARD_UPDATE.sql",
+		"../database/triggers/TR_AUDIT_DECK_DELETE.sql",
+		"../database/triggers/TR_AUDIT_DECK_UPDATE.sql",
+		"../database/triggers/TR_AUDIT_USER_DELETE.sql",
+		"../database/triggers/TR_AUDIT_USER_UPDATE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_DELETE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_INSERT.sql",
 		"../database/triggers/TR_LOBBY_AFTER_UPDATE.sql",
@@ -135,8 +137,6 @@ func main() {
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_CARD.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_DECK.sql",
 		"../database/triggers/TR_SET_CHANGED_ON_DATE_BF_UP_USER.sql",
-		"../database/triggers/TR_USER_AFTER_DELETE.sql",
-		"../database/triggers/TR_USER_AFTER_UPDATE.sql",
 	}
 	for _, sqlFile := range sqlFiles {
 		err = database.RunFile(sqlFile)
