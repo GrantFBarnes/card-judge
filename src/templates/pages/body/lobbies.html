@@ -63,6 +63,16 @@
             <details>
                 <summary>Settings</summary>
                 <div class="form-input">
+                    <label for="createLobbyDrawPriority">Draw Priority</label>
+                    <select
+                            id="createLobbyDrawPriority"
+                            name="drawPriority"
+                            autocomplete="off"
+                            required="required"
+                    >
+                        <option value="RANDOM" selected>Random</option>
+                        <option value="PLAYCOUNT">Play Count</option>
+                    </select>
                     <label for="createLobbyHandSize">Hand Size</label>
                     <select
                             id="createLobbyHandSize"

@@ -92,6 +92,25 @@
             <input type="submit" value="Set Lobby Message"/>
         </form>
         <form
+                hx-put="/api/lobby/{{.Lobby.Id}}/draw-priority"
+                hx-target="find .htmx-result"
+        >
+            <div class="form-input">
+                <label for="setLobbyDrawPriority">Draw Priority</label>
+                <select
+                        id="setLobbyDrawPriority"
+                        name="drawPriority"
+                        autocomplete="off"
+                        required="required"
+                >
+                    <option value="RANDOM" selected>Random</option>
+                    <option value="PLAYCOUNT">Play Count</option>
+                </select>
+            </div>
+            <div class="htmx-result"></div>
+            <input type="submit" value="Set Lobby Draw Priority"/>
+        </form>
+        <form
                 hx-put="/api/lobby/{{.Lobby.Id}}/hand-size"
                 hx-target="find .htmx-result"
         >

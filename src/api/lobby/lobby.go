@@ -257,6 +257,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var message string
 	var password string
 	var passwordConfirm string
+	var drawPriority string
 	var handSize int
 	var creditLimit int
 	var winStreakThreshold int
@@ -271,6 +272,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			password = val[0]
 		} else if key == "passwordConfirm" {
 			passwordConfirm = val[0]
+		} else if key == "drawPriority" {
+			drawPriority = val[0]
 		} else if key == "handSize" {
 			handSize, err = strconv.Atoi(val[0])
 			if err != nil {
@@ -381,7 +384,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, message, password, handSize, creditLimit, winStreakThreshold, loseStreakThreshold)
+	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, creditLimit, winStreakThreshold, loseStreakThreshold)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1438,6 +1441,49 @@ func SetMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Lobby message set to "+message)
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetDrawPriority(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var drawPriority string
+	for key, val := range r.Form {
+		if key == "drawPriority" {
+			drawPriority = val[0]
+		}
+	}
+
+	err = database.SetLobbyDrawPriority(lobbyId, drawPriority)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby draw priority set to %s", player.Name, drawPriority))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
