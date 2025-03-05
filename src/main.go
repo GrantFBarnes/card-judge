@@ -111,6 +111,7 @@ func main() {
 		"../database/procedures/SP_WITHDRAW_RESPONSE.sql",
 
 		// events
+		"../database/events/EVT_CLEAN_BAD_RESPONSE_CARDS.sql",
 		"../database/events/EVT_CLEAN_LOGIN_ATTEMPTS.sql",
 
 		// triggers
