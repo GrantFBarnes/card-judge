@@ -64,6 +64,7 @@ func main() {
 		"../database/tables/LOG_RESPONSE_CARD.sql",
 		"../database/tables/LOG_WIN.sql",
 		"../database/tables/LOG_KICK.sql",
+		"../database/tables/AUDIT_CARD.sql",
 
 		// functions
 		"../database/functions/FN_GET_DRAW_PILE_CARD_ID.sql",
@@ -117,6 +118,8 @@ func main() {
 		"../database/events/EVT_CLEAN_LOGIN_ATTEMPTS.sql",
 
 		// triggers
+		"../database/triggers/TR_CARD_AFTER_DELETE.sql",
+		"../database/triggers/TR_CARD_AFTER_UPDATE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_DELETE.sql",
 		"../database/triggers/TR_LOBBY_AFTER_INSERT.sql",
 		"../database/triggers/TR_LOBBY_AFTER_UPDATE.sql",
