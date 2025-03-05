@@ -66,6 +66,7 @@ func main() {
 		"../database/tables/LOG_KICK.sql",
 
 		// functions
+		"../database/functions/FN_GET_DRAW_PILE_CARD_ID.sql",
 		"../database/functions/FN_GET_LOBBY_JUDGE_PLAYER_ID.sql",
 		"../database/functions/FN_GET_LOGIN_ATTEMPT_IS_ALLOWED.sql",
 		"../database/functions/FN_GET_PLAYER_IS_WINNING.sql",

@@ -40,15 +40,7 @@ BEGIN
 
     WHILE VAR_LOBBY_DRAW_PILE_SIZE > 0 AND VAR_LOBBY_HAND_SIZE > VAR_PLAYER_HAND_SIZE
         DO
-            SELECT
-                C.ID
-            INTO VAR_CARD_ID
-            FROM DRAW_PILE AS DP
-                     INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
-            WHERE C.CATEGORY = 'RESPONSE'
-              AND DP.LOBBY_ID = VAR_LOBBY_ID
-            ORDER BY RAND()
-            LIMIT 1;
+            SET VAR_CARD_ID = FN_GET_DRAW_PILE_CARD_ID('RESPONSE', VAR_LOBBY_ID);
 
             INSERT
             INTO HAND
