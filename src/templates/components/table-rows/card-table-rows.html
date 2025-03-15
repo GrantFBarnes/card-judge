@@ -3,14 +3,14 @@
         <tr>
             <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
             <td>{{.ChangedOnDate.Format "2006-01-02"}}</td>
-            <td>{{if eq .Category "PROMPT"}} Prompt {{else}} Response {{end}}</td>
-            <td class="wrap-new-lines">{{.Text}}</td>
-            <td>{{if .Image.Valid}} <span class="bi bi-card-image"></span> {{end}}</td>
             <td>
-                <span title="Edit"
-                      class="bi bi-pencil clickable"
-                      onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
-                ></span>
+                <div style="text-align: center;">
+                    <span
+                        title="Edit Card"
+                        class="bi bi-pencil clickable"
+                        onclick="document.getElementById('card-{{.Id}}-update-dialog').showModal()"
+                    ></span>
+                </div>
                 <dialog id="card-{{.Id}}-update-dialog">
                     <div style="display: grid; grid-auto-flow: column">
                         <div>
@@ -107,6 +107,9 @@
                     </form>
                 </dialog>
             </td>
+            <td>{{if eq .Category "PROMPT"}} Prompt {{else}} Response {{end}}</td>
+            <td class="wrap-new-lines">{{.Text}}</td>
+            <td>{{if .Image.Valid}} <span class="bi bi-card-image"></span> {{end}}</td>
             <td>
                 <span title="Delete"
                       class="bi bi-trash clickable"
