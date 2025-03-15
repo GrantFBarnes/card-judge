@@ -1,4 +1,5 @@
 {{define "body"}}
+    <h2>Decks</h2>
     <button onclick="document.getElementById('deck-create-dialog').showModal()">
         Create Deck
     </button>
@@ -60,8 +61,6 @@
             <input type="submit" value="Create Deck"/>
         </form>
     </dialog>
-    <br/>
-    <h3>Choose a Deck to Modify</h3>
     <table>
         <thead>
         <tr>
@@ -85,4 +84,6 @@
         </thead>
         <tbody id="deck-table-rows"></tbody>
     </table>
+    <br/>
+    <br/>
 {{end}}
