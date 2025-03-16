@@ -193,6 +193,13 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	decks, err := database.GetReadableDecks(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get user decks"))
+		return
+	}
+
 	tmpl, err := template.ParseFiles(
 		"templates/pages/base.html",
 		"templates/pages/body/lobby.html",
@@ -214,12 +221,14 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		api.BasePageData
 		Lobby    database.Lobby
 		PlayerId uuid.UUID
+		Decks    []database.Deck
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Lobby:        lobby,
 		PlayerId:     playerId,
+		Decks:        decks,
 	})
 }
 

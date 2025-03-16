@@ -206,6 +206,52 @@
             <input type="submit" value="Set Lobby Lose Streak Threshold"/>
         </form>
     </dialog>
+    <dialog id="lobby-draw-pile-dialog">
+        <div style="display: grid; grid-auto-flow: column">
+            <div>
+                <h3>Lobby Draw Pile</h3>
+            </div>
+            <div>
+                <span
+                    class="bi bi-x-lg close-button"
+                    onclick="document.getElementById('lobby-draw-pile-dialog').close()"
+                ></span>
+            </div>
+        </div>
+        <form hx-put="/api/lobby/{{.Lobby.Id}}/set-decks" hx-target="find .htmx-result">
+            {{$deckCount := len .Decks}}
+            {{if gt $deckCount 0}}
+                <h3>Choose Decks</h3>
+                <table style="max-height: 200px">
+                    <tbody>
+                    {{range .Decks}}
+                        <tr>
+                            <td>
+                                <input
+                                    id="deckSelect{{.Id}}"
+                                    type="checkbox"
+                                    name="deckId{{.Id}}"
+                                    value="{{.Id}}"
+                                    autocomplete="off"
+                                />
+                                <label for="deckSelect{{.Id}}" class="clickable">{{.Name}}</label>
+                            </td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            {{end}}
+            <br/>
+            <details>
+                <summary>Missing decks?</summary>
+                <p>Go <a href="/decks" target="_blank" rel="noopener noreferrer">here</a> to access/create some.</p>
+            </details>
+            <br/>
+            <br/>
+            <div class="htmx-result"></div>
+            <input type="submit" value="Set Decks"/>
+        </form>
+    </dialog>
     <dialog id="purchase-credits-dialog">
         <div style="display: grid; grid-auto-flow: column">
             <div>

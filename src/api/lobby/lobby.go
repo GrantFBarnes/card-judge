@@ -391,7 +391,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.AddCardsToLobby(lobbyId, deckIds)
+	err = database.SyncDecksInLobby(lobbyId, deckIds)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1773,6 +1773,60 @@ func SetResponseCount(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
+}
+
+func SetDecks(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var deckIds = make([]uuid.UUID, 0)
+	for key, val := range r.Form {
+		if strings.HasPrefix(key, "deckId") {
+			deckId, err := uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse deck id."))
+				return
+			}
+			deckIds = append(deckIds, deckId)
+		}
+	}
+
+	if len(deckIds) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("At least one deck is required."))
+		return
+	}
+
+	err = database.SyncDecksInLobby(lobbyId, deckIds)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-info")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Updated draw pile decks.")
+	w.WriteHeader(http.StatusOK)
 }
 
 func getLobbyRequestPlayer(r *http.Request, lobbyId uuid.UUID) (database.Player, error) {
