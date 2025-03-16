@@ -134,14 +134,14 @@
             <input type="submit" value="Set Lobby Hand Size"/>
         </form>
         <form
-                hx-put="/api/lobby/{{.Lobby.Id}}/credit-limit"
+                hx-put="/api/lobby/{{.Lobby.Id}}/free-credits"
                 hx-target="find .htmx-result"
         >
             <div class="form-input">
-                <label for="setLobbyCreditLimit">Credit Limit</label>
+                <label for="setLobbyFreeCredits">Free Credits</label>
                 <select
-                        id="setLobbyCreditLimit"
-                        name="creditLimit"
+                        id="setLobbyFreeCredits"
+                        name="freeCredits"
                         autocomplete="off"
                         required="required"
                 >
@@ -159,7 +159,7 @@
                 </select>
             </div>
             <div class="htmx-result"></div>
-            <input type="submit" value="Set Lobby Credit Limit"/>
+            <input type="submit" value="Set Lobby Free Credits"/>
         </form>
         <form
                 hx-put="/api/lobby/{{.Lobby.Id}}/win-streak-threshold"

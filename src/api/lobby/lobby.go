@@ -259,7 +259,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var passwordConfirm string
 	var drawPriority string
 	var handSize int
-	var creditLimit int
+	var freeCredits int
 	var winStreakThreshold int
 	var loseStreakThreshold int
 	var deckIds = make([]uuid.UUID, 0)
@@ -281,11 +281,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				_, _ = w.Write([]byte("Failed to parse hand size."))
 				return
 			}
-		} else if key == "creditLimit" {
-			creditLimit, err = strconv.Atoi(val[0])
+		} else if key == "freeCredits" {
+			freeCredits, err = strconv.Atoi(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse credit limit."))
+				_, _ = w.Write([]byte("Failed to parse free credits."))
 				return
 			}
 		} else if key == "winStreakThreshold" {
@@ -335,12 +335,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		handSize = 16
 	}
 
-	if creditLimit < 0 {
-		creditLimit = 0
+	if freeCredits < 0 {
+		freeCredits = 0
 	}
 
-	if creditLimit > 10 {
-		creditLimit = 10
+	if freeCredits > 10 {
+		freeCredits = 10
 	}
 
 	if winStreakThreshold < 1 {
@@ -384,7 +384,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, creditLimit, winStreakThreshold, loseStreakThreshold)
+	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, freeCredits, winStreakThreshold, loseStreakThreshold)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -555,7 +555,7 @@ func AlertLobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if lobby.CreditLimit-player.CreditsSpent < credits {
+	if lobby.FreeCredits-player.CreditsSpent < credits {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("You do not have that many credits to spend."))
 		return
@@ -621,7 +621,7 @@ func GambleCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if lobby.CreditLimit-player.CreditsSpent < credits {
+	if lobby.FreeCredits-player.CreditsSpent < credits {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("You do not have that many credits to gamble."))
 		return
@@ -693,7 +693,7 @@ func BetOnWin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if lobby.CreditLimit-player.CreditsSpent < credits {
+	if lobby.FreeCredits-player.CreditsSpent < credits {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("You do not have that many credits to bet."))
 		return
@@ -1546,7 +1546,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("success"))
 }
 
-func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
+func SetFreeCredits(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -1569,34 +1569,34 @@ func SetCreditLimit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var creditLimit int
+	var freeCredits int
 	for key, val := range r.Form {
-		if key == "creditLimit" {
-			creditLimit, err = strconv.Atoi(val[0])
+		if key == "freeCredits" {
+			freeCredits, err = strconv.Atoi(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse credit limit."))
+				_, _ = w.Write([]byte("Failed to parse free credits."))
 				return
 			}
 		}
 	}
 
-	if creditLimit < 0 {
-		creditLimit = 0
+	if freeCredits < 0 {
+		freeCredits = 0
 	}
 
-	if creditLimit > 10 {
-		creditLimit = 10
+	if freeCredits > 10 {
+		freeCredits = 10
 	}
 
-	err = database.SetLobbyCreditLimit(lobbyId, creditLimit)
+	err = database.SetLobbyFreeCredits(lobbyId, freeCredits)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby credit limit set to %d", player.Name, creditLimit))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free credits set to %d", player.Name, freeCredits))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
