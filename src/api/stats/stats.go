@@ -42,7 +42,7 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(
-		"templates/components/table.html",
+		"templates/components/tables/stats-table.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -55,7 +55,7 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 		Rows    [][]string
 	}
 
-	_ = tmpl.ExecuteTemplate(w, "table", data{
+	_ = tmpl.ExecuteTemplate(w, "stats-table", data{
 		Headers: headers,
 		Rows:    rows,
 	})
