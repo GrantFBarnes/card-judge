@@ -9,6 +9,7 @@ BEGIN
         DECK_ID,
         CATEGORY,
         TEXT,
+        YOUTUBE,
         IMAGE
     )
     SELECT
@@ -17,6 +18,7 @@ BEGIN
         DECK_ID,
         CATEGORY,
         TEXT,
+        YOUTUBE,
         IMAGE
     FROM CARD
     WHERE DECK_ID = OLD.ID;

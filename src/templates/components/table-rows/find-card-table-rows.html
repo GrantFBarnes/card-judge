@@ -2,6 +2,7 @@
     {{range .}}
         <tr>
             <td class="wrap-new-lines">{{.Text}}</td>
+            <td>{{if .YouTube.Valid}} <span class="bi bi-youtube"></span> {{end}}</td>
             <td>{{if .Image.Valid}} <span class="bi bi-card-image"></span> {{end}}</td>
             <td>
                 <form

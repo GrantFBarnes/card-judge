@@ -7,6 +7,13 @@
             {{if .JudgeCardDeck.Valid}}
                 <span class="bi bi-info-circle" style="float: right" title="{{.JudgeCardDeck.String}}"></span>
             {{end}}
+            {{if .JudgeCardYouTube.Valid}}
+                <br/>
+                <br/>
+                <div class="iframe-container">
+                    <iframe src="https://www.youtube.com/embed/{{.JudgeCardYouTube.String}}"></iframe>
+                </div>
+            {{end}}
             {{if .JudgeCardImage.Valid}}
                 <br/>
                 <br/>
@@ -110,6 +117,13 @@
                                                   style="float: right"
                                                   title="{{.DeckName}}"
                                             ></span>
+                                            {{if .YouTube.Valid}}
+                                                <br/>
+                                                <br/>
+                                                <div class="iframe-container">
+                                                    <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                                                </div>
+                                            {{end}}
                                             {{if .Image.Valid}}
                                                 <br/>
                                                 <br/>
@@ -167,6 +181,13 @@
                                               style="float: right"
                                               title="{{.DeckName}}"
                                         ></span>
+                                        {{if .YouTube.Valid}}
+                                            <br/>
+                                            <br/>
+                                            <div class="iframe-container">
+                                                <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                                            </div>
+                                        {{end}}
                                         {{if .Image.Valid}}
                                             <br/>
                                             <br/>

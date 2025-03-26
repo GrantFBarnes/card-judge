@@ -21,6 +21,13 @@
                 >
                     <span class="wrap-new-lines">{{.Text}}</span>
                     <span class="bi bi-info-circle" style="float: right" title="{{.DeckName}}"></span>
+                    {{if .YouTube.Valid}}
+                        <br/>
+                        <br/>
+                        <div class="iframe-container">
+                            <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                        </div>
+                    {{end}}
                     {{if .Image.Valid}}
                         <br/>
                         <br/>

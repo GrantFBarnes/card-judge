@@ -22,7 +22,6 @@
                             ></span>
                         </div>
                     </div>
-                    <h3>Set Category</h3>
                     <form hx-put="/api/card/{{.Id}}/category" hx-target="find .htmx-result">
                         <div class="form-input">
                             <input
@@ -48,11 +47,10 @@
                                 {{end}}
                             </select>
                         </div>
-                        <br/>
                         <div class="htmx-result"></div>
                         <input type="submit" value="Set Category"/>
                     </form>
-                    <h3>Set Card Text</h3>
+                    <br/>
                     <form hx-put="/api/card/{{.Id}}/text" hx-target="find .htmx-result">
                         <div class="form-input">
                             <input
@@ -67,19 +65,54 @@
                                     id="text{{.Id}}"
                                     name="text"
                                     maxlength="510"
-                                    placeholder="Enter Card Text"
+                                    placeholder="Enter Text"
                                     required="required"
                                     cols="40"
                                     rows="10"
                                     autocomplete="off"
                             >{{.Text}}</textarea>
                         </div>
-                        <br/>
                         <div class="htmx-result"></div>
-                        <input type="submit" value="Set Card Text"/>
+                        <input type="submit" value="Set Text"/>
                     </form>
-                    <h3>Set Card Image</h3>
+                    <br/>
+                    <form hx-put="/api/card/{{.Id}}/youtube" hx-target="find .htmx-result">
+                        {{if .YouTube.Valid}}
+                            <div class="iframe-container">
+                                <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                            </div>
+                        {{end}}
+                        <div class="form-input">
+                            <input
+                                    type="text"
+                                    id="textDeckId{{.Id}}"
+                                    name="deckId"
+                                    value="{{.DeckId}}"
+                                    hidden
+                            />
+                            <label for="youtube{{.Id}}" style="vertical-align: top">YouTube Video ID</label>
+                            <input
+                                    type="text"
+                                    id="youtube{{.Id}}"
+                                    name="youtube"
+                                    title="Must be 11 characters or empty"
+                                    pattern=".{11}|^$"
+                                    maxlength="11"
+                                    placeholder="Enter YouTube Video ID"
+                                    {{if .YouTube.Valid}}
+                                        value="{{.YouTube.String}}"
+                                    {{end}}
+                                    autocomplete="off"
+                            />
+                        </div>
+                        <div class="htmx-result"></div>
+                        <input type="submit" value="Set YouTube"/>
+                    </form>
+                    <br/>
                     <form enctype="multipart/form-data" hx-put="/api/card/{{.Id}}/image" hx-target="find .htmx-result">
+                        {{if .Image.Valid}}
+                            <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
+                        {{end}}
                         <div class="form-input">
                             <input
                                     type="file"
@@ -88,10 +121,6 @@
                                     value="{{.DeckId}}"
                                     hidden
                             />
-                            {{if .Image.Valid}}
-                                <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
-                                <br/>
-                            {{end}}
                             <label for="image{{.Id}}">Image</label>
                             <input
                                     type="file"
@@ -101,21 +130,37 @@
                                     autocomplete="off"
                             />
                         </div>
-                        <br/>
                         <div class="htmx-result"></div>
                         <input type="submit" value="Set Image"/>
                     </form>
+                    <br/>
                 </dialog>
             </td>
             <td>{{if eq .Category "PROMPT"}} Prompt {{else}} Response {{end}}</td>
             <td class="wrap-new-lines">{{.Text}}</td>
-            <td>{{if .Image.Valid}} <span class="bi bi-card-image"></span> {{end}}</td>
             <td>
-                <span title="Delete"
-                      class="bi bi-trash clickable"
-                      hx-delete="/api/card/{{.Id}}"
-                      hx-confirm="Are you sure you want to delete this card?"
-                ></span>
+                {{if .YouTube.Valid}}
+                    <div style="text-align: center;">
+                        <span class="bi bi-youtube"></span>
+                    </div>
+                {{end}}
+            </td>
+            <td>
+                {{if .Image.Valid}}
+                    <div style="text-align: center;">
+                        <span class="bi bi-card-image"></span>
+                    </div>
+                {{end}}
+            </td>
+            <td>
+                <div style="text-align: center;">
+                    <span
+                        title="Delete"
+                        class="bi bi-trash clickable"
+                        hx-delete="/api/card/{{.Id}}"
+                        hx-confirm="Are you sure you want to delete this card?"
+                    ></span>
+                </div>
             </td>
         </tr>
     {{end}}

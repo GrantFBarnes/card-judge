@@ -9,6 +9,7 @@ BEGIN
         DECK_ID,
         CATEGORY,
         TEXT,
+        YOUTUBE,
         IMAGE
     ) VALUES (
         'UPDATE',
@@ -16,6 +17,7 @@ BEGIN
         OLD.DECK_ID,
         OLD.CATEGORY,
         OLD.TEXT,
+        OLD.YOUTUBE,
         OLD.IMAGE
     );
 END;

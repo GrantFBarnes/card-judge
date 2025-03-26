@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS AUDIT_CARD
     DECK_ID         UUID                       NOT NULL,
     CATEGORY        ENUM ('PROMPT','RESPONSE') NOT NULL,
     TEXT            VARCHAR(510)               NOT NULL,
+    YOUTUBE         CHAR(11)                   NULL,
     IMAGE           BLOB                       NULL,
 
     PRIMARY KEY (ID)

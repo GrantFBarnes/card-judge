@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS CARD
     DECK_ID         UUID                       NOT NULL,
     CATEGORY        ENUM ('PROMPT','RESPONSE') NOT NULL DEFAULT 'PROMPT',
     TEXT            VARCHAR(510)               NOT NULL,
+    YOUTUBE         CHAR(11)                   NULL,
     IMAGE           BLOB                       NULL,
 
     PRIMARY KEY (ID),

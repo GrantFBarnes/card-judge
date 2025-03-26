@@ -18,6 +18,7 @@ type Card struct {
 	DeckId   uuid.UUID
 	Category string
 	Text     string
+	YouTube  sql.NullString
 	Image    sql.NullString
 }
 
@@ -51,6 +52,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			C.DECK_ID,
 			C.CATEGORY,
 			C.TEXT,
+			C.YOUTUBE,
 			C.IMAGE
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
@@ -78,6 +80,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			&card.DeckId,
 			&card.Category,
 			&card.Text,
+			&card.YouTube,
 			&imageBytes); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
@@ -103,6 +106,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 			DECK_ID,
 			CATEGORY,
 			TEXT,
+			YOUTUBE,
 			IMAGE
 		FROM (
 			SELECT
@@ -114,6 +118,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 				C.DECK_ID,
 				C.CATEGORY,
 				C.TEXT,
+				C.YOUTUBE,
 				C.IMAGE
 			FROM CARD AS C
 				INNER JOIN DRAW_PILE AS DP ON DP.CARD_ID = C.ID
@@ -142,6 +147,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 			&card.DeckId,
 			&card.Category,
 			&card.Text,
+			&card.YouTube,
 			&imageBytes); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
@@ -197,6 +203,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 			DECK_ID,
 			CATEGORY,
 			TEXT,
+			YOUTUBE,
 			IMAGE
 		FROM CARD
 		WHERE ID = ?
@@ -216,6 +223,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 			&card.DeckId,
 			&card.Category,
 			&card.Text,
+			&card.YouTube,
 			&imageBytes); err != nil {
 			log.Println(err)
 			return card, errors.New("failed to scan row in query results")
@@ -319,6 +327,18 @@ func SetCardText(id uuid.UUID, text string) error {
 		WHERE ID = ?
 	`
 	return execute(sqlString, text, id)
+}
+
+func SetCardYouTube(id uuid.UUID, youtube string) error {
+	sqlString := `
+		UPDATE CARD
+		SET YOUTUBE = ?
+		WHERE ID = ?
+	`
+	if len(youtube) == 0 {
+		return execute(sqlString, nil, id)
+	}
+	return execute(sqlString, youtube, id)
 }
 
 func SetCardImage(id uuid.UUID, imageBytes []byte) error {
