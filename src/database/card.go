@@ -238,7 +238,7 @@ func GetCard(id uuid.UUID) (Card, error) {
 	return card, nil
 }
 
-func CreateCard(deckId uuid.UUID, category string, text string) (uuid.UUID, error) {
+func CreateCard(deckId uuid.UUID, category string, text string, youtube string) (uuid.UUID, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		log.Println(err)
@@ -246,10 +246,13 @@ func CreateCard(deckId uuid.UUID, category string, text string) (uuid.UUID, erro
 	}
 
 	sqlString := `
-		INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT, YOUTUBE)
+		VALUES (?, ?, ?, ?, ?)
 	`
-	return id, execute(sqlString, id, deckId, category, text)
+	if len(youtube) == 0 {
+		return id, execute(sqlString, id, deckId, category, text, nil)
+	}
+	return id, execute(sqlString, id, deckId, category, text, youtube)
 }
 
 func GetCardId(deckId uuid.UUID, text string) (uuid.UUID, error) {
@@ -310,35 +313,19 @@ func GetResponseCardTextStart(responseId uuid.UUID) (string, error) {
 	return text, nil
 }
 
-func SetCardCategory(id uuid.UUID, category string) error {
-	sqlString := `
-		UPDATE CARD
-		SET CATEGORY = ?
-		WHERE ID = ?
-	`
-	return execute(sqlString, category, id)
-}
-
-func SetCardText(id uuid.UUID, text string) error {
+func UpdateCard(id uuid.UUID, category string, text string, youtube string) error {
 	sqlString := `
 		UPDATE CARD
 		SET
-			TEXT = ?
-		WHERE ID = ?
-	`
-	return execute(sqlString, text, id)
-}
-
-func SetCardYouTube(id uuid.UUID, youtube string) error {
-	sqlString := `
-		UPDATE CARD
-		SET YOUTUBE = ?
+			CATEGORY = ?,
+			TEXT = ?,
+			YOUTUBE = ?
 		WHERE ID = ?
 	`
 	if len(youtube) == 0 {
-		return execute(sqlString, nil, id)
+		return execute(sqlString, category, text, nil, id)
 	}
-	return execute(sqlString, youtube, id)
+	return execute(sqlString, category, text, youtube, id)
 }
 
 func SetCardImage(id uuid.UUID, imageBytes []byte) error {

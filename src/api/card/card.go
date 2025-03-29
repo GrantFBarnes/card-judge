@@ -121,6 +121,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var deckId uuid.UUID
 	var category string
 	var text string
+	var youtube string
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -133,32 +134,15 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			category = val[0]
 		} else if key == "text" {
 			text = val[0]
+		} else if key == "youtube" {
+			youtube = val[0]
 		}
-	}
-
-	if text == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("No text found."))
-		return
 	}
 
 	userId := api.GetUserId(r)
 	if userId == uuid.Nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	existingCardId, err := database.GetCardId(deckId, text)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	if existingCardId != uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Card text already exists."))
 		return
 	}
 
@@ -182,7 +166,32 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = database.CreateCard(deckId, category, text)
+	if text == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("No text found."))
+		return
+	}
+
+	existingCardId, err := database.GetCardId(deckId, text)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	if existingCardId != uuid.Nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Card text already exists."))
+		return
+	}
+
+	if len(youtube) != 0 && len(youtube) != 11 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Invalid YouTube Video ID."))
+		return
+	}
+
+	_, err = database.CreateCard(deckId, category, text, youtube)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -193,7 +202,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func SetCategory(w http.ResponseWriter, r *http.Request) {
+func Update(w http.ResponseWriter, r *http.Request) {
 	cardIdString := r.PathValue("cardId")
 	cardId, err := uuid.Parse(cardIdString)
 	if err != nil {
@@ -211,6 +220,8 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 
 	var deckId uuid.UUID
 	var category string
+	var text string
+	var youtube string
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -221,6 +232,10 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 			}
 		} else if key == "category" {
 			category = val[0]
+		} else if key == "text" {
+			text = val[0]
+		} else if key == "youtube" {
+			youtube = val[0]
 		}
 	}
 
@@ -244,71 +259,16 @@ func SetCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetCardCategory(cardId, category)
+	text, err = processCardText(text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
-	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusOK)
-}
-
-func SetText(w http.ResponseWriter, r *http.Request) {
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
-		return
-	}
-
-	err = r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to parse form."))
-		return
-	}
-
-	var deckId uuid.UUID
-	var text string
-	for key, val := range r.Form {
-		if key == "deckId" {
-			deckId, err = uuid.Parse(val[0])
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse deck id."))
-				return
-			}
-		} else if key == "text" {
-			text = val[0]
-		}
-	}
-
 	if text == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("No text found."))
-		return
-	}
-
-	userId := api.GetUserId(r)
-	if userId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to check deck access."))
-		return
-	}
-
-	if !hasDeckAccess {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte("User does not have access."))
 		return
 	}
 
@@ -325,82 +285,13 @@ func SetText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text, err = processCardText(text)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	err = database.SetCardText(cardId, text)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	w.Header().Add("HX-Refresh", "true")
-	w.WriteHeader(http.StatusOK)
-}
-
-func SetYouTube(w http.ResponseWriter, r *http.Request) {
-	cardIdString := r.PathValue("cardId")
-	cardId, err := uuid.Parse(cardIdString)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get card id from path."))
-		return
-	}
-
-	err = r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to parse form."))
-		return
-	}
-
-	var deckId uuid.UUID
-	var youtube string
-	for key, val := range r.Form {
-		if key == "deckId" {
-			deckId, err = uuid.Parse(val[0])
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse deck id."))
-				return
-			}
-		} else if key == "youtube" {
-			youtube = val[0]
-		}
-	}
-
 	if len(youtube) != 0 && len(youtube) != 11 {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Invalid YouTube Video ID."))
 		return
 	}
 
-	userId := api.GetUserId(r)
-	if userId == uuid.Nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to get user id."))
-		return
-	}
-
-	hasDeckAccess, err := database.UserHasDeckAccess(userId, deckId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to check deck access."))
-		return
-	}
-
-	if !hasDeckAccess {
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte("User does not have access."))
-		return
-	}
-
-	err = database.SetCardYouTube(cardId, youtube)
+	err = database.UpdateCard(cardId, category, text, youtube)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

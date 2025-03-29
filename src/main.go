@@ -194,9 +194,7 @@ func main() {
 	http.Handle("POST /api/card/search", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Search)))
 	http.Handle("POST /api/card/find", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Find)))
 	http.Handle("POST /api/card/create", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Create)))
-	http.Handle("PUT /api/card/{cardId}/category", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetCategory)))
-	http.Handle("PUT /api/card/{cardId}/text", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetText)))
-	http.Handle("PUT /api/card/{cardId}/youtube", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetYouTube)))
+	http.Handle("PUT /api/card/{cardId}", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Update)))
 	http.Handle("PUT /api/card/{cardId}/image", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetImage)))
 	http.Handle("DELETE /api/card/{cardId}", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Delete)))
 

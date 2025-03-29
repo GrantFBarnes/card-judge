@@ -22,11 +22,10 @@
                             ></span>
                         </div>
                     </div>
-                    <form hx-put="/api/card/{{.Id}}/category" hx-target="find .htmx-result">
+                    <form hx-put="/api/card/{{.Id}}" hx-target="find .htmx-result">
                         <div class="form-input">
                             <input
                                     type="text"
-                                    id="categoryDeckId{{.Id}}"
                                     name="deckId"
                                     value="{{.DeckId}}"
                                     hidden
@@ -46,20 +45,6 @@
                                     <option value="RESPONSE" selected>Response</option>
                                 {{end}}
                             </select>
-                        </div>
-                        <div class="htmx-result"></div>
-                        <input type="submit" value="Set Category"/>
-                    </form>
-                    <br/>
-                    <form hx-put="/api/card/{{.Id}}/text" hx-target="find .htmx-result">
-                        <div class="form-input">
-                            <input
-                                    type="text"
-                                    id="textDeckId{{.Id}}"
-                                    name="deckId"
-                                    value="{{.DeckId}}"
-                                    hidden
-                            />
                             <label for="text{{.Id}}" style="vertical-align: top">Text</label>
                             <textarea
                                     id="text{{.Id}}"
@@ -71,25 +56,6 @@
                                     rows="10"
                                     autocomplete="off"
                             >{{.Text}}</textarea>
-                        </div>
-                        <div class="htmx-result"></div>
-                        <input type="submit" value="Set Text"/>
-                    </form>
-                    <br/>
-                    <form hx-put="/api/card/{{.Id}}/youtube" hx-target="find .htmx-result">
-                        {{if .YouTube.Valid}}
-                            <div class="iframe-container">
-                                <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
-                            </div>
-                        {{end}}
-                        <div class="form-input">
-                            <input
-                                    type="text"
-                                    id="textDeckId{{.Id}}"
-                                    name="deckId"
-                                    value="{{.DeckId}}"
-                                    hidden
-                            />
                             <label for="youtube{{.Id}}" style="vertical-align: top">YouTube Video ID</label>
                             <input
                                     type="text"
@@ -106,8 +72,14 @@
                             />
                         </div>
                         <div class="htmx-result"></div>
-                        <input type="submit" value="Set YouTube"/>
+                        <input type="submit" value="Update Card"/>
                     </form>
+                    {{if .YouTube.Valid}}
+                        <br/>
+                        <div class="iframe-container">
+                            <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                        </div>
+                    {{end}}
                     <br/>
                     <form enctype="multipart/form-data" hx-put="/api/card/{{.Id}}/image" hx-target="find .htmx-result">
                         {{if .Image.Valid}}
@@ -116,7 +88,6 @@
                         <div class="form-input">
                             <input
                                     type="file"
-                                    id="imageDeckId{{.Id}}"
                                     name="deckId"
                                     value="{{.DeckId}}"
                                     hidden
