@@ -493,7 +493,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "card-play":
+	case "response-card-play":
 		switch subject {
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Played")
@@ -544,7 +544,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "card-discard":
+	case "response-card-discard":
 		switch subject {
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Discarded")
@@ -581,7 +581,44 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
-	case "card-skip":
+	case "prompt-card-play":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Cards Played")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN USER AS U ON U.ID = LRC.JUDGE_USER_ID
+				GROUP BY U.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		case "card":
+			resultHeaders = append(resultHeaders, "Cards Played")
+			resultHeaders = append(resultHeaders, "Card")
+			params = append(params, userId)
+			sqlString = `
+				SELECT
+					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
+					COALESCE(C.TEXT, 'Unknown') AS NAME
+				FROM LOG_RESPONSE_CARD AS LRC
+					LEFT JOIN CARD AS C ON C.ID = LRC.JUDGE_CARD_ID
+				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				GROUP BY C.ID
+				ORDER BY
+					COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
+	case "prompt-card-skip":
 		switch subject {
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Skipped")
