@@ -33,16 +33,25 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Cards Played</td>
-                    <td>{{.PersonalStats.CardPlayCount}}</td>
+                    <td>Response Cards Played</td>
+                    <td>{{.PersonalStats.ResponseCardPlayCount}}</td>
                 </tr>
                 <tr>
-                    <td>Cards Discarded</td>
-                    <td>{{.PersonalStats.CardDiscardCount}}</td>
+                    <td>Response Cards Discarded</td>
+                    <td>{{.PersonalStats.ResponseCardDiscardCount}}</td>
                 </tr>
                 <tr>
-                    <td>Cards Skipped</td>
-                    <td>{{.PersonalStats.CardSkipCount}}</td>
+                    <td colspan="2">
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Prompt Cards Played</td>
+                    <td>{{.PersonalStats.PromptCardPlayCount}}</td>
+                </tr>
+                <tr>
+                    <td>Prompt Cards Skipped</td>
+                    <td>{{.PersonalStats.PromptCardSkipCount}}</td>
                 </tr>
                 <tr>
                     <td colspan="2">

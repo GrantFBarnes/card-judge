@@ -9,16 +9,17 @@ import (
 )
 
 type StatPersonal struct {
-	GamePlayCount      int
-	GameWinCount       int
-	RoundPlayCount     int
-	RoundWinCount      int
-	CardPlayCount      int
-	CardDiscardCount   int
-	CardSkipCount      int
-	CreditsSpentCount  int
-	CreditsEarnedCount int
-	LobbyKickCount     int
+	GamePlayCount            int
+	GameWinCount             int
+	RoundPlayCount           int
+	RoundWinCount            int
+	ResponseCardPlayCount    int
+	ResponseCardDiscardCount int
+	PromptCardPlayCount      int
+	PromptCardSkipCount      int
+	CreditsSpentCount        int
+	CreditsEarnedCount       int
+	LobbyKickCount           int
 }
 
 func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
@@ -62,9 +63,14 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 				SELECT COUNT(*)
 				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
-			) AS CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS CARD_DISCARD_COUNT,
-			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS CARD_SKIP_COUNT,
+			) AS RESPONSE_CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS RESPONSE_CARD_DISCARD_COUNT,
+			(
+				SELECT COUNT(DISTINCT ROUND_ID)
+				FROM LOG_RESPONSE_CARD
+				WHERE JUDGE_USER_ID = U.ID
+			) AS PROMPT_CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS PROMPT_CARD_SKIP_COUNT,
 			COALESCE(
 				(
 					SELECT SUM(AMOUNT)
@@ -97,9 +103,10 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 			&result.GameWinCount,
 			&result.RoundPlayCount,
 			&result.RoundWinCount,
-			&result.CardPlayCount,
-			&result.CardDiscardCount,
-			&result.CardSkipCount,
+			&result.ResponseCardPlayCount,
+			&result.ResponseCardDiscardCount,
+			&result.PromptCardPlayCount,
+			&result.PromptCardSkipCount,
 			&result.CreditsSpentCount,
 			&result.CreditsEarnedCount,
 			&result.LobbyKickCount); err != nil {
