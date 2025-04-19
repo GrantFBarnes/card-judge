@@ -106,30 +106,29 @@
                                 {{else}}
                                     {{$isRuledOut := .IsRuledOut}}
                                     {{range .ResponseCards}}
-                                        <p
-                                                style="padding: 20px;"
-                                                {{if $isRuledOut}}
-                                                    class="disabled strike"
-                                                {{end}}
+                                        <div
+                                            style="padding: 20px;"
+                                            {{if $isRuledOut}}
+                                                class="disabled strike"
+                                            {{end}}
                                         >
-                                            <span class="wrap-new-lines">{{.Text}}</span>
-                                            <span class="bi bi-info-circle"
-                                                  style="float: right"
-                                                  title="{{.DeckName}}"
-                                            ></span>
+                                            <p>
+                                                <span class="wrap-new-lines">{{.Text}}</span>
+                                                <span
+                                                    class="bi bi-info-circle"
+                                                    style="float: right"
+                                                    title="{{.DeckName}}"
+                                                ></span>
+                                            </p>
                                             {{if .YouTube.Valid}}
-                                                <br/>
-                                                <br/>
                                                 <div class="iframe-container">
                                                     <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
                                                 </div>
                                             {{end}}
                                             {{if .Image.Valid}}
-                                                <br/>
-                                                <br/>
                                                 <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
                                             {{end}}
-                                        </p>
+                                        </div>
                                     {{end}}
                                 {{end}}
                             </td>
@@ -165,31 +164,30 @@
                                     <hr/>
                                 {{end}}
                                 {{range .ResponseCards}}
-                                    <p style="padding: 20px">
-                                        {{if not .SpecialCategory.Valid}}
-                                            <span title="Withdraw"
-                                                  class="bi bi-backspace clickable"
-                                                  hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
+                                    <div style="padding: 20px">
+                                        <p>
+                                            {{if not .SpecialCategory.Valid}}
+                                                <span title="Withdraw"
+                                                    class="bi bi-backspace clickable"
+                                                    hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
+                                                ></span>
+                                            {{end}}
+                                            <span class="wrap-new-lines">{{.Text}}</span>
+                                            <span
+                                                class="bi bi-info-circle"
+                                                style="float: right"
+                                                title="{{.DeckName}}"
                                             ></span>
-                                        {{end}}
-                                        <span class="wrap-new-lines">{{.Text}}</span>
-                                        <span class="bi bi-info-circle"
-                                              style="float: right"
-                                              title="{{.DeckName}}"
-                                        ></span>
+                                        </p>
                                         {{if .YouTube.Valid}}
-                                            <br/>
-                                            <br/>
                                             <div class="iframe-container">
                                                 <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
                                             </div>
                                         {{end}}
                                         {{if .Image.Valid}}
-                                            <br/>
-                                            <br/>
                                             <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
                                         {{end}}
-                                    </p>
+                                    </div>
                                 {{end}}
                             </td>
                         </tr>
