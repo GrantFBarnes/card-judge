@@ -1,4 +1,4 @@
-CREATE PROCEDURE IF NOT EXISTS SP_VOTE_TO_KICK(
+CREATE PROCEDURE IF NOT EXISTS SP_VOTE_TO_KICK (
     IN VAR_VOTER_PLAYER_ID UUID,
     IN VAR_SUBJECT_PLAYER_ID UUID
 )
@@ -9,25 +9,23 @@ BEGIN
 
     SELECT
         LOBBY_ID
-    INTO VAR_LOBBY_ID
+    INTO
+        VAR_LOBBY_ID
     FROM PLAYER
     WHERE ID = VAR_SUBJECT_PLAYER_ID;
 
-    INSERT IGNORE
-    INTO KICK
-        (
-            VOTER_PLAYER_ID,
-            SUBJECT_PLAYER_ID
-        )
-    VALUES
-        (
-            VAR_VOTER_PLAYER_ID,
-            VAR_SUBJECT_PLAYER_ID
-        );
+    INSERT IGNORE INTO KICK (
+        VOTER_PLAYER_ID,
+        SUBJECT_PLAYER_ID
+    ) VALUES (
+        VAR_VOTER_PLAYER_ID,
+        VAR_SUBJECT_PLAYER_ID
+    );
 
     SELECT
         COUNT(*)
-    INTO VAR_VOTES_RECEIVED
+    INTO
+        VAR_VOTES_RECEIVED
     FROM KICK
     WHERE SUBJECT_PLAYER_ID = VAR_SUBJECT_PLAYER_ID;
 
@@ -38,26 +36,22 @@ BEGIN
 
         SELECT
             USER_ID
-        INTO VAR_SUBJECT_USER_ID
+        INTO
+            VAR_SUBJECT_USER_ID
         FROM PLAYER
         WHERE ID = VAR_SUBJECT_PLAYER_ID;
 
-        INSERT
-        INTO LOG_KICK
-            (
-                LOBBY_ID,
-                USER_ID
-            )
-        VALUES
-            (
-                VAR_LOBBY_ID,
-                VAR_SUBJECT_USER_ID
-            );
+        INSERT INTO LOG_KICK (
+            LOBBY_ID,
+            USER_ID
+        ) VALUES (
+            VAR_LOBBY_ID,
+            VAR_SUBJECT_USER_ID
+        );
 
         CALL SP_SET_PLAYER_INACTIVE(VAR_LOBBY_ID, VAR_SUBJECT_USER_ID);
-
         SELECT 1;
-    ELSE
+        ELSE
         SELECT 0;
     END IF;
 END;

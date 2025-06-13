@@ -1,49 +1,44 @@
-CREATE PROCEDURE IF NOT EXISTS SP_RESPOND_WITH_WILD_CARD(
+CREATE PROCEDURE IF NOT EXISTS SP_RESPOND_WITH_WILD_CARD (
     IN VAR_PLAYER_ID UUID,
     IN VAR_CARD_TEXT VARCHAR(255)
 )
 BEGIN
     DECLARE VAR_LOBBY_ID UUID;
     DECLARE VAR_CARD_ID UUID;
-
     SET VAR_CARD_ID = UUID();
 
     SELECT
         LOBBY_ID
-    INTO VAR_LOBBY_ID
+    INTO
+        VAR_LOBBY_ID
     FROM PLAYER
     WHERE ID = VAR_PLAYER_ID;
 
-    INSERT
-    INTO CARD
-        (
-            ID,
-            DECK_ID,
-            CATEGORY,
-            TEXT
-        )
+    INSERT INTO CARD (
+        ID,
+        DECK_ID,
+        CATEGORY,
+        TEXT
+    )
     SELECT
-        VAR_CARD_ID   AS ID,
-        D.ID          AS DECK_ID,
-        'RESPONSE'    AS CATEGORY,
+        VAR_CARD_ID AS ID,
+        D.ID AS DECK_ID,
+        'RESPONSE' AS CATEGORY,
         VAR_CARD_TEXT AS TEXT
     FROM DECK AS D
     WHERE D.ID = VAR_LOBBY_ID
-      AND D.IS_LOBBY_WILD_DECK = TRUE;
+        AND D.IS_LOBBY_WILD_DECK = TRUE;
 
     UPDATE PLAYER
-    SET
-        CREDITS_SPENT = CREDITS_SPENT + 3
+    SET CREDITS_SPENT = CREDITS_SPENT + 3
     WHERE ID = VAR_PLAYER_ID;
 
-    INSERT
-    INTO LOG_CREDITS_SPENT
-        (
-            LOBBY_ID,
-            USER_ID,
-            AMOUNT,
-            CATEGORY
-        )
+    INSERT INTO LOG_CREDITS_SPENT (
+        LOBBY_ID,
+        USER_ID,
+        AMOUNT,
+        CATEGORY
+    )
     SELECT
         LOBBY_ID,
         USER_ID,

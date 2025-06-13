@@ -1,4 +1,4 @@
-CREATE PROCEDURE IF NOT EXISTS SP_DRAW_HAND(
+CREATE PROCEDURE IF NOT EXISTS SP_DRAW_HAND (
     IN VAR_PLAYER_ID UUID
 )
 BEGIN
@@ -20,56 +20,58 @@ BEGIN
 
     SELECT
         HAND_SIZE
-    INTO VAR_LOBBY_HAND_SIZE
+    INTO
+        VAR_LOBBY_HAND_SIZE
     FROM LOBBY
     WHERE ID = VAR_LOBBY_ID;
 
     SELECT
         COUNT(C.ID)
-    INTO VAR_LOBBY_DRAW_PILE_SIZE
+    INTO
+        VAR_LOBBY_DRAW_PILE_SIZE
     FROM DRAW_PILE AS DP
-             INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
+        INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
     WHERE C.CATEGORY = 'RESPONSE'
-      AND DP.LOBBY_ID = VAR_LOBBY_ID;
+        AND DP.LOBBY_ID = VAR_LOBBY_ID;
 
     SELECT
         COUNT(CARD_ID)
-    INTO VAR_PLAYER_HAND_SIZE
+    INTO
+        VAR_PLAYER_HAND_SIZE
     FROM HAND
     WHERE PLAYER_ID = VAR_PLAYER_ID;
 
-    WHILE VAR_LOBBY_DRAW_PILE_SIZE > 0 AND VAR_LOBBY_HAND_SIZE > VAR_PLAYER_HAND_SIZE
+    WHILE VAR_LOBBY_DRAW_PILE_SIZE > 0
+        AND VAR_LOBBY_HAND_SIZE > VAR_PLAYER_HAND_SIZE
         DO
             SET VAR_CARD_ID = FN_GET_DRAW_PILE_CARD_ID('RESPONSE', VAR_LOBBY_ID);
 
-            INSERT
-            INTO HAND
-                (
-                    PLAYER_ID,
-                    CARD_ID
-                )
-            VALUES
-                (
-                    VAR_PLAYER_ID,
-                    VAR_CARD_ID
-                );
+            INSERT INTO HAND (
+                PLAYER_ID,
+                CARD_ID
+            ) VALUES (
+                VAR_PLAYER_ID,
+                VAR_CARD_ID
+            );
 
             DELETE
             FROM DRAW_PILE
             WHERE LOBBY_ID = VAR_LOBBY_ID
-              AND CARD_ID = VAR_CARD_ID;
+                AND CARD_ID = VAR_CARD_ID;
 
             SELECT
                 COUNT(C.ID)
-            INTO VAR_LOBBY_DRAW_PILE_SIZE
+            INTO
+                VAR_LOBBY_DRAW_PILE_SIZE
             FROM DRAW_PILE AS DP
-                     INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
+                INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
             WHERE C.CATEGORY = 'RESPONSE'
-              AND DP.LOBBY_ID = VAR_LOBBY_ID;
+                AND DP.LOBBY_ID = VAR_LOBBY_ID;
 
             SELECT
                 COUNT(CARD_ID)
-            INTO VAR_PLAYER_HAND_SIZE
+            INTO
+                VAR_PLAYER_HAND_SIZE
             FROM HAND
             WHERE PLAYER_ID = VAR_PLAYER_ID;
         END WHILE;

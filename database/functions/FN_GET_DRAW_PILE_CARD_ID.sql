@@ -1,9 +1,9 @@
-CREATE FUNCTION IF NOT EXISTS FN_GET_DRAW_PILE_CARD_ID(
-    IN VAR_CATEGORY ENUM ('PROMPT','RESPONSE'),
+CREATE FUNCTION IF NOT EXISTS FN_GET_DRAW_PILE_CARD_ID (
+    IN VAR_CATEGORY ENUM('PROMPT', 'RESPONSE'),
     IN VAR_LOBBY_ID UUID
 ) RETURNS UUID
 BEGIN
-    DECLARE VAR_LOBBY_DRAW_PRIORITY ENUM ('RANDOM','PLAYCOUNT');
+    DECLARE VAR_LOBBY_DRAW_PRIORITY ENUM('RANDOM', 'PLAYCOUNT');
 
     SELECT
         DRAW_PRIORITY
@@ -20,15 +20,17 @@ BEGIN
                 FROM DRAW_PILE AS DP
                     INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
                     LEFT JOIN (
-                        SELECT
-                            JUDGE_CARD_ID AS CARD_ID,
-                            COUNT(*) AS PLAY_COUNT
-                        FROM LOG_RESPONSE_CARD
-                        GROUP BY JUDGE_CARD_ID, ROUND_ID
-                    ) AS CP ON CP.CARD_ID = C.ID
+                            SELECT
+                                JUDGE_CARD_ID AS CARD_ID,
+                                COUNT(*) AS PLAY_COUNT
+                            FROM LOG_RESPONSE_CARD
+                            GROUP BY JUDGE_CARD_ID,
+                                ROUND_ID
+                        ) AS CP ON CP.CARD_ID = C.ID
                 WHERE C.CATEGORY = VAR_CATEGORY
-                  AND DP.LOBBY_ID = VAR_LOBBY_ID
-                ORDER BY CP.PLAY_COUNT, RAND()
+                    AND DP.LOBBY_ID = VAR_LOBBY_ID
+                ORDER BY CP.PLAY_COUNT,
+                    RAND()
                 LIMIT 1
             );
         END IF;
@@ -39,15 +41,16 @@ BEGIN
             FROM DRAW_PILE AS DP
                 INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
                 LEFT JOIN (
-                    SELECT
-                        PLAYER_CARD_ID AS CARD_ID,
-                        COUNT(*) AS PLAY_COUNT
-                    FROM LOG_RESPONSE_CARD
-                    GROUP BY PLAYER_CARD_ID
-                ) AS CP ON CP.CARD_ID = C.ID
+                        SELECT
+                            PLAYER_CARD_ID AS CARD_ID,
+                            COUNT(*) AS PLAY_COUNT
+                        FROM LOG_RESPONSE_CARD
+                        GROUP BY PLAYER_CARD_ID
+                    ) AS CP ON CP.CARD_ID = C.ID
             WHERE C.CATEGORY = VAR_CATEGORY
-              AND DP.LOBBY_ID = VAR_LOBBY_ID
-            ORDER BY CP.PLAY_COUNT, RAND()
+                AND DP.LOBBY_ID = VAR_LOBBY_ID
+            ORDER BY CP.PLAY_COUNT,
+                RAND()
             LIMIT 1
         );
     END IF;
@@ -58,7 +61,7 @@ BEGIN
         FROM DRAW_PILE AS DP
             INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
         WHERE C.CATEGORY = VAR_CATEGORY
-          AND DP.LOBBY_ID = VAR_LOBBY_ID
+            AND DP.LOBBY_ID = VAR_LOBBY_ID
         ORDER BY RAND()
         LIMIT 1
     );
