@@ -27,6 +27,7 @@ BEGIN
 
                 IF VAR_LOOP_DONE THEN LEAVE READ_LOOP;
                 END IF;
+
                 CALL SP_DRAW_HAND(VAR_PLAYER_ID);
                 END LOOP;
             CLOSE VAR_PLAYER_CURSOR;

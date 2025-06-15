@@ -29,12 +29,13 @@ BEGIN
         PASSWORD_HASH,
         IS_PUBLIC_READONLY,
         IS_LOBBY_WILD_DECK
-    ) VALUES (
-        'DELETE',
-        OLD.ID,
-        OLD.NAME,
-        OLD.PASSWORD_HASH,
-        OLD.IS_PUBLIC_READONLY,
-        OLD.IS_LOBBY_WILD_DECK
-    );
+    )
+    VALUES (
+            'DELETE',
+            OLD.ID,
+            OLD.NAME,
+            OLD.PASSWORD_HASH,
+            OLD.IS_PUBLIC_READONLY,
+            OLD.IS_LOBBY_WILD_DECK
+        );
 END;

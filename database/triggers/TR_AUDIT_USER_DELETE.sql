@@ -10,13 +10,14 @@ BEGIN
         COLOR_THEME,
         IS_APPROVED,
         IS_ADMIN
-    ) VALUES (
-        'DELETE',
-        OLD.ID,
-        OLD.NAME,
-        OLD.PASSWORD_HASH,
-        OLD.COLOR_THEME,
-        OLD.IS_APPROVED,
-        OLD.IS_ADMIN
-    );
+    )
+    VALUES (
+            'DELETE',
+            OLD.ID,
+            OLD.NAME,
+            OLD.PASSWORD_HASH,
+            OLD.COLOR_THEME,
+            OLD.IS_APPROVED,
+            OLD.IS_ADMIN
+        );
 END;

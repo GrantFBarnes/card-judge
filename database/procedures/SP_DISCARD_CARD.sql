@@ -15,10 +15,13 @@ BEGIN
     FROM PLAYER
     WHERE ID = VAR_PLAYER_ID;
 
-    IF EXISTS(SELECT ID
+    IF EXISTS(
+        SELECT
+            ID
         FROM HAND
         WHERE PLAYER_ID = VAR_PLAYER_ID
-            AND CARD_ID = VAR_CARD_ID) THEN
+            AND CARD_ID = VAR_CARD_ID
+    ) THEN
         DELETE
         FROM HAND
         WHERE PLAYER_ID = VAR_PLAYER_ID
@@ -26,14 +29,7 @@ BEGIN
 
         CALL SP_DRAW_HAND(VAR_PLAYER_ID);
 
-        INSERT INTO LOG_DISCARD (
-            LOBBY_ID,
-            USER_ID,
-            CARD_ID
-        ) VALUES (
-            VAR_LOBBY_ID,
-            VAR_PLAYER_USER_ID,
-            VAR_CARD_ID
-        );
+        INSERT INTO LOG_DISCARD (LOBBY_ID, USER_ID, CARD_ID)
+        VALUES (VAR_LOBBY_ID, VAR_PLAYER_USER_ID, VAR_CARD_ID);
     END IF;
 END;

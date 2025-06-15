@@ -10,13 +10,14 @@ BEGIN
         TEXT,
         YOUTUBE,
         IMAGE
-    ) VALUES (
-        'DELETE',
-        OLD.ID,
-        OLD.DECK_ID,
-        OLD.CATEGORY,
-        OLD.TEXT,
-        OLD.YOUTUBE,
-        OLD.IMAGE
-    );
+    )
+    VALUES (
+            'DELETE',
+            OLD.ID,
+            OLD.DECK_ID,
+            OLD.CATEGORY,
+            OLD.TEXT,
+            OLD.YOUTUBE,
+            OLD.IMAGE
+        );
 END;

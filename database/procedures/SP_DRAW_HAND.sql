@@ -1,6 +1,4 @@
-CREATE PROCEDURE IF NOT EXISTS SP_DRAW_HAND (
-    IN VAR_PLAYER_ID UUID
-)
+CREATE PROCEDURE IF NOT EXISTS SP_DRAW_HAND (IN VAR_PLAYER_ID UUID)
 BEGIN
     DECLARE VAR_LOBBY_ID UUID;
     DECLARE VAR_PLAYER_USER_ID UUID;
@@ -44,15 +42,13 @@ BEGIN
     WHILE VAR_LOBBY_DRAW_PILE_SIZE > 0
         AND VAR_LOBBY_HAND_SIZE > VAR_PLAYER_HAND_SIZE
         DO
-            SET VAR_CARD_ID = FN_GET_DRAW_PILE_CARD_ID('RESPONSE', VAR_LOBBY_ID);
+            SET VAR_CARD_ID = FN_GET_DRAW_PILE_CARD_ID(
+                    'RESPONSE',
+                    VAR_LOBBY_ID
+                );
 
-            INSERT INTO HAND (
-                PLAYER_ID,
-                CARD_ID
-            ) VALUES (
-                VAR_PLAYER_ID,
-                VAR_CARD_ID
-            );
+            INSERT INTO HAND (PLAYER_ID, CARD_ID)
+            VALUES (VAR_PLAYER_ID, VAR_CARD_ID);
 
             DELETE
             FROM DRAW_PILE
