@@ -58,8 +58,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 		WHERE C.DECK_ID = ?
 			AND C.CATEGORY LIKE ?
 			AND C.TEXT LIKE ?
-		ORDER BY
-			C.CHANGED_ON_DATE DESC,
+		ORDER BY C.CHANGED_ON_DATE DESC,
 			C.TEXT ASC
 		LIMIT ? OFFSET ?
 	`
@@ -109,23 +108,23 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 			YOUTUBE,
 			IMAGE
 		FROM (
-			SELECT
-				MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE) AS SCORE,
-				DP.LOBBY_ID,
-				C.ID,
-				C.CREATED_ON_DATE,
-				C.CHANGED_ON_DATE,
-				C.DECK_ID,
-				C.CATEGORY,
-				C.TEXT,
-				C.YOUTUBE,
-				C.IMAGE
-			FROM CARD AS C
-				INNER JOIN DRAW_PILE AS DP ON DP.CARD_ID = C.ID
-			WHERE DP.LOBBY_ID = ?
-				AND C.CATEGORY = 'RESPONSE'
-				AND MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE)
-		) AS T
+				SELECT
+					MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE) AS SCORE,
+					DP.LOBBY_ID,
+					C.ID,
+					C.CREATED_ON_DATE,
+					C.CHANGED_ON_DATE,
+					C.DECK_ID,
+					C.CATEGORY,
+					C.TEXT,
+					C.YOUTUBE,
+					C.IMAGE
+				FROM CARD AS C
+					INNER JOIN DRAW_PILE AS DP ON DP.CARD_ID = C.ID
+				WHERE DP.LOBBY_ID = ?
+					AND C.CATEGORY = 'RESPONSE'
+					AND MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE)
+			) AS T
 		ORDER BY SCORE DESC
 		LIMIT 10
 	`
@@ -170,8 +169,7 @@ func GetCardsInDeckExport(deckId uuid.UUID) ([]Card, error) {
 			C.TEXT
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
-		ORDER BY
-			C.CATEGORY ASC,
+		ORDER BY C.CATEGORY ASC,
 			C.TEXT ASC
 	`
 	rows, err := query(sqlString, deckId)
@@ -285,10 +283,11 @@ func GetResponseCardTextStart(responseId uuid.UUID) (string, error) {
 	var text string
 
 	sqlString := `
-		SELECT C.TEXT
+		SELECT
+			C.TEXT
 		FROM RESPONSE AS R
-				INNER JOIN RESPONSE_CARD AS RC ON RC.RESPONSE_ID = R.ID
-				INNER JOIN CARD AS C ON C.ID = RC.CARD_ID
+			INNER JOIN RESPONSE_CARD AS RC ON RC.RESPONSE_ID = R.ID
+			INNER JOIN CARD AS C ON C.ID = RC.CARD_ID
 		WHERE R.ID = ?
 		ORDER BY RC.CREATED_ON_DATE
 		LIMIT 1
@@ -316,8 +315,7 @@ func GetResponseCardTextStart(responseId uuid.UUID) (string, error) {
 func UpdateCard(id uuid.UUID, category string, text string, youtube string) error {
 	sqlString := `
 		UPDATE CARD
-		SET
-			CATEGORY = ?,
+		SET CATEGORY = ?,
 			TEXT = ?,
 			YOUTUBE = ?
 		WHERE ID = ?
@@ -339,7 +337,8 @@ func SetCardImage(id uuid.UUID, imageBytes []byte) error {
 
 func DeleteCard(id uuid.UUID) error {
 	sqlString := `
-		DELETE FROM CARD
+		DELETE
+		FROM CARD
 		WHERE ID = ?
 	`
 	return execute(sqlString, id)

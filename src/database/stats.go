@@ -28,7 +28,8 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 	sqlString := `
 		SELECT
 			(
-				SELECT COUNT(DISTINCT LOBBY_ID)
+				SELECT
+					COUNT(DISTINCT LOBBY_ID)
 				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
 			) AS GAME_PLAY_COUNT,
@@ -40,52 +41,74 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 							LRC.LOBBY_ID,
 							LRC.PLAYER_USER_ID,
 							COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
-							RANK() OVER (PARTITION BY LRC.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
+							RANK() OVER (
+								PARTITION BY LRC.LOBBY_ID
+								ORDER BY ROUND_WIN_COUNT DESC
+							) AS RANKING
 						FROM LOG_RESPONSE_CARD AS LRC
 							INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
-						GROUP BY LRC.LOBBY_ID, LRC.PLAYER_USER_ID
+						GROUP BY LRC.LOBBY_ID,
+							LRC.PLAYER_USER_ID
 					) AS ROUND_WINS
 				WHERE PLAYER_USER_ID = U.ID
 					AND RANKING = 1
 			) AS GAME_WIN_COUNT,
 			(
-				SELECT COUNT(DISTINCT ROUND_ID)
+				SELECT
+					COUNT(DISTINCT ROUND_ID)
 				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
 			) AS ROUND_PLAY_COUNT,
 			(
-				SELECT COUNT(DISTINCT LW.ID)
+				SELECT
+					COUNT(DISTINCT LW.ID)
 				FROM LOG_RESPONSE_CARD AS LRC
-						INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 				WHERE LRC.PLAYER_USER_ID = U.ID
 			) AS ROUND_WIN_COUNT,
 			(
-				SELECT COUNT(*)
+				SELECT
+					COUNT(*)
 				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
 			) AS RESPONSE_CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS RESPONSE_CARD_DISCARD_COUNT,
 			(
-				SELECT COUNT(DISTINCT ROUND_ID)
+				SELECT
+					COUNT(*)
+				FROM LOG_DISCARD
+				WHERE USER_ID = U.ID
+			) AS RESPONSE_CARD_DISCARD_COUNT,
+			(
+				SELECT
+					COUNT(DISTINCT ROUND_ID)
 				FROM LOG_RESPONSE_CARD
 				WHERE JUDGE_USER_ID = U.ID
 			) AS PROMPT_CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS PROMPT_CARD_SKIP_COUNT,
+			(
+				SELECT
+					COUNT(*)
+				FROM LOG_SKIP
+				WHERE USER_ID = U.ID
+			) AS PROMPT_CARD_SKIP_COUNT,
 			COALESCE(
 				(
-					SELECT SUM(AMOUNT)
+					SELECT
+						SUM(AMOUNT)
 					FROM LOG_CREDITS_SPENT
 					WHERE USER_ID = U.ID
 						AND AMOUNT > 0
-				), 0
+				),
+				0
 			) AS CREDITS_SPENT_COUNT,
 			COALESCE(
 				(
-					SELECT SUM(AMOUNT) * -1
+					SELECT
+						SUM(AMOUNT) * -1
 					FROM LOG_CREDITS_SPENT
 					WHERE USER_ID = U.ID
 						AND AMOUNT < 0
-				), 0
+				),
+				0
 			) AS CREDITS_EARNED_COUNT,
 			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
 		FROM USER AS U
@@ -136,34 +159,40 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					GP.GAME_PLAY_COUNT AS PLAY_COUNT,
 					COALESCE(GW.GAME_WIN_COUNT, 0) AS WIN_COUNT,
-					COALESCE((GW.GAME_WIN_COUNT * 1.0) / (GP.GAME_PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
+					COALESCE(
+						(GW.GAME_WIN_COUNT * 1.0) / (GP.GAME_PLAY_COUNT * 1.0),
+						0.0
+					) AS WIN_RATIO,
 					U.NAME AS NAME
 				FROM USER AS U
-						INNER JOIN (
+					INNER JOIN (
 							SELECT
 								PLAYER_USER_ID,
 								COUNT(DISTINCT LOBBY_ID) AS GAME_PLAY_COUNT
 							FROM LOG_RESPONSE_CARD
 							GROUP BY PLAYER_USER_ID
 						) AS GP ON GP.PLAYER_USER_ID = U.ID
-						LEFT JOIN (
+					LEFT JOIN (
 							SELECT
 								PLAYER_USER_ID,
 								COUNT(*) AS GAME_WIN_COUNT
 							FROM (
-								SELECT
-									LRC.PLAYER_USER_ID,
-									COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
-									RANK() OVER (PARTITION BY LRC.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
-								FROM LOG_RESPONSE_CARD AS LRC
-									INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
-								GROUP BY LRC.LOBBY_ID, LRC.PLAYER_USER_ID
-							) AS GAME_RANK
+									SELECT
+										LRC.PLAYER_USER_ID,
+										COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
+										RANK() OVER (
+											PARTITION BY LRC.LOBBY_ID
+											ORDER BY ROUND_WIN_COUNT DESC
+										) AS RANKING
+									FROM LOG_RESPONSE_CARD AS LRC
+										INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+									GROUP BY LRC.LOBBY_ID,
+										LRC.PLAYER_USER_ID
+								) AS GAME_RANK
 							WHERE RANKING = 1
 							GROUP BY PLAYER_USER_ID
 						) AS GW ON GW.PLAYER_USER_ID = U.ID
-				ORDER BY
-					WIN_RATIO DESC,
+				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
@@ -185,16 +214,19 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 							LRC.LOBBY_ID,
 							LRC.PLAYER_USER_ID,
 							COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
-							RANK() OVER (PARTITION BY LRC.LOBBY_ID ORDER BY ROUND_WIN_COUNT DESC) AS RANKING
+							RANK() OVER (
+								PARTITION BY LRC.LOBBY_ID
+								ORDER BY ROUND_WIN_COUNT DESC
+							) AS RANKING
 						FROM LOG_RESPONSE_CARD AS LRC
 							INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
-						GROUP BY LRC.LOBBY_ID, LRC.PLAYER_USER_ID
+						GROUP BY LRC.LOBBY_ID,
+							LRC.PLAYER_USER_ID
 					) AS RW
 					INNER JOIN USER AS U ON U.ID = RW.PLAYER_USER_ID
 				WHERE RW.RANKING = 1
 				GROUP BY RW.PLAYER_USER_ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -213,8 +245,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -228,8 +259,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -242,8 +272,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 				GROUP BY LRC.SPECIAL_CATEGORY
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -266,15 +295,14 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM (
 						SELECT
 							COUNT(DISTINCT LRC.ROUND_ID) AS PLAY_COUNT,
-							COUNT(DISTINCT LW.ID)        AS WIN_COUNT,
-							U.NAME                       AS NAME
+							COUNT(DISTINCT LW.ID) AS WIN_COUNT,
+							U.NAME AS NAME
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 							INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 						GROUP BY U.ID
 					) AS T
-				ORDER BY
-					WIN_RATIO DESC,
+				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
@@ -294,16 +322,15 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM (
 						SELECT
 							COUNT(DISTINCT LRC.ROUND_ID) AS PLAY_COUNT,
-							COUNT(DISTINCT LW.ID)        AS WIN_COUNT,
+							COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 							COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 							LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
-						WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+						WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
 						GROUP BY C.ID
 					) AS T
-				ORDER BY
-					WIN_RATIO DESC,
+				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
@@ -322,14 +349,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM (
 						SELECT
 							COUNT(DISTINCT LRC.ROUND_ID) AS PLAY_COUNT,
-							COUNT(DISTINCT LW.ID)        AS WIN_COUNT,
+							COUNT(DISTINCT LW.ID) AS WIN_COUNT,
 							COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 						GROUP BY LRC.SPECIAL_CATEGORY
 					) AS T
-				ORDER BY
-					WIN_RATIO DESC,
+				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
@@ -350,8 +376,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -368,8 +393,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -383,8 +407,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 				GROUP BY LRC.SPECIAL_CATEGORY
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -403,8 +426,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -420,8 +442,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -434,8 +455,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 				GROUP BY LRC.SPECIAL_CATEGORY
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -451,20 +471,30 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					AVG(TIMESTAMPDIFF(SECOND, LAST_PLAY.CREATED_ON_DATE, ROUND_WIN.CREATED_ON_DATE)) AS AVG_SECONDS,
 					U.NAME
-				FROM (SELECT ROUND_ID,
+				FROM (
+						SELECT
+							ROUND_ID,
 							CREATED_ON_DATE,
-							RANK() OVER (PARTITION BY ROUND_ID ORDER BY CREATED_ON_DATE DESC) AS REV_PLAY_ORDER
-					FROM LOG_RESPONSE_CARD) AS LAST_PLAY
-						INNER JOIN (SELECT LRC.ROUND_ID,
-											LRC.JUDGE_USER_ID,
-											LW.CREATED_ON_DATE
-									FROM LOG_WIN AS LW
-											INNER JOIN LOG_RESPONSE_CARD AS LRC ON LRC.RESPONSE_ID = LW.RESPONSE_ID
-									GROUP BY LRC.RESPONSE_ID) AS ROUND_WIN ON ROUND_WIN.ROUND_ID = LAST_PLAY.ROUND_ID
-						INNER JOIN USER AS U ON U.ID = ROUND_WIN.JUDGE_USER_ID
+							RANK() OVER (
+								PARTITION BY ROUND_ID
+								ORDER BY CREATED_ON_DATE DESC
+							) AS REV_PLAY_ORDER
+						FROM LOG_RESPONSE_CARD
+					) AS LAST_PLAY
+					INNER JOIN (
+							SELECT
+								LRC.ROUND_ID,
+								LRC.JUDGE_USER_ID,
+								LW.CREATED_ON_DATE
+							FROM LOG_WIN AS LW
+								INNER JOIN LOG_RESPONSE_CARD AS LRC ON LRC.RESPONSE_ID = LW.RESPONSE_ID
+							GROUP BY LRC.RESPONSE_ID
+						) AS ROUND_WIN ON ROUND_WIN.ROUND_ID = LAST_PLAY.ROUND_ID
+					INNER JOIN USER AS U ON U.ID = ROUND_WIN.JUDGE_USER_ID
 				WHERE LAST_PLAY.REV_PLAY_ORDER = 1
 				GROUP BY ROUND_WIN.JUDGE_USER_ID
-				ORDER BY AVG_SECONDS, NAME;
+				ORDER BY AVG_SECONDS,
+					NAME;
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -478,24 +508,41 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					AVG(TIMESTAMPDIFF(SECOND, PREV_WIN.CREATED_ON_DATE, LAST_PLAY.CREATED_ON_DATE)) AS AVG_SECONDS,
 					U.NAME
-				FROM (SELECT ROUND_ID,
+				FROM (
+						SELECT
+							ROUND_ID,
 							PLAYER_USER_ID,
 							CREATED_ON_DATE,
-							RANK() OVER (PARTITION BY ROUND_ID, PLAYER_USER_ID ORDER BY CREATED_ON_DATE DESC) AS REV_PLAY_ORDER
-					FROM LOG_RESPONSE_CARD) AS LAST_PLAY
-						INNER JOIN (SELECT ROUND_ID,
-											LAG(ROUND_ID) OVER (PARTITION BY LOBBY_ID ORDER BY CREATED_ON_DATE) AS PREV_ROUND_ID
-									FROM LOG_RESPONSE_CARD
-									GROUP BY ROUND_ID) AS ROUND_AND_PREV ON ROUND_AND_PREV.ROUND_ID = LAST_PLAY.ROUND_ID
-						INNER JOIN (SELECT LRC.ROUND_ID,
-											LW.CREATED_ON_DATE
-									FROM LOG_WIN AS LW
-											INNER JOIN LOG_RESPONSE_CARD AS LRC ON LRC.RESPONSE_ID = LW.RESPONSE_ID
-									GROUP BY LRC.RESPONSE_ID) AS PREV_WIN ON PREV_WIN.ROUND_ID = ROUND_AND_PREV.PREV_ROUND_ID
-						INNER JOIN USER AS U ON U.ID = LAST_PLAY.PLAYER_USER_ID
+							RANK() OVER (
+								PARTITION BY ROUND_ID,
+								PLAYER_USER_ID
+								ORDER BY CREATED_ON_DATE DESC
+							) AS REV_PLAY_ORDER
+						FROM LOG_RESPONSE_CARD
+					) AS LAST_PLAY
+					INNER JOIN (
+							SELECT
+								ROUND_ID,
+								LAG(ROUND_ID) OVER (
+									PARTITION BY LOBBY_ID
+									ORDER BY CREATED_ON_DATE
+								) AS PREV_ROUND_ID
+							FROM LOG_RESPONSE_CARD
+							GROUP BY ROUND_ID
+						) AS ROUND_AND_PREV ON ROUND_AND_PREV.ROUND_ID = LAST_PLAY.ROUND_ID
+					INNER JOIN (
+							SELECT
+								LRC.ROUND_ID,
+								LW.CREATED_ON_DATE
+							FROM LOG_WIN AS LW
+								INNER JOIN LOG_RESPONSE_CARD AS LRC ON LRC.RESPONSE_ID = LW.RESPONSE_ID
+							GROUP BY LRC.RESPONSE_ID
+						) AS PREV_WIN ON PREV_WIN.ROUND_ID = ROUND_AND_PREV.PREV_ROUND_ID
+					INNER JOIN USER AS U ON U.ID = LAST_PLAY.PLAYER_USER_ID
 				WHERE LAST_PLAY.REV_PLAY_ORDER = 1
 				GROUP BY LAST_PLAY.PLAYER_USER_ID
-				ORDER BY AVG_SECONDS, NAME;
+				ORDER BY AVG_SECONDS,
+					NAME;
 			`
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
@@ -512,8 +559,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -529,8 +575,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
 				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -543,8 +588,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 				GROUP BY LRC.SPECIAL_CATEGORY
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -563,8 +607,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_DISCARD AS LD
 					INNER JOIN USER AS U ON U.ID = LD.USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -578,10 +621,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_DISCARD AS LD
 					LEFT JOIN CARD AS C ON C.ID = LD.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -600,8 +642,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.JUDGE_USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -615,10 +656,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.JUDGE_CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -637,8 +677,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_SKIP AS LS
 					INNER JOIN USER AS U ON U.ID = LS.USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -652,10 +691,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_SKIP AS LS
 					LEFT JOIN CARD AS C ON C.ID = LS.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
 				GROUP BY C.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -679,9 +717,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UJ.ID = ?
-				GROUP BY LRC.JUDGE_USER_ID, LRC.PLAYER_USER_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY LRC.JUDGE_USER_ID,
+					LRC.PLAYER_USER_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -700,9 +738,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 					INNER JOIN CARD AS CP ON CP.ID = LRC.PLAYER_CARD_ID
 				WHERE UJ.ID = ?
-				GROUP BY LRC.JUDGE_USER_ID, LRC.PLAYER_CARD_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY LRC.JUDGE_USER_ID,
+					LRC.PLAYER_CARD_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -720,9 +758,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 				WHERE UJ.ID = ?
-				GROUP BY LRC.JUDGE_USER_ID, LRC.SPECIAL_CATEGORY
-				ORDER BY
-					COUNT DESC,
+				GROUP BY LRC.JUDGE_USER_ID,
+					LRC.SPECIAL_CATEGORY
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -746,9 +784,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
-				GROUP BY LRC.JUDGE_USER_ID, LRC.PLAYER_USER_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY LRC.JUDGE_USER_ID,
+					LRC.PLAYER_USER_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -767,9 +805,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN CARD AS CJ ON CJ.ID = LRC.PLAYER_CARD_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
-				GROUP BY LRC.PLAYER_CARD_ID, LRC.PLAYER_USER_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY LRC.PLAYER_CARD_ID,
+					LRC.PLAYER_USER_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -787,9 +825,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
 				WHERE UP.ID = ?
-				GROUP BY LRC.SPECIAL_CATEGORY, LRC.PLAYER_USER_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY LRC.SPECIAL_CATEGORY,
+					LRC.PLAYER_USER_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -809,8 +847,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.AMOUNT > 0
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -830,8 +867,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.AMOUNT < 0
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -852,9 +888,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.AMOUNT > 0
-				GROUP BY U.ID, LCS.CATEGORY
-				ORDER BY
-					COUNT DESC,
+				GROUP BY U.ID,
+					LCS.CATEGORY
+				ORDER BY COUNT DESC,
 					NAME ASC,
 					CATEGORY ASC
 				LIMIT 10
@@ -876,9 +912,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.AMOUNT < 0
-				GROUP BY U.ID, LCS.CATEGORY
-				ORDER BY
-					COUNT DESC,
+				GROUP BY U.ID,
+					LCS.CATEGORY
+				ORDER BY COUNT DESC,
 					NAME ASC,
 					CATEGORY ASC
 				LIMIT 10
@@ -898,9 +934,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.AMOUNT > 0
-				GROUP BY U.ID, LCS.LOBBY_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY U.ID,
+					LCS.LOBBY_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -919,9 +955,9 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.AMOUNT < 0
-				GROUP BY U.ID, LCS.LOBBY_ID
-				ORDER BY
-					COUNT DESC,
+				GROUP BY U.ID,
+					LCS.LOBBY_ID
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -941,8 +977,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.CATEGORY = 'GAMBLE'
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -962,8 +997,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.CATEGORY = 'GAMBLE-WIN'
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -983,8 +1017,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.CATEGORY = 'BET'
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -1004,8 +1037,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
 				WHERE LCS.CATEGORY = 'BET-WIN'
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
@@ -1024,8 +1056,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_KICK AS LK
 					INNER JOIN USER AS U ON U.ID = LK.USER_ID
 				GROUP BY U.ID
-				ORDER BY
-					COUNT DESC,
+				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
 			`
