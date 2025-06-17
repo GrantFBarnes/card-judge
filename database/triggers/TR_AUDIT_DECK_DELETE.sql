@@ -2,7 +2,7 @@ CREATE TRIGGER IF NOT EXISTS TR_AUDIT_DECK_DELETE
 BEFORE
 DELETE ON DECK FOR EACH ROW
 BEGIN
-    INSERT INTO AUDIT_CARD (
+    INSERT INTO AUDIT_CARD(
         AUDIT_TYPE,
         CARD_ID,
         DECK_ID,
@@ -22,7 +22,7 @@ BEGIN
     FROM CARD
     WHERE DECK_ID = OLD.ID;
 
-    INSERT INTO AUDIT_DECK (
+    INSERT INTO AUDIT_DECK(
         AUDIT_TYPE,
         DECK_ID,
         NAME,
@@ -31,11 +31,11 @@ BEGIN
         IS_LOBBY_WILD_DECK
     )
     VALUES (
-            'DELETE',
-            OLD.ID,
-            OLD.NAME,
-            OLD.PASSWORD_HASH,
-            OLD.IS_PUBLIC_READONLY,
-            OLD.IS_LOBBY_WILD_DECK
-        );
+        'DELETE',
+        OLD.ID,
+        OLD.NAME,
+        OLD.PASSWORD_HASH,
+        OLD.IS_PUBLIC_READONLY,
+        OLD.IS_LOBBY_WILD_DECK
+    );
 END;

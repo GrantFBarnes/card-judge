@@ -2,7 +2,7 @@ CREATE TRIGGER IF NOT EXISTS TR_AUDIT_USER_DELETE
 BEFORE
 DELETE ON USER FOR EACH ROW
 BEGIN
-    INSERT INTO AUDIT_USER (
+    INSERT INTO AUDIT_USER(
         AUDIT_TYPE,
         USER_ID,
         NAME,
@@ -12,12 +12,12 @@ BEGIN
         IS_ADMIN
     )
     VALUES (
-            'DELETE',
-            OLD.ID,
-            OLD.NAME,
-            OLD.PASSWORD_HASH,
-            OLD.COLOR_THEME,
-            OLD.IS_APPROVED,
-            OLD.IS_ADMIN
-        );
+        'DELETE',
+        OLD.ID,
+        OLD.NAME,
+        OLD.PASSWORD_HASH,
+        OLD.COLOR_THEME,
+        OLD.IS_APPROVED,
+        OLD.IS_ADMIN
+    );
 END;

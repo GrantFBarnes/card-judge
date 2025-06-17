@@ -2,7 +2,7 @@ CREATE TRIGGER IF NOT EXISTS TR_AUDIT_DECK_UPDATE
 BEFORE
 UPDATE ON DECK FOR EACH ROW
 BEGIN
-    INSERT INTO AUDIT_DECK (
+    INSERT INTO AUDIT_DECK(
         AUDIT_TYPE,
         DECK_ID,
         NAME,
@@ -11,11 +11,11 @@ BEGIN
         IS_LOBBY_WILD_DECK
     )
     VALUES (
-            'UPDATE',
-            OLD.ID,
-            OLD.NAME,
-            OLD.PASSWORD_HASH,
-            OLD.IS_PUBLIC_READONLY,
-            OLD.IS_LOBBY_WILD_DECK
-        );
+        'UPDATE',
+        OLD.ID,
+        OLD.NAME,
+        OLD.PASSWORD_HASH,
+        OLD.IS_PUBLIC_READONLY,
+        OLD.IS_LOBBY_WILD_DECK
+    );
 END;
