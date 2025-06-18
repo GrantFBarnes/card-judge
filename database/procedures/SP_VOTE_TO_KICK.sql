@@ -46,5 +46,6 @@ BEGIN
         ELSE
         SELECT
             0;
-    END IF;
+    END
+    IF;
 END;

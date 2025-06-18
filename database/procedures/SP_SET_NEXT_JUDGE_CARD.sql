@@ -14,13 +14,20 @@ BEGIN
     WHERE ID = VAR_NEW_CARD_ID;
 
     SELECT
-        ROUND((LENGTH(VAR_NEW_CARD_TEXT) - LENGTH(REPLACE(VAR_NEW_CARD_TEXT, '_____', ''))) / LENGTH('_____'))
+        ROUND(
+            (
+                LENGTH(VAR_NEW_CARD_TEXT) - LENGTH(
+                    REPLACE(VAR_NEW_CARD_TEXT, '_____', '')
+                )
+            ) / LENGTH('_____')
+        )
     INTO
         VAR_BLANK_COUNT;
 
     IF VAR_BLANK_COUNT < 1 THEN
         SET VAR_BLANK_COUNT = 1;
-    END IF;
+    END
+    IF;
 
     UPDATE JUDGE
     SET CARD_ID = VAR_NEW_CARD_ID,

@@ -29,7 +29,8 @@ BEGIN
             'BET-WIN'
         FROM PLAYER
         WHERE ID = VAR_PLAYER_ID;
-    END IF;
+    END
+    IF;
 
     INSERT INTO WIN(PLAYER_ID)
     VALUES (VAR_PLAYER_ID);

@@ -6,5 +6,6 @@ BEGIN
         DELETE
         FROM USER_ACCESS_LOBBY
         WHERE LOBBY_ID = NEW.ID;
-    END IF;
+    END
+    IF;
 END;

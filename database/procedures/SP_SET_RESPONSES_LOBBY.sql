@@ -22,7 +22,8 @@ BEGIN
             VAR_PLAYER_ID;
 
         IF VAR_LOOP_DONE THEN LEAVE READ_LOOP;
-        END IF;
+        END
+        IF;
 
         CALL SP_SET_RESPONSES_PLAYER(VAR_PLAYER_ID);
         END LOOP;

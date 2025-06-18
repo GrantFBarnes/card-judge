@@ -18,7 +18,10 @@ BEGIN
                 ELSE
                 -- PLAYER LEFT THE LOBBY
                 CALL SP_SET_RESPONSES_PLAYER(NEW.ID);
-            END IF;
-        END IF;
-    END IF;
+            END
+            IF;
+        END
+        IF;
+    END
+    IF;
 END;

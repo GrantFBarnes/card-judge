@@ -24,7 +24,8 @@ BEGIN
             VAR_RESPONSE_ID;
 
         IF VAR_LOOP_DONE THEN LEAVE READ_LOOP;
-        END IF;
+        END
+        IF;
 
         CALL SP_WITHDRAW_RESPONSE(VAR_RESPONSE_ID);
         END LOOP;

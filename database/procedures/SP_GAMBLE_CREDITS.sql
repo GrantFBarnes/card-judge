@@ -29,5 +29,6 @@ BEGIN
             'GAMBLE-WIN'
         FROM PLAYER
         WHERE ID = VAR_PLAYER_ID;
-    END IF;
+    END
+    IF;
 END;

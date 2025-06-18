@@ -22,7 +22,8 @@ BEGIN
             VAR_RESPONSE_CARD_ID;
 
         IF VAR_LOOP_DONE THEN LEAVE READ_LOOP;
-        END IF;
+        END
+        IF;
 
         CALL SP_WITHDRAW_CARD(VAR_RESPONSE_CARD_ID);
         END LOOP;
