@@ -110,7 +110,12 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 				),
 				0
 			) AS CREDITS_EARNED_COUNT,
-			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
+			(
+				SELECT
+					COUNT(*)
+				FROM LOG_KICK
+				WHERE USER_ID = U.ID
+			) AS LOBBY_KICK_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
 	`
@@ -290,7 +295,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
-					COALESCE((WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
+					COALESCE(
+						(WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0),
+						0.0
+					) AS WIN_RATIO,
 					NAME
 				FROM (
 						SELECT
@@ -317,17 +325,24 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
-					COALESCE((WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
+					COALESCE(
+						(WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0),
+						0.0
+					) AS WIN_RATIO,
 					NAME
 				FROM (
 						SELECT
 							COUNT(DISTINCT LRC.ROUND_ID) AS PLAY_COUNT,
 							COUNT(DISTINCT LW.ID) AS WIN_COUNT,
-							COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
+							COALESCE(
+								C.TEXT,
+								LRC.SPECIAL_CATEGORY,
+								'Unknown'
+							) AS NAME
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 							LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
-						WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
+						WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 						GROUP BY C.ID
 					) AS T
 				ORDER BY WIN_RATIO DESC,
@@ -469,7 +484,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Judge")
 			sqlString = `
 				SELECT
-					AVG(TIMESTAMPDIFF(SECOND, LAST_PLAY.CREATED_ON_DATE, ROUND_WIN.CREATED_ON_DATE)) AS AVG_SECONDS,
+					AVG(
+						TIMESTAMPDIFF(
+							SECOND,
+							LAST_PLAY.CREATED_ON_DATE,
+							ROUND_WIN.CREATED_ON_DATE
+						)
+					) AS AVG_SECONDS,
 					U.NAME
 				FROM (
 						SELECT
@@ -506,7 +527,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
 				SELECT
-					AVG(TIMESTAMPDIFF(SECOND, PREV_WIN.CREATED_ON_DATE, LAST_PLAY.CREATED_ON_DATE)) AS AVG_SECONDS,
+					AVG(
+						TIMESTAMPDIFF(
+							SECOND,
+							PREV_WIN.CREATED_ON_DATE,
+							LAST_PLAY.CREATED_ON_DATE
+						)
+					) AS AVG_SECONDS,
 					U.NAME
 				FROM (
 						SELECT
