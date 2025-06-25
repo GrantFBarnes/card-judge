@@ -25,24 +25,25 @@ BEGIN
 
     WHILE VAR_NEXT_JUDGE_PLAYER_ID IS NULL
         AND VAR_TRY_COUNT < VAR_PLAYER_COUNT
-        DO
-            SET VAR_TRY_COUNT = VAR_TRY_COUNT + 1;
-            SET VAR_NEXT_POSITION = VAR_NEXT_POSITION + 1;
+    DO
+        SET VAR_TRY_COUNT = VAR_TRY_COUNT + 1;
+        SET VAR_NEXT_POSITION = VAR_NEXT_POSITION + 1;
 
-            IF VAR_NEXT_POSITION > VAR_PLAYER_COUNT THEN
-                SET VAR_NEXT_POSITION = 1;
-            END
-            IF;
+        IF VAR_NEXT_POSITION > VAR_PLAYER_COUNT THEN
+            SET VAR_NEXT_POSITION = 1;
+        END
+        IF;
 
-            SELECT
-                ID
-            INTO
-                VAR_NEXT_JUDGE_PLAYER_ID
-            FROM PLAYER
-            WHERE IS_ACTIVE = 1
-                AND LOBBY_ID = VAR_LOBBY_ID
-                AND JOIN_ORDER = VAR_NEXT_POSITION;
-        END WHILE;
+        SELECT
+            ID
+        INTO
+            VAR_NEXT_JUDGE_PLAYER_ID
+        FROM PLAYER
+        WHERE IS_ACTIVE = 1
+            AND LOBBY_ID = VAR_LOBBY_ID
+            AND JOIN_ORDER = VAR_NEXT_POSITION;
+    END
+    WHILE;
 
     UPDATE JUDGE
     SET POSITION = VAR_NEXT_POSITION,

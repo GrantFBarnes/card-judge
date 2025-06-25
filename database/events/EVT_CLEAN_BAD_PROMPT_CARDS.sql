@@ -16,21 +16,21 @@ DO
                         FROM LOG_SKIP AS LS
                             INNER JOIN CARD AS C ON C.ID = LS.CARD_ID
                             LEFT JOIN (
-                                    SELECT
-                                        JUDGE_CARD_ID AS CARD_ID,
-                                        CREATED_ON_DATE AS LAST_PLAYED_DATE
-                                    FROM (
-                                            SELECT
-                                                JUDGE_CARD_ID,
-                                                CREATED_ON_DATE,
-                                                RANK() OVER (
-                                                    PARTITION BY JUDGE_CARD_ID
-                                                    ORDER BY CREATED_ON_DATE DESC
-                                                ) AS PLAY_ORDER
-                                            FROM LOG_RESPONSE_CARD
-                                        ) AS CARDSPLAYED
-                                    WHERE PLAY_ORDER = 1
-                                ) AS LASTPLAYED ON LASTPLAYED.CARD_ID = LS.CARD_ID
+                                SELECT
+                                    JUDGE_CARD_ID AS CARD_ID,
+                                    CREATED_ON_DATE AS LAST_PLAYED_DATE
+                                FROM (
+                                        SELECT
+                                            JUDGE_CARD_ID,
+                                            CREATED_ON_DATE,
+                                            RANK() OVER (
+                                                PARTITION BY JUDGE_CARD_ID
+                                                ORDER BY CREATED_ON_DATE DESC
+                                            ) AS PLAY_ORDER
+                                        FROM LOG_RESPONSE_CARD
+                                    ) AS CARDSPLAYED
+                                WHERE PLAY_ORDER = 1
+                            ) AS LASTPLAYED ON LASTPLAYED.CARD_ID = LS.CARD_ID
                         WHERE LASTPLAYED.LAST_PLAYED_DATE IS NULL
                             -- NEVER PLAYED
                             OR LASTPLAYED.LAST_PLAYED_DATE < LS.CREATED_ON_DATE

@@ -53,41 +53,43 @@ BEGIN
 
     -- CREATE ANY MISSING RESPONSES
     WHILE VAR_RESPONSE_COUNT_CURRENT < VAR_RESPONSE_COUNT_FINAL
-        DO
-            INSERT INTO RESPONSE(PLAYER_ID)
-            VALUES (VAR_PLAYER_ID);
+    DO
+        INSERT INTO RESPONSE(PLAYER_ID)
+        VALUES (VAR_PLAYER_ID);
 
-            SELECT
-                COUNT(*)
-            INTO
-                VAR_RESPONSE_COUNT_CURRENT
-            FROM RESPONSE
-            WHERE PLAYER_ID = VAR_PLAYER_ID;
-        END WHILE;
+        SELECT
+            COUNT(*)
+        INTO
+            VAR_RESPONSE_COUNT_CURRENT
+        FROM RESPONSE
+        WHERE PLAYER_ID = VAR_PLAYER_ID;
+    END
+    WHILE;
 
     -- DELETE ANY EXTRA RESPONSES
     WHILE VAR_RESPONSE_COUNT_CURRENT > VAR_RESPONSE_COUNT_FINAL
-        DO
-            SELECT
-                ID
-            INTO
-                VAR_RESPONSE_ID_TO_REMOVE
-            FROM RESPONSE
-            WHERE PLAYER_ID = VAR_PLAYER_ID
-            ORDER BY CREATED_ON_DATE DESC
-            LIMIT 1;
+    DO
+        SELECT
+            ID
+        INTO
+            VAR_RESPONSE_ID_TO_REMOVE
+        FROM RESPONSE
+        WHERE PLAYER_ID = VAR_PLAYER_ID
+        ORDER BY CREATED_ON_DATE DESC
+        LIMIT 1;
 
-            CALL SP_WITHDRAW_RESPONSE(VAR_RESPONSE_ID_TO_REMOVE);
+        CALL SP_WITHDRAW_RESPONSE(VAR_RESPONSE_ID_TO_REMOVE);
 
-            DELETE
-            FROM RESPONSE
-            WHERE ID = VAR_RESPONSE_ID_TO_REMOVE;
+        DELETE
+        FROM RESPONSE
+        WHERE ID = VAR_RESPONSE_ID_TO_REMOVE;
 
-            SELECT
-                COUNT(*)
-            INTO
-                VAR_RESPONSE_COUNT_CURRENT
-            FROM RESPONSE
-            WHERE PLAYER_ID = VAR_PLAYER_ID;
-        END WHILE;
+        SELECT
+            COUNT(*)
+        INTO
+            VAR_RESPONSE_COUNT_CURRENT
+        FROM RESPONSE
+        WHERE PLAYER_ID = VAR_PLAYER_ID;
+    END
+    WHILE;
 END;
