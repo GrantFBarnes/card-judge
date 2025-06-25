@@ -109,7 +109,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 			IMAGE
 		FROM (
 				SELECT
-					MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE) AS SCORE,
+					MATCH (TEXT) AGAINST(? IN NATURAL LANGUAGE MODE) AS SCORE,
 					DP.LOBBY_ID,
 					C.ID,
 					C.CREATED_ON_DATE,
@@ -123,7 +123,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 					INNER JOIN DRAW_PILE AS DP ON DP.CARD_ID = C.ID
 				WHERE DP.LOBBY_ID = ?
 					AND C.CATEGORY = 'RESPONSE'
-					AND MATCH (TEXT) AGAINST (? IN NATURAL LANGUAGE MODE)
+					AND MATCH (TEXT) AGAINST(? IN NATURAL LANGUAGE MODE)
 			) AS T
 		ORDER BY SCORE DESC
 		LIMIT 10
@@ -244,7 +244,7 @@ func CreateCard(deckId uuid.UUID, category string, text string, youtube string) 
 	}
 
 	sqlString := `
-		INSERT INTO CARD (ID, DECK_ID, CATEGORY, TEXT, YOUTUBE)
+		INSERT INTO CARD(ID, DECK_ID, CATEGORY, TEXT, YOUTUBE)
 		VALUES (?, ?, ?, ?, ?)
 	`
 	if len(youtube) == 0 {

@@ -184,7 +184,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 							FROM (
 									SELECT
 										LRC.PLAYER_USER_ID,
-										COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
+										COUNT(
+											DISTINCT
+											LRC.ROUND_ID
+										) AS ROUND_WIN_COUNT,
 										RANK() OVER (
 											PARTITION BY LRC.LOBBY_ID
 											ORDER BY ROUND_WIN_COUNT DESC
@@ -359,7 +362,10 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
-					COALESCE((WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
+					COALESCE(
+						(WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0),
+						0.0
+					) AS WIN_RATIO,
 					NAME
 				FROM (
 						SELECT
@@ -648,7 +654,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_DISCARD AS LD
 					LEFT JOIN CARD AS C ON C.ID = LD.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
+				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
@@ -683,7 +689,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.JUDGE_CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
+				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
@@ -718,7 +724,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_SKIP AS LS
 					LEFT JOIN CARD AS C ON C.ID = LS.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS (?, C.DECK_ID)
+				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
