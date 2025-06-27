@@ -6,14 +6,12 @@ BEGIN
         IF NEW.IS_ACTIVE THEN
             -- JOINED THE LOBBY
             CALL SP_DRAW_HAND(NEW.ID);
-
             CALL SP_SET_RESPONSES_PLAYER(NEW.ID);
             ELSE
             -- LEFT THE LOBBY
             IF EXISTS(SELECT ID FROM JUDGE WHERE PLAYER_ID = NEW.ID) THEN
                 -- JUDGE LEFT THE LOBBY
                 CALL SP_SET_MISSING_JUDGE_PLAYER(NEW.LOBBY_ID);
-
                 CALL SP_SET_RESPONSES_LOBBY(NEW.LOBBY_ID);
                 ELSE
                 -- PLAYER LEFT THE LOBBY
