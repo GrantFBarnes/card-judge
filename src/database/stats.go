@@ -66,30 +66,15 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 				WHERE LRC.PLAYER_USER_ID = U.ID
 			) AS ROUND_WIN_COUNT,
-			(
-				SELECT
-					COUNT(*)
-				FROM LOG_RESPONSE_CARD
-				WHERE PLAYER_USER_ID = U.ID
-			) AS RESPONSE_CARD_PLAY_COUNT,
-			(
-				SELECT
-					COUNT(*)
-				FROM LOG_DISCARD
-				WHERE USER_ID = U.ID
-			) AS RESPONSE_CARD_DISCARD_COUNT,
+			(SELECT COUNT(*) FROM LOG_RESPONSE_CARD WHERE PLAYER_USER_ID = U.ID) AS RESPONSE_CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS RESPONSE_CARD_DISCARD_COUNT,
 			(
 				SELECT
 					COUNT(DISTINCT ROUND_ID)
 				FROM LOG_RESPONSE_CARD
 				WHERE JUDGE_USER_ID = U.ID
 			) AS PROMPT_CARD_PLAY_COUNT,
-			(
-				SELECT
-					COUNT(*)
-				FROM LOG_SKIP
-				WHERE USER_ID = U.ID
-			) AS PROMPT_CARD_SKIP_COUNT,
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS PROMPT_CARD_SKIP_COUNT,
 			COALESCE(
 				(
 					SELECT
@@ -110,12 +95,7 @@ func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
 				),
 				0
 			) AS CREDITS_EARNED_COUNT,
-			(
-				SELECT
-					COUNT(*)
-				FROM LOG_KICK
-				WHERE USER_ID = U.ID
-			) AS LOBBY_KICK_COUNT
+			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
 	`
@@ -184,10 +164,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 						FROM (
 								SELECT
 									LRC.PLAYER_USER_ID,
-									COUNT(
-										DISTINCT
-										LRC.ROUND_ID
-									) AS ROUND_WIN_COUNT,
+									COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
 									RANK() OVER (
 										PARTITION BY LRC.LOBBY_ID
 										ORDER BY ROUND_WIN_COUNT DESC
@@ -298,10 +275,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
-					COALESCE(
-						(WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0),
-						0.0
-					) AS WIN_RATIO,
+					COALESCE((WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
 					NAME
 				FROM (
 						SELECT
@@ -328,20 +302,13 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
-					COALESCE(
-						(WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0),
-						0.0
-					) AS WIN_RATIO,
+					COALESCE((WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
 					NAME
 				FROM (
 						SELECT
 							COUNT(DISTINCT LRC.ROUND_ID) AS PLAY_COUNT,
 							COUNT(DISTINCT LW.ID) AS WIN_COUNT,
-							COALESCE(
-								C.TEXT,
-								LRC.SPECIAL_CATEGORY,
-								'Unknown'
-							) AS NAME
+							COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 							LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
@@ -362,10 +329,7 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
-					COALESCE(
-						(WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0),
-						0.0
-					) AS WIN_RATIO,
+					COALESCE((WIN_COUNT * 1.0) / (PLAY_COUNT * 1.0), 0.0) AS WIN_RATIO,
 					NAME
 				FROM (
 						SELECT
