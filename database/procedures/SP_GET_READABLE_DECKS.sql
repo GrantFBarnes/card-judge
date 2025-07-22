@@ -8,8 +8,7 @@ BEGIN
         WHERE D.IS_LOBBY_WILD_DECK = FALSE
         ORDER BY D.NAME;
         ELSE
-        SELECT
-            DISTINCT
+        SELECT DISTINCT
             D.ID,
             D.NAME
         FROM DECK AS D
