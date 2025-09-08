@@ -1,4 +1,4 @@
-.idea
 todo.txt
-backup.sql
+*backup*.sql
+*.gpg
 main
