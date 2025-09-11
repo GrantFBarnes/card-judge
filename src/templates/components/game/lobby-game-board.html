@@ -1,222 +1,250 @@
 {{define "lobby-game-board"}}
-    <h3 id="prompt-card">
-        {{if not .JudgeCardText.Valid}}
-            <span>[NO PROMPT CARD]</span>
+<h3 id="prompt-card">
+    {{if not .JudgeCardText.Valid}}
+    <span>[NO PROMPT CARD]</span>
+    {{else}}
+    <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
+    {{if .JudgeCardDeck.Valid}}
+    <span
+        class="bi bi-info-circle"
+        style="float: right"
+        title="{{.JudgeCardDeck.String}}"
+    ></span>
+    {{end}}
+    {{if .JudgeCardYouTube.Valid}}
+    <br />
+    <br />
+    <div class="iframe-container">
+        <iframe src="https://www.youtube.com/embed/{{.JudgeCardYouTube.String}}"></iframe>
+    </div>
+    {{end}}
+    {{if .JudgeCardImage.Valid}}
+    <br />
+    <br />
+    <img
+        src="data:image;base64,{{.JudgeCardImage.String}}"
+        alt="Card Image"
+    />
+    {{end}}
+    {{end}}
+</h3>
+{{if and .PlayerIsJudge (not .BoardHasAnySpecial) (not .BoardHasAnyRevealed)}}
+<span id="judge-settings">
+    <label for="setResponseCount">Responses:</label>
+    <select
+        id="setResponseCount"
+        name="responseCount"
+        autocomplete="off"
+        required="required"
+        hx-put="/api/lobby/{{.LobbyId}}/response-count"
+        hx-trigger="change"
+    >
+        {{if eq .JudgeResponseCount 3}}
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option
+            value="3"
+            selected
+        >3</option>
+        {{else if eq .JudgeResponseCount 2}}
+        <option value="1">1</option>
+        <option
+            value="2"
+            selected
+        >2</option>
+        <option value="3">3</option>
         {{else}}
-            <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
-            {{if .JudgeCardDeck.Valid}}
-                <span class="bi bi-info-circle" style="float: right" title="{{.JudgeCardDeck.String}}"></span>
-            {{end}}
-            {{if .JudgeCardYouTube.Valid}}
-                <br/>
-                <br/>
-                <div class="iframe-container">
-                    <iframe src="https://www.youtube.com/embed/{{.JudgeCardYouTube.String}}"></iframe>
-                </div>
-            {{end}}
-            {{if .JudgeCardImage.Valid}}
-                <br/>
-                <br/>
-                <img src="data:image;base64,{{.JudgeCardImage.String}}" alt="Card Image"/>
-            {{end}}
+        <option
+            value="1"
+            selected
+        >1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
         {{end}}
-    </h3>
-    {{if and .PlayerIsJudge (not .BoardHasAnySpecial) (not .BoardHasAnyRevealed)}}
-        <span id="judge-settings">
-            <label for="setResponseCount">Responses:</label>
-            <select
-                id="setResponseCount"
-                name="responseCount"
-                autocomplete="off"
-                required="required"
-                hx-put="/api/lobby/{{.LobbyId}}/response-count"
-                hx-trigger="change"
-            >
-                {{if eq .JudgeResponseCount 3}}
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                {{else if eq .JudgeResponseCount 2}}
-                    <option value="1">1</option>
-                    <option value="2" selected>2</option>
-                    <option value="3">3</option>
-                {{else}}
-                    <option value="1" selected>1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
+    </select>
+    <span
+        class="bi bi-skip-forward-circle clickable"
+        style="float: right"
+        hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
+        hx-confirm="Are you sure you want to skip this prompt?"
+    >
+        Skip Prompt
+    </span>
+</span>
+{{end}}
+{{if .JudgeCardText.Valid}}
+<br />
+{{if .BoardIsReady}}
+<div id="board-responses">
+    <table id="board-responses-table">
+        <tbody>
+            {{range .BoardResponses}}
+            <tr>
+                {{if $.PlayerIsJudge}}
+                <td style="width: 1em">
+                    {{if .IsRevealed}}
+                    {{if .IsRuledOut}}
+                    <span
+                        title="Undo Rule Out of Response"
+                        class="bi bi-arrow-counterclockwise clickable"
+                        hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                    ></span>
+                    {{else}}
+                    <span
+                        title="Rule Out Response"
+                        class="bi bi-trash clickable"
+                        hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
+                    ></span>
+                    {{end}}
+                    {{end}}
+                </td>
                 {{end}}
-            </select>
-            <span class="bi bi-skip-forward-circle clickable"
-                  style="float: right"
-                  hx-post="/api/lobby/{{.LobbyId}}/skip-prompt"
-                  hx-confirm="Are you sure you want to skip this prompt?"
-            >
-                Skip Prompt
-            </span>
-        </span>
-    {{end}}
-    {{if .JudgeCardText.Valid}}
-        <br/>
-        {{if .BoardIsReady}}
-            <div id="board-responses">
-                <table id="board-responses-table">
-                    <tbody>
-                    {{range .BoardResponses}}
-                        <tr>
-                            {{if $.PlayerIsJudge}}
-                                <td style="width: 1em">
-                                    {{if .IsRevealed}}
-                                        {{if .IsRuledOut}}
-                                            <span title="Undo Rule Out of Response"
-                                                  class="bi bi-arrow-counterclockwise clickable"
-                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
-                                            ></span>
-                                        {{else}}
-                                            <span title="Rule Out Response"
-                                                  class="bi bi-trash clickable"
-                                                  hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/toggle-rule-out"
-                                            ></span>
-                                        {{end}}
-                                    {{end}}
-                                </td>
+                <td
+                    {{if $.PlayerIsJudge}}
+                    {{if not .IsRevealed}}
+                    class="clickable"
+                    hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal"
+                    {{else if and $.BoardIsAllRevealed (not .IsRuledOut)}}
+                    class="clickable"
+                    hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
+                    hx-confirm="Are you sure you want to pick this response as the winner?"
+                    {{end}}
+                    {{end}}
+                >
+                    <hr />
+                    {{if not .IsRevealed}}
+                    <p style="padding: 20px">
+                        {{if $.PlayerIsJudge}}
+                        <span class="bi bi-hand-index pulse"></span>
+                        &nbsp;&nbsp;Reveal Response...
+                        {{else}}
+                        <span class="bi bi-hourglass flipflop"></span>
+                        &nbsp;&nbsp;Waiting to be revealed...
+                        {{end}}
+                    </p>
+                    {{else}}
+                    {{$isRuledOut := .IsRuledOut}}
+                    {{range .ResponseCards}}
+                    <div
+                        style="padding: 20px;"
+                        {{if $isRuledOut}}
+                        class="disabled strike"
+                        {{end}}
+                    >
+                        <p>
+                            <span class="wrap-new-lines">{{.Text}}</span>
+                            <span
+                                class="bi bi-info-circle"
+                                style="float: right"
+                                title="{{.DeckName}}"
+                            ></span>
+                        </p>
+                        {{if .YouTube.Valid}}
+                        <div class="iframe-container">
+                            <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                        </div>
+                        {{end}}
+                        {{if .Image.Valid}}
+                        <img
+                            src="data:image;base64,{{.Image.String}}"
+                            alt="Card Image"
+                        />
+                        {{end}}
+                    </div>
+                    {{end}}
+                    {{end}}
+                </td>
+            </tr>
+            {{end}}
+            {{if and .PlayerIsJudge .BoardIsAllRevealed (not .BoardIsAllRuledOut)}}
+            <tr>
+                <td>
+                    <span class="bi bi-shuffle"></span>
+                </td>
+                <td
+                    class="clickable"
+                    hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
+                    hx-confirm="Are you sure you want to pick a random winner?"
+                >
+                    <hr />
+                    <p style="padding: 20px">
+                        Random Winner
+                    </p>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+{{else}}
+<div id="player-responses">
+    <table id="player-responses-table">
+        <tbody>
+            {{range .PlayerResponses}}
+            <tr>
+                <td>
+                    {{$playerResponseCardCount := len .ResponseCards}}
+                    {{if gt $playerResponseCardCount 0}}
+                    <hr />
+                    {{end}}
+                    {{range .ResponseCards}}
+                    <div style="padding: 20px">
+                        <p>
+                            {{if not .SpecialCategory.Valid}}
+                            <span
+                                title="Withdraw"
+                                class="bi bi-backspace clickable"
+                                hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
+                            ></span>
                             {{end}}
-                            <td
-                                    {{if $.PlayerIsJudge}}
-                                        {{if not .IsRevealed}}
-                                            class="clickable"
-                                            hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/reveal"
-                                        {{else if and $.BoardIsAllRevealed (not .IsRuledOut)}}
-                                            class="clickable"
-                                            hx-post="/api/lobby/{{$.LobbyId}}/response/{{.ResponseId}}/pick-winner"
-                                            hx-confirm="Are you sure you want to pick this response as the winner?"
-                                        {{end}}
-                                    {{end}}
-                            >
-                                <hr/>
-                                {{if not .IsRevealed}}
-                                    <p style="padding: 20px">
-                                        {{if $.PlayerIsJudge}}
-                                            <span class="bi bi-hand-index pulse"></span>
-                                            &nbsp;&nbsp;Reveal Response...
-                                        {{else}}
-                                            <span class="bi bi-hourglass flipflop"></span>
-                                            &nbsp;&nbsp;Waiting to be revealed...
-                                        {{end}}
-                                    </p>
-                                {{else}}
-                                    {{$isRuledOut := .IsRuledOut}}
-                                    {{range .ResponseCards}}
-                                        <div
-                                            style="padding: 20px;"
-                                            {{if $isRuledOut}}
-                                                class="disabled strike"
-                                            {{end}}
-                                        >
-                                            <p>
-                                                <span class="wrap-new-lines">{{.Text}}</span>
-                                                <span
-                                                    class="bi bi-info-circle"
-                                                    style="float: right"
-                                                    title="{{.DeckName}}"
-                                                ></span>
-                                            </p>
-                                            {{if .YouTube.Valid}}
-                                                <div class="iframe-container">
-                                                    <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
-                                                </div>
-                                            {{end}}
-                                            {{if .Image.Valid}}
-                                                <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
-                                            {{end}}
-                                        </div>
-                                    {{end}}
-                                {{end}}
-                            </td>
-                        </tr>
+                            <span class="wrap-new-lines">{{.Text}}</span>
+                            <span
+                                class="bi bi-info-circle"
+                                style="float: right"
+                                title="{{.DeckName}}"
+                            ></span>
+                        </p>
+                        {{if .YouTube.Valid}}
+                        <div class="iframe-container">
+                            <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
+                        </div>
+                        {{end}}
+                        {{if .Image.Valid}}
+                        <img
+                            src="data:image;base64,{{.Image.String}}"
+                            alt="Card Image"
+                        />
+                        {{end}}
+                    </div>
                     {{end}}
-                    {{if and .PlayerIsJudge .BoardIsAllRevealed (not .BoardIsAllRuledOut)}}
-                        <tr>
-                            <td>
-                                <span class="bi bi-shuffle"></span>
-                            </td>
-                            <td class="clickable"
-                                hx-post="/api/lobby/{{$.LobbyId}}/pick-random-winner"
-                                hx-confirm="Are you sure you want to pick a random winner?">
-                                <hr/>
-                                <p style="padding: 20px">
-                                    Random Winner
-                                </p>
-                            </td>
-                        </tr>
-                    {{end}}
-                    </tbody>
-                </table>
-            </div>
-        {{else}}
-            <div id="player-responses">
-                <table id="player-responses-table">
-                    <tbody>
-                    {{range .PlayerResponses}}
-                        <tr>
-                            <td>
-                                {{$playerResponseCardCount := len .ResponseCards}}
-                                {{if gt $playerResponseCardCount 0}}
-                                    <hr/>
-                                {{end}}
-                                {{range .ResponseCards}}
-                                    <div style="padding: 20px">
-                                        <p>
-                                            {{if not .SpecialCategory.Valid}}
-                                                <span title="Withdraw"
-                                                    class="bi bi-backspace clickable"
-                                                    hx-post="/api/lobby/{{$.LobbyId}}/response-card/{{.ResponseCardId}}/withdraw"
-                                                ></span>
-                                            {{end}}
-                                            <span class="wrap-new-lines">{{.Text}}</span>
-                                            <span
-                                                class="bi bi-info-circle"
-                                                style="float: right"
-                                                title="{{.DeckName}}"
-                                            ></span>
-                                        </p>
-                                        {{if .YouTube.Valid}}
-                                            <div class="iframe-container">
-                                                <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
-                                            </div>
-                                        {{end}}
-                                        {{if .Image.Valid}}
-                                            <img src="data:image;base64,{{.Image.String}}" alt="Card Image"/>
-                                        {{end}}
-                                    </div>
-                                {{end}}
-                            </td>
-                        </tr>
-                    {{end}}
-                    </tbody>
-                </table>
-            </div>
-            <br/>
-            <div id="players-responded">
-                <table id="players-responded-table">
-                    <thead>
-                    <tr>
-                        <th style="padding: 20px">Player</th>
-                        <th style="padding: 20px">Cards Played</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{range .BoardResponses}}
-                        <tr>
-                            <td>{{.PlayerUserName}}</td>
-                            <td style="text-align: center">
-                                {{len .ResponseCards}}/{{$.JudgeBlankCount}}
-                            </td>
-                        </tr>
-                    {{end}}
-                    </tbody>
-                </table>
-            </div>
-        {{end}}
-        <br/>
-    {{end}}
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+<br />
+<div id="players-responded">
+    <table id="players-responded-table">
+        <thead>
+            <tr>
+                <th style="padding: 20px">Player</th>
+                <th style="padding: 20px">Cards Played</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .BoardResponses}}
+            <tr>
+                <td>{{.PlayerUserName}}</td>
+                <td style="text-align: center">
+                    {{len .ResponseCards}}/{{$.JudgeBlankCount}}
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+{{end}}
+<br />
+{{end}}
 {{end}}
