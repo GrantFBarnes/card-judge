@@ -15,9 +15,8 @@ BEGIN
     SELECT
         ROUND(
             (
-                LENGTH(VAR_NEW_CARD_TEXT) - LENGTH(
-                    REPLACE(VAR_NEW_CARD_TEXT, '_____', '')
-                )
+                LENGTH(VAR_NEW_CARD_TEXT) -
+                LENGTH(REPLACE(VAR_NEW_CARD_TEXT, '_____', ''))
             ) / LENGTH('_____')
         )
     INTO
