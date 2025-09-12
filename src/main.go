@@ -148,11 +148,7 @@ func main() {
 	}
 
 	// static files
-	http.HandleFunc("GET /static/{fileType}/{fileName}", func(w http.ResponseWriter, r *http.Request) {
-		fileType := r.PathValue("fileType")
-		fileName := r.PathValue("fileName")
-		http.ServeFileFS(w, r, static.StaticFiles, "static/"+fileType+"/"+fileName)
-	})
+	http.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.StaticFiles))))
 
 	// pages
 	http.Handle("GET /", api.MiddlewareForPages(http.HandlerFunc(apiPages.Home)))
