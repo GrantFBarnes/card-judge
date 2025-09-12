@@ -15,6 +15,7 @@ import (
 	apiStats "github.com/grantfbarnes/card-judge/api/stats"
 	apiUser "github.com/grantfbarnes/card-judge/api/user"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/static"
 	"github.com/grantfbarnes/card-judge/websocket"
 )
 
@@ -150,7 +151,7 @@ func main() {
 	http.HandleFunc("GET /static/{fileType}/{fileName}", func(w http.ResponseWriter, r *http.Request) {
 		fileType := r.PathValue("fileType")
 		fileName := r.PathValue("fileName")
-		http.ServeFile(w, r, "static/"+fileType+"/"+fileName)
+		http.ServeFileFS(w, r, static.StaticFiles, "static/"+fileType+"/"+fileName)
 	})
 
 	// pages
