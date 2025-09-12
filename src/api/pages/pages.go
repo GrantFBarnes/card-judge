@@ -8,15 +8,17 @@ import (
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/static"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Home"
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/home.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/home.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -31,9 +33,10 @@ func About(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - About"
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/about.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/about.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,9 +51,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Login"
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/login.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/login.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -65,9 +69,10 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Manage"
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/manage.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/manage.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -82,9 +87,10 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Admin"
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/admin.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/admin.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -106,9 +112,10 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/stats.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/stats.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -138,9 +145,10 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/lobbies.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/lobbies.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -200,9 +208,10 @@ func Lobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/lobby.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/lobby.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -266,9 +275,10 @@ func LobbyAccess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/lobby-access.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/lobby-access.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -291,9 +301,10 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Decks"
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/decks.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/decks.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -338,9 +349,10 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/deck.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/deck.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -393,9 +405,10 @@ func DeckAccess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/pages/base.html",
-		"templates/pages/body/deck-access.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/deck-access.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

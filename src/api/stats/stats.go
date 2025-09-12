@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/static"
 )
 
 func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
@@ -41,8 +42,9 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/tables/stats-table.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/tables/stats-table.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/static"
 )
 
 func Search(w http.ResponseWriter, r *http.Request) {
@@ -56,8 +57,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/card-table-rows.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/table-rows/card-table-rows.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -98,8 +100,9 @@ func Find(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/find-card-table-rows.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/table-rows/find-card-table-rows.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

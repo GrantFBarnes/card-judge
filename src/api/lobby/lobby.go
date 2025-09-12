@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
 	"github.com/grantfbarnes/card-judge/database"
+	"github.com/grantfbarnes/card-judge/static"
 	"github.com/grantfbarnes/card-judge/websocket"
 )
 
@@ -23,8 +24,9 @@ func GetGameInterfaceHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/game-interface.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/game/game-interface.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -57,8 +59,9 @@ func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-game-info.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/game/lobby-game-info.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -92,8 +95,9 @@ func GetPlayerHandHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-hand.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/game/player-hand.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -127,8 +131,9 @@ func GetPlayerSpecialsHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/player-specials.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/game/player-specials.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -162,8 +167,9 @@ func GetLobbyGameBoardHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-game-board.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/game/lobby-game-board.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -197,8 +203,9 @@ func GetLobbyGameStatsHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/game/lobby-game-stats.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/game/lobby-game-stats.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -233,8 +240,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles(
-		"templates/components/table-rows/lobby-table-rows.html",
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/components/table-rows/lobby-table-rows.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
