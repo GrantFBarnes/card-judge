@@ -49,7 +49,7 @@ table {
     display: table;
 }
 
-#lobby-grid-interface > div {
+#lobby-grid-interface>div {
     padding: 10px;
     border: 2px solid black;
 }
@@ -137,9 +137,11 @@ table {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.5);
     }
+
     100% {
         transform: scale(1);
     }
@@ -154,9 +156,11 @@ table {
     0% {
         transform: rotate(0);
     }
+
     50% {
         transform: rotate(0.5turn);
     }
+
     100% {
         transform: rotate(0);
     }

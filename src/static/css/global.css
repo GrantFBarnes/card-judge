@@ -171,10 +171,7 @@ summary {
 
 #content {
     margin: var(--content-margin);
-    height: calc(
-            100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) -
-            var(--top-bar-height)
-    );
+    height: calc(100% - (2 * var(--content-margin)) - (2 * var(--top-bar-padding)) - var(--top-bar-height));
 }
 
 #body {
