@@ -1,5 +1,7 @@
 # Card Judge
 
+Version: 0.0.1
+
 ## Environment Variables
 
 ```
