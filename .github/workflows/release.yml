@@ -17,4 +17,10 @@ jobs:
 
       - name: Build
         working-directory: ./src
-        run: go build -v
+        run: go build -o card-judge
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: card-judge
+          path: ./src/card-judge
