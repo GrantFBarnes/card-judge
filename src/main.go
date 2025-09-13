@@ -54,6 +54,7 @@ func main() {
 		"sql/tables/HAND.sql",
 		"sql/tables/RESPONSE.sql",
 		"sql/tables/RESPONSE_CARD.sql",
+		"sql/tables/REVIEW_CARD.sql",
 		"sql/tables/WIN.sql",
 		"sql/tables/KICK.sql",
 		"sql/tables/USER_ACCESS_DECK.sql",
