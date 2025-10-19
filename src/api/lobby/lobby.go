@@ -848,12 +848,21 @@ func BlockResponse(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	targetPlayer, err := database.GetPlayer(targetPlayerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
 	err = database.BlockResponse(player.Id, targetPlayerId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
+
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Blocked <green>"+targetPlayer.Name+"</> from responding.")
 
 	websocket.PlayerBroadcast(targetPlayerId, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
