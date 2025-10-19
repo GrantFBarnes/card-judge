@@ -119,6 +119,28 @@
                 ></span>
             </td>
         </tr>
+        <tr>
+            <td>
+                <button
+                    hx-post="/api/lobby/{{$.LobbyId}}/reset-responses"
+                    hx-confirm="Are you sure you want to reset responses?"
+                    {{$opponentCount := len .Opponents}}
+                    {{if gt $opponentCount 0}}
+                    class="disabled non-clickable"
+                    disabled
+                    {{end}}
+                >
+                    Reset Responses
+                </button>
+            </td>
+            <td></td>
+            <td>
+                <span
+                    class="bi bi-info-circle"
+                    title="Reset player responses back to default."
+                ></span>
+            </td>
+        </tr>
         {{else}}
         <tr>
             <td>

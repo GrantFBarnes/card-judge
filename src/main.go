@@ -92,6 +92,7 @@ func main() {
 		"sql/procedures/SP_PICK_RANDOM_WINNER.sql",
 		"sql/procedures/SP_PICK_WINNER.sql",
 		"sql/procedures/SP_PURCHASE_CREDITS.sql",
+		"sql/procedures/SP_RESET_RESPONSES.sql",
 		"sql/procedures/SP_RESPOND_WITH_CARD.sql",
 		"sql/procedures/SP_RESPOND_WITH_FIND_CARD.sql",
 		"sql/procedures/SP_RESPOND_WITH_STEAL_CARD.sql",
@@ -209,6 +210,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/{cardId}/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/purchase-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PurchaseCredits)))
 	http.Handle("POST /api/lobby/{lobbyId}/skip-judge", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SkipJudge)))
+	http.Handle("POST /api/lobby/{lobbyId}/reset-responses", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.ResetResponses)))
 	http.Handle("POST /api/lobby/{lobbyId}/alert", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.AlertLobby)))
 	http.Handle("POST /api/lobby/{lobbyId}/gamble-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GambleCredits)))
 	http.Handle("POST /api/lobby/{lobbyId}/bet-on-win", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.BetOnWin)))
