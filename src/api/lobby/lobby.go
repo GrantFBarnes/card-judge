@@ -512,6 +512,35 @@ func SkipJudge(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func ResetResponses(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.ResetResponses(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Reset responses.")
+
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+	w.WriteHeader(http.StatusOK)
+}
+
 func AlertLobby(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
@@ -778,6 +807,8 @@ func AddExtraResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Purchased an extra response.")
+
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
@@ -807,7 +838,66 @@ func AddExtraResponseUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Undid purchase of an extra response.")
+
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
+	w.WriteHeader(http.StatusOK)
+}
+
+func BlockResponse(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var targetPlayerId uuid.UUID
+	for key, val := range r.Form {
+		if key == "targetPlayerId" {
+			targetPlayerId, err = uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse target player id."))
+				return
+			}
+		}
+	}
+
+	targetPlayer, err := database.GetPlayer(targetPlayerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.BlockResponse(player.Id, targetPlayerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Blocked <green>"+targetPlayer.Name+"</> from responding.")
+
+	websocket.PlayerBroadcast(targetPlayerId, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
