@@ -807,6 +807,8 @@ func AddExtraResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Purchased an extra response.")
+
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
@@ -835,6 +837,8 @@ func AddExtraResponseUndo(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
+
+	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Undid purchase of an extra response.")
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
