@@ -813,6 +813,54 @@ func AddExtraResponseUndo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func BlockResponse(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var targetPlayerId uuid.UUID
+	for key, val := range r.Form {
+		if key == "targetPlayerId" {
+			targetPlayerId, err = uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse target player id."))
+				return
+			}
+		}
+	}
+
+	err = database.BlockResponse(player.Id, targetPlayerId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(targetPlayerId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
+	w.WriteHeader(http.StatusOK)
+}
+
 func PlayStealCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
