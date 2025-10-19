@@ -84,6 +84,7 @@ func main() {
 		"sql/procedures/SP_ALERT_LOBBY.sql",
 		"sql/procedures/SP_BET_ON_WIN.sql",
 		"sql/procedures/SP_BET_ON_WIN_UNDO.sql",
+		"sql/procedures/SP_BLOCK_RESPONSE.sql",
 		"sql/procedures/SP_DISCARD_CARD.sql",
 		"sql/procedures/SP_DRAW_HAND.sql",
 		"sql/procedures/SP_GAMBLE_CREDITS.sql",
