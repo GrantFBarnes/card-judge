@@ -664,11 +664,17 @@ func GambleCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.GambleCredits(player.Id, credits)
+	gambleWon, err := database.GambleCredits(player.Id, credits)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
+	}
+
+	if gambleWon {
+		websocket.PlayerBroadcast(player.Id, "Congratulations, you <green>won</> your gamble!")
+	} else {
+		websocket.PlayerBroadcast(player.Id, "Sorry, you <red>lost</> your gamble...")
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
