@@ -26,6 +26,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	var categorySearch string
 	var textSearch string
 	var pageNumber int
+	var pageSize int
 	for key, val := range r.Form {
 		if key == "deckId" {
 			deckId, err = uuid.Parse(val[0])
@@ -45,12 +46,17 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				_, _ = w.Write([]byte("Failed to parse page."))
 				return
 			}
+		} else if key == "pageSize" {
+			pageSize, err = strconv.Atoi(val[0])
+			if err != nil {
+				pageSize = 10 // default
+			}
 		}
 	}
 
 	textSearch = "%" + textSearch + "%"
 
-	cards, err := database.SearchCardsInDeck(deckId, categorySearch, textSearch, pageNumber)
+	cards, err := database.SearchCardsInDeck(deckId, categorySearch, textSearch, pageNumber, pageSize)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

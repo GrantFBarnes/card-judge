@@ -27,7 +27,7 @@ type LobbyCard struct {
 	Card
 }
 
-func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
+func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int, pageSize int) ([]Card, error) {
 	if categorySearch == "" {
 		categorySearch = "%"
 	}
@@ -36,7 +36,11 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 		textSearch = "%"
 	}
 
-	pageSize := 10
+	if pageSize < 1 {
+		pageSize = 10
+	} else if pageSize > 50 {
+		pageSize = 50
+	}
 
 	if pageNumber < 1 {
 		pageNumber = 1
