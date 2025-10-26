@@ -18,13 +18,13 @@
         </button>
         <span
             title="Export Deck to CSV"
-            class="bi bi-download clickable"
+            class="clickable"
             hx-get="/api/deck/{{.Deck.Id}}/card-export"
             hx-target="#deck-card-export-content"
             hx-confirm="Are you sure you want to export deck cards to a CSV file?"
             style="padding: 10px 15px; cursor: pointer; border: 2px solid; border-radius: 4px;"
         >
-            <span class="bi-download"></span> Export
+            <span class="bi bi-download"></span> Export
             <span
                 id="deck-card-export-content"
                 style="display: none"
