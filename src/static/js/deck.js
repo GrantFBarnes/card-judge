@@ -14,9 +14,6 @@ function downloadCSV(fileName, content) {
     document.body.removeChild(element);
 }
 
-// Pagination functions - HTMX-first approach
-// Server handles ALL state, JavaScript just updates hidden form inputs and triggers submission
-
 function goToPage(pageNum) {
 	const pageSearchEl = document.getElementById('pageSearch');
 	if (pageSearchEl) {
