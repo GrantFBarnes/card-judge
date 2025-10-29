@@ -1,6 +1,6 @@
 {{define "body"}}
 <script src="/static/js/deck.js"></script>
-<div style="display: grid; grid-auto-flow: column; margin-bottom: 20px;">
+<div class="deck-header">
     <h2>
         {{.Deck.Name}}
         <span
@@ -9,25 +9,24 @@
             onclick="document.getElementById('deck-update-dialog').showModal()"
         ></span>
     </h2>
-    <div style="text-align: right; display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
+    <div class="deck-header-actions">
         <button 
             onclick="document.getElementById('card-create-dialog').showModal()"
-            style="padding: 10px 20px; font-size: 16px; font-weight: bold;"
+            class="deck-create-button"
         >
             <span class="bi bi-plus-circle"></span> Create Card
         </button>
         <span
             title="Export Deck to CSV"
-            class="clickable"
+            class="clickable deck-export-button"
             hx-get="/api/deck/{{.Deck.Id}}/card-export"
             hx-target="#deck-card-export-content"
             hx-confirm="Are you sure you want to export deck cards to a CSV file?"
-            style="padding: 10px 15px; cursor: pointer; border: 2px solid; border-radius: 4px;"
         >
             <span class="bi bi-download"></span> Export
             <span
                 id="deck-card-export-content"
-                style="display: none"
+                class="hidden"
             ></span>
         </span>
     </div>
@@ -42,10 +41,9 @@
         hx-target="#card-table-rows"
     >
         <input
-            type="text"
+            type="hidden"
             name="deckId"
             value="{{.Deck.Id}}"
-            hidden
         />
         <div class="search-form-group">
             <label for="categorySearch">Category:</label>
@@ -78,7 +76,7 @@
             type="hidden"
             id="pageSearch"
             name="page"
-            value="1"
+            value="{{.CurrentPage}}"
         />
         <input
             type="hidden"
@@ -108,7 +106,7 @@
         </button>
         
         <span class="pagination-info">
-            Page <span id="currentPage">1</span>
+            Page <span id="currentPage">{{.CurrentPage}}</span> of <span id="totalPages">{{.TotalPages}}</span>
         </span>
         
         <button
@@ -120,8 +118,9 @@
         </button>
         <button
             type="button"
-            onclick="goToPage(100)"
-            title="Last Page (100)"
+            id="lastPageButton"
+            onclick="goToPage({{.TotalPages}})"
+            title="Last Page ({{.TotalPages}})"
         >
             Last <span class="bi bi-chevron-bar-right"></span>
         </button>
@@ -133,9 +132,8 @@
             type="number"
             id="pageJump"
             min="1"
-            max="100"
-            value="1"
-            style="width: 70px;"
+            max="{{.TotalPages}}"
+            value="{{.CurrentPage}}"
             onkeypress="if(event.key === 'Enter') { goToPage(parseInt(this.value)); }"
         />
         <button
@@ -144,20 +142,6 @@
         >
             Go
         </button>
-        
-        <div class="pagination-divider"></div>
-        
-        <span class="pagination-label">Items per page:</span>
-        <select
-            id="pageSizeSelect"
-            onchange="changePageSize(parseInt(this.value))"
-            style="width: 70px;"
-        >
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-        </select>
     </div>
 </div>
 
@@ -179,26 +163,26 @@
 
 <br />
 
-<details style="margin-top: 30px; border: 2px solid #dc3545; border-radius: 8px; padding: 15px; background-color: #fff5f5;">
-    <summary style="color: #dc3545; font-weight: bold; cursor: pointer; font-size: 16px;">
+<details class="danger-zone">
+    <summary class="danger-zone-summary">
         <span class="bi bi-exclamation-triangle-fill"></span>
         Danger Zone
     </summary>
     <br />
-    <p style="color: #721c24; margin-bottom: 15px;">
+    <p class="danger-zone-text">
         Warning: This action cannot be undone. Deleting this deck will permanently remove all associated cards.
     </p>
     <button
         hx-delete="/api/deck/{{.Deck.Id}}"
         hx-confirm="Are you sure you want to delete this deck?"
-        style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; font-weight: bold;"
+        class="danger-zone-button"
     >
         <span class="bi bi-trash"></span>
         Delete Deck
     </button>
 </details>
 <dialog id="deck-update-dialog">
-    <div style="display: grid; grid-auto-flow: column">
+    <div class="dialog-header-grid">
         <div>
             <h3>Edit Deck</h3>
         </div>

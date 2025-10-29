@@ -14,102 +14,30 @@ function downloadCSV(fileName, content) {
     document.body.removeChild(element);
 }
 
-// Pagination functions
-let currentPageNumber = 1;
-let currentPageSize = 10;
-
-function updatePageDisplay() {
-    const currentPageEl = document.getElementById('currentPage');
-    const pageJumpEl = document.getElementById('pageJump');
-    const pageSizeSelectEl = document.getElementById('pageSizeSelect');
-    
-    if (currentPageEl) currentPageEl.textContent = currentPageNumber;
-    if (pageJumpEl) pageJumpEl.value = currentPageNumber;
-    if (pageSizeSelectEl) pageSizeSelectEl.value = currentPageSize;
-}
+// Pagination functions - HTMX-first approach
+// Server handles ALL state, JavaScript just updates hidden form inputs and triggers submission
 
 function goToPage(pageNum) {
-    if (pageNum < 1) pageNum = 1;
-    if (pageNum > 100) pageNum = 100;
-    
-    currentPageNumber = pageNum;
-    const pageSearchEl = document.getElementById('pageSearch');
-    const pageSizeSearchEl = document.getElementById('pageSizeSearch');
-    
-    if (pageSearchEl) {
-        pageSearchEl.value = currentPageNumber;
-    }
-    if (pageSizeSearchEl) {
-        pageSizeSearchEl.value = currentPageSize;
-    }
-    
-    updatePageDisplay();
-    
-    // Trigger the htmx form submission
-    const formEl = document.getElementById('card-search-form');
-    if (formEl) {
-        htmx.trigger(formEl, 'submit');
-    }
+	const pageSearchEl = document.getElementById('pageSearch');
+	if (pageSearchEl) {
+		pageSearchEl.value = pageNum;
+		htmx.trigger('#card-search-form', 'submit');
+	}
 }
 
 function nextPage() {
-    goToPage(currentPageNumber + 1);
+	const pageJumpEl = document.getElementById('pageJump');
+	if (pageJumpEl) {
+		const currentPage = parseInt(pageJumpEl.value) || 1;
+		const maxPage = parseInt(pageJumpEl.max) || 1;
+		goToPage(Math.min(currentPage + 1, maxPage));
+	}
 }
 
 function previousPage() {
-    goToPage(currentPageNumber - 1);
+	const pageJumpEl = document.getElementById('pageJump');
+	if (pageJumpEl) {
+		const currentPage = parseInt(pageJumpEl.value) || 1;
+		goToPage(Math.max(currentPage - 1, 1));
+	}
 }
-
-function changePageSize(newSize) {
-    if (newSize < 1) newSize = 10;
-    if (newSize > 50) newSize = 50;
-    
-    currentPageSize = newSize;
-    currentPageNumber = 1; // Reset to first page when changing page size
-    
-    const pageSearchEl = document.getElementById('pageSearch');
-    const pageSizeSearchEl = document.getElementById('pageSizeSearch');
-    
-    if (pageSearchEl) {
-        pageSearchEl.value = 1;
-    }
-    if (pageSizeSearchEl) {
-        pageSizeSearchEl.value = currentPageSize;
-    }
-    
-    updatePageDisplay();
-    
-    // Trigger the htmx form submission
-    const formEl = document.getElementById('card-search-form');
-    if (formEl) {
-        htmx.trigger(formEl, 'submit');
-    }
-}
-
-// Reset to page 1 when search criteria changes
-document.addEventListener('DOMContentLoaded', function() {
-    const categorySearch = document.getElementById('categorySearch');
-    const textSearch = document.getElementById('textSearch');
-    
-    if (categorySearch) {
-        categorySearch.addEventListener('change', function() {
-            currentPageNumber = 1;
-            const pageSearchEl = document.getElementById('pageSearch');
-            if (pageSearchEl) pageSearchEl.value = 1;
-            updatePageDisplay();
-        });
-    }
-    
-    if (textSearch) {
-        let searchTimeout;
-        textSearch.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(function() {
-                currentPageNumber = 1;
-                const pageSearchEl = document.getElementById('pageSearch');
-                if (pageSearchEl) pageSearchEl.value = 1;
-                updatePageDisplay();
-            }, 500);
-        });
-    }
-});

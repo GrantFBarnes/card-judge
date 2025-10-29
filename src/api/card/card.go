@@ -56,6 +56,28 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	textSearch = "%" + textSearch + "%"
 
+	// Page size is fixed at 10 for performance (modals/layered HTML)
+	pageSize = 10
+
+	// Get total count for pagination
+	totalCount, err := database.CountCardsInDeck(deckId, categorySearch, textSearch)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	// Calculate total pages
+	totalPages := (totalCount + pageSize - 1) / pageSize // Ceiling division
+	if totalPages < 1 {
+		totalPages = 1
+	}
+
+	// Ensure page number is within bounds
+	if pageNumber > totalPages {
+		pageNumber = totalPages
+	}
+
 	cards, err := database.SearchCardsInDeck(deckId, categorySearch, textSearch, pageNumber, pageSize)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -74,6 +96,28 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "card-table-rows", cards)
+
+	// Write OOB swaps for pagination state
+	_, _ = w.Write([]byte(`<span id="currentPage" hx-swap-oob="true">`))
+	_, _ = w.Write([]byte(strconv.Itoa(pageNumber)))
+	_, _ = w.Write([]byte(`</span>`))
+
+	_, _ = w.Write([]byte(`<span id="totalPages" hx-swap-oob="true">`))
+	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
+	_, _ = w.Write([]byte(`</span>`))
+
+	_, _ = w.Write([]byte(`<input type="number" id="pageJump" min="1" max="`))
+	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
+	_, _ = w.Write([]byte(`" value="`))
+	_, _ = w.Write([]byte(strconv.Itoa(pageNumber)))
+	_, _ = w.Write([]byte(`" hx-swap-oob="outerHTML" onkeypress="if(event.key === 'Enter') { goToPage(parseInt(this.value)); }" />`))
+
+	// Update Last Page button
+	_, _ = w.Write([]byte(`<button type="button" id="lastPageButton" onclick="goToPage(`))
+	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
+	_, _ = w.Write([]byte(`)" title="Last Page (`))
+	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
+	_, _ = w.Write([]byte(`)" hx-swap-oob="outerHTML">Last <span class="bi bi-chevron-bar-right"></span></button>`))
 }
 
 func Find(w http.ResponseWriter, r *http.Request) {
