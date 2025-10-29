@@ -367,12 +367,12 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		TotalPages  int
 	}
 
-	// Calculate initial total pages (pageSize fixed at 10)
+	// Calculate initial total pages using CardsPageSize constant
 	totalCount, err := database.CountCardsInDeck(deckId, "%", "%")
 	if err != nil {
 		totalCount = 0
 	}
-	totalPages := (totalCount + 10 - 1) / 10
+	totalPages := (totalCount + database.CardsPageSize - 1) / database.CardsPageSize
 	if totalPages < 1 {
 		totalPages = 1
 	}
