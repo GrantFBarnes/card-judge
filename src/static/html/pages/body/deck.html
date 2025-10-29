@@ -10,7 +10,7 @@
         ></span>
     </h2>
     <div class="deck-header-actions">
-        <button 
+        <button
             onclick="document.getElementById('card-create-dialog').showModal()"
             class="deck-create-button"
         >
@@ -104,11 +104,11 @@
         >
             <span class="bi bi-chevron-left"></span> Previous
         </button>
-        
+
         <span class="pagination-info">
             Page <span id="currentPage">{{.CurrentPage}}</span> of <span id="totalPages">{{.TotalPages}}</span>
         </span>
-        
+
         <button
             type="button"
             onclick="nextPage()"
@@ -124,9 +124,9 @@
         >
             Last <span class="bi bi-chevron-bar-right"></span>
         </button>
-        
+
         <div class="pagination-divider"></div>
-        
+
         <span class="pagination-label">Jump to:</span>
         <input
             type="number"
