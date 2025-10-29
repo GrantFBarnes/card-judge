@@ -39,6 +39,11 @@ table {
     overflow: auto;
 }
 
+th,
+td {
+    padding: 5px;
+}
+
 tbody tr {
     transition: background-color 0.2s ease;
 }
@@ -167,12 +172,12 @@ summary {
 }
 
 #top-bar-menu div:first-child {
-    border-top: 2px dashed var(--border-subtle);
+    border-top: 2px dashed black;
 }
 
 #top-bar-menu div {
-    border-bottom: 2px solid var(--border-subtle);
-    border-left: 2px solid var(--border-subtle);
+    border-bottom: 2px solid black;
+    border-left: 2px solid black;
     padding: 10px;
 }
 
