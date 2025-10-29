@@ -1,5 +1,9 @@
 {{define "body"}}
 <script src="/static/js/deck.js"></script>
+<link
+    rel="stylesheet"
+    href="/static/css/deck.css"
+/>
 <div class="deck-header">
     <h2>
         {{.Deck.Name}}
@@ -26,7 +30,7 @@
             <span class="bi bi-download"></span> Export
             <span
                 id="deck-card-export-content"
-                class="hidden"
+                style="display: none"
             ></span>
         </span>
     </div>
