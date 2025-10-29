@@ -348,16 +348,5 @@ summary {
 
 .danger-zone-summary {
     font-weight: bold;
-    cursor: pointer;
     font-size: 16px;
-}
-
-.danger-zone-text {
-    margin-bottom: 15px;
-}
-
-.danger-zone-button {
-    border: none;
-    padding: 10px 20px;
-    font-weight: bold;
 }
