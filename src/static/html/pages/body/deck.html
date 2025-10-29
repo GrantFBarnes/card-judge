@@ -1,6 +1,6 @@
 {{define "body"}}
 <script src="/static/js/deck.js"></script>
-<div style="display: grid; grid-auto-flow: column">
+<div class="deck-header">
     <h2>
         {{.Deck.Name}}
         <span
@@ -9,81 +9,144 @@
             onclick="document.getElementById('deck-update-dialog').showModal()"
         ></span>
     </h2>
-    <div style="text-align: right;">
+    <div class="deck-header-actions">
+        <button 
+            onclick="document.getElementById('card-create-dialog').showModal()"
+            class="deck-create-button"
+        >
+            <span class="bi bi-plus-circle"></span> Create Card
+        </button>
         <span
             title="Export Deck to CSV"
-            class="bi bi-download clickable"
+            class="clickable deck-export-button"
             hx-get="/api/deck/{{.Deck.Id}}/card-export"
             hx-target="#deck-card-export-content"
             hx-confirm="Are you sure you want to export deck cards to a CSV file?"
         >
-            Export
+            <span class="bi bi-download"></span> Export
             <span
                 id="deck-card-export-content"
-                style="display: none"
+                class="hidden"
             ></span>
         </span>
     </div>
 </div>
+
+<!-- Search Form -->
+<div class="search-form-container">
+    <form
+        id="card-search-form"
+        hx-post="/api/card/search"
+        hx-trigger="load, submit, change from:#categorySearch delay:500ms, input from:#textSearch delay:500ms"
+        hx-target="#card-table-rows"
+    >
+        <input
+            type="hidden"
+            name="deckId"
+            value="{{.Deck.Id}}"
+        />
+        <div class="search-form-group">
+            <label for="categorySearch">Category:</label>
+            <select
+                id="categorySearch"
+                name="category"
+                autocomplete="off"
+                required
+            >
+                <option
+                    value="%"
+                    selected
+                >Any</option>
+                <option value="PROMPT">Prompt</option>
+                <option value="RESPONSE">Response</option>
+            </select>
+        </div>
+        <div class="search-form-group search-form-group-flex">
+            <label for="textSearch">Search:</label>
+            <input
+                type="search"
+                id="textSearch"
+                name="text"
+                maxlength="510"
+                placeholder="Search card text..."
+                autocomplete="off"
+            />
+        </div>
+        <input
+            type="hidden"
+            id="pageSearch"
+            name="page"
+            value="{{.CurrentPage}}"
+        />
+        <input
+            type="hidden"
+            id="pageSizeSearch"
+            name="pageSize"
+            value="10"
+        />
+    </form>
+</div>
+
+<!-- Pagination Ribbon -->
+<div class="pagination-ribbon">
+    <div class="pagination-controls">
+        <button
+            type="button"
+            onclick="goToPage(1)"
+            title="First Page"
+        >
+            <span class="bi bi-chevron-bar-left"></span> First
+        </button>
+        <button
+            type="button"
+            onclick="previousPage()"
+            title="Previous Page"
+        >
+            <span class="bi bi-chevron-left"></span> Previous
+        </button>
+        
+        <span class="pagination-info">
+            Page <span id="currentPage">{{.CurrentPage}}</span> of <span id="totalPages">{{.TotalPages}}</span>
+        </span>
+        
+        <button
+            type="button"
+            onclick="nextPage()"
+            title="Next Page"
+        >
+            Next <span class="bi bi-chevron-right"></span>
+        </button>
+        <button
+            type="button"
+            id="lastPageButton"
+            onclick="goToPage({{.TotalPages}})"
+            title="Last Page ({{.TotalPages}})"
+        >
+            Last <span class="bi bi-chevron-bar-right"></span>
+        </button>
+        
+        <div class="pagination-divider"></div>
+        
+        <span class="pagination-label">Jump to:</span>
+        <input
+            type="number"
+            id="pageJump"
+            min="1"
+            max="{{.TotalPages}}"
+            value="{{.CurrentPage}}"
+            onkeypress="if(event.key === 'Enter') { goToPage(parseInt(this.value)); }"
+        />
+        <button
+            type="button"
+            onclick="goToPage(parseInt(document.getElementById('pageJump').value))"
+        >
+            Go
+        </button>
+    </div>
+</div>
+
 <table>
     <thead>
-        <tr>
-            <th colspan="2">
-                <button onclick="document.getElementById('card-create-dialog').showModal()">
-                    Create Card
-                </button>
-            </th>
-            <th
-                colspan="6"
-                style="text-align: left;"
-            >
-                <form
-                    hx-post="/api/card/search"
-                    hx-trigger="load, input change delay:500ms"
-                    hx-target="#card-table-rows"
-                >
-                    <input
-                        type="text"
-                        name="deckId"
-                        value="{{.Deck.Id}}"
-                        hidden
-                    />
-                    <label for="categorySearch">Category:</label>
-                    <select
-                        id="categorySearch"
-                        name="category"
-                        autocomplete="off"
-                        required
-                    >
-                        <option
-                            value="%"
-                            selected
-                        >Any</option>
-                        <option value="PROMPT">Prompt</option>
-                        <option value="RESPONSE">Response</option>
-                    </select>
-                    <label for="textSearch">Text:</label>
-                    <input
-                        type="search"
-                        id="textSearch"
-                        name="text"
-                        maxlength="510"
-                        placeholder="Search..."
-                        autocomplete="off"
-                    />
-                    <label for="pageSearch">Page:</label>
-                    <input
-                        type="number"
-                        id="pageSearch"
-                        name="page"
-                        min="1"
-                        max="100"
-                        value="1"
-                        required="required"
-                    />
-                </form>
-            </th>
-        </tr>
         <tr>
             <th>Created</th>
             <th>Changed</th>
@@ -97,28 +160,29 @@
     </thead>
     <tbody id="card-table-rows"></tbody>
 </table>
+
 <br />
-<br />
-<details>
-    <summary>
-        <span class="bi bi-radioactive">
-            Danger Zone
-        </span>
+
+<details class="danger-zone">
+    <summary class="danger-zone-summary">
+        <span class="bi bi-exclamation-triangle-fill"></span>
+        Danger Zone
     </summary>
     <br />
+    <p class="danger-zone-text">
+        Warning: This action cannot be undone. Deleting this deck will permanently remove all associated cards.
+    </p>
     <button
         hx-delete="/api/deck/{{.Deck.Id}}"
         hx-confirm="Are you sure you want to delete this deck?"
+        class="danger-zone-button"
     >
-        <span class="bi bi-trash">
-            Delete Deck
-        </span>
+        <span class="bi bi-trash"></span>
+        Delete Deck
     </button>
 </details>
-<br />
-<br />
 <dialog id="deck-update-dialog">
-    <div style="display: grid; grid-auto-flow: column">
+    <div class="dialog-header-grid">
         <div>
             <h3>Edit Deck</h3>
         </div>

@@ -148,13 +148,21 @@
     </form>
 </details>
 <br />
-<details>
-    <summary><span class="bi bi-radioactive">&nbsp;Danger Zone</span></summary>
+<details class="danger-zone">
+    <summary class="danger-zone-summary">
+        <span class="bi bi-exclamation-triangle-fill"></span>
+        Danger Zone
+    </summary>
     <br />
+    <p class="danger-zone-text">
+        Warning: This action cannot be undone. Deleting your account will permanently remove all your data.
+    </p>
     <button
         hx-delete="/api/user/{{.User.Id}}"
         hx-confirm="Are you sure you want to delete your user account?"
+        class="danger-zone-button"
     >
+        <span class="bi bi-trash"></span>
         Delete User Account
     </button>
 </details>

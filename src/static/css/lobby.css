@@ -24,7 +24,7 @@
     min-height: 400px;
     display: grid;
     grid-template-columns: 400px auto 200px;
-    grid-template-rows: 80px auto;
+    grid-template-rows: 110px auto;
     grid-template-areas:
         "info info info"
         "player board stats";

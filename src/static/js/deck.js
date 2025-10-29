@@ -13,3 +13,28 @@ function downloadCSV(fileName, content) {
     element.click();
     document.body.removeChild(element);
 }
+
+function goToPage(pageNum) {
+	const pageSearchEl = document.getElementById('pageSearch');
+	if (pageSearchEl) {
+		pageSearchEl.value = pageNum;
+		htmx.trigger('#card-search-form', 'submit');
+	}
+}
+
+function nextPage() {
+	const pageJumpEl = document.getElementById('pageJump');
+	if (pageJumpEl) {
+		const currentPage = parseInt(pageJumpEl.value) || 1;
+		const maxPage = parseInt(pageJumpEl.max) || 1;
+		goToPage(Math.min(currentPage + 1, maxPage));
+	}
+}
+
+function previousPage() {
+	const pageJumpEl = document.getElementById('pageJump');
+	if (pageJumpEl) {
+		const currentPage = parseInt(pageJumpEl.value) || 1;
+		goToPage(Math.max(currentPage - 1, 1));
+	}
+}

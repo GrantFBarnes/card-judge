@@ -27,6 +27,10 @@ type LobbyCard struct {
 	Card
 }
 
+// CardsPageSize is the fixed page size for card pagination
+// Set to 10 for performance (modals/layered HTML cause browser lag with larger pages)
+const CardsPageSize = 10
+
 func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
 	if categorySearch == "" {
 		categorySearch = "%"
@@ -36,12 +40,8 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 		textSearch = "%"
 	}
 
-	pageSize := 10
-
 	if pageNumber < 1 {
 		pageNumber = 1
-	} else if pageNumber > 100 {
-		pageNumber = 100
 	}
 
 	sqlString := `
@@ -62,7 +62,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			C.TEXT ASC
 		LIMIT ? OFFSET ?
 	`
-	rows, err := query(sqlString, deckId, categorySearch, textSearch, pageSize, (pageNumber-1)*pageSize)
+	rows, err := query(sqlString, deckId, categorySearch, textSearch, CardsPageSize, (pageNumber-1)*CardsPageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +93,39 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 		result = append(result, card)
 	}
 	return result, nil
+}
+
+func CountCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string) (int, error) {
+	if categorySearch == "" {
+		categorySearch = "%"
+	}
+
+	if textSearch == "" {
+		textSearch = "%"
+	}
+
+	sqlString := `
+		SELECT COUNT(*)
+		FROM CARD AS C
+		WHERE C.DECK_ID = ?
+			AND C.CATEGORY LIKE ?
+			AND C.TEXT LIKE ?
+	`
+	rows, err := query(sqlString, deckId, categorySearch, textSearch)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var count int
+	if rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			log.Println(err)
+			return 0, errors.New("failed to scan count")
+		}
+	}
+
+	return count, nil
 }
 
 func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error) {
