@@ -27,19 +27,17 @@ type LobbyCard struct {
 	Card
 }
 
-func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int, pageSize int) ([]Card, error) {
+// CardsPageSize is the fixed page size for card pagination
+// Set to 10 for performance (modals/layered HTML cause browser lag with larger pages)
+const CardsPageSize = 10
+
+func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
 	if categorySearch == "" {
 		categorySearch = "%"
 	}
 
 	if textSearch == "" {
 		textSearch = "%"
-	}
-
-	if pageSize < 1 {
-		pageSize = 10
-	} else if pageSize > 50 {
-		pageSize = 50
 	}
 
 	if pageNumber < 1 {
@@ -64,7 +62,7 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			C.TEXT ASC
 		LIMIT ? OFFSET ?
 	`
-	rows, err := query(sqlString, deckId, categorySearch, textSearch, pageSize, (pageNumber-1)*pageSize)
+	rows, err := query(sqlString, deckId, categorySearch, textSearch, CardsPageSize, (pageNumber-1)*CardsPageSize)
 	if err != nil {
 		return nil, err
 	}
