@@ -118,10 +118,10 @@ func CountCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string
 	defer rows.Close()
 
 	var count int
-	if rows.Next() {
+	for rows.Next() {
 		if err := rows.Scan(&count); err != nil {
 			log.Println(err)
-			return 0, errors.New("failed to scan count")
+			return count, errors.New("failed to scan row in query results")
 		}
 	}
 
