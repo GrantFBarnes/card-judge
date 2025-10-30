@@ -44,6 +44,10 @@ td {
     padding: 5px;
 }
 
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
 dialog {
     max-width: 80vw;
     max-height: 80vh;
@@ -134,6 +138,18 @@ summary {
 .close-button {
     cursor: pointer;
     float: right;
+}
+
+.danger-zone {
+    margin-top: 30px;
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.danger-zone-summary {
+    font-weight: bold;
+    font-size: 16px;
 }
 
 #top-bar {

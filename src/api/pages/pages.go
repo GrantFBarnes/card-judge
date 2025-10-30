@@ -362,12 +362,26 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		Deck database.Deck
+		Deck        database.Deck
+		CurrentPage int
+		TotalPages  int
+	}
+
+	// Calculate initial total pages using CardsPageSize constant
+	totalCount, err := database.CountCardsInDeck(deckId, "%", "%")
+	if err != nil {
+		totalCount = 0
+	}
+	totalPages := (totalCount + database.CardsPageSize - 1) / database.CardsPageSize
+	if totalPages < 1 {
+		totalPages = 1
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Deck:         deck,
+		CurrentPage:  1,
+		TotalPages:   totalPages,
 	})
 }
 
