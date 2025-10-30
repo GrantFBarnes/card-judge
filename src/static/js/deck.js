@@ -14,11 +14,13 @@ function downloadCSV(fileName, content) {
 	document.body.removeChild(element);
 }
 
-function goToPage(pageNum) {
+function goToPage(pageNumber) {
 	const pageSearchElement = document.getElementById("pageSearch");
 	if (pageSearchElement) {
-		pageSearchElement.value = pageNum;
-		htmx.trigger("#card-search-form", "submit");
+		if (pageSearchElement.value != pageNumber) {
+			pageSearchElement.value = pageNumber;
+			htmx.trigger("#card-search-form", "submit");
+		}
 	}
 }
 
