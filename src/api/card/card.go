@@ -89,14 +89,19 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	_ = tmpl.ExecuteTemplate(w, "card-table-rows", cards)
 
 	// Write OOB swaps for pagination state
+	_, _ = w.Write([]byte(`<input type="number" id="pageSearch" name="page" min="1" max="`))
+	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
+	_, _ = w.Write([]byte(`" value="`))
+	_, _ = w.Write([]byte(strconv.Itoa(pageNumber)))
+	_, _ = w.Write([]byte(`" hx-swap-oob="true" />`))
+
 	_, _ = w.Write([]byte(`<span id="totalPages" hx-swap-oob="true">`))
 	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
 	_, _ = w.Write([]byte(`</span>`))
 
-	// Update Last Page button
 	_, _ = w.Write([]byte(`<button type="button" id="lastPageButton" onclick="goToPage(`))
 	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
-	_, _ = w.Write([]byte(`)" hx-swap-oob="outerHTML">Last <span class="bi bi-chevron-bar-right"></span></button>`))
+	_, _ = w.Write([]byte(`)" hx-swap-oob="true"><span class="bi bi-chevron-bar-right"></span></button>`))
 }
 
 func Find(w http.ResponseWriter, r *http.Request) {

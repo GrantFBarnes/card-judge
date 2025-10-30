@@ -27,7 +27,7 @@
     <form
         id="card-search-form"
         hx-post="/api/card/search"
-        hx-trigger="load, submit, change from:#categorySearch delay:500ms, input from:#textSearch delay:500ms, change from:#pageSearch delay:500ms"
+        hx-trigger="load, submit, input change delay:500ms"
         hx-target="#card-table-rows"
     >
         <input
@@ -63,13 +63,13 @@
             type="button"
             onclick="goToPage(1)"
         >
-            <span class="bi bi-chevron-bar-left"></span> First
+            <span class="bi bi-chevron-bar-left"></span>
         </button>
         <button
             type="button"
             onclick="previousPage()"
         >
-            <span class="bi bi-chevron-left"></span> Previous
+            <span class="bi bi-chevron-left"></span>
         </button>
 
         <span>
@@ -80,21 +80,26 @@
                 min="1"
                 max="{{.TotalPages}}"
                 value="{{.CurrentPage}}"
-            /> of <span id="totalPages">{{.TotalPages}}</span>
+                hx-swap-oob="true"
+            /> of <span
+                id="totalPages"
+                hx-swap-oob="true"
+            >{{.TotalPages}}</span>
         </span>
 
         <button
             type="button"
             onclick="nextPage()"
         >
-            Next <span class="bi bi-chevron-right"></span>
+            <span class="bi bi-chevron-right"></span>
         </button>
         <button
             type="button"
             id="lastPageButton"
             onclick="goToPage({{.TotalPages}})"
+            hx-swap-oob="true"
         >
-            Last <span class="bi bi-chevron-bar-right"></span>
+            <span class="bi bi-chevron-bar-right"></span>
         </button>
     </form>
 </div>
