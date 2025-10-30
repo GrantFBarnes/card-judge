@@ -15,26 +15,26 @@ function downloadCSV(fileName, content) {
 }
 
 function goToPage(pageNum) {
-	const pageSearchEl = document.getElementById('pageSearch');
-	if (pageSearchEl) {
-		pageSearchEl.value = pageNum;
-		htmx.trigger('#card-search-form', 'submit');
-	}
-}
-
-function nextPage() {
-	const pageJumpEl = document.getElementById('pageJump');
-	if (pageJumpEl) {
-		const currentPage = parseInt(pageJumpEl.value) || 1;
-		const maxPage = parseInt(pageJumpEl.max) || 1;
-		goToPage(Math.min(currentPage + 1, maxPage));
+	const pageSearchElement = document.getElementById("pageSearch");
+	if (pageSearchElement) {
+		pageSearchElement.value = pageNum;
+		htmx.trigger("#card-search-form", "submit");
 	}
 }
 
 function previousPage() {
-	const pageJumpEl = document.getElementById('pageJump');
-	if (pageJumpEl) {
-		const currentPage = parseInt(pageJumpEl.value) || 1;
+	const pageSearchElement = document.getElementById("pageSearch");
+	if (pageSearchElement) {
+		const currentPage = parseInt(pageSearchElement.value) || 1;
 		goToPage(Math.max(currentPage - 1, 1));
+	}
+}
+
+function nextPage() {
+	const pageSearchElement = document.getElementById("pageSearch");
+	if (pageSearchElement) {
+		const currentPage = parseInt(pageSearchElement.value) || 1;
+		const totalPages = parseInt(pageSearchElement.max) || 1;
+		goToPage(Math.min(currentPage + 1, totalPages));
 	}
 }
