@@ -373,6 +373,46 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func Recover(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("Id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	err = database.RecoverCard(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
+func PermanentlyDelete(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("Id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	err = database.PermanentlyDeleteCard(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
 func processCardText(text string) (string, error) {
 	normalizedText := text
 

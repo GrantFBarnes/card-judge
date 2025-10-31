@@ -22,6 +22,17 @@ type Card struct {
 	Image    sql.NullString
 }
 
+type ReviewCard struct {
+	Id            uuid.UUID
+	CreatedOnDate time.Time
+
+	DeckName string
+	Category string
+	Text     string
+	YouTube  sql.NullString
+	Image    sql.NullString
+}
+
 type LobbyCard struct {
 	LobbyId uuid.UUID
 	Card
@@ -106,6 +117,81 @@ func CountCardsInDeck(deckId uuid.UUID, category string, text string) (int, erro
 			AND C.TEXT LIKE ?
 	`
 	rows, err := query(sqlString, deckId, category, text)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var count int
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			log.Println(err)
+			return 0, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return count, nil
+}
+
+func SearchCardsInReview(page int) ([]ReviewCard, error) {
+	if page < 1 {
+		page = 1
+	}
+
+	sqlString := `
+		SELECT
+			RC.ID,
+			RC.CREATED_ON_DATE,
+			D.NAME AS DECK_NAME,
+			RC.CATEGORY,
+			RC.TEXT,
+			RC.YOUTUBE,
+			RC.IMAGE
+		FROM REVIEW_CARD AS RC
+			INNER JOIN DECK AS D ON D.ID = RC.DECK_ID
+		ORDER BY RC.CREATED_ON_DATE
+		LIMIT 10 OFFSET ?
+	`
+	rows, err := query(sqlString, (page-1)*10)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make([]ReviewCard, 0)
+	for rows.Next() {
+		var card ReviewCard
+		var imageBytes []byte
+		if err := rows.Scan(
+			&card.Id,
+			&card.CreatedOnDate,
+			&card.DeckName,
+			&card.Category,
+			&card.Text,
+			&card.YouTube,
+			&imageBytes,
+		); err != nil {
+			log.Println(err)
+			return nil, errors.New("failed to scan row in query results")
+		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
+		}
+
+		result = append(result, card)
+	}
+	return result, nil
+}
+
+func CountCardsInReview() (int, error) {
+	sqlString := `
+		SELECT
+			COUNT(*)
+		FROM REVIEW_CARD AS RC
+	`
+	rows, err := query(sqlString)
 	if err != nil {
 		return 0, err
 	}
@@ -366,6 +452,35 @@ func DeleteCard(id uuid.UUID) error {
 	sqlString := `
 		DELETE
 		FROM CARD
+		WHERE ID = ?
+	`
+	return execute(sqlString, id)
+}
+
+func RecoverCard(id uuid.UUID) error {
+	sqlString := `
+		INSERT INTO CARD(DECK_ID, CATEGORY, TEXT, YOUTUBE, IMAGE)
+		SELECT
+			DECK_ID,
+			CATEGORY,
+			TEXT,
+			YOUTUBE,
+			IMAGE
+		FROM REVIEW_CARD
+		WHERE ID = ?
+	`
+	err := execute(sqlString, id)
+	if err != nil {
+		return err
+	}
+
+	return PermanentlyDeleteCard(id)
+}
+
+func PermanentlyDeleteCard(id uuid.UUID) error {
+	sqlString := `
+		DELETE
+		FROM REVIEW_CARD
 		WHERE ID = ?
 	`
 	return execute(sqlString, id)

@@ -160,6 +160,7 @@ func main() {
 	http.Handle("GET /account", api.MiddlewareForPages(http.HandlerFunc(apiPages.Account)))
 	http.Handle("GET /stats", api.MiddlewareForPages(http.HandlerFunc(apiPages.Stats)))
 	http.Handle("GET /users", api.MiddlewareForPages(http.HandlerFunc(apiPages.Users)))
+	http.Handle("GET /review", api.MiddlewareForPages(http.HandlerFunc(apiPages.Review)))
 	http.Handle("GET /lobbies", api.MiddlewareForPages(http.HandlerFunc(apiPages.Lobbies)))
 	http.Handle("GET /lobby/{lobbyId}", api.MiddlewareForPages(http.HandlerFunc(apiPages.Lobby)))
 	http.Handle("GET /lobby/{lobbyId}/access", api.MiddlewareForPages(http.HandlerFunc(apiPages.LobbyAccess)))
@@ -194,6 +195,10 @@ func main() {
 	http.Handle("PUT /api/card/{cardId}", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Update)))
 	http.Handle("PUT /api/card/{cardId}/image", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.SetImage)))
 	http.Handle("DELETE /api/card/{cardId}", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Delete)))
+
+	// review card
+	http.Handle("PUT /api/card/review/{Id}/recover", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.Recover)))
+	http.Handle("DELETE /api/card/review/{Id}", api.MiddlewareForAPIs(http.HandlerFunc(apiCard.PermanentlyDelete)))
 
 	// lobby
 	http.Handle("GET /api/lobby/{lobbyId}/html/game-interface", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.GetGameInterfaceHTML)))
