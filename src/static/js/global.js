@@ -40,3 +40,37 @@ function toggleTopBarMenu() {
         topBarMenu.style.display = "block";
     }
 }
+
+function goToPreviousTablePage() {
+    const pageNumberElement = document.getElementById("pageNumber");
+    if (pageNumberElement) {
+        const currentPage = parseInt(pageNumberElement.value) || 1;
+        goToTablePage(Math.max(currentPage - 1, 1));
+    }
+}
+
+function goToNextTablePage() {
+    const pageNumberElement = document.getElementById("pageNumber");
+    if (pageNumberElement) {
+        const currentPage = parseInt(pageNumberElement.value) || 1;
+        const totalPages = parseInt(pageNumberElement.max) || 1;
+        goToTablePage(Math.min(currentPage + 1, totalPages));
+    }
+}
+
+function goToTablePage(pageNumber) {
+    const pageNumberElement = document.getElementById("pageNumber");
+    if (pageNumberElement) {
+        if (pageNumberElement.value != pageNumber) {
+            pageNumberElement.value = pageNumber;
+            submitTableFilterForm();
+        }
+    }
+}
+
+function submitTableFilterForm() {
+    const formElement = document.getElementById("table-filter-form");
+    if (formElement) {
+        formElement.submit();
+    }
+}

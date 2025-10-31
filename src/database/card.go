@@ -27,21 +27,15 @@ type LobbyCard struct {
 	Card
 }
 
-// CardsPageSize is the fixed page size for card pagination
-// Set to 10 for performance (modals/layered HTML cause browser lag with larger pages)
-const CardsPageSize = 10
-
-func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
-	if categorySearch == "" {
-		categorySearch = "%"
+func SearchCardsInDeck(deckId uuid.UUID, category string, text string, page int) ([]Card, error) {
+	if category == "" {
+		category = "%"
 	}
 
-	if textSearch == "" {
-		textSearch = "%"
-	}
+	text = "%" + text + "%"
 
-	if pageNumber < 1 {
-		pageNumber = 1
+	if page < 1 {
+		page = 1
 	}
 
 	sqlString := `
@@ -60,9 +54,9 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			AND C.TEXT LIKE ?
 		ORDER BY C.CHANGED_ON_DATE DESC,
 			C.TEXT ASC
-		LIMIT ? OFFSET ?
+		LIMIT 10 OFFSET ?
 	`
-	rows, err := query(sqlString, deckId, categorySearch, textSearch, CardsPageSize, (pageNumber-1)*CardsPageSize)
+	rows, err := query(sqlString, deckId, category, text, (page-1)*10)
 	if err != nil {
 		return nil, err
 	}
@@ -80,9 +74,10 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			&card.Category,
 			&card.Text,
 			&card.YouTube,
-			&imageBytes); err != nil {
+			&imageBytes,
+		); err != nil {
 			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
+			return nil, errors.New("failed to scan row in query results")
 		}
 
 		card.Image.Valid = imageBytes != nil
@@ -95,23 +90,22 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 	return result, nil
 }
 
-func CountCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string) (int, error) {
-	if categorySearch == "" {
-		categorySearch = "%"
+func CountCardsInDeck(deckId uuid.UUID, category string, text string) (int, error) {
+	if category == "" {
+		category = "%"
 	}
 
-	if textSearch == "" {
-		textSearch = "%"
-	}
+	text = "%" + text + "%"
 
 	sqlString := `
-		SELECT COUNT(*)
+		SELECT
+			COUNT(*)
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
 			AND C.CATEGORY LIKE ?
 			AND C.TEXT LIKE ?
 	`
-	rows, err := query(sqlString, deckId, categorySearch, textSearch)
+	rows, err := query(sqlString, deckId, category, text)
 	if err != nil {
 		return 0, err
 	}
@@ -121,14 +115,14 @@ func CountCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string
 	for rows.Next() {
 		if err := rows.Scan(&count); err != nil {
 			log.Println(err)
-			return count, errors.New("failed to scan row in query results")
+			return 0, errors.New("failed to scan row in query results")
 		}
 	}
 
 	return count, nil
 }
 
-func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error) {
+func FindDrawPileCard(lobbyId uuid.UUID, text string) ([]LobbyCard, error) {
 	sqlString := `
 		SELECT
 			LOBBY_ID,
@@ -161,7 +155,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 		ORDER BY SCORE DESC
 		LIMIT 10
 	`
-	rows, err := query(sqlString, textSearch, lobbyId, textSearch)
+	rows, err := query(sqlString, text, lobbyId, text)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
@@ -87,6 +88,39 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Admin"
 
+	var name string
+	var page int
+	params := r.URL.Query()
+	for key, val := range params {
+		switch key {
+		case "name":
+			name = val[0]
+		case "page":
+			page, _ = strconv.Atoi(val[0])
+		}
+	}
+
+	totalRowCount, err := database.CountUsers(name)
+	if err != nil {
+		totalRowCount = 0
+	}
+	totalPageCount := max((totalRowCount+9)/10, 1)
+
+	if page < 1 {
+		page = 1
+	}
+
+	if page > totalPageCount {
+		page = totalPageCount
+	}
+
+	users, err := database.SearchUsers(name, page)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get table rows"))
+		return
+	}
+
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
@@ -98,7 +132,23 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
+	type data struct {
+		api.BasePageData
+		Name     string
+		Page     int
+		LastPage int
+		RowCount int
+		Users    []database.User
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData: basePageData,
+		Name:         name,
+		Page:         page,
+		LastPage:     totalPageCount,
+		RowCount:     totalRowCount,
+		Users:        users,
+	})
 }
 
 func Stats(w http.ResponseWriter, r *http.Request) {
@@ -138,6 +188,39 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Lobbies"
 
+	var name string
+	var page int
+	params := r.URL.Query()
+	for key, val := range params {
+		switch key {
+		case "name":
+			name = val[0]
+		case "page":
+			page, _ = strconv.Atoi(val[0])
+		}
+	}
+
+	totalRowCount, err := database.CountLobbies(name)
+	if err != nil {
+		totalRowCount = 0
+	}
+	totalPageCount := max((totalRowCount+9)/10, 1)
+
+	if page < 1 {
+		page = 1
+	}
+
+	if page > totalPageCount {
+		page = totalPageCount
+	}
+
+	lobbies, err := database.SearchLobbies(name, page)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get table rows"))
+		return
+	}
+
 	decks, err := database.GetReadableDecks(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -158,11 +241,21 @@ func Lobbies(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		Decks []database.Deck
+		Name     string
+		Page     int
+		LastPage int
+		RowCount int
+		Lobbies  []database.LobbyDetails
+		Decks    []database.Deck
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
+		Name:         name,
+		Page:         page,
+		LastPage:     totalPageCount,
+		RowCount:     totalRowCount,
+		Lobbies:      lobbies,
 		Decks:        decks,
 	})
 }
@@ -301,6 +394,39 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Decks"
 
+	var name string
+	var page int
+	params := r.URL.Query()
+	for key, val := range params {
+		switch key {
+		case "name":
+			name = val[0]
+		case "page":
+			page, _ = strconv.Atoi(val[0])
+		}
+	}
+
+	totalRowCount, err := database.CountDecks(name)
+	if err != nil {
+		totalRowCount = 0
+	}
+	totalPageCount := max((totalRowCount+9)/10, 1)
+
+	if page < 1 {
+		page = 1
+	}
+
+	if page > totalPageCount {
+		page = totalPageCount
+	}
+
+	decks, err := database.SearchDecks(name, page)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get table rows"))
+		return
+	}
+
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
@@ -312,7 +438,23 @@ func Decks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
+	type data struct {
+		api.BasePageData
+		Name     string
+		Page     int
+		LastPage int
+		RowCount int
+		Decks    []database.DeckDetails
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData: basePageData,
+		Name:         name,
+		Page:         page,
+		LastPage:     totalPageCount,
+		RowCount:     totalRowCount,
+		Decks:        decks,
+	})
 }
 
 func Deck(w http.ResponseWriter, r *http.Request) {
@@ -349,6 +491,42 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var category string
+	var text string
+	var page int
+	params := r.URL.Query()
+	for key, val := range params {
+		switch key {
+		case "category":
+			category = val[0]
+		case "text":
+			text = val[0]
+		case "page":
+			page, _ = strconv.Atoi(val[0])
+		}
+	}
+
+	totalRowCount, err := database.CountCardsInDeck(deckId, category, text)
+	if err != nil {
+		totalRowCount = 0
+	}
+	totalPageCount := max((totalRowCount+9)/10, 1)
+
+	if page < 1 {
+		page = 1
+	}
+
+	if page > totalPageCount {
+		page = totalPageCount
+	}
+
+	cards, err := database.SearchCardsInDeck(deckId, category, text, page)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get table rows"))
+		return
+	}
+
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
@@ -362,26 +540,24 @@ func Deck(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		Deck        database.Deck
-		CurrentPage int
-		TotalPages  int
-	}
-
-	// Calculate initial total pages using CardsPageSize constant
-	totalCount, err := database.CountCardsInDeck(deckId, "%", "%")
-	if err != nil {
-		totalCount = 0
-	}
-	totalPages := (totalCount + database.CardsPageSize - 1) / database.CardsPageSize
-	if totalPages < 1 {
-		totalPages = 1
+		Deck     database.Deck
+		Category string
+		Text     string
+		Page     int
+		LastPage int
+		RowCount int
+		Cards    []database.Card
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Deck:         deck,
-		CurrentPage:  1,
-		TotalPages:   totalPages,
+		Category:     category,
+		Text:         text,
+		Page:         page,
+		LastPage:     totalPageCount,
+		RowCount:     totalRowCount,
+		Cards:        cards,
 	})
 }
 

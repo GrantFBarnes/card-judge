@@ -1,8 +1,12 @@
 {{define "body"}}
-<h2>Decks</h2>
-<button onclick="document.getElementById('deck-create-dialog').showModal()">
-    Create Deck
-</button>
+<div style="display: grid; grid-auto-flow: column">
+    <h2>Decks</h2>
+    <div style="text-align: right;">
+        <button onclick="document.getElementById('deck-create-dialog').showModal()">
+            <span class="bi bi-plus-circle"></span> Create Deck
+        </button>
+    </div>
+</div>
 <dialog id="deck-create-dialog">
     <div style="display: grid; grid-auto-flow: column">
         <div>
@@ -71,29 +75,71 @@
         />
     </form>
 </dialog>
+<form id="table-filter-form">
+    <label for="nameSearch">Search:</label>
+    <input
+        type="search"
+        id="nameSearch"
+        name="name"
+        maxlength="510"
+        placeholder="Search..."
+        value="{{.Name}}"
+        autocomplete="off"
+        onchange="submitTableFilterForm()"
+    />
+
+    {{if gt .Page 1}}
+    <button onclick="goToTablePage(1)">
+        <span class="bi bi-chevron-bar-left"></span>
+    </button>
+    <button onclick="goToPreviousTablePage()">
+        <span class="bi bi-chevron-left"></span>
+    </button>
+    {{end}}
+
+    <span>
+        Page <input
+            type="number"
+            id="pageNumber"
+            name="page"
+            min="1"
+            max="{{.LastPage}}"
+            value="{{.Page}}"
+            onchange="submitTableFilterForm()"
+        /> of {{.LastPage}}
+    </span>
+
+    {{if lt .Page .LastPage}}
+    <button onclick="goToNextTablePage()">
+        <span class="bi bi-chevron-right"></span>
+    </button>
+    <button onclick="goToTablePage({{.LastPage}})">
+        <span class="bi bi-chevron-bar-right"></span>
+    </button>
+    {{end}}
+</form>
+{{if eq .RowCount 0}}
+No decks found with that search criteria.
+{{else}}
 <table>
     <thead>
         <tr>
-            <th>
-                <label for="deckSearch">Name</label>
-                <input
-                    type="search"
-                    id="deckSearch"
-                    name="search"
-                    maxlength="255"
-                    placeholder="Search..."
-                    autocomplete="off"
-                    hx-post="/api/deck/search"
-                    hx-trigger="load, input changed delay:500ms, search"
-                    hx-target="#deck-table-rows"
-                />
-            </th>
+            <th>Name</th>
             <th>Cards</th>
             <th>View Access</th>
         </tr>
     </thead>
-    <tbody id="deck-table-rows"></tbody>
+    <tbody>
+        {{range .Decks}}
+        <tr>
+            <td class="wrap-new-lines"><a href="/deck/{{.Id}}">{{.Name}}</a></td>
+            <td>{{.CardCount}}</td>
+            <td>{{if .IsPublicReadOnly}} Public {{else}} <span class="bi bi-lock">Private</span> {{end}}</td>
+        </tr>
+        {{end}}
+    </tbody>
 </table>
+{{end}}
 <br />
 <br />
 {{end}}

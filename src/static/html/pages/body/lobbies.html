@@ -1,8 +1,12 @@
 {{define "body"}}
-<h2>Lobbies</h2>
-<button onclick="document.getElementById('lobby-create-dialog').showModal()">
-    Create Lobby
-</button>
+<div style="display: grid; grid-auto-flow: column">
+    <h2>Lobbies</h2>
+    <div style="text-align: right;">
+        <button onclick="document.getElementById('lobby-create-dialog').showModal()">
+            <span class="bi bi-plus-circle"></span> Create Lobby
+        </button>
+    </div>
+</div>
 <dialog id="lobby-create-dialog">
     <div style="display: grid; grid-auto-flow: column">
         <div>
@@ -193,30 +197,73 @@
         />
     </form>
 </dialog>
+<form id="table-filter-form">
+    <label for="nameSearch">Search:</label>
+    <input
+        type="search"
+        id="nameSearch"
+        name="name"
+        maxlength="510"
+        placeholder="Search..."
+        value="{{.Name}}"
+        autocomplete="off"
+        onchange="submitTableFilterForm()"
+    />
+
+    {{if gt .Page 1}}
+    <button onclick="goToTablePage(1)">
+        <span class="bi bi-chevron-bar-left"></span>
+    </button>
+    <button onclick="goToPreviousTablePage()">
+        <span class="bi bi-chevron-left"></span>
+    </button>
+    {{end}}
+
+    <span>
+        Page <input
+            type="number"
+            id="pageNumber"
+            name="page"
+            min="1"
+            max="{{.LastPage}}"
+            value="{{.Page}}"
+            onchange="submitTableFilterForm()"
+        /> of {{.LastPage}}
+    </span>
+
+    {{if lt .Page .LastPage}}
+    <button onclick="goToNextTablePage()">
+        <span class="bi bi-chevron-right"></span>
+    </button>
+    <button onclick="goToTablePage({{.LastPage}})">
+        <span class="bi bi-chevron-bar-right"></span>
+    </button>
+    {{end}}
+</form>
+{{if eq .RowCount 0}}
+No lobbies found with that search criteria.
+{{else}}
 <table>
     <thead>
         <tr>
             <th>Created</th>
-            <th>
-                <label for="lobbySearch">Name</label>
-                <input
-                    type="search"
-                    id="lobbySearch"
-                    name="search"
-                    maxlength="255"
-                    placeholder="Search..."
-                    autocomplete="off"
-                    hx-post="/api/lobby/search"
-                    hx-trigger="load, input changed delay:500ms, search"
-                    hx-target="#lobby-table-rows"
-                />
-            </th>
+            <th>Name</th>
             <th>Security</th>
             <th>Users</th>
         </tr>
     </thead>
-    <tbody id="lobby-table-rows"></tbody>
+    <tbody>
+        {{range .Lobbies}}
+        <tr>
+            <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
+            <td class="wrap-new-lines"><a href="/lobby/{{.Id}}">{{.Name}}</a></td>
+            <td>{{if .PasswordHash.Valid}} <span class="bi bi-lock">Protected</span> {{else}} Open {{end}}</td>
+            <td>{{.UserCount}}</td>
+        </tr>
+        {{end}}
+    </tbody>
 </table>
+{{end}}
 <br />
 <br />
 {{end}}
