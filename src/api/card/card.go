@@ -4,7 +4,6 @@ import (
 	"io"
 	"net/http"
 	"regexp"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -13,96 +12,6 @@ import (
 	"github.com/grantfbarnes/card-judge/database"
 	"github.com/grantfbarnes/card-judge/static"
 )
-
-func Search(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to parse form."))
-		return
-	}
-
-	var deckId uuid.UUID
-	var categorySearch string
-	var textSearch string
-	var pageNumber int
-	for key, val := range r.Form {
-		if key == "deckId" {
-			deckId, err = uuid.Parse(val[0])
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse deck id."))
-				return
-			}
-		} else if key == "category" {
-			categorySearch = val[0]
-		} else if key == "text" {
-			textSearch = val[0]
-		} else if key == "page" {
-			pageNumber, err = strconv.Atoi(val[0])
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("Failed to parse page."))
-				return
-			}
-		}
-	}
-
-	textSearch = "%" + textSearch + "%"
-
-	// Get total count for pagination
-	totalCount, err := database.CountCardsInDeck(deckId, categorySearch, textSearch)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	// Calculate total pages
-	totalPages := (totalCount + database.CardsPageSize - 1) / database.CardsPageSize // Ceiling division
-	if totalPages < 1 {
-		totalPages = 1
-	}
-
-	// Ensure page number is within bounds
-	if pageNumber > totalPages {
-		pageNumber = totalPages
-	}
-
-	cards, err := database.SearchCardsInDeck(deckId, categorySearch, textSearch, pageNumber)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFS(
-		static.StaticFiles,
-		"html/components/table-rows/card-table-rows.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "card-table-rows", cards)
-
-	// Write OOB swaps for pagination state
-	_, _ = w.Write([]byte(`<input type="number" id="pageSearch" name="page" min="1" max="`))
-	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
-	_, _ = w.Write([]byte(`" value="`))
-	_, _ = w.Write([]byte(strconv.Itoa(pageNumber)))
-	_, _ = w.Write([]byte(`" hx-swap-oob="true" />`))
-
-	_, _ = w.Write([]byte(`<span id="totalPages" hx-swap-oob="true">`))
-	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
-	_, _ = w.Write([]byte(`</span>`))
-
-	_, _ = w.Write([]byte(`<button type="button" id="lastPageButton" onclick="goToPage(`))
-	_, _ = w.Write([]byte(strconv.Itoa(totalPages)))
-	_, _ = w.Write([]byte(`)" hx-swap-oob="true"><span class="bi bi-chevron-bar-right"></span></button>`))
-}
 
 func Find(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
@@ -454,6 +363,46 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = database.DeleteCard(cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
+func Recover(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("Id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	err = database.RecoverCard(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
+func PermanentlyDelete(w http.ResponseWriter, r *http.Request) {
+	idString := r.PathValue("Id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get id from path."))
+		return
+	}
+
+	err = database.PermanentlyDeleteCard(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

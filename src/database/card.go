@@ -22,26 +22,31 @@ type Card struct {
 	Image    sql.NullString
 }
 
+type ReviewCard struct {
+	Id            uuid.UUID
+	CreatedOnDate time.Time
+
+	DeckName string
+	Category string
+	Text     string
+	YouTube  sql.NullString
+	Image    sql.NullString
+}
+
 type LobbyCard struct {
 	LobbyId uuid.UUID
 	Card
 }
 
-// CardsPageSize is the fixed page size for card pagination
-// Set to 10 for performance (modals/layered HTML cause browser lag with larger pages)
-const CardsPageSize = 10
-
-func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string, pageNumber int) ([]Card, error) {
-	if categorySearch == "" {
-		categorySearch = "%"
+func SearchCardsInDeck(deckId uuid.UUID, category string, text string, page int) ([]Card, error) {
+	if category == "" {
+		category = "%"
 	}
 
-	if textSearch == "" {
-		textSearch = "%"
-	}
+	text = "%" + text + "%"
 
-	if pageNumber < 1 {
-		pageNumber = 1
+	if page < 1 {
+		page = 1
 	}
 
 	sqlString := `
@@ -60,9 +65,9 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			AND C.TEXT LIKE ?
 		ORDER BY C.CHANGED_ON_DATE DESC,
 			C.TEXT ASC
-		LIMIT ? OFFSET ?
+		LIMIT 10 OFFSET ?
 	`
-	rows, err := query(sqlString, deckId, categorySearch, textSearch, CardsPageSize, (pageNumber-1)*CardsPageSize)
+	rows, err := query(sqlString, deckId, category, text, (page-1)*10)
 	if err != nil {
 		return nil, err
 	}
@@ -80,9 +85,10 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 			&card.Category,
 			&card.Text,
 			&card.YouTube,
-			&imageBytes); err != nil {
+			&imageBytes,
+		); err != nil {
 			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
+			return nil, errors.New("failed to scan row in query results")
 		}
 
 		card.Image.Valid = imageBytes != nil
@@ -95,23 +101,22 @@ func SearchCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch strin
 	return result, nil
 }
 
-func CountCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string) (int, error) {
-	if categorySearch == "" {
-		categorySearch = "%"
+func CountCardsInDeck(deckId uuid.UUID, category string, text string) (int, error) {
+	if category == "" {
+		category = "%"
 	}
 
-	if textSearch == "" {
-		textSearch = "%"
-	}
+	text = "%" + text + "%"
 
 	sqlString := `
-		SELECT COUNT(*)
+		SELECT
+			COUNT(*)
 		FROM CARD AS C
 		WHERE C.DECK_ID = ?
 			AND C.CATEGORY LIKE ?
 			AND C.TEXT LIKE ?
 	`
-	rows, err := query(sqlString, deckId, categorySearch, textSearch)
+	rows, err := query(sqlString, deckId, category, text)
 	if err != nil {
 		return 0, err
 	}
@@ -121,14 +126,89 @@ func CountCardsInDeck(deckId uuid.UUID, categorySearch string, textSearch string
 	for rows.Next() {
 		if err := rows.Scan(&count); err != nil {
 			log.Println(err)
-			return count, errors.New("failed to scan row in query results")
+			return 0, errors.New("failed to scan row in query results")
 		}
 	}
 
 	return count, nil
 }
 
-func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error) {
+func SearchCardsInReview(page int) ([]ReviewCard, error) {
+	if page < 1 {
+		page = 1
+	}
+
+	sqlString := `
+		SELECT
+			RC.ID,
+			RC.CREATED_ON_DATE,
+			D.NAME AS DECK_NAME,
+			RC.CATEGORY,
+			RC.TEXT,
+			RC.YOUTUBE,
+			RC.IMAGE
+		FROM REVIEW_CARD AS RC
+			INNER JOIN DECK AS D ON D.ID = RC.DECK_ID
+		ORDER BY RC.CREATED_ON_DATE
+		LIMIT 10 OFFSET ?
+	`
+	rows, err := query(sqlString, (page-1)*10)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make([]ReviewCard, 0)
+	for rows.Next() {
+		var card ReviewCard
+		var imageBytes []byte
+		if err := rows.Scan(
+			&card.Id,
+			&card.CreatedOnDate,
+			&card.DeckName,
+			&card.Category,
+			&card.Text,
+			&card.YouTube,
+			&imageBytes,
+		); err != nil {
+			log.Println(err)
+			return nil, errors.New("failed to scan row in query results")
+		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
+		}
+
+		result = append(result, card)
+	}
+	return result, nil
+}
+
+func CountCardsInReview() (int, error) {
+	sqlString := `
+		SELECT
+			COUNT(*)
+		FROM REVIEW_CARD AS RC
+	`
+	rows, err := query(sqlString)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var count int
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			log.Println(err)
+			return 0, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return count, nil
+}
+
+func FindDrawPileCard(lobbyId uuid.UUID, text string) ([]LobbyCard, error) {
 	sqlString := `
 		SELECT
 			LOBBY_ID,
@@ -161,7 +241,7 @@ func FindDrawPileCard(lobbyId uuid.UUID, textSearch string) ([]LobbyCard, error)
 		ORDER BY SCORE DESC
 		LIMIT 10
 	`
-	rows, err := query(sqlString, textSearch, lobbyId, textSearch)
+	rows, err := query(sqlString, text, lobbyId, text)
 	if err != nil {
 		return nil, err
 	}
@@ -372,6 +452,35 @@ func DeleteCard(id uuid.UUID) error {
 	sqlString := `
 		DELETE
 		FROM CARD
+		WHERE ID = ?
+	`
+	return execute(sqlString, id)
+}
+
+func RecoverCard(id uuid.UUID) error {
+	sqlString := `
+		INSERT INTO CARD(DECK_ID, CATEGORY, TEXT, YOUTUBE, IMAGE)
+		SELECT
+			DECK_ID,
+			CATEGORY,
+			TEXT,
+			YOUTUBE,
+			IMAGE
+		FROM REVIEW_CARD
+		WHERE ID = ?
+	`
+	err := execute(sqlString, id)
+	if err != nil {
+		return err
+	}
+
+	return PermanentlyDeleteCard(id)
+}
+
+func PermanentlyDeleteCard(id uuid.UUID) error {
+	sqlString := `
+		DELETE
+		FROM REVIEW_CARD
 		WHERE ID = ?
 	`
 	return execute(sqlString, id)

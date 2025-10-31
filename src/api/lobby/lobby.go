@@ -216,43 +216,6 @@ func GetLobbyGameStatsHTML(w http.ResponseWriter, r *http.Request) {
 	_ = tmpl.ExecuteTemplate(w, "lobby-game-stats", data)
 }
 
-func Search(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("Failed to parse form."))
-		return
-	}
-
-	var search string
-	for key, val := range r.Form {
-		if key == "search" {
-			search = val[0]
-		}
-	}
-
-	search = "%" + search + "%"
-
-	lobbies, err := database.SearchLobbies(search)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
-
-	tmpl, err := template.ParseFS(
-		static.StaticFiles,
-		"html/components/table-rows/lobby-table-rows.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to parse HTML."))
-		return
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "lobby-table-rows", lobbies)
-}
-
 func Create(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {

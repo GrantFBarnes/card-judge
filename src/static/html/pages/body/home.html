@@ -17,7 +17,7 @@
             <button onclick="window.location.href='/stats'">Statistics</button>
         </div>
         <div>
-            <button onclick="window.location.href='/manage'">Manage Account</button>
+            <button onclick="window.location.href='/account'">Account</button>
         </div>
         {{else}}
         <div>
@@ -29,7 +29,10 @@
         </div>
         {{if .User.IsAdmin}}
         <div>
-            <button onclick="window.location.href='/admin'">Admin</button>
+            <button onclick="window.location.href='/users'">Users</button>
+        </div>
+        <div>
+            <button onclick="window.location.href='/review'">Review</button>
         </div>
         {{end}}
     </div>
