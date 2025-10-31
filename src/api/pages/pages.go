@@ -84,9 +84,9 @@ func Manage(w http.ResponseWriter, r *http.Request) {
 	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
-func Admin(w http.ResponseWriter, r *http.Request) {
+func Users(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Admin"
+	basePageData.PageTitle = "Card Judge - Users"
 
 	var name string
 	var page int
@@ -124,7 +124,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
-		"html/pages/body/admin.html",
+		"html/pages/body/users.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
