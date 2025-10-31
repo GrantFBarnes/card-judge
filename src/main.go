@@ -157,7 +157,7 @@ func main() {
 	http.Handle("GET /", api.MiddlewareForPages(http.HandlerFunc(apiPages.Home)))
 	http.Handle("GET /about", api.MiddlewareForPages(http.HandlerFunc(apiPages.About)))
 	http.Handle("GET /login", api.MiddlewareForPages(http.HandlerFunc(apiPages.Login)))
-	http.Handle("GET /manage", api.MiddlewareForPages(http.HandlerFunc(apiPages.Manage)))
+	http.Handle("GET /account", api.MiddlewareForPages(http.HandlerFunc(apiPages.Account)))
 	http.Handle("GET /stats", api.MiddlewareForPages(http.HandlerFunc(apiPages.Stats)))
 	http.Handle("GET /users", api.MiddlewareForPages(http.HandlerFunc(apiPages.Users)))
 	http.Handle("GET /lobbies", api.MiddlewareForPages(http.HandlerFunc(apiPages.Lobbies)))

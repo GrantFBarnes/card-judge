@@ -66,14 +66,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
 }
 
-func Manage(w http.ResponseWriter, r *http.Request) {
+func Account(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Manage"
+	basePageData.PageTitle = "Card Judge - Account"
 
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
-		"html/pages/body/manage.html",
+		"html/pages/body/account.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
