@@ -213,9 +213,9 @@ func Review(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func Stats(w http.ResponseWriter, r *http.Request) {
+func StatsPersonal(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Stats"
+	basePageData.PageTitle = "Card Judge - Stats - Personal"
 
 	personalStats, err := database.GetPersonalStats(basePageData.User.Id)
 	if err != nil {
@@ -227,7 +227,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
-		"html/pages/body/stats.html",
+		"html/pages/body/stats-personal.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -237,12 +237,36 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		PersonalStats database.StatPersonal
+		database.StatPersonal
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData:  basePageData,
-		PersonalStats: personalStats,
+		BasePageData: basePageData,
+		StatPersonal: personalStats,
+	})
+}
+
+func StatsGlobal(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Stats - Global"
+
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/stats-global.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	type data struct {
+		api.BasePageData
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData: basePageData,
 	})
 }
 

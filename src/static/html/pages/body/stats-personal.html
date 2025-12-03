@@ -1,0 +1,85 @@
+{{define "body"}}
+<div style="display: grid; grid-auto-flow: column">
+    <h2>{{.User.Name}}'s Statistics</h2>
+    <div style="text-align: right;">
+        <button onclick="window.location.href='/stats/global'">
+            Global Statistics
+        </button>
+    </div>
+</div>
+<table>
+    <tbody>
+        <tr>
+            <td>Games Played</td>
+            <td>{{.GamePlayCount}}</td>
+        </tr>
+        <tr>
+            <td>Games Won</td>
+            <td>{{.GameWinCount}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>Rounds Played</td>
+            <td>{{.RoundPlayCount}}</td>
+        </tr>
+        <tr>
+            <td>Rounds Won</td>
+            <td>{{.RoundWinCount}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>Response Cards Played</td>
+            <td>{{.ResponseCardPlayCount}}</td>
+        </tr>
+        <tr>
+            <td>Response Cards Discarded</td>
+            <td>{{.ResponseCardDiscardCount}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>Prompt Cards Played</td>
+            <td>{{.PromptCardPlayCount}}</td>
+        </tr>
+        <tr>
+            <td>Prompt Cards Skipped</td>
+            <td>{{.PromptCardSkipCount}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>Credits Spent</td>
+            <td>{{.CreditsSpentCount}}</td>
+        </tr>
+        <tr>
+            <td>Credits Earned</td>
+            <td>{{.CreditsEarnedCount}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>Times Kicked</td>
+            <td>{{.LobbyKickCount}}</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<br />
+{{end}}
