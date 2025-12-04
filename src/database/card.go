@@ -22,7 +22,7 @@ type Card struct {
 	Image    sql.NullString
 }
 
-type ReviewCard struct {
+type DisplayCard struct {
 	Id            uuid.UUID
 	CreatedOnDate time.Time
 
@@ -133,7 +133,7 @@ func CountCardsInDeck(deckId uuid.UUID, category string, text string) (int, erro
 	return count, nil
 }
 
-func SearchCardsInReview(page int) ([]ReviewCard, error) {
+func SearchCardsInReview(page int) ([]DisplayCard, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -158,9 +158,9 @@ func SearchCardsInReview(page int) ([]ReviewCard, error) {
 	}
 	defer rows.Close()
 
-	result := make([]ReviewCard, 0)
+	result := make([]DisplayCard, 0)
 	for rows.Next() {
-		var card ReviewCard
+		var card DisplayCard
 		var imageBytes []byte
 		if err := rows.Scan(
 			&card.Id,
@@ -192,6 +192,103 @@ func CountCardsInReview() (int, error) {
 		FROM REVIEW_CARD AS RC
 	`
 	rows, err := query(sqlString)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var count int
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			log.Println(err)
+			return 0, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return count, nil
+}
+
+func SearchCardsWithAccess(userId uuid.UUID, deckName string, category string, text string, page int) ([]DisplayCard, error) {
+	deckName = "%" + deckName + "%"
+	if category == "" {
+		category = "%"
+	}
+	text = "%" + text + "%"
+
+	if page < 1 {
+		page = 1
+	}
+
+	sqlString := `
+		SELECT
+			C.ID,
+			C.CREATED_ON_DATE,
+			D.NAME AS DECK_NAME,
+			C.CATEGORY,
+			C.TEXT,
+			C.YOUTUBE,
+			C.IMAGE
+		FROM CARD AS C
+			INNER JOIN DECK AS D ON D.ID = C.DECK_ID
+		WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+			AND D.NAME LIKE ?
+			AND C.CATEGORY LIKE ?
+			AND C.TEXT LIKE ?
+		ORDER BY C.CHANGED_ON_DATE DESC,
+			C.TEXT ASC
+		LIMIT 10 OFFSET ?
+	`
+	rows, err := query(sqlString, userId, deckName, category, text, (page-1)*10)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make([]DisplayCard, 0)
+	for rows.Next() {
+		var card DisplayCard
+		var imageBytes []byte
+		if err := rows.Scan(
+			&card.Id,
+			&card.CreatedOnDate,
+			&card.DeckName,
+			&card.Category,
+			&card.Text,
+			&card.YouTube,
+			&imageBytes,
+		); err != nil {
+			log.Println(err)
+			return nil, errors.New("failed to scan row in query results")
+		}
+
+		card.Image.Valid = imageBytes != nil
+		if card.Image.Valid {
+			card.Image.String = base64.StdEncoding.EncodeToString(imageBytes)
+		}
+
+		result = append(result, card)
+	}
+	return result, nil
+}
+
+func CountCardsWithAccess(userId uuid.UUID, deckName string, category string, text string) (int, error) {
+	deckName = "%" + deckName + "%"
+	if category == "" {
+		category = "%"
+	}
+	text = "%" + text + "%"
+
+	sqlString := `
+		SELECT
+			COUNT(*)
+		FROM CARD AS C
+			INNER JOIN DECK AS D ON D.ID = C.DECK_ID
+		WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+			AND D.NAME LIKE ?
+			AND C.CATEGORY LIKE ?
+			AND C.TEXT LIKE ?
+	`
+	rows, err := query(sqlString, userId, deckName, category, text)
 	if err != nil {
 		return 0, err
 	}

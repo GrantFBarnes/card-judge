@@ -1,14 +1,23 @@
 {{define "body"}}
 <div style="display: grid; grid-auto-flow: column">
-    <h2>{{.User.Name}}'s Statistics</h2>
+    <h2>User Statistics</h2>
     <div style="text-align: right;">
-        <button onclick="window.location.href='/stats/global'">
-            Global Statistics
+        <button onclick="window.location.href='/stats'">
+            Statistics Home
         </button>
     </div>
 </div>
 <table>
     <tbody>
+        <tr>
+            <td>User</td>
+            <td>{{.UserName}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <hr />
+            </td>
+        </tr>
         <tr>
             <td>Games Played</td>
             <td>{{.GamePlayCount}}</td>
@@ -80,6 +89,8 @@
         </tr>
     </tbody>
 </table>
+<br />
+<button onclick="window.location.href='/stats/users'">Select Different User</button>
 <br />
 <br />
 {{end}}

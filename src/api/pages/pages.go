@@ -201,7 +201,7 @@ func Review(w http.ResponseWriter, r *http.Request) {
 		Page     int
 		LastPage int
 		RowCount int
-		Cards    []database.ReviewCard
+		Cards    []database.DisplayCard
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
@@ -213,21 +213,83 @@ func Review(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func StatsPersonal(w http.ResponseWriter, r *http.Request) {
+func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Stats - Personal"
+	basePageData.PageTitle = "Card Judge - Stats"
 
-	personalStats, err := database.GetPersonalStats(basePageData.User.Id)
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/stats.html",
+	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to get personal stats"))
+		_, _ = w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
+}
+
+func StatsLeaderboard(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Stats - Leaderboard"
+
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/stats-leaderboard.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
+}
+
+func StatsUsers(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Stats - Users"
+
+	var name string
+	var page int
+	params := r.URL.Query()
+	for key, val := range params {
+		switch key {
+		case "name":
+			name = val[0]
+		case "page":
+			page, _ = strconv.Atoi(val[0])
+		}
+	}
+
+	totalRowCount, err := database.CountUsers(name)
+	if err != nil {
+		totalRowCount = 0
+	}
+	totalPageCount := max((totalRowCount+9)/10, 1)
+
+	if page < 1 {
+		page = 1
+	}
+
+	if page > totalPageCount {
+		page = totalPageCount
+	}
+
+	users, err := database.SearchUsers(name, page)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get table rows"))
 		return
 	}
 
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
-		"html/pages/body/stats-personal.html",
+		"html/pages/body/stats-users.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -237,23 +299,46 @@ func StatsPersonal(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
-		database.StatPersonal
+		Name     string
+		Page     int
+		LastPage int
+		RowCount int
+		Users    []database.User
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		StatPersonal: personalStats,
+		Name:         name,
+		Page:         page,
+		LastPage:     totalPageCount,
+		RowCount:     totalRowCount,
+		Users:        users,
 	})
 }
 
-func StatsGlobal(w http.ResponseWriter, r *http.Request) {
+func StatsUser(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Stats - Global"
+	basePageData.PageTitle = "Card Judge - Stats - User"
+
+	userIdString := r.PathValue("userId")
+	userId, err := uuid.Parse(userIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse id."))
+		return
+	}
+
+	userStats, err := database.GetStatsUser(userId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to get user stats."))
+		return
+	}
 
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
-		"html/pages/body/stats-global.html",
+		"html/pages/body/stats-user.html",
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -263,10 +348,130 @@ func StatsGlobal(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
+		database.StatUser
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
+		StatUser:     userStats,
+	})
+}
+
+func StatsCards(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Stats - Cards"
+
+	var deckName string
+	var category string
+	var text string
+	var page int
+	params := r.URL.Query()
+	for key, val := range params {
+		switch key {
+		case "deckName":
+			deckName = val[0]
+		case "category":
+			category = val[0]
+		case "text":
+			text = val[0]
+		case "page":
+			page, _ = strconv.Atoi(val[0])
+		}
+	}
+
+	totalRowCount, err := database.CountCardsWithAccess(basePageData.User.Id, deckName, category, text)
+	if err != nil {
+		totalRowCount = 0
+	}
+	totalPageCount := max((totalRowCount+9)/10, 1)
+
+	if page < 1 {
+		page = 1
+	}
+
+	if page > totalPageCount {
+		page = totalPageCount
+	}
+
+	cards, err := database.SearchCardsWithAccess(basePageData.User.Id, deckName, category, text, page)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to get table rows"))
+		return
+	}
+
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/stats-cards.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	type data struct {
+		api.BasePageData
+		DeckName string
+		Category string
+		Text     string
+		Page     int
+		LastPage int
+		RowCount int
+		Cards    []database.DisplayCard
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData: basePageData,
+		DeckName:     deckName,
+		Category:     category,
+		Text:         text,
+		Page:         page,
+		LastPage:     totalPageCount,
+		RowCount:     totalRowCount,
+		Cards:        cards,
+	})
+}
+
+func StatsCard(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Stats - Card"
+
+	cardIdString := r.PathValue("cardId")
+	cardId, err := uuid.Parse(cardIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse id."))
+		return
+	}
+
+	cardStats, err := database.GetStatsCard(cardId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to get card stats."))
+		return
+	}
+
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/stats-card.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	type data struct {
+		api.BasePageData
+		database.StatCard
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData: basePageData,
+		StatCard:     cardStats,
 	})
 }
 

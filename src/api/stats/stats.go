@@ -35,7 +35,7 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	headers, rows, err := database.GetLeaderboardStats(userId, topic, subject)
+	headers, rows, err := database.GetStatsLeaderboard(userId, topic, subject)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

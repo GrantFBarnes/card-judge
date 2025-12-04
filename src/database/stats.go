@@ -8,7 +8,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type StatPersonal struct {
+type StatUser struct {
+	UserName string
+
 	GamePlayCount            int
 	GameWinCount             int
 	RoundPlayCount           int
@@ -22,111 +24,15 @@ type StatPersonal struct {
 	LobbyKickCount           int
 }
 
-func GetPersonalStats(userId uuid.UUID) (StatPersonal, error) {
-	var result StatPersonal
+type StatCard struct {
+	DeckName string
+	Category string
+	Text     string
 
-	sqlString := `
-		SELECT
-			(
-				SELECT
-					COUNT(DISTINCT LOBBY_ID)
-				FROM LOG_RESPONSE_CARD
-				WHERE PLAYER_USER_ID = U.ID
-			) AS GAME_PLAY_COUNT,
-			(
-				SELECT
-					COUNT(*)
-				FROM (
-						SELECT
-							LRC.LOBBY_ID,
-							LRC.PLAYER_USER_ID,
-							COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
-							RANK() OVER (
-								PARTITION BY LRC.LOBBY_ID
-								ORDER BY ROUND_WIN_COUNT DESC
-							) AS RANKING
-						FROM LOG_RESPONSE_CARD AS LRC
-							INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
-						GROUP BY LRC.LOBBY_ID,
-							LRC.PLAYER_USER_ID
-					) AS ROUND_WINS
-				WHERE PLAYER_USER_ID = U.ID
-					AND RANKING = 1
-			) AS GAME_WIN_COUNT,
-			(
-				SELECT
-					COUNT(DISTINCT ROUND_ID)
-				FROM LOG_RESPONSE_CARD
-				WHERE PLAYER_USER_ID = U.ID
-			) AS ROUND_PLAY_COUNT,
-			(
-				SELECT
-					COUNT(DISTINCT LW.ID)
-				FROM LOG_RESPONSE_CARD AS LRC
-					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
-				WHERE LRC.PLAYER_USER_ID = U.ID
-			) AS ROUND_WIN_COUNT,
-			(SELECT COUNT(*) FROM LOG_RESPONSE_CARD WHERE PLAYER_USER_ID = U.ID) AS RESPONSE_CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS RESPONSE_CARD_DISCARD_COUNT,
-			(
-				SELECT
-					COUNT(DISTINCT ROUND_ID)
-				FROM LOG_RESPONSE_CARD
-				WHERE JUDGE_USER_ID = U.ID
-			) AS PROMPT_CARD_PLAY_COUNT,
-			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS PROMPT_CARD_SKIP_COUNT,
-			COALESCE(
-				(
-					SELECT
-						SUM(AMOUNT)
-					FROM LOG_CREDITS_SPENT
-					WHERE USER_ID = U.ID
-						AND AMOUNT > 0
-				),
-				0
-			) AS CREDITS_SPENT_COUNT,
-			COALESCE(
-				(
-					SELECT
-						SUM(AMOUNT) * -1
-					FROM LOG_CREDITS_SPENT
-					WHERE USER_ID = U.ID
-						AND AMOUNT < 0
-				),
-				0
-			) AS CREDITS_EARNED_COUNT,
-			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
-		FROM USER AS U
-		WHERE U.ID = ?
-	`
-	rows, err := query(sqlString, userId)
-	if err != nil {
-		return result, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(
-			&result.GamePlayCount,
-			&result.GameWinCount,
-			&result.RoundPlayCount,
-			&result.RoundWinCount,
-			&result.ResponseCardPlayCount,
-			&result.ResponseCardDiscardCount,
-			&result.PromptCardPlayCount,
-			&result.PromptCardSkipCount,
-			&result.CreditsSpentCount,
-			&result.CreditsEarnedCount,
-			&result.LobbyKickCount); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
-	}
-
-	return result, nil
+	GamePlayCount int
 }
 
-func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]string, [][]string, error) {
+func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]string, [][]string, error) {
 	resultHeaders := make([]string, 0)
 	resultRows := make([][]string, 0)
 	params := make([]any, 0)
@@ -1089,4 +995,151 @@ func GetLeaderboardStats(userId uuid.UUID, topic string, subject string) ([]stri
 	}
 
 	return resultHeaders, resultRows, nil
+}
+
+func GetStatsUser(userId uuid.UUID) (StatUser, error) {
+	var result StatUser
+
+	sqlString := `
+		SELECT
+			U.NAME AS USER_NAME,
+			(
+				SELECT
+					COUNT(DISTINCT LOBBY_ID)
+				FROM LOG_RESPONSE_CARD
+				WHERE PLAYER_USER_ID = U.ID
+			) AS GAME_PLAY_COUNT,
+			(
+				SELECT
+					COUNT(*)
+				FROM (
+						SELECT
+							LRC.LOBBY_ID,
+							LRC.PLAYER_USER_ID,
+							COUNT(DISTINCT LRC.ROUND_ID) AS ROUND_WIN_COUNT,
+							RANK() OVER (
+								PARTITION BY LRC.LOBBY_ID
+								ORDER BY ROUND_WIN_COUNT DESC
+							) AS RANKING
+						FROM LOG_RESPONSE_CARD AS LRC
+							INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+						GROUP BY LRC.LOBBY_ID,
+							LRC.PLAYER_USER_ID
+					) AS ROUND_WINS
+				WHERE PLAYER_USER_ID = U.ID
+					AND RANKING = 1
+			) AS GAME_WIN_COUNT,
+			(
+				SELECT
+					COUNT(DISTINCT ROUND_ID)
+				FROM LOG_RESPONSE_CARD
+				WHERE PLAYER_USER_ID = U.ID
+			) AS ROUND_PLAY_COUNT,
+			(
+				SELECT
+					COUNT(DISTINCT LW.ID)
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+				WHERE LRC.PLAYER_USER_ID = U.ID
+			) AS ROUND_WIN_COUNT,
+			(SELECT COUNT(*) FROM LOG_RESPONSE_CARD WHERE PLAYER_USER_ID = U.ID) AS RESPONSE_CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = U.ID) AS RESPONSE_CARD_DISCARD_COUNT,
+			(
+				SELECT
+					COUNT(DISTINCT ROUND_ID)
+				FROM LOG_RESPONSE_CARD
+				WHERE JUDGE_USER_ID = U.ID
+			) AS PROMPT_CARD_PLAY_COUNT,
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = U.ID) AS PROMPT_CARD_SKIP_COUNT,
+			COALESCE(
+				(
+					SELECT
+						SUM(AMOUNT)
+					FROM LOG_CREDITS_SPENT
+					WHERE USER_ID = U.ID
+						AND AMOUNT > 0
+				),
+				0
+			) AS CREDITS_SPENT_COUNT,
+			COALESCE(
+				(
+					SELECT
+						SUM(AMOUNT) * -1
+					FROM LOG_CREDITS_SPENT
+					WHERE USER_ID = U.ID
+						AND AMOUNT < 0
+				),
+				0
+			) AS CREDITS_EARNED_COUNT,
+			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
+		FROM USER AS U
+		WHERE U.ID = ?
+	`
+	rows, err := query(sqlString, userId)
+	if err != nil {
+		return result, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&result.UserName,
+			&result.GamePlayCount,
+			&result.GameWinCount,
+			&result.RoundPlayCount,
+			&result.RoundWinCount,
+			&result.ResponseCardPlayCount,
+			&result.ResponseCardDiscardCount,
+			&result.PromptCardPlayCount,
+			&result.PromptCardSkipCount,
+			&result.CreditsSpentCount,
+			&result.CreditsEarnedCount,
+			&result.LobbyKickCount,
+		); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return result, nil
+}
+
+func GetStatsCard(cardId uuid.UUID) (StatCard, error) {
+	var result StatCard
+
+	sqlString := `
+		SELECT
+			D.NAME AS DECK_NAME,
+			C.CATEGORY,
+			C.TEXT,
+			(
+				SELECT
+					COUNT(DISTINCT LOBBY_ID)
+				FROM LOG_RESPONSE_CARD
+				WHERE JUDGE_CARD_ID = C.ID
+					OR PLAYER_CARD_ID = C.ID
+			) AS GAME_PLAY_COUNT
+		FROM CARD AS C
+			INNER JOIN DECK AS D ON D.ID = C.DECK_ID
+		WHERE C.ID = ?
+	`
+	rows, err := query(sqlString, cardId)
+	if err != nil {
+		return result, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&result.DeckName,
+			&result.Category,
+			&result.Text,
+			&result.GamePlayCount,
+		); err != nil {
+			log.Println(err)
+			return result, errors.New("failed to scan row in query results")
+		}
+	}
+
+	return result, nil
 }
