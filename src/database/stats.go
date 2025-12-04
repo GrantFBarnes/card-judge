@@ -29,7 +29,10 @@ type StatCard struct {
 	Category string
 	Text     string
 
-	GamePlayCount int
+	PlayCount    int
+	WinCount     int
+	DiscardCount int
+	SkipCount    int
 }
 
 func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]string, [][]string, error) {
@@ -1114,11 +1117,20 @@ func GetStatsCard(cardId uuid.UUID) (StatCard, error) {
 			C.TEXT,
 			(
 				SELECT
-					COUNT(DISTINCT LOBBY_ID)
+					COUNT(DISTINCT ID)
 				FROM LOG_RESPONSE_CARD
 				WHERE JUDGE_CARD_ID = C.ID
 					OR PLAYER_CARD_ID = C.ID
-			) AS GAME_PLAY_COUNT
+			) AS PLAY_COUNT,
+			(
+				SELECT
+					COUNT(DISTINCT LW.ID)
+				FROM LOG_RESPONSE_CARD AS LRC
+					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+				WHERE LRC.PLAYER_CARD_ID = C.ID
+			) AS WIN_COUNT,
+			(SELECT COUNT(DISTINCT ID) FROM LOG_DISCARD WHERE CARD_ID = C.ID) AS DISCARD_COUNT,
+			(SELECT COUNT(DISTINCT ID) FROM LOG_SKIP WHERE CARD_ID = C.ID) AS SKIP_COUNT
 		FROM CARD AS C
 			INNER JOIN DECK AS D ON D.ID = C.DECK_ID
 		WHERE C.ID = ?
@@ -1134,7 +1146,10 @@ func GetStatsCard(cardId uuid.UUID) (StatCard, error) {
 			&result.DeckName,
 			&result.Category,
 			&result.Text,
-			&result.GamePlayCount,
+			&result.PlayCount,
+			&result.WinCount,
+			&result.DiscardCount,
+			&result.SkipCount,
 		); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
