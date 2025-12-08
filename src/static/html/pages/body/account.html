@@ -103,6 +103,62 @@
                             >
                                 GruvBox Light
                             </option>
+                            <option
+                                value="retrowave-theme"
+                                {{if eq .User.ColorTheme.String "retrowave-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                🌅 Retrowave
+                            </option>
+                            <option
+                                value="bubblegum-theme"
+                                {{if eq .User.ColorTheme.String "bubblegum-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                🍬 Bubblegum
+                            </option>
+                            <option
+                                value="electric-lime-theme"
+                                {{if eq .User.ColorTheme.String "electric-lime-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                ⚡ Electric Lime
+                            </option>
+                            <option
+                                value="neon-theme"
+                                {{if eq .User.ColorTheme.String "neon-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                🌈 NEON
+                            </option>
+                            <option
+                                value="commander-keen-theme"
+                                {{if eq .User.ColorTheme.String "commander-keen-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                🚀 Commander Keen
+                            </option>
+                            <option
+                                value="lava-theme"
+                                {{if eq .User.ColorTheme.String "lava-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                🌋 LAVA
+                            </option>
+                            <option
+                                value="hacker-theme"
+                                {{if eq .User.ColorTheme.String "hacker-theme"}}
+                                selected
+                                {{end}}
+                            >
+                                💻 Hacker
+                            </option>
                         </select>
                     </div>
                     <div class="htmx-result"></div>
