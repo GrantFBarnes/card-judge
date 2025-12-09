@@ -2,6 +2,9 @@
     --top-bar-height: 20px;
     --top-bar-padding: 15px;
     --content-margin: 20px;
+    --font-family: Arial, Helvetica, sans-serif;
+    --font-family-mono: Consolas, Courier New, monospace;
+    --font-size-base: 16px;
 }
 
 html,
@@ -193,4 +196,62 @@ summary {
     max-width: 1920px;
     margin: auto;
     height: 100%;
+}
+
+/* Theme-specific font overrides */
+body.retrowave-theme,
+body.neon-theme {
+    --font-family: 'Orbitron', 'Segoe UI', -apple-system, sans-serif;
+    --font-family-mono: 'Share Tech Mono', 'Consolas', monospace;
+    --font-size-base: 15px;
+}
+
+body.bubblegum-theme {
+    --font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+    --font-size-base: 16px;
+}
+
+body.electric-lime-theme,
+body.lava-theme,
+body.hawkeye-theme {
+    --font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+    --font-size-base: 16px;
+}
+
+body.commander-keen-theme {
+    --font-family: 'Press Start 2P', 'Courier New', monospace;
+    --font-family-mono: 'Press Start 2P', 'Courier New', monospace;
+    --font-size-base: 12px;
+}
+
+body.hacker-theme {
+    --font-family: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
+    --font-family-mono: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
+    --font-size-base: 14px;
+}
+
+body.green-acres-theme {
+    --font-family: 'Arial Black', 'Trebuchet MS', 'Impact', sans-serif;
+    --font-size-base: 17px;
+}
+
+body.red-barn-theme {
+    --font-family: 'Arial Black', 'Franklin Gothic Heavy', sans-serif;
+    --font-size-base: 17px;
+}
+
+body.flambeau-theme,
+body.flambeau-inverse-theme {
+    --font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+    --font-size-base: 17px;
+}
+
+body.blue-oval-theme {
+    --font-family: 'Trebuchet MS', 'Arial', 'Helvetica', sans-serif;
+    --font-size-base: 16px;
+}
+
+body.merica-theme {
+    --font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+    --font-size-base: 17px;
 }
