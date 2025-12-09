@@ -2,14 +2,12 @@
     --top-bar-height: 20px;
     --top-bar-padding: 15px;
     --content-margin: 20px;
-    --font-family: Arial, Helvetica, sans-serif;
-    --font-family-mono: Consolas, Courier New, monospace;
-    --font-size-base: 16px;
 }
 
 html,
 body {
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
     height: 100%;
 }
 
