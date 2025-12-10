@@ -59,4 +59,15 @@ const (
 	ColorsCSSPath    = "src/static/css/colors.css"
 	ScreenshotDir    = "screenshots"
 	ThemeReportDir   = "theme-reports"
+	AccessibilityReportFile = "accessibility-report.txt"
+)
+
+// Accessibility thresholds
+const (
+	WCAGLevelAAA = "AAA"
+	WCAGLevelAA  = "AA"
+	WCAGLevelA   = "A"
+	MaxViolationsForAAA = 0
+	MaxViolationsForAA  = 2
+	ContrastViolationThreshold = 0
 )
