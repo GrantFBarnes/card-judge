@@ -237,23 +237,33 @@
         hx-target="find .htmx-result"
     >
         <div class="form-input">
-            <label for="newUserPassword">New Password</label>
+            <label for="currentPassword">Current Password</label>
             <input
                 type="password"
-                id="newUserPassword"
-                name="password"
+                id="currentPassword"
+                name="currentPassword"
                 maxlength="255"
-                placeholder="Enter Password"
+                placeholder="Current Password"
+                required="required"
+                autocomplete="password"
+            />
+            <label for="newPassword">New Password</label>
+            <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                maxlength="255"
+                placeholder="New Password"
                 required="required"
                 autocomplete="new-password"
             />
-            <label for="newUserPasswordConfirm">Confirm New Password</label>
+            <label for="newPasswordConfirm">Confirm New Password</label>
             <input
                 type="password"
-                id="newUserPasswordConfirm"
-                name="passwordConfirm"
+                id="newPasswordConfirm"
+                name="newPasswordConfirm"
                 maxlength="255"
-                placeholder="Enter Password"
+                placeholder="New Password Again"
                 required="required"
                 autocomplete="off"
             />
