@@ -132,8 +132,7 @@
             </td>
         </tr>
         {{end}}
-        {{if not .PlayerIsWinning}}
-        {{if .PlayerIsJudge}}
+        {{if and .PlayerIsJudge (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -155,6 +154,8 @@
                 ></span>
             </td>
         </tr>
+        {{end}}
+        {{if .PlayerIsJudge}}
         <tr>
             <td>
                 <button
@@ -177,7 +178,8 @@
                 ></span>
             </td>
         </tr>
-        {{else}}
+        {{end}}
+        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -208,6 +210,8 @@
                 ></span>
             </td>
         </tr>
+        {{end}}
+        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -229,6 +233,8 @@
                 ></span>
             </td>
         </tr>
+        {{end}}
+        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -250,6 +256,8 @@
                 ></span>
             </td>
         </tr>
+        {{end}}
+        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -271,6 +279,8 @@
                 ></span>
             </td>
         </tr>
+        {{end}}
+        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -291,6 +301,8 @@
                 ></span>
             </td>
         </tr>
+        {{end}}
+        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
         <tr>
             <td>
                 <button
@@ -311,7 +323,6 @@
                 ></span>
             </td>
         </tr>
-        {{end}}
         {{end}}
     </tbody>
 </table>
