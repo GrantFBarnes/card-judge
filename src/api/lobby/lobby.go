@@ -1070,6 +1070,7 @@ func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
 	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
 	w.WriteHeader(http.StatusOK)
 }
