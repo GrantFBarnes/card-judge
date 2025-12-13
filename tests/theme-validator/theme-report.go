@@ -14,7 +14,7 @@ import (
 // GenerateThemePDFs creates a PDF for each theme with all its screenshots
 func GenerateThemePDFs(screenshotBaseDir string, timestamp string) error {
 	screenshotDir := filepath.Join(screenshotBaseDir, timestamp)
-	
+
 	// Map of theme -> list of (page name, file path)
 	themes := make(map[string][]struct {
 		page string
@@ -50,12 +50,12 @@ func GenerateThemePDFs(screenshotBaseDir string, timestamp string) error {
 				// Format: theme_timestamp.png
 				filename := fileEntry.Name()
 				parts := strings.Split(strings.TrimSuffix(filename, ".png"), "_")
-				
+
 				if len(parts) >= 2 {
 					// Theme is everything except the last part (timestamp)
 					theme := strings.Join(parts[:len(parts)-1], "_")
 					filePath := filepath.Join(pageDir, filename)
-					
+
 					themes[theme] = append(themes[theme], struct {
 						page string
 						path string
@@ -83,7 +83,7 @@ func GenerateThemePDFs(screenshotBaseDir string, timestamp string) error {
 
 	for _, theme := range themeNames {
 		images := themes[theme]
-		
+
 		// Sort by page name
 		sort.Slice(images, func(i, j int) bool {
 			return images[i].page < images[j].page
@@ -136,7 +136,7 @@ func generateThemePDF(theme string, images []struct {
 		}
 
 		pdf.AddPage()
-		
+
 		// Page header
 		pdf.SetFont("Arial", "B", 14)
 		pdf.Cell(0, 10, formatPageName(img.page))
@@ -145,7 +145,7 @@ func generateThemePDF(theme string, images []struct {
 		// Add image
 		imgWidth := 190.0
 		imgHeight := 107.0 // A4 aspect ratio
-		
+
 		// Files are now actual PNG format
 		pdf.Image(img.path, 10, pdf.GetY(), imgWidth, imgHeight, false, "PNG", 0, "")
 		pdf.Ln(imgHeight + 10)
@@ -180,5 +180,3 @@ func formatPageName(page string) string {
 	}
 	return strings.Join(parts, " ")
 }
-
-

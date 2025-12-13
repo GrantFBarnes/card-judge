@@ -34,7 +34,7 @@ func SetupTestDatabase() error {
 
 	// Adapt for test database (in-memory only, no file modification)
 	testSetupSQL := strings.ReplaceAll(string(setupSQL), util.ProductionDatabaseName, util.TestDatabaseName)
-	
+
 	// Split and execute each statement
 	statements := strings.Split(testSetupSQL, ";")
 	for _, stmt := range statements {
@@ -117,8 +117,6 @@ func connectToTestDatabase(config dbConfig) (*sql.DB, error) {
 	}
 	return db, nil
 }
-
-
 
 func executeSQLFiles(db *sql.DB) error {
 	sqlFiles := getSQLFileList()

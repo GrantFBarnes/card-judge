@@ -159,7 +159,7 @@ func findBrowserPath() string {
 
 func initBrowser() (context.Context, context.CancelFunc) {
 	opts := chromedp.DefaultExecAllocatorOptions[:]
-	
+
 	// Auto-detect browser path if available
 	if browserPath := findBrowserPath(); browserPath != "" {
 		log.Printf("Using browser: %s\n", browserPath)
@@ -167,7 +167,7 @@ func initBrowser() (context.Context, context.CancelFunc) {
 	} else {
 		log.Println("Using default browser detection")
 	}
-	
+
 	opts = append(opts,
 		chromedp.WindowSize(1920, 1080),
 		chromedp.Flag("headless", true),
@@ -277,7 +277,7 @@ func captureTheme(ctx context.Context, pageDir, theme, pageName string, current,
 			(function() {
 				var existing = document.getElementById('debug-url-bar');
 				if (existing) existing.remove();
-				
+
 				var urlBar = document.createElement('div');
 				urlBar.id = 'debug-url-bar';
 				urlBar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#333;color:#0f0;font-family:monospace;font-size:14px;padding:5px 10px;z-index:999999;border-bottom:2px solid #0f0;';
@@ -311,4 +311,3 @@ func captureTheme(ctx context.Context, pageDir, theme, pageName string, current,
 	log.Printf("  [%3d/%d] %5.1f%% %s ✓\n", current, total, float64(current)/float64(total)*100, theme)
 	return result
 }
-

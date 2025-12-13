@@ -17,15 +17,15 @@ import (
 
 // AccessibilityResult holds the axe results for a page/theme combo
 type AccessibilityResult struct {
-	Theme       string
-	Page        string
-	Violations  int
-	Passes      int
-	Incomplete  int
+	Theme             string
+	Page              string
+	Violations        int
+	Passes            int
+	Incomplete        int
 	InapplicableRules int
-	ContrastIssues int
-	WCAGLevel   string
-	Details     axeResults
+	ContrastIssues    int
+	WCAGLevel         string
+	Details           axeResults
 }
 
 // axeResults mirrors the axe-core output structure
@@ -176,11 +176,11 @@ func GenerateAccessibilityReport(results []AccessibilityResult, timestamp string
 	fmt.Fprintf(file, "║                     THEME COLOR CONTRAST REPORT                              ║\n")
 	fmt.Fprintf(file, "║                    WCAG Contrast Ratio Analysis by Theme                     ║\n")
 	fmt.Fprintf(file, "╚════════════════════════════════════════════════════════════════════════════════╝\n\n")
-	
+
 	// Extract only color-contrast violations
 	contrastIssuesByTheme := make(map[string][]map[string]interface{})
 	totalContrastViolations := 0
-	
+
 	for _, result := range results {
 		for _, violation := range result.Details.Violations {
 			if id, ok := violation["id"].(string); ok && id == "color-contrast" {
@@ -241,18 +241,18 @@ func GenerateAccessibilityReport(results []AccessibilityResult, timestamp string
 		// Group violations by element
 		for idx, violation := range violations {
 			fmt.Fprintf(file, "Issue #%d\n", idx+1)
-			
+
 			// Extract violation details
 			if help, ok := violation["help"].(string); ok {
 				fmt.Fprintf(file, "  Problem: %s\n", help)
 			}
-			
+
 			if nodes, ok := violation["nodes"].([]interface{}); ok && len(nodes) > 0 {
 				if node, ok := nodes[0].(map[string]interface{}); ok {
 					if html, ok := node["html"].(string); ok {
 						fmt.Fprintf(file, "  Element: %s\n", html)
 					}
-					
+
 					// Try to extract detailed failure info
 					if any, ok := node["any"].([]interface{}); ok && len(any) > 0 {
 						if failureInfo, ok := any[0].(map[string]interface{}); ok {
@@ -263,7 +263,7 @@ func GenerateAccessibilityReport(results []AccessibilityResult, timestamp string
 					}
 				}
 			}
-			
+
 			fmt.Fprintf(file, "\n")
 		}
 		fmt.Fprintf(file, "\n")
