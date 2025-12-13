@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"runtime"
-	"syscall"
 	"time"
 
 	"github.com/grantfbarnes/card-judge/tests/util"
@@ -54,13 +52,6 @@ func (sm *ServerManager) Start() error {
 	sm.cmd.Env = append(os.Environ(),
 		fmt.Sprintf("CARD_JUDGE_SQL_DATABASE=%s", util.TestDatabaseName),
 	)
-
-	// On Windows, create a new process group so we can kill child processes
-	if runtime.GOOS == "windows" {
-		sm.cmd.SysProcAttr = &syscall.SysProcAttr{
-			CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
-		}
-	}
 
 	log.Printf("Starting server with: CARD_JUDGE_SQL_DATABASE=%s\n", util.TestDatabaseName)
 
