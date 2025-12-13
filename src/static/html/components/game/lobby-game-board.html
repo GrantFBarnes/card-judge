@@ -4,13 +4,6 @@
     <span>[NO PROMPT CARD]</span>
     {{else}}
     <span class="wrap-new-lines">{{.JudgeCardText.String}}</span>
-    {{if .JudgeCardDeck.Valid}}
-    <span
-        class="bi bi-info-circle"
-        style="float: right"
-        title="{{.JudgeCardDeck.String}}"
-    ></span>
-    {{end}}
     {{if .JudgeCardYouTube.Valid}}
     <br />
     <br />
@@ -133,11 +126,6 @@
                     >
                         <p>
                             <span class="wrap-new-lines">{{.Text}}</span>
-                            <span
-                                class="bi bi-info-circle"
-                                style="float: right"
-                                title="{{.DeckName}}"
-                            ></span>
                         </p>
                         {{if .YouTube.Valid}}
                         <div class="iframe-container">
@@ -198,11 +186,6 @@
                             ></span>
                             {{end}}
                             <span class="wrap-new-lines">{{.Text}}</span>
-                            <span
-                                class="bi bi-info-circle"
-                                style="float: right"
-                                title="{{.DeckName}}"
-                            ></span>
                         </p>
                         {{if .YouTube.Valid}}
                         <div class="iframe-container">
