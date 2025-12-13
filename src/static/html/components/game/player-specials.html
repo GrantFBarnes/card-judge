@@ -96,6 +96,42 @@
                 ></span>
             </td>
         </tr>
+        {{if not .PlayerIsJudge}}
+        <tr>
+            <td>
+                {{if gt .PlayerBetOnWin 0}}
+                <i>Bet Placed: {{.PlayerBetOnWin}}</i>
+                {{if not .BoardHasAnyRevealed}}
+                <br />
+                <span
+                    title="Undo Bet"
+                    class="bi bi-arrow-counterclockwise clickable"
+                    hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win/undo"
+                >
+                    <i>Undo Bet</i>
+                </span>
+                {{end}}
+                {{else}}
+                <button
+                    onclick="document.getElementById('bet-on-win-dialog').showModal()"
+                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
+                    class="disabled non-clickable"
+                    disabled
+                    {{end}}
+                >
+                    Bet On Win
+                </button>
+                {{end}}
+            </td>
+            <td>1+</td>
+            <td>
+                <span
+                    class="bi bi-info-circle"
+                    title="Bet credits you will win this round. Earn double credits back if correct."
+                ></span>
+            </td>
+        </tr>
+        {{end}}
         {{if not .PlayerIsWinning}}
         {{if .PlayerIsJudge}}
         <tr>
@@ -142,40 +178,6 @@
             </td>
         </tr>
         {{else}}
-        <tr>
-            <td>
-                {{if gt .PlayerBetOnWin 0}}
-                <i>Bet Placed: {{.PlayerBetOnWin}}</i>
-                {{if not .BoardHasAnyRevealed}}
-                <br />
-                <span
-                    title="Undo Bet"
-                    class="bi bi-arrow-counterclockwise clickable"
-                    hx-post="/api/lobby/{{$.LobbyId}}/bet-on-win/undo"
-                >
-                    <i>Undo Bet</i>
-                </span>
-                {{end}}
-                {{else}}
-                <button
-                    onclick="document.getElementById('bet-on-win-dialog').showModal()"
-                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
-                    class="disabled non-clickable"
-                    disabled
-                    {{end}}
-                >
-                    Bet On Win
-                </button>
-                {{end}}
-            </td>
-            <td>1+</td>
-            <td>
-                <span
-                    class="bi bi-info-circle"
-                    title="Bet credits you will win this round. Earn double credits back if correct."
-                ></span>
-            </td>
-        </tr>
         <tr>
             <td>
                 <button
