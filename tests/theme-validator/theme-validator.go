@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/chromedp/chromedp"
@@ -64,9 +65,12 @@ func main() {
 
 	// Capture screenshots
 	total := len(themes) * len(pagesToCapture)
-	log.Printf("Starting screenshot capture: %d themes × %d pages = %d total screenshots\n", len(themes), len(pagesToCapture), total)
+	log.Printf("\n📸 SCREENSHOT CAPTURE: %d themes × %d pages = %d total\n", len(themes), len(pagesToCapture), total)
+	log.Println(strings.Repeat("─", 80))
 
-	captureScreenshots(ctx, baseURL, outputDir, themes, pagesToCapture, total)
+	accessibilityResults := captureScreenshots(ctx, baseURL, outputDir, themes, pagesToCapture, total)
+
+	log.Println(strings.Repeat("─", 80))
 
 	// Generate PDFs
 	elapsed := time.Since(startTime)
@@ -81,10 +85,18 @@ func main() {
 	} else {
 		log.Println("✅ All PDFs generated successfully!")
 	}
+
+	// Generate accessibility report
+	log.Println("\n📋 Generating accessibility report...")
+	if err := GenerateAccessibilityReport(accessibilityResults, timestamp); err != nil {
+		log.Printf("⚠️  Warning: Accessibility report generation failed: %v\n", err)
+	} else {
+		log.Printf("✅ Accessibility report saved to: theme-reports/%s/accessibility-report.txt\n", timestamp)
+	}
 }
 
 func runSetup() error {
-	log.Println("🔧 Running setup tasks...\n")
+	log.Println("🔧 Running setup tasks...")
 
 	if err := setup.KillServerOnPort(util.DefaultPort); err != nil {
 		log.Printf("Warning: Failed to kill existing server: %v\n", err)
@@ -94,7 +106,8 @@ func runSetup() error {
 		return fmt.Errorf("failed to set up test database: %w", err)
 	}
 
-	log.Println("\n✅ Setup complete! Ready to capture screenshots.\n")
+	log.Println("")
+	log.Println("✅ Setup complete! Ready to capture screenshots.")
 	return nil
 }
 
@@ -193,11 +206,13 @@ func selectPages(pages []PageConfig) []PageConfig {
 	return nil
 }
 
-func captureScreenshots(ctx context.Context, baseURL, outputDir string, themes []string, pages []PageConfig, total int) {
+func captureScreenshots(ctx context.Context, baseURL, outputDir string, themes []string, pages []PageConfig, total int) []AccessibilityResult {
 	current := 0
+	var accessibilityResults []AccessibilityResult
 
 	for _, page := range pages {
-		log.Printf("\n📸 Capturing page: %s", page.Name)
+		log.Printf("\n📄 Page: %s\n", page.Name)
+		log.Println(strings.Repeat("  ", 40))
 
 		pageDir := filepath.Join(outputDir, page.Name)
 		if err := os.MkdirAll(pageDir, 0755); err != nil {
@@ -210,7 +225,7 @@ func captureScreenshots(ctx context.Context, baseURL, outputDir string, themes [
 
 		// Navigate to page
 		url := baseURL + page.Path
-		log.Printf("  Navigating to %s...\n", url)
+		log.Printf("  → Navigating to %s...\n", url)
 		err := chromedp.Run(pageCtx,
 			chromedp.Navigate(url),
 			chromedp.WaitVisible("body", chromedp.ByQuery),
@@ -235,19 +250,25 @@ func captureScreenshots(ctx context.Context, baseURL, outputDir string, themes [
 		// Capture all themes for this page
 		for _, theme := range themes {
 			current++
-			captureTheme(pageCtx, pageDir, theme, current, total)
+			result := captureTheme(pageCtx, pageDir, theme, page.Name, current, total)
+			accessibilityResults = append(accessibilityResults, result)
 		}
 
 		pageCancel()
 	}
+	return accessibilityResults
 }
 
-func captureTheme(ctx context.Context, pageDir, theme string, current, total int) {
+func captureTheme(ctx context.Context, pageDir, theme, pageName string, current, total int) AccessibilityResult {
 	screenshotTime := time.Now().Format("150405")
 	filename := filepath.Join(pageDir, fmt.Sprintf("%s_%s.png", theme, screenshotTime))
 	var buf []byte
+	result := AccessibilityResult{
+		Theme: theme,
+		Page:  pageName,
+	}
 
-	log.Printf("  [%d/%d] %.1f%% - %s: applying theme\n", current, total, float64(current)/float64(total)*100, theme)
+	log.Printf("  [%3d/%d] %5.1f%% %s\n", current, total, float64(current)/float64(total)*100, theme)
 
 	// Apply theme and capture
 	err := chromedp.Run(ctx,
@@ -270,13 +291,24 @@ func captureTheme(ctx context.Context, pageDir, theme string, current, total int
 
 	if err != nil {
 		log.Printf("Error capturing theme %s: %v\n", theme, err)
-		return
+		return result
+	}
+
+	// Run accessibility check
+	accessResult, err := RunAccessibilityCheck(ctx, theme)
+	if err != nil {
+		log.Printf("    ⚠️  Accessibility check failed: %v\n", err)
+	} else {
+		accessResult.Page = pageName
+		result = accessResult
 	}
 
 	if err := os.WriteFile(filename, buf, 0644); err != nil {
 		log.Printf("Error saving screenshot %s: %v\n", filename, err)
-		return
+		return result
 	}
 
-	log.Printf("  [%d/%d] %.1f%% - %s ✓\n", current, total, float64(current)/float64(total)*100, theme)
+	log.Printf("  [%3d/%d] %5.1f%% %s ✓\n", current, total, float64(current)/float64(total)*100, theme)
+	return result
 }
+
