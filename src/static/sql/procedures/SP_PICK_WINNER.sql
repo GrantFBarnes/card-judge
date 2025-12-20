@@ -18,18 +18,11 @@ BEGIN
     WHERE R.ID = VAR_RESPONSE_ID;
 
     IF(VAR_PLAYER_BET_ON_WIN > 0) THEN
-        UPDATE PLAYER
-        SET CREDITS_SPENT = CREDITS_SPENT - (VAR_PLAYER_BET_ON_WIN * 2)
-        WHERE ID = VAR_PLAYER_ID;
-
-        INSERT INTO LOG_CREDITS_SPENT(LOBBY_ID, USER_ID, AMOUNT, CATEGORY)
-        SELECT
-            LOBBY_ID,
-            USER_ID,
-            (VAR_PLAYER_BET_ON_WIN * 2) * -1,
-            'BET-WIN'
-        FROM PLAYER
-        WHERE ID = VAR_PLAYER_ID;
+        CALL SP_SPEND_CREDITS(
+                VAR_PLAYER_ID,
+                (VAR_PLAYER_BET_ON_WIN * 2) * -1,
+                'BET-WIN'
+            );
     END
     IF;
 
