@@ -6,41 +6,38 @@ OR REPLACE PROCEDURE SP_RESPOND_WITH_CARD(
 )
 BEGIN
     DECLARE VAR_RESPONSE_CARD_ID UUID DEFAULT UUID();
-    DECLARE VAR_LOBBY_ID UUID;
-    DECLARE VAR_JUDGE_BLANK_COUNT INT;
-    DECLARE VAR_RESPONSE_ID UUID;
 
-    SELECT
-        LOBBY_ID
-    INTO
-        VAR_LOBBY_ID
-    FROM PLAYER
-    WHERE ID = VAR_PLAYER_ID;
-
-    SELECT
-        BLANK_COUNT
-    INTO
-        VAR_JUDGE_BLANK_COUNT
-    FROM JUDGE
-    WHERE LOBBY_ID = VAR_LOBBY_ID;
-
-    SELECT
-        ID
-    INTO
-        VAR_RESPONSE_ID
-    FROM (
+    DECLARE VAR_LOBBY_ID UUID DEFAULT (
             SELECT
-                R.ID,
-                R.CREATED_ON_DATE,
-                COUNT(RC.ID) AS CARD_COUNT
-            FROM RESPONSE AS R
-                LEFT JOIN RESPONSE_CARD AS RC ON RC.RESPONSE_ID = R.ID
-            WHERE R.PLAYER_ID = VAR_PLAYER_ID
-            GROUP BY R.ID
-        ) AS T
-    WHERE CARD_COUNT < VAR_JUDGE_BLANK_COUNT
-    ORDER BY CREATED_ON_DATE
-    LIMIT 1;
+                LOBBY_ID
+            FROM PLAYER
+            WHERE ID = VAR_PLAYER_ID
+        );
+
+    DECLARE VAR_JUDGE_BLANK_COUNT INT DEFAULT (
+            SELECT
+                BLANK_COUNT
+            FROM JUDGE
+            WHERE LOBBY_ID = VAR_LOBBY_ID
+        );
+
+    DECLARE VAR_RESPONSE_ID UUID DEFAULT (
+            SELECT
+                ID
+            FROM (
+                    SELECT
+                        R.ID,
+                        R.CREATED_ON_DATE,
+                        COUNT(RC.ID) AS CARD_COUNT
+                    FROM RESPONSE AS R
+                        LEFT JOIN RESPONSE_CARD AS RC ON RC.RESPONSE_ID = R.ID
+                    WHERE R.PLAYER_ID = VAR_PLAYER_ID
+                    GROUP BY R.ID
+                ) AS T
+            WHERE CARD_COUNT < VAR_JUDGE_BLANK_COUNT
+            ORDER BY CREATED_ON_DATE
+            LIMIT 1
+        );
 
     INSERT INTO RESPONSE_CARD(ID, RESPONSE_ID, CARD_ID, SPECIAL_CATEGORY)
     VALUES (
