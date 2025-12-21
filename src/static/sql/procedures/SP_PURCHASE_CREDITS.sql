@@ -30,7 +30,10 @@ BEGIN
 
         CALL SP_SPEND_CREDITS(
                 VAR_OTHER_PLAYER_ID,
-                FN_GET_SPECIAL_COST('PURCHASE'),
+                (
+                    FN_GET_SPECIAL_COST('PURCHASE') +
+                    FN_GET_PLAYER_HANDICAP_INVERSE(VAR_OTHER_PLAYER_ID)
+                ) * -1,
                 'PURCHASE'
             );
         END LOOP;

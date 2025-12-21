@@ -7,8 +7,10 @@ BEGIN
 
     CALL SP_SPEND_CREDITS_UNDO(
             VAR_PLAYER_ID,
-            FN_GET_SPECIAL_COST('EXTRA-RESPONSE') +
-                FN_GET_PLAYER_HANDICAP(VAR_PLAYER_ID),
+            (
+                FN_GET_SPECIAL_COST('EXTRA-RESPONSE') +
+                    FN_GET_PLAYER_HANDICAP(VAR_PLAYER_ID)
+            ),
             'EXTRA-RESPONSE'
         );
 

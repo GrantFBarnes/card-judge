@@ -1,0 +1,23 @@
+CREATE
+OR REPLACE FUNCTION FN_GET_PLAYER_HANDICAP_INVERSE(IN VAR_PLAYER_ID UUID)
+RETURNS INT
+BEGIN
+    DECLARE VAR_LOBBY_ID UUID DEFAULT FN_GET_PLAYER_LOBBY_ID(VAR_PLAYER_ID);
+
+    RETURN (
+        WITH PLAYER_RANK AS (
+                SELECT
+                    P.ID,
+                    RANK() OVER (ORDER BY COUNT(W.ID) DESC) AS RANKING
+                FROM PLAYER AS P
+                    LEFT JOIN WIN AS W ON W.PLAYER_ID = P.ID
+                WHERE P.LOBBY_ID = VAR_LOBBY_ID
+                    AND P.IS_ACTIVE = 1
+                GROUP BY P.ID
+            )
+        SELECT
+            RANKING - 1
+        FROM PLAYER_RANK
+        WHERE ID = VAR_PLAYER_ID
+    );
+END;

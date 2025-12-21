@@ -57,10 +57,13 @@ BEGIN
         END
         IF;
 
-        -- AWARD CREDIT AFTER BREAKING THRESHOLD
+        -- AWARD CREDITS AFTER BREAKING THRESHOLD
         CALL SP_SPEND_CREDITS(
                 VAR_PLAYER_ID,
-                FN_GET_SPECIAL_COST('LOSING-STREAK'),
+                (
+                    FN_GET_SPECIAL_COST('LOSING-STREAK') +
+                    FN_GET_PLAYER_HANDICAP_INVERSE(VAR_PLAYER_ID)
+                ) * -1,
                 'LOSING-STREAK'
             );
 

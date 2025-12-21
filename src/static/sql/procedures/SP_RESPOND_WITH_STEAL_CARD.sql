@@ -28,14 +28,19 @@ BEGIN
 
     CALL SP_SPEND_CREDITS(
             VAR_PLAYER_ID,
-            FN_GET_SPECIAL_COST('STEAL') +
-            FN_GET_PLAYER_HANDICAP(VAR_PLAYER_ID),
+            (
+                FN_GET_SPECIAL_COST('STEAL') +
+                    FN_GET_PLAYER_HANDICAP(VAR_PLAYER_ID)
+            ),
             'STEAL'
         );
 
     CALL SP_SPEND_CREDITS(
             VAR_VICTIM_PLAYER_ID,
-            FN_GET_SPECIAL_COST('STEAL-VICTIM'),
+            (
+                FN_GET_SPECIAL_COST('STEAL-VICTIM') +
+                FN_GET_PLAYER_HANDICAP_INVERSE(VAR_VICTIM_PLAYER_ID)
+            ) * -1,
             'STEAL-VICTIM'
         );
 
