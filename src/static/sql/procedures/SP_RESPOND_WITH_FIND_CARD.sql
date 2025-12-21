@@ -25,7 +25,7 @@ BEGIN
 
         CALL SP_SPEND_CREDITS(
                 VAR_PLAYER_ID,
-                FN_GET_SPECIAL_COST('FIND'),
+                FN_GET_SPECIAL_COST(VAR_PLAYER_ID, 'FIND'),
                 'FIND'
             );
 

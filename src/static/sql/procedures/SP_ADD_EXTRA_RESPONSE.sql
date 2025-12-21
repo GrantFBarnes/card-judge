@@ -7,7 +7,7 @@ BEGIN
 
     CALL SP_SPEND_CREDITS(
             VAR_PLAYER_ID,
-            FN_GET_SPECIAL_COST('EXTRA-RESPONSE'),
+            FN_GET_SPECIAL_COST(VAR_PLAYER_ID, 'EXTRA-RESPONSE'),
             'EXTRA-RESPONSE'
         );
 
