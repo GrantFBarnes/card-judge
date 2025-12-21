@@ -14,8 +14,9 @@ OR REPLACE PROCEDURE SP_SPEND_CREDITS_UNDO(
         'BET-WIN',
         'EXTRA-RESPONSE',
         'BLOCK-RESPONSE',
-        'SURPRISE',
         'STEAL',
+        'STEAL-VICTIM',
+        'SURPRISE',
         'FIND',
         'WILD'
     )
