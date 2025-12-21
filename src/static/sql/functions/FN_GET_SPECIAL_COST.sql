@@ -26,37 +26,29 @@ BEGIN
         );
 
     DECLARE VAR_PLAYER_COST INT DEFAULT VAR_BASE_COST;
-    DECLARE VAR_LOBBY_ID UUID;
-    DECLARE VAR_PLAYER_USER_ID UUID;
 
-    SELECT
-        LOBBY_ID,
-        USER_ID
-    INTO
-        VAR_LOBBY_ID,
-        VAR_PLAYER_USER_ID
-    FROM PLAYER
-    WHERE ID = VAR_PLAYER_ID;
+    DECLARE VAR_LOBBY_ID UUID DEFAULT (
+            SELECT
+                LOBBY_ID
+            FROM PLAYER
+            WHERE ID = VAR_PLAYER_ID
+        );
 
     WITH PLAYER_RANK AS (
             SELECT
-                LRC.PLAYER_USER_ID,
-                RANK() OVER (
-                    PARTITION BY LRC.LOBBY_ID
-                    ORDER BY COUNT(DISTINCT LRC.ROUND_ID) ASC
-                ) AS RANKING
-            FROM LOG_RESPONSE_CARD AS LRC
-                INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
-            WHERE LRC.LOBBY_ID = VAR_LOBBY_ID
-            GROUP BY LRC.PLAYER_USER_ID,
-                LRC.LOBBY_ID
+                P.ID,
+                RANK() OVER (ORDER BY COUNT(W.ID) ASC) AS RANKING
+            FROM PLAYER AS P
+                LEFT JOIN WIN AS W ON W.PLAYER_ID = P.ID
+            WHERE P.LOBBY_ID = VAR_LOBBY_ID
+            GROUP BY P.ID
         )
     SELECT
-        RANKING * VAR_BASE_COST
+        VAR_BASE_COST + RANKING - 1
     INTO
         VAR_PLAYER_COST
     FROM PLAYER_RANK
-    WHERE PLAYER_USER_ID = VAR_PLAYER_USER_ID;
+    WHERE ID = VAR_PLAYER_ID;
 
     RETURN VAR_PLAYER_COST;
 END;
