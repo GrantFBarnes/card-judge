@@ -23,7 +23,12 @@ BEGIN
         WHERE LOBBY_ID = VAR_LOBBY_ID
             AND CARD_ID = VAR_CARD_ID;
 
-        CALL SP_SPEND_CREDITS(VAR_PLAYER_ID, 2, 'FIND');
+        CALL SP_SPEND_CREDITS(
+                VAR_PLAYER_ID,
+                FN_GET_SPECIAL_COST('FIND'),
+                'FIND'
+            );
+
         CALL SP_RESPOND_WITH_CARD(VAR_PLAYER_ID, VAR_CARD_ID, 'FIND');
     END
     IF;
