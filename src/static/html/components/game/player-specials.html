@@ -132,13 +132,13 @@
             </td>
         </tr>
         {{end}}
-        {{if and .PlayerIsJudge (not .PlayerIsWinning)}}
+        {{if .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/skip-judge"
                     hx-confirm="Are you sure you want to skip being judge?"
-                    {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 5)}}
+                    {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining .SpecialCostSkipBeingJudge)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -146,7 +146,7 @@
                     Skip Being Judge
                 </button>
             </td>
-            <td>5</td>
+            <td>{{.SpecialCostSkipBeingJudge}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"
@@ -179,13 +179,13 @@
             </td>
         </tr>
         {{end}}
-        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
+        {{if not .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
                     hx-confirm="Are you sure you want to use an extra response?"
-                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 2)}}
+                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining .SpecialCostExtraResponse)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -202,7 +202,7 @@
                 </span>
                 {{end}}
             </td>
-            <td>2</td>
+            <td>{{.SpecialCostExtraResponse}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"
@@ -211,13 +211,13 @@
             </td>
         </tr>
         {{end}}
-        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
+        {{if not .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     onclick="document.getElementById('block-response-dialog').showModal()"
                     {{$opponentCount := len .Opponents}}
-                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 2) (eq $opponentCount 0)}}
+                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining .SpecialCostBlockResponse) (eq $opponentCount 0)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -225,7 +225,7 @@
                     Block Response
                 </button>
             </td>
-            <td>2</td>
+            <td>{{.SpecialCostBlockResponse}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"
@@ -234,13 +234,13 @@
             </td>
         </tr>
         {{end}}
-        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
+        {{if not .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
                     hx-confirm="Are you sure you want to use a Surprise Card?"
-                    {{if .PlayerIsReady}}
+                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostSurpriseCard)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -248,7 +248,7 @@
                     Surprise Card
                 </button>
             </td>
-            <td>-</td>
+            <td>{{.SpecialCostSurpriseCard}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"
@@ -257,13 +257,13 @@
             </td>
         </tr>
         {{end}}
-        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
+        {{if not .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
                     hx-confirm="Are you sure you want to use a Steal Card?"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 1)}}
+                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostStealCard)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -271,7 +271,7 @@
                     Steal Card
                 </button>
             </td>
-            <td>1</td>
+            <td>{{.SpecialCostStealCard}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"
@@ -280,12 +280,12 @@
             </td>
         </tr>
         {{end}}
-        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
+        {{if not .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     onclick="document.getElementById('find-card-dialog').showModal()"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 2)}}
+                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostFindCard)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -293,7 +293,7 @@
                     Find Card
                 </button>
             </td>
-            <td>2</td>
+            <td>{{.SpecialCostFindCard}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"
@@ -302,12 +302,12 @@
             </td>
         </tr>
         {{end}}
-        {{if and (not .PlayerIsJudge) (not .PlayerIsWinning)}}
+        {{if not .PlayerIsJudge}}
         <tr>
             <td>
                 <button
                     onclick="document.getElementById('wild-card-dialog').showModal()"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining 3)}}
+                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostWildCard)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -315,7 +315,7 @@
                     Wild Card
                 </button>
             </td>
-            <td>3</td>
+            <td>{{.SpecialCostWildCard}}</td>
             <td>
                 <span
                     class="bi bi-info-circle"

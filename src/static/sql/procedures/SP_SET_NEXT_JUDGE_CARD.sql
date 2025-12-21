@@ -1,27 +1,27 @@
 CREATE
 OR REPLACE PROCEDURE SP_SET_NEXT_JUDGE_CARD(IN VAR_LOBBY_ID UUID)
 BEGIN
-    DECLARE VAR_NEW_CARD_ID UUID;
-    DECLARE VAR_NEW_CARD_TEXT VARCHAR(510);
-    DECLARE VAR_BLANK_COUNT INT;
-    SET VAR_NEW_CARD_ID = FN_GET_DRAW_PILE_CARD_ID('PROMPT', VAR_LOBBY_ID);
+    DECLARE VAR_NEW_CARD_ID UUID DEFAULT FN_GET_DRAW_PILE_CARD_ID(
+            'PROMPT',
+            VAR_LOBBY_ID
+        );
 
-    SELECT
-        TEXT
-    INTO
-        VAR_NEW_CARD_TEXT
-    FROM CARD
-    WHERE ID = VAR_NEW_CARD_ID;
+    DECLARE VAR_NEW_CARD_TEXT VARCHAR(510) DEFAULT (
+            SELECT
+                TEXT
+            FROM CARD
+            WHERE ID = VAR_NEW_CARD_ID
+        );
 
-    SELECT
-        ROUND(
-            (
-                LENGTH(VAR_NEW_CARD_TEXT) -
-                LENGTH(REPLACE(VAR_NEW_CARD_TEXT, '_____', ''))
-            ) / LENGTH('_____')
-        )
-    INTO
-        VAR_BLANK_COUNT;
+    DECLARE VAR_BLANK_COUNT INT DEFAULT (
+            SELECT
+                ROUND(
+                    (
+                        LENGTH(VAR_NEW_CARD_TEXT) -
+                        LENGTH(REPLACE(VAR_NEW_CARD_TEXT, '_____', ''))
+                    ) / LENGTH('_____')
+                )
+        );
 
     IF VAR_BLANK_COUNT < 1 THEN
         SET VAR_BLANK_COUNT = 1;
