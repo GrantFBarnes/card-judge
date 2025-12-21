@@ -28,7 +28,11 @@ BEGIN
         END
         IF;
 
-        CALL SP_SPEND_CREDITS(VAR_OTHER_PLAYER_ID, -1, 'PURCHASE');
+        CALL SP_SPEND_CREDITS(
+                VAR_OTHER_PLAYER_ID,
+                FN_GET_SPECIAL_COST('PURCHASE'),
+                'PURCHASE'
+            );
         END LOOP;
     CLOSE VAR_PLAYER_CURSOR;
 END;
