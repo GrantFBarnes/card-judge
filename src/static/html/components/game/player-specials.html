@@ -261,6 +261,29 @@
         <tr>
             <td>
                 <button
+                    hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
+                    hx-confirm="Are you sure you want to use a Steal Card?"
+                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostStealCard)}}
+                    class="disabled non-clickable"
+                    disabled
+                    {{end}}
+                >
+                    Steal Card
+                </button>
+            </td>
+            <td>{{.SpecialCostStealCard}}</td>
+            <td>
+                <span
+                    class="bi bi-info-circle"
+                    title="Steal a random card from another player in the lobby.&#010;They will receive an extra credit to spend as a result."
+                ></span>
+            </td>
+        </tr>
+        {{end}}
+        {{if not .PlayerIsJudge}}
+        <tr>
+            <td>
+                <button
                     onclick="document.getElementById('find-card-dialog').showModal()"
                     {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostFindCard)}}
                     class="disabled non-clickable"

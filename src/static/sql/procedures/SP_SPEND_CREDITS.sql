@@ -15,6 +15,7 @@ OR REPLACE PROCEDURE SP_SPEND_CREDITS(
         'EXTRA-RESPONSE',
         'BLOCK-RESPONSE',
         'SURPRISE',
+        'STEAL',
         'FIND',
         'WILD'
     )

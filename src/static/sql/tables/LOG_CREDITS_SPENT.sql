@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS LOG_CREDITS_SPENT(
         'BET-WIN',
         'EXTRA-RESPONSE',
         'BLOCK-RESPONSE',
+        'STEAL',
+        'STEAL-VICTIM',
         'SURPRISE',
         'FIND',
         'WILD'
