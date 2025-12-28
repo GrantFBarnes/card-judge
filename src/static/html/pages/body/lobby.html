@@ -495,5 +495,35 @@
             </tbody>
         </table>
     </form>
+    <form
+        hx-post="/api/lobby/{{.Lobby.Id}}/perk/gamble-advantage"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to get a gamble advantage"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>Gamble odds are 10% better</span>
+                    </td>
+                    <td>
+                        <input
+                            type="submit"
+                            value="Select"
+                            onclick="document.getElementById('perks-dialog').close()"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 </dialog>
 {{end}}

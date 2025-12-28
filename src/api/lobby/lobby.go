@@ -1092,6 +1092,36 @@ func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("success"))
 }
 
+func PerkGambleAdvantage(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.PerkGambleAdvantage(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
+	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your gamble odds are now <green>%d</> percent better than the normal value.", player.GambleAdvantageSize+10))
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
 func WithdrawCard(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
