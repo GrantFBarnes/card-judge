@@ -53,13 +53,15 @@ Gameplay can continue until there are no more cards to draw from the
 draw pile or when players agree to finish. The player with the most
 points is the winner.
 
-### Credits/Specials
+### Credits/Specials/Perks
 
 A lobby will have a set free credits for each player. Credits can be
-used to purchase Specials at varying costs. Specials vary from gambling
-credits to potentially earn more, to playing Special Cards which are an
-alternative way to play a turn. Each Special has a help icon next to it
-to display what it is.
+used to purchase Specials/Perks at varying costs. Specials vary from
+gambling credits to potentially earn more, to playing Special Cards
+which are an alternative way to play a turn. Each Special has a help
+icon next to it to display what it is. Perks last the rest of the game,
+as opposed to the round. Perks will provide a long term advantage in the
+game.
 
 Credits can be earned/lost through win/lose streaks. The streak amount
 can be set per lobby. This is to help balance and allow those who may be
@@ -68,7 +70,7 @@ credits and catch up.
 
 A handicap is in place to help balance the game. A player's handicap is
 the amount of other players in the lobby they are beating. All fixed
-cost specials will have the handicap added to the price.
+cost specials/perks will have the handicap added to the price.
 
 ## Environment Variables
 
