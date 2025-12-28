@@ -418,8 +418,112 @@
         <input
             type="submit"
             value="Play Wild Card"
-            onclick="document.getElementById('wild-card-dialog').close();"
+            onclick="document.getElementById('wild-card-dialog').close()"
         />
+    </form>
+</dialog>
+<dialog id="perks-dialog">
+    <div style="display: grid; grid-auto-flow: column">
+        <div>
+            <h3>Perks</h3>
+            <h5><i>Long term advantages that last the rest of the game.</i></h5>
+        </div>
+        <div>
+            <span
+                class="bi bi-x-lg close-button"
+                onclick="document.getElementById('perks-dialog').close()"
+            ></span>
+        </div>
+    </div>
+    <form
+        hx-post="/api/lobby/{{.Lobby.Id}}/perk/larger-hand"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to get a larger hand?"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>Hand size grows by 2</td>
+                    <td>
+                        <input
+                            type="submit"
+                            value="Select"
+                            onclick="document.getElementById('perks-dialog').close()"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <form
+        hx-post="/api/lobby/{{.Lobby.Id}}/perk/smaller-handicap"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to get a smaller handicap?"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>Handicap reduces by 1</span>
+                        <br />
+                        <span>&nbsp;&nbsp;<small><i>(cannot go negative)</i></small></span>
+                    </td>
+                    <td>
+                        <input
+                            type="submit"
+                            value="Select"
+                            onclick="document.getElementById('perks-dialog').close()"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <form
+        hx-post="/api/lobby/{{.Lobby.Id}}/perk/gamble-advantage"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to get a gamble advantage"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>Gamble odds are 10% better</span>
+                    </td>
+                    <td>
+                        <input
+                            type="submit"
+                            value="Select"
+                            onclick="document.getElementById('perks-dialog').close()"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </form>
 </dialog>
 {{end}}

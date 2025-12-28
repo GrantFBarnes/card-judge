@@ -342,6 +342,26 @@
             </td>
         </tr>
         {{end}}
+        <tr>
+            <td>
+                <button
+                    onclick="document.getElementById('perks-dialog').showModal()"
+                    {{if lt .PlayerCreditsRemaining .SpecialCostPerk}}
+                    class="disabled non-clickable"
+                    disabled
+                    {{end}}
+                >
+                    Perks
+                </button>
+            </td>
+            <td>{{.SpecialCostPerk}}</td>
+            <td>
+                <span
+                    class="bi bi-info-circle"
+                    title="Perks give you long term advantages."
+                ></span>
+            </td>
+        </tr>
     </tbody>
 </table>
 <dialog id="credit-history-dialog">
@@ -444,7 +464,7 @@
         <input
             type="submit"
             value="Alert Lobby"
-            onclick="document.getElementById('alert-lobby-dialog').close();"
+            onclick="document.getElementById('alert-lobby-dialog').close()"
         />
     </form>
 </dialog>

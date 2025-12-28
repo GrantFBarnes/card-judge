@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS LOG_CREDITS_SPENT(
         'STEAL-VICTIM',
         'SURPRISE',
         'FIND',
-        'WILD'
+        'WILD',
+        'PERK'
     ) NOT NULL,
     PRIMARY KEY(ID)
 );
