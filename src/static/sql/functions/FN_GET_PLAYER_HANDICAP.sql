@@ -2,22 +2,37 @@ CREATE
 OR REPLACE FUNCTION FN_GET_PLAYER_HANDICAP(IN VAR_PLAYER_ID UUID)
 RETURNS INT
 BEGIN
+    DECLARE VAR_HANDICAP INT DEFAULT 0;
     DECLARE VAR_LOBBY_ID UUID DEFAULT FN_GET_PLAYER_LOBBY_ID(VAR_PLAYER_ID);
 
-    RETURN (
-        WITH PLAYER_RANK AS (
-                SELECT
-                    P.ID,
-                    RANK() OVER (ORDER BY COUNT(W.ID) ASC) AS RANKING
-                FROM PLAYER AS P
-                    LEFT JOIN WIN AS W ON W.PLAYER_ID = P.ID
-                WHERE P.LOBBY_ID = VAR_LOBBY_ID
-                    AND P.IS_ACTIVE = 1
-                GROUP BY P.ID
-            )
-        SELECT
-            RANKING - 1
-        FROM PLAYER_RANK
-        WHERE ID = VAR_PLAYER_ID
-    );
+    DECLARE VAR_PLAYER_SMALLER_HANDICAP_SIZE INT DEFAULT (
+            SELECT
+                SMALLER_HANDICAP_SIZE
+            FROM PLAYER
+            WHERE ID = VAR_PLAYER_ID
+        );
+
+    WITH PLAYER_RANK AS (
+            SELECT
+                P.ID,
+                RANK() OVER (ORDER BY COUNT(W.ID) ASC) AS RANKING
+            FROM PLAYER AS P
+                LEFT JOIN WIN AS W ON W.PLAYER_ID = P.ID
+            WHERE P.LOBBY_ID = VAR_LOBBY_ID
+                AND P.IS_ACTIVE = 1
+            GROUP BY P.ID
+        )
+    SELECT
+        RANKING - 1 - VAR_PLAYER_SMALLER_HANDICAP_SIZE
+    INTO
+        VAR_HANDICAP
+    FROM PLAYER_RANK
+    WHERE ID = VAR_PLAYER_ID;
+
+    IF VAR_HANDICAP < 0 THEN
+        SET VAR_HANDICAP = 0;
+    END
+    IF;
+
+    RETURN VAR_HANDICAP;
 END;
