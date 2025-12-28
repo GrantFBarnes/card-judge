@@ -11,7 +11,8 @@ OR REPLACE FUNCTION FN_GET_SPECIAL_COST(
         'STEAL-VICTIM',
         'SURPRISE',
         'FIND',
-        'WILD'
+        'WILD',
+        'PERK'
     )
 )
 RETURNS INT
@@ -29,5 +30,6 @@ BEGIN
         WHEN VAR_CATEGORY = 'SURPRISE' THEN 0
         WHEN VAR_CATEGORY = 'FIND' THEN 2
         WHEN VAR_CATEGORY = 'WILD' THEN 3
+        WHEN VAR_CATEGORY = 'PERK' THEN 10
     END;
 END;

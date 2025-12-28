@@ -18,7 +18,8 @@ OR REPLACE PROCEDURE SP_SPEND_CREDITS(
         'STEAL-VICTIM',
         'SURPRISE',
         'FIND',
-        'WILD'
+        'WILD',
+        'PERK'
     )
 )
 BEGIN
