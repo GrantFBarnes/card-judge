@@ -557,7 +557,7 @@
     <div style="display: grid; grid-auto-flow: column">
         <div>
             <h3>Block Response</h3>
-            <h5><i>Reduce the amount of responses an opponent player gets this round.</i></h5>
+            <h5><i>Decrease the amount of responses an opponent player gets this round.</i></h5>
         </div>
         <div>
             <span
@@ -637,7 +637,7 @@
     <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/handicap-advantage"
         hx-target="find .htmx-result"
-        hx-confirm="Are you sure you want to reduce your handicap?"
+        hx-confirm="Are you sure you want to decrease your handicap?"
     >
         <table>
             <colgroup>
@@ -648,7 +648,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <span>Handicap reduces by 1</span>
+                        <span>Handicap decreases by 1</span>
                         <br />
                         <span>&nbsp;&nbsp;<small><i>(cannot go negative)</i></small></span>
                     </td>
@@ -673,7 +673,7 @@
     <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/gamble-advantage"
         hx-target="find .htmx-result"
-        hx-confirm="Are you sure you want to get a gamble advantage"
+        hx-confirm="Are you sure you want to increase your gamble odds?"
     >
         <table>
             <colgroup>
@@ -684,7 +684,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <span>Gamble odds are 10% better</span>
+                        <span>Gamble odds increase by 10%</span>
                     </td>
                     <td>
                         <input

@@ -1056,7 +1056,7 @@ func PerkHandSizeAdvantage(w http.ResponseWriter, r *http.Request) {
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your hand size is now <green>%d</> larger than the lobby default.", player.HandSizeAdvantage+2))
+	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your hand size is now increased by <green>%d</> more than the lobby default.", player.HandSizeAdvantage+2))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1086,7 +1086,7 @@ func PerkHandicapAdvantage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, "Perk: Your handicap is now reduced by <green>1</> (cannot go negative).")
+	websocket.PlayerBroadcast(player.Id, "Perk: Your handicap is now decreased by <green>1</> (cannot go negative).")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1116,7 +1116,7 @@ func PerkGambleAdvantage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, "Perk: Your chances to win a gamble are now <green>10%</> better.")
+	websocket.PlayerBroadcast(player.Id, "Perk: Your chances to win a gamble are now increased by <green>10%</>.")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
