@@ -738,5 +738,39 @@
             </tbody>
         </table>
     </form>
+    <form
+        hx-post="/api/lobby/{{.LobbyId}}/perk/spy-advantage"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to spy on other player's credits?"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>Spy on other player's credits</span>
+                    </td>
+                    <td>
+                        <input
+                            {{if .PlayerSpyAdvantage}}
+                            class="disabled non-clickable"
+                            disabled
+                            {{end}}
+                            type="submit"
+                            value="Select"
+                            onclick="document.getElementById('perks-dialog').close()"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 </dialog>
 {{end}}

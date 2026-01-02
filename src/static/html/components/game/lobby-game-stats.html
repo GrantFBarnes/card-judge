@@ -17,6 +17,26 @@
 </table>
 <br />
 <br />
+{{if .PlayerSpyAdvantage}}
+<table>
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Credits</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Credits}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Count}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+<br />
+<br />
+{{end}}
 <table>
     <thead>
         <tr>

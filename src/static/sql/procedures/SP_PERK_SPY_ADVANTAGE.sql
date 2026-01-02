@@ -1,0 +1,16 @@
+CREATE
+OR REPLACE PROCEDURE SP_PERK_SPY_ADVANTAGE(IN VAR_PLAYER_ID UUID)
+BEGIN
+    UPDATE PLAYER
+    SET SPY_ADVANTAGE = 1
+    WHERE ID = VAR_PLAYER_ID;
+
+    CALL SP_SPEND_CREDITS(
+            VAR_PLAYER_ID,
+            (
+                FN_GET_SPECIAL_COST('PERK') +
+                    FN_GET_PLAYER_HANDICAP(VAR_PLAYER_ID)
+            ),
+            'PERK'
+        );
+END;
