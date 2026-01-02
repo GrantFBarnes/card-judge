@@ -74,6 +74,14 @@ window.onload = () => {
                 });
                 return;
 
+            case "refresh-lobby-game-stats":
+                confirmationDialogDelete();
+                htmx.ajax("GET", "/api" + document.location.pathname + "/html/lobby-game-stats", {
+                    source: "#lobby-game-stats",
+                    target: "#lobby-game-stats"
+                });
+                return;
+
             case "kick":
                 document.location.href = "/lobbies";
                 return;

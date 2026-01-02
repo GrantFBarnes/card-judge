@@ -1031,7 +1031,7 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
+func PerkHandSizeAdvantage(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -1047,7 +1047,7 @@ func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.PerkLargerHand(player.Id)
+	err = database.PerkHandSizeAdvantage(player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1056,13 +1056,13 @@ func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your hand size is now <green>%d</> larger than the lobby default.", player.LargerHandSize+2))
+	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your hand size is now increased by <green>%d</> more than the lobby default.", player.HandSizeAdvantage+2))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
 }
 
-func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
+func PerkDiscardAdvantage(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -1078,7 +1078,38 @@ func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.PerkSmallerHandicap(player.Id)
+	err = database.PerkDiscardAdvantage(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
+	websocket.PlayerBroadcast(player.Id, "Perk: You can now discard from your hand at any time.")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func PerkHandicapAdvantage(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.PerkHandicapAdvantage(player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1086,7 +1117,7 @@ func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your handicap is now <green>%d</> smaller than the normal value (cannot go negative).", player.SmallerHandicapSize+1))
+	websocket.PlayerBroadcast(player.Id, "Perk: Your handicap is now decreased by <green>1</> (cannot go negative).")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1116,7 +1147,38 @@ func PerkGambleAdvantage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your gamble odds are now <green>%d</> percent better than the normal value.", player.GambleAdvantageSize+10))
+	websocket.PlayerBroadcast(player.Id, "Perk: Your chances to win a gamble are now increased by <green>10%</>.")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func PerkSpyAdvantage(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = database.PerkSpyAdvantage(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
+	websocket.PlayerBroadcast(player.Id, "refresh-lobby-game-stats")
+	websocket.PlayerBroadcast(player.Id, "Perk: You can now spy on other player's credits.")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
