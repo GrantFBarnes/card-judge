@@ -634,10 +634,11 @@
             </tbody>
         </table>
     </form>
+    {{if not .PlayerHandicapAdvantage}}
     <form
-        hx-post="/api/lobby/{{.LobbyId}}/perk/smaller-handicap"
+        hx-post="/api/lobby/{{.LobbyId}}/perk/handicap-advantage"
         hx-target="find .htmx-result"
-        hx-confirm="Are you sure you want to get a smaller handicap?"
+        hx-confirm="Are you sure you want to reduce your handicap?"
     >
         <table>
             <colgroup>
@@ -666,6 +667,7 @@
             </tbody>
         </table>
     </form>
+    {{end}}
     {{if not .PlayerGambleAdvantage}}
     <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/gamble-advantage"

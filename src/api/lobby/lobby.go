@@ -1062,7 +1062,7 @@ func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("success"))
 }
 
-func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
+func PerkHandicapAdvantage(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -1078,7 +1078,7 @@ func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.PerkSmallerHandicap(player.Id)
+	err = database.PerkHandicapAdvantage(player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1086,7 +1086,7 @@ func PerkSmallerHandicap(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your handicap is now <green>%d</> smaller than the normal value (cannot go negative).", player.SmallerHandicapSize+1))
+	websocket.PlayerBroadcast(player.Id, "Perk: Your handicap is now reduced by <green>1</> (cannot go negative).")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
