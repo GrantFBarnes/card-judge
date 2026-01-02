@@ -635,6 +635,40 @@
         </table>
     </form>
     <form
+        hx-post="/api/lobby/{{.LobbyId}}/perk/discard-advantage"
+        hx-target="find .htmx-result"
+        hx-confirm="Are you sure you want to always allow discards?"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>Discards always allowed</span>
+                    </td>
+                    <td>
+                        <input
+                            {{if .PlayerDiscardAdvantage}}
+                            class="disabled non-clickable"
+                            disabled
+                            {{end}}
+                            type="submit"
+                            value="Select"
+                            onclick="document.getElementById('perks-dialog').close()"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/handicap-advantage"
         hx-target="find .htmx-result"
         hx-confirm="Are you sure you want to decrease your handicap?"

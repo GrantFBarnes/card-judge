@@ -126,6 +126,7 @@ func main() {
 	http.Handle("POST /api/lobby/{lobbyId}/card/find/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayFindCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/card/wild/play", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PlayWildCard)))
 	http.Handle("POST /api/lobby/{lobbyId}/perk/hand-size-advantage", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PerkHandSizeAdvantage)))
+	http.Handle("POST /api/lobby/{lobbyId}/perk/discard-advantage", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PerkDiscardAdvantage)))
 	http.Handle("POST /api/lobby/{lobbyId}/perk/handicap-advantage", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PerkHandicapAdvantage)))
 	http.Handle("POST /api/lobby/{lobbyId}/perk/gamble-advantage", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.PerkGambleAdvantage)))
 	http.Handle("POST /api/lobby/{lobbyId}/response-card/{responseCardId}/withdraw", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.WithdrawCard)))
