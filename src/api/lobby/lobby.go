@@ -1116,7 +1116,7 @@ func PerkGambleAdvantage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your gamble odds are now <green>%d</> percent better than the normal value.", player.GambleAdvantageSize+10))
+	websocket.PlayerBroadcast(player.Id, "Perk: Your chances to win a gamble are now <green>10%</> better.")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))

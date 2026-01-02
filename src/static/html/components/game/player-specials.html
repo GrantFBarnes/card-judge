@@ -666,6 +666,7 @@
             </tbody>
         </table>
     </form>
+    {{if not .PlayerGambleAdvantage}}
     <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/gamble-advantage"
         hx-target="find .htmx-result"
@@ -696,5 +697,6 @@
             </tbody>
         </table>
     </form>
+    {{end}}
 </dialog>
 {{end}}
