@@ -607,9 +607,9 @@
         </div>
     </div>
     <form
-        hx-post="/api/lobby/{{.LobbyId}}/perk/larger-hand"
+        hx-post="/api/lobby/{{.LobbyId}}/perk/hand-size-advantage"
         hx-target="find .htmx-result"
-        hx-confirm="Are you sure you want to get a larger hand?"
+        hx-confirm="Are you sure you want to increase your hand size?"
     >
         <table>
             <colgroup>
@@ -619,7 +619,7 @@
             </colgroup>
             <tbody>
                 <tr>
-                    <td>Hand size grows by 2</td>
+                    <td>Hand size increases by 2</td>
                     <td>
                         <input
                             type="submit"

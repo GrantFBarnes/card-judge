@@ -1031,7 +1031,7 @@ func PlayWildCard(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
+func PerkHandSizeAdvantage(w http.ResponseWriter, r *http.Request) {
 	lobbyIdString := r.PathValue("lobbyId")
 	lobbyId, err := uuid.Parse(lobbyIdString)
 	if err != nil {
@@ -1047,7 +1047,7 @@ func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.PerkLargerHand(player.Id)
+	err = database.PerkHandSizeAdvantage(player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1056,7 +1056,7 @@ func PerkLargerHand(w http.ResponseWriter, r *http.Request) {
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your hand size is now <green>%d</> larger than the lobby default.", player.LargerHandSize+2))
+	websocket.PlayerBroadcast(player.Id, fmt.Sprintf("Perk: Your hand size is now <green>%d</> larger than the lobby default.", player.HandSizeAdvantage+2))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
