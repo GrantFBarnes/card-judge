@@ -634,7 +634,6 @@
             </tbody>
         </table>
     </form>
-    {{if not .PlayerHandicapAdvantage}}
     <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/handicap-advantage"
         hx-target="find .htmx-result"
@@ -655,6 +654,10 @@
                     </td>
                     <td>
                         <input
+                            {{if .PlayerHandicapAdvantage}}
+                            class="disabled non-clickable"
+                            disabled
+                            {{end}}
                             type="submit"
                             value="Select"
                             onclick="document.getElementById('perks-dialog').close()"
@@ -667,8 +670,6 @@
             </tbody>
         </table>
     </form>
-    {{end}}
-    {{if not .PlayerGambleAdvantage}}
     <form
         hx-post="/api/lobby/{{.LobbyId}}/perk/gamble-advantage"
         hx-target="find .htmx-result"
@@ -687,6 +688,10 @@
                     </td>
                     <td>
                         <input
+                            {{if .PlayerGambleAdvantage}}
+                            class="disabled non-clickable"
+                            disabled
+                            {{end}}
                             type="submit"
                             value="Select"
                             onclick="document.getElementById('perks-dialog').close()"
@@ -699,6 +704,5 @@
             </tbody>
         </table>
     </form>
-    {{end}}
 </dialog>
 {{end}}

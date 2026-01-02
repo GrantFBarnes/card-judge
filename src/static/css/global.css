@@ -120,7 +120,7 @@ summary {
 }
 
 .non-clickable {
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 
 .disabled {
