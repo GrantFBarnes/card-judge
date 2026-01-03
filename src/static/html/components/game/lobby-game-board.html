@@ -191,6 +191,7 @@
                             <span class="wrap-new-lines">{{.Text}}</span>
                             {{end}}
                         </p>
+                        {{if ne .SpecialCategory.String "SURPRISE"}}
                         {{if .YouTube.Valid}}
                         <div class="iframe-container">
                             <iframe src="https://www.youtube.com/embed/{{.YouTube.String}}"></iframe>
@@ -201,6 +202,7 @@
                             src="data:image;base64,{{.Image.String}}"
                             alt="Card Image"
                         />
+                        {{end}}
                         {{end}}
                     </div>
                     {{end}}
