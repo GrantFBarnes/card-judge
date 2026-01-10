@@ -78,7 +78,7 @@ sed -i -E 's/^Version: '$REGEX_VALID_VERSION'$/Version: '$NEW_VERSION'/' README.
 echo "Successfully updated from $CURRENT_VERSION to $NEW_VERSION"
 echo "Review pending changes, if all looks good run the following:"
 echo ""
-echo "git add ."
+echo "git add $(pwd)/README.md"
 echo "git commit -m 'v$NEW_VERSION'"
 echo "git push"
 echo "git tag -a v$NEW_VERSION -m 'version v$NEW_VERSION'"
