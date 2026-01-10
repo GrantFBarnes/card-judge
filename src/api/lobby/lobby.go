@@ -1271,7 +1271,7 @@ func VoteToKick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+	websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
 
 	if isKicked {
 		websocket.LobbyBroadcast(lobbyId, "<red>Player Kicked</>: <green>"+subjectPlayer.Name+"</>")
