@@ -1087,7 +1087,7 @@ func PerkDiscardAdvantage(w http.ResponseWriter, r *http.Request) {
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.PlayerBroadcast(player.Id, "refresh-player-specials")
-	websocket.PlayerBroadcast(player.Id, "Perk: You can now discard from your hand at any time.")
+	websocket.PlayerBroadcast(player.Id, "Perk: You can now discard more often (whenever you cannot play a card).")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
