@@ -1,6 +1,6 @@
 # Card Judge
 
-Version: 1.13.4
+Version: 1.13.5
 
 Card Judge is an open source online multiplayer party game.
 
