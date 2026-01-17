@@ -1320,7 +1320,7 @@ func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Removed their vote to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+	websocket.LobbyBroadcast(lobbyId, "Someone removed their vote to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
