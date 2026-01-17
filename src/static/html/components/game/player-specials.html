@@ -132,7 +132,8 @@
                 {{else}}
                 <button
                     onclick="document.getElementById('bet-on-win-dialog').showModal()"
-                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining 1)}}
+                    {{$opponentCount := len .Opponents}}
+                    {{if or .BoardHasAnyRevealed (eq $opponentCount 0) (lt .PlayerCreditsRemaining 1)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
