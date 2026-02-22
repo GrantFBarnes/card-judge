@@ -82,7 +82,17 @@ window.onload = () => {
                 });
                 return;
 
-            case "kick":
+            case "table-flipped":
+            case "player-kicked":
+                confirmationDialogDelete();
+                const gifDialog = document.getElementById(`${messageText}-dialog`);
+                if (gifDialog) {
+                    gifDialog.showModal();
+                    setTimeout(() => gifDialog.close(), 2000);
+                }
+                return;
+
+            case "exit":
                 document.location.href = "/lobbies";
                 return;
         }

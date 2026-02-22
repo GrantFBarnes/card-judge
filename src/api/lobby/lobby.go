@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
@@ -1271,14 +1272,18 @@ func VoteToKick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
-
 	if isKicked {
 		websocket.LobbyBroadcast(lobbyId, "<red>Player Kicked</>: <green>"+subjectPlayer.Name+"</>")
-		websocket.PlayerBroadcast(subjectPlayerId, "kick")
+		websocket.LobbyBroadcast(lobbyId, "player-kicked")
+		go func() {
+			time.Sleep(2 * time.Second)
+			websocket.PlayerBroadcast(subjectPlayerId, "exit")
+		}()
+	} else {
+		websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+		websocket.PlayerBroadcast(player.Id, "refresh")
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1321,8 +1326,8 @@ func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "Someone removed their vote to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+	websocket.PlayerBroadcast(player.Id, "refresh")
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1497,9 +1502,14 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: FLIP THE TABLE!")
+	websocket.LobbyBroadcast(lobbyId, "table-flipped")
+	go func() {
+		time.Sleep(2 * time.Second)
+		websocket.PlayerBroadcast(player.Id, "exit")
+	}()
 
-	w.Header().Add("HX-Redirect", "/lobbies")
 	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("Table Flipped!"))
 }
 
 func SkipPrompt(w http.ResponseWriter, r *http.Request) {
