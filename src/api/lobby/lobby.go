@@ -1272,14 +1272,18 @@ func VoteToKick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
-
 	if isKicked {
 		websocket.LobbyBroadcast(lobbyId, "<red>Player Kicked</>: <green>"+subjectPlayer.Name+"</>")
-		websocket.PlayerBroadcast(subjectPlayerId, "kick")
+		websocket.LobbyBroadcast(lobbyId, "player-kicked")
+		go func() {
+			time.Sleep(2 * time.Second)
+			websocket.PlayerBroadcast(subjectPlayerId, "exit")
+		}()
+	} else {
+		websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+		websocket.PlayerBroadcast(player.Id, "refresh")
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -1322,8 +1326,8 @@ func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "Someone removed their vote to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+	websocket.PlayerBroadcast(player.Id, "refresh")
 
-	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
 

@@ -83,6 +83,7 @@ window.onload = () => {
                 return;
 
             case "table-flipped":
+            case "player-kicked":
                 confirmationDialogDelete();
                 const gifDialog = document.getElementById(`${messageText}-dialog`);
                 if (gifDialog) {
@@ -92,10 +93,6 @@ window.onload = () => {
                 return;
 
             case "exit":
-                document.location.href = "/lobbies";
-                return;
-
-            case "kick":
                 document.location.href = "/lobbies";
                 return;
         }
