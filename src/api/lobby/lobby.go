@@ -1497,9 +1497,11 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: FLIP THE TABLE!")
+	websocket.LobbyBroadcast(lobbyId, "table-flipped")
+	websocket.PlayerBroadcast(player.Id, "flip-table")
 
-	w.Header().Add("HX-Redirect", "/lobbies")
 	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("Table Flipped!"))
 }
 
 func SkipPrompt(w http.ResponseWriter, r *http.Request) {

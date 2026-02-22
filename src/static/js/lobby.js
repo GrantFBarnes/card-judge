@@ -82,6 +82,18 @@ window.onload = () => {
                 });
                 return;
 
+            case "table-flipped":
+                const flipTableDialog = document.getElementById("flip-table-dialog");
+                if (flipTableDialog) {
+                    flipTableDialog.showModal();
+                    setTimeout(() => flipTableDialog.close(), 2000);
+                }
+                return;
+
+            case "flip-table":
+                setTimeout(() => document.location.href = "/lobbies", 2000);
+                return;
+
             case "kick":
                 document.location.href = "/lobbies";
                 return;
