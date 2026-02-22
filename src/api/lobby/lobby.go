@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/grantfbarnes/card-judge/api"
@@ -1498,7 +1499,10 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: FLIP THE TABLE!")
 	websocket.LobbyBroadcast(lobbyId, "table-flipped")
-	websocket.PlayerBroadcast(player.Id, "flip-table")
+	go func() {
+		time.Sleep(2 * time.Second)
+		websocket.PlayerBroadcast(player.Id, "exit")
+	}()
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("Table Flipped!"))

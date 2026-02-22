@@ -83,15 +83,16 @@ window.onload = () => {
                 return;
 
             case "table-flipped":
-                const flipTableDialog = document.getElementById("flip-table-dialog");
-                if (flipTableDialog) {
-                    flipTableDialog.showModal();
-                    setTimeout(() => flipTableDialog.close(), 2000);
+                confirmationDialogDelete();
+                const gifDialog = document.getElementById(`${messageText}-dialog`);
+                if (gifDialog) {
+                    gifDialog.showModal();
+                    setTimeout(() => gifDialog.close(), 2000);
                 }
                 return;
 
-            case "flip-table":
-                setTimeout(() => document.location.href = "/lobbies", 2000);
+            case "exit":
+                document.location.href = "/lobbies";
                 return;
 
             case "kick":
