@@ -21,7 +21,11 @@
     </thead>
     <tbody>
         {{range .Achievements}}
-        <tr>
+        <tr
+            {{if not .IsDone}}
+            class="disabled"
+            {{end}}
+        >
             <td>{{.Category}}</td>
             <td style="text-align: right;">{{.GoalAmount}}</td>
             <td style="text-align: center;">
