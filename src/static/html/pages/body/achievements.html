@@ -1,0 +1,49 @@
+{{define "body"}}
+<h2>Achievements</h2>
+<div>
+    <label>
+        Progress: <progress
+            value="{{.Progress}}"
+            max="100"
+        >{{printf "%.1f" .Progress}}%</progress>
+    </label>
+    <span>{{printf "%.1f" .Progress}}%</span>
+</div>
+<br />
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Goal Amount</th>
+            <th>Done</th>
+            <th>Rarity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Achievements}}
+        <tr
+            {{if not .IsDone}}
+            class="disabled"
+            {{end}}
+        >
+            <td>{{.Category}}</td>
+            <td style="text-align: right;">{{.GoalAmount}}</td>
+            <td style="text-align: center;">
+                {{if .IsDone}}
+                <i class="bi bi-check-square"></i>
+                {{else}}
+                <i class="bi bi-square"></i>
+                {{end}}
+            </td>
+            <td>
+                <progress
+                    value="{{.Rarity}}"
+                    max="100"
+                >{{printf "%.1f" .Rarity}}%</progress>
+                <span>{{printf "%.1f" .Rarity}}%</span>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}
