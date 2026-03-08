@@ -4,6 +4,7 @@
     <thead>
         <tr>
             <th>Achievement</th>
+            <th>Progress</th>
             <th>Date Achieved</th>
         </tr>
     </thead>
@@ -11,6 +12,7 @@
         {{range .Achievements}}
         <tr>
             <td>{{.Name}}</td>
+            <td>{{.ProgressPercent}}%</td>
             <td>
                 {{if .DateAchieved.Valid}}
                 {{.DateAchieved.Time.Format "2006-01-02"}}
