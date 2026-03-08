@@ -3,15 +3,16 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
 )
 
 type Achievement struct {
-	Name            string
-	ProgressPercent float32
-	DateAchieved    sql.NullTime
+	Name         string
+	Progress     string
+	DateAchieved sql.NullTime
 }
 
 func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
@@ -60,19 +61,20 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 
 	for rows.Next() {
 		var achievement Achievement
+		var progress float32
 		if err := rows.Scan(
 			&achievement.Name,
-			&achievement.ProgressPercent,
+			&progress,
 			&achievement.DateAchieved,
 		); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
 
-		achievement.ProgressPercent = achievement.ProgressPercent * 100
-		if achievement.ProgressPercent > 100 {
-			achievement.ProgressPercent = 100
+		if progress > 1 {
+			progress = 1.0
 		}
+		achievement.Progress = fmt.Sprintf("%.1f%%", progress*100)
 
 		result = append(result, achievement)
 	}
