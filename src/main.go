@@ -55,6 +55,7 @@ func main() {
 	http.Handle("GET /about", api.MiddlewareForPages(http.HandlerFunc(apiPages.About)))
 	http.Handle("GET /login", api.MiddlewareForPages(http.HandlerFunc(apiPages.Login)))
 	http.Handle("GET /account", api.MiddlewareForPages(http.HandlerFunc(apiPages.Account)))
+	http.Handle("GET /achievements", api.MiddlewareForPages(http.HandlerFunc(apiPages.Achievements)))
 	http.Handle("GET /stats", api.MiddlewareForPages(http.HandlerFunc(apiPages.Stats)))
 	http.Handle("GET /stats/leaderboard", api.MiddlewareForPages(http.HandlerFunc(apiPages.StatsLeaderboard)))
 	http.Handle("GET /stats/users", api.MiddlewareForPages(http.HandlerFunc(apiPages.StatsUsers)))

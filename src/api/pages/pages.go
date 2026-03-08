@@ -213,6 +213,24 @@ func Review(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func Achievements(w http.ResponseWriter, r *http.Request) {
+	basePageData := api.GetBasePageData(r)
+	basePageData.PageTitle = "Card Judge - Achievements"
+
+	tmpl, err := template.ParseFS(
+		static.StaticFiles,
+		"html/pages/base.html",
+		"html/pages/body/achievements.html",
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("failed to parse HTML"))
+		return
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
+}
+
 func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
