@@ -227,7 +227,7 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 	achievementsDoneCount := 0
 	achievementsTotalCount := 0
 	for _, a := range achievements {
-		if a.Achieved {
+		if a.Done {
 			achievementsDoneCount += 1
 		}
 		achievementsTotalCount += 1

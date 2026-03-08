@@ -11,7 +11,7 @@ import (
 type Achievement struct {
 	Category string
 	Goal     int
-	Achieved bool
+	Done     bool
 	Rarity   string
 }
 
@@ -33,7 +33,7 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 		SELECT
 			A.CATEGORY,
 			A.GOAL,
-			IF(UA.ACHIEVEMENT_CODE IS NOT NULL, 1, 0) AS ACHIEVED,
+			IF(UA.ACHIEVEMENT_CODE IS NOT NULL, 1, 0) AS DONE,
 			(
 				SELECT
 					COUNT(*) / ?
@@ -56,7 +56,7 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 		if err := rows.Scan(
 			&achievement.Category,
 			&achievement.Goal,
-			&achievement.Achieved,
+			&achievement.Done,
 			&rarity,
 		); err != nil {
 			log.Println(err)
