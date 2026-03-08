@@ -1,41 +1,47 @@
 CREATE
 OR REPLACE VIEW V_ACHIEVEMENT AS
 SELECT
-    'KICK-1' AS CODE,
-    'Get kicked' AS NAME
-UNION
-SELECT
-    'KICK-10' AS CODE,
-    'Get kicked 10 times' AS NAME
-UNION
-SELECT
-    'KICK-20' AS CODE,
-    'Get kicked 20 times' AS NAME
-UNION
-SELECT
-    'WIN-GAME-1' AS CODE,
-    'Win a game' AS NAME
-UNION
-SELECT
-    'WIN-GAME-10' AS CODE,
-    'Win 10 games' AS NAME
-UNION
-SELECT
-    'WIN-GAME-100' AS CODE,
-    'Win 100 games' AS NAME
-UNION
-SELECT
-    'WIN-ROUND-1' AS CODE,
-    'Win a round' AS NAME
-UNION
-SELECT
-    'WIN-ROUND-10' AS CODE,
-    'Win 10 rounds' AS NAME
-UNION
-SELECT
-    'WIN-ROUND-100' AS CODE,
-    'Win 100 rounds' AS NAME
-UNION
-SELECT
-    'WIN-ROUND-1000' AS CODE,
-    'Win 1000 rounds' AS NAME;
+    CODE,
+    NAME,
+    ROWNUM () AS LIST_ORDER
+FROM (
+        SELECT
+            'WIN-GAME-1' AS CODE,
+            'Win a game' AS NAME
+        UNION
+        SELECT
+            'WIN-GAME-10' AS CODE,
+            'Win 10 games' AS NAME
+        UNION
+        SELECT
+            'WIN-GAME-100' AS CODE,
+            'Win 100 games' AS NAME
+        UNION
+        SELECT
+            'WIN-ROUND-1' AS CODE,
+            'Win a round' AS NAME
+        UNION
+        SELECT
+            'WIN-ROUND-10' AS CODE,
+            'Win 10 rounds' AS NAME
+        UNION
+        SELECT
+            'WIN-ROUND-100' AS CODE,
+            'Win 100 rounds' AS NAME
+        UNION
+        SELECT
+            'WIN-ROUND-1000' AS CODE,
+            'Win 1000 rounds' AS NAME
+        UNION
+        SELECT
+            'KICK-1' AS CODE,
+            'Get kicked' AS NAME
+        UNION
+        SELECT
+            'KICK-10' AS CODE,
+            'Get kicked 10 times' AS NAME
+        UNION
+        SELECT
+            'KICK-20' AS CODE,
+            'Get kicked 20 times' AS NAME
+    ) AS T;
