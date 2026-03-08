@@ -1,4 +1,19 @@
 {{define "body"}}
-<h2>User Achievements</h2>
-<p>{{.User.Name}}</p>
+<h2>Achievements</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Achievement</th>
+            <th>Date Achieved</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Achievements}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.DateAchieved.Format "2006-01-02"}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
 {{end}}

@@ -217,6 +217,13 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Achievements"
 
+	userAchievements, err := database.GetAchievements(basePageData.User.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to get user achievements."))
+		return
+	}
+
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
@@ -228,7 +235,15 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = tmpl.ExecuteTemplate(w, "base", basePageData)
+	type data struct {
+		api.BasePageData
+		Achievements []database.Achievement
+	}
+
+	_ = tmpl.ExecuteTemplate(w, "base", data{
+		BasePageData: basePageData,
+		Achievements: userAchievements,
+	})
 }
 
 func Stats(w http.ResponseWriter, r *http.Request) {
