@@ -40,8 +40,7 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 			) AS RARITY
 		FROM V_ACHIEVEMENT AS A
 			LEFT JOIN USER_ACHIEVEMENTS AS UA ON UA.ACHIEVEMENT_CODE = A.CODE
-		ORDER BY ACHIEVED DESC,
-			A.CODE
+		ORDER BY A.CODE
 	`
 	rows, err := query(sqlString, userId, userCount)
 	if err != nil {
