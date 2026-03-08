@@ -1,5 +1,15 @@
 {{define "body"}}
 <h2>Achievements</h2>
+<div>
+    <label>
+        Progress: <progress
+            value="{{.Progress}}"
+            max="100"
+        >{{printf "%.1f" .Progress}}%</progress>
+    </label>
+    <span>{{printf "%.1f" .Progress}}%</span>
+</div>
+<br />
 <table>
     <thead>
         <tr>

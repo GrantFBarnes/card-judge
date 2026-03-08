@@ -217,11 +217,20 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Achievements"
 
-	userAchievements, err := database.GetAchievements(basePageData.User.Id)
+	achievements, err := database.GetAchievements(basePageData.User.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte("Failed to get user achievements."))
 		return
+	}
+
+	achievementsDoneCount := 0
+	achievementsTotalCount := 0
+	for _, a := range achievements {
+		if a.Achieved {
+			achievementsDoneCount += 1
+		}
+		achievementsTotalCount += 1
 	}
 
 	tmpl, err := template.ParseFS(
@@ -237,12 +246,14 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 
 	type data struct {
 		api.BasePageData
+		Progress     float32
 		Achievements []database.Achievement
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		Achievements: userAchievements,
+		Progress:     float32(achievementsDoneCount) / float32(achievementsTotalCount) * 100.0,
+		Achievements: achievements,
 	})
 }
 
