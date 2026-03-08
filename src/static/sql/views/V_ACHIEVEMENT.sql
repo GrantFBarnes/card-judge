@@ -8,91 +8,91 @@ SELECT
 FROM (
         SELECT
             'WIN-GAME-1' AS CODE,
-            'Game Win' AS CATEGORY,
+            'Games Won' AS CATEGORY,
             1 AS GOAL
         UNION
         SELECT
             'WIN-GAME-10' AS CODE,
-            'Game Win' AS CATEGORY,
+            'Games Won' AS CATEGORY,
             10 AS GOAL
         UNION
         SELECT
             'WIN-GAME-100' AS CODE,
-            'Game Win' AS CATEGORY,
+            'Games Won' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
             'WIN-ROUND-10' AS CODE,
-            'Round Win' AS CATEGORY,
+            'Rounds Won' AS CATEGORY,
             10 AS GOAL
         UNION
         SELECT
             'WIN-ROUND-100' AS CODE,
-            'Round Win' AS CATEGORY,
+            'Rounds Won' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
             'WIN-ROUND-1000' AS CODE,
-            'Round Win' AS CATEGORY,
+            'Rounds Won' AS CATEGORY,
             1000 AS GOAL
         UNION
         SELECT
             'GAMBLE-1' AS CODE,
-            'Gamble' AS CATEGORY,
+            'Gambles Made' AS CATEGORY,
             1 AS GOAL
         UNION
         SELECT
             'GAMBLE-10' AS CODE,
-            'Gamble' AS CATEGORY,
+            'Gambles Made' AS CATEGORY,
             10 AS GOAL
         UNION
         SELECT
             'GAMBLE-100' AS CODE,
-            'Gamble' AS CATEGORY,
+            'Gambles Made' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
             'BET-1' AS CODE,
-            'Bet' AS CATEGORY,
+            'Bets Placed' AS CATEGORY,
             1 AS GOAL
         UNION
         SELECT
             'BET-10' AS CODE,
-            'Bet' AS CATEGORY,
+            'Bets Placed' AS CATEGORY,
             10 AS GOAL
         UNION
         SELECT
             'BET-100' AS CODE,
-            'Bet' AS CATEGORY,
+            'Bets Placed' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
             'PERK-1' AS CODE,
-            'Perk' AS CATEGORY,
+            'Perks Pruchased' AS CATEGORY,
             1 AS GOAL
         UNION
         SELECT
             'PERK-10' AS CODE,
-            'Perk' AS CATEGORY,
+            'Perks Pruchased' AS CATEGORY,
             10 AS GOAL
         UNION
         SELECT
             'PERK-100' AS CODE,
-            'Perk' AS CATEGORY,
+            'Perks Pruchased' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
             'KICK-1' AS CODE,
-            'Kicked' AS CATEGORY,
+            'Kicked From Lobby' AS CATEGORY,
             1 AS GOAL
         UNION
         SELECT
             'KICK-10' AS CODE,
-            'Kicked' AS CATEGORY,
+            'Kicked From Lobby' AS CATEGORY,
             10 AS GOAL
         UNION
         SELECT
             'KICK-100' AS CODE,
-            'Kicked' AS CATEGORY,
+            'Kicked From Lobby' AS CATEGORY,
             100 AS GOAL
     ) AS T;
