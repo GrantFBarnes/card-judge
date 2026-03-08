@@ -1,28 +1,36 @@
 package database
 
 import (
+	"database/sql"
 	"errors"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
 )
 
 type Achievement struct {
 	Name         string
-	DateAchieved time.Time
+	DateAchieved sql.NullTime
 }
 
 func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 	var result []Achievement
 
 	sqlString := `
+		WITH USER_ACHIEVEMENTS AS (
+				SELECT
+					ACHIEVEMENTCODE,
+					CREATED_ON_DATE
+				FROM USER_ACHIEVEMENT
+				WHERE USER_ID = ?
+			)
 		SELECT
-			UA.ACHIEVEMENT,
+			A.NAME,
 			UA.CREATED_ON_DATE
-		FROM USER_ACHIEVEMENT AS UA
-		WHERE UA.USER_ID = ?
-		ORDER BY UA.CREATED_ON_DATE DESC
+		FROM ACHIEVEMENT AS A
+			LEFT JOIN USER_ACHIEVEMENTS AS UA ON UA.ACHIEVEMENTCODE = A.CODE
+		ORDER BY UA.CREATED_ON_DATE DESC,
+			A.CODE
 	`
 	rows, err := query(sqlString, userId)
 	if err != nil {

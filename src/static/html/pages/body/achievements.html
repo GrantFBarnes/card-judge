@@ -11,7 +11,13 @@
         {{range .Achievements}}
         <tr>
             <td>{{.Name}}</td>
-            <td>{{.DateAchieved.Format "2006-01-02"}}</td>
+            <td>
+                {{if .DateAchieved.Valid}}
+                {{.DateAchieved.Time.Format "2006-01-02"}}
+                {{else}}
+                -
+                {{end}}
+            </td>
         </tr>
         {{end}}
     </tbody>
