@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -12,7 +11,7 @@ type Achievement struct {
 	Category   string
 	GoalAmount int
 	IsDone     bool
-	Rarity     string
+	Rarity     float32
 }
 
 func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
@@ -34,17 +33,12 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 			A.CATEGORY,
 			A.GOAL_AMOUNT,
 			IF(UA.ACHIEVEMENT_CODE IS NOT NULL, 1, 0) AS IS_DONE,
-			(
-				SELECT
-					COUNT(*) / ?
-				FROM USER_ACHIEVEMENT
-				WHERE ACHIEVEMENT_CODE = A.CODE
-			) AS RARITY
+			(SELECT COUNT(*) FROM USER_ACHIEVEMENT WHERE ACHIEVEMENT_CODE = A.CODE) AS DONE_COUNT
 		FROM V_ACHIEVEMENT AS A
 			LEFT JOIN USER_ACHIEVEMENTS AS UA ON UA.ACHIEVEMENT_CODE = A.CODE
 		ORDER BY A.LIST_ORDER
 	`
-	rows, err := query(sqlString, userId, userCount)
+	rows, err := query(sqlString, userId)
 	if err != nil {
 		return result, err
 	}
@@ -52,18 +46,18 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 
 	for rows.Next() {
 		var achievement Achievement
-		var rarity float32
+		var doneCount int
 		if err := rows.Scan(
 			&achievement.Category,
 			&achievement.GoalAmount,
 			&achievement.IsDone,
-			&rarity,
+			&doneCount,
 		); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
 
-		achievement.Rarity = getPercentageString(rarity)
+		achievement.Rarity = float32(doneCount) / float32(userCount) * 100.0
 
 		result = append(result, achievement)
 	}
@@ -93,11 +87,4 @@ func getUserCount() (int, error) {
 	}
 
 	return result, nil
-}
-
-func getPercentageString(value float32) string {
-	if value > 1 {
-		value = 1.0
-	}
-	return fmt.Sprintf("%.1f%%", value*100)
 }
