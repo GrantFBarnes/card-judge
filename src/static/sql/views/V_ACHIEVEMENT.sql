@@ -67,6 +67,21 @@ FROM (
             100 AS GOAL
         UNION
         SELECT
+            'PERK-1' AS CODE,
+            'Perk' AS CATEGORY,
+            1 AS GOAL
+        UNION
+        SELECT
+            'PERK-10' AS CODE,
+            'Perk' AS CATEGORY,
+            10 AS GOAL
+        UNION
+        SELECT
+            'PERK-100' AS CODE,
+            'Perk' AS CATEGORY,
+            100 AS GOAL
+        UNION
+        SELECT
             'KICK-1' AS CODE,
             'Kicked' AS CATEGORY,
             1 AS GOAL

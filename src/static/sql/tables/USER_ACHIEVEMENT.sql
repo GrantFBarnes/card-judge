@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS USER_ACHIEVEMENT(
         'BET-1',
         'BET-10',
         'BET-100',
+        'PERK-1',
+        'PERK-10',
+        'PERK-100',
         'KICK-1',
         'KICK-10',
         'KICK-100'
