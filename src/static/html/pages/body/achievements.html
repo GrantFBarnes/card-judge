@@ -4,7 +4,7 @@
     <thead>
         <tr>
             <th>Category</th>
-            <th>Threshold</th>
+            <th>Goal</th>
             <th>Achieved</th>
             <th>Rarity</th>
         </tr>
@@ -13,7 +13,7 @@
         {{range .Achievements}}
         <tr>
             <td>{{.Category}}</td>
-            <td style="text-align: right;">{{.Threshold}}</td>
+            <td style="text-align: right;">{{.Goal}}</td>
             <td style="text-align: center;">
                 {{if .Achieved}}
                 <i class="bi bi-check-square"></i>

@@ -9,10 +9,10 @@ import (
 )
 
 type Achievement struct {
-	Category  string
-	Threshold int
-	Achieved  bool
-	Rarity    string
+	Category string
+	Goal     int
+	Achieved bool
+	Rarity   string
 }
 
 func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
@@ -32,7 +32,7 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 			)
 		SELECT
 			A.CATEGORY,
-			A.THRESHOLD,
+			A.GOAL,
 			IF(UA.ACHIEVEMENT_CODE IS NOT NULL, 1, 0) AS ACHIEVED,
 			(
 				SELECT
@@ -55,7 +55,7 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 		var rarity float32
 		if err := rows.Scan(
 			&achievement.Category,
-			&achievement.Threshold,
+			&achievement.Goal,
 			&achievement.Achieved,
 			&rarity,
 		); err != nil {
