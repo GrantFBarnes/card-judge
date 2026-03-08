@@ -47,23 +47,8 @@ FROM (
             10 AS GOAL
         UNION
         SELECT
-            'GAMBLE-50' AS CODE,
+            'GAMBLE-100' AS CODE,
             'Gamble' AS CATEGORY,
-            50 AS GOAL
-        UNION
-        SELECT
-            'GAMBLE-WIN-2' AS CODE,
-            'Gamble Win' AS CATEGORY,
-            2 AS GOAL
-        UNION
-        SELECT
-            'GAMBLE-WIN-20' AS CODE,
-            'Gamble Win' AS CATEGORY,
-            20 AS GOAL
-        UNION
-        SELECT
-            'GAMBLE-WIN-100' AS CODE,
-            'Gamble Win' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
@@ -77,23 +62,8 @@ FROM (
             10 AS GOAL
         UNION
         SELECT
-            'BET-50' AS CODE,
+            'BET-100' AS CODE,
             'Bet' AS CATEGORY,
-            50 AS GOAL
-        UNION
-        SELECT
-            'BET-WIN-2' AS CODE,
-            'Bet Win' AS CATEGORY,
-            2 AS GOAL
-        UNION
-        SELECT
-            'BET-WIN-20' AS CODE,
-            'Bet Win' AS CATEGORY,
-            20 AS GOAL
-        UNION
-        SELECT
-            'BET-WIN-100' AS CODE,
-            'Bet Win' AS CATEGORY,
             100 AS GOAL
         UNION
         SELECT
@@ -107,7 +77,7 @@ FROM (
             10 AS GOAL
         UNION
         SELECT
-            'KICK-50' AS CODE,
+            'KICK-100' AS CODE,
             'Kicked' AS CATEGORY,
-            50 AS GOAL
+            100 AS GOAL
     ) AS T;

@@ -9,19 +9,13 @@ CREATE TABLE IF NOT EXISTS USER_ACHIEVEMENT(
         'WIN-ROUND-1000',
         'GAMBLE-1',
         'GAMBLE-10',
-        'GAMBLE-50',
-        'GAMBLE-WIN-2',
-        'GAMBLE-WIN-20',
-        'GAMBLE-WIN-100',
+        'GAMBLE-100',
         'BET-1',
         'BET-10',
-        'BET-50',
-        'BET-WIN-2',
-        'BET-WIN-20',
-        'BET-WIN-100',
+        'BET-100',
         'KICK-1',
         'KICK-10',
-        'KICK-50'
+        'KICK-100'
     ) NOT NULL,
     PRIMARY KEY(USER_ID, ACHIEVEMENT_CODE),
     FOREIGN KEY(USER_ID) REFERENCES USER (ID) ON DELETE CASCADE
