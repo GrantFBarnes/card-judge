@@ -22,11 +22,6 @@ FROM (
             100 AS THRESHOLD
         UNION
         SELECT
-            'WIN-ROUND-1' AS CODE,
-            'Round Win' AS CATEGORY,
-            1 AS THRESHOLD
-        UNION
-        SELECT
             'WIN-ROUND-10' AS CODE,
             'Round Win' AS CATEGORY,
             10 AS THRESHOLD
@@ -52,9 +47,9 @@ FROM (
             10 AS THRESHOLD
         UNION
         SELECT
-            'GAMBLE-20' AS CODE,
+            'GAMBLE-50' AS CODE,
             'Gamble' AS CATEGORY,
-            20 AS THRESHOLD
+            50 AS THRESHOLD
         UNION
         SELECT
             'GAMBLE-WIN-2' AS CODE,
@@ -67,9 +62,9 @@ FROM (
             20 AS THRESHOLD
         UNION
         SELECT
-            'GAMBLE-WIN-40' AS CODE,
+            'GAMBLE-WIN-100' AS CODE,
             'Gamble Win' AS CATEGORY,
-            40 AS THRESHOLD
+            100 AS THRESHOLD
         UNION
         SELECT
             'BET-1' AS CODE,
@@ -82,9 +77,9 @@ FROM (
             10 AS THRESHOLD
         UNION
         SELECT
-            'BET-20' AS CODE,
+            'BET-50' AS CODE,
             'Bet' AS CATEGORY,
-            20 AS THRESHOLD
+            50 AS THRESHOLD
         UNION
         SELECT
             'BET-WIN-2' AS CODE,
@@ -97,9 +92,9 @@ FROM (
             20 AS THRESHOLD
         UNION
         SELECT
-            'BET-WIN-40' AS CODE,
+            'BET-WIN-100' AS CODE,
             'Bet Win' AS CATEGORY,
-            40 AS THRESHOLD
+            100 AS THRESHOLD
         UNION
         SELECT
             'KICK-1' AS CODE,
@@ -112,7 +107,7 @@ FROM (
             10 AS THRESHOLD
         UNION
         SELECT
-            'KICK-20' AS CODE,
+            'KICK-50' AS CODE,
             'Kicked' AS CATEGORY,
-            20 AS THRESHOLD
+            50 AS THRESHOLD
     ) AS T;
