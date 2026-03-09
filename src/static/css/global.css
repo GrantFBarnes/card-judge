@@ -115,6 +115,11 @@ summary {
     cursor: pointer;
 }
 
+a.no-style {
+    text-decoration: none;
+    color: inherit;
+}
+
 .clickable {
     cursor: pointer;
 }

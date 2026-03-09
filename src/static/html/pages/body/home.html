@@ -8,34 +8,34 @@
     <div id="home-buttons">
         {{if .LoggedIn}}
         <div>
-            <button onclick="window.location.href='/lobbies'">Game Lobbies</button>
+            <a href="/lobbies"><button>Game Lobbies</button></a>
         </div>
         <div>
-            <button onclick="window.location.href='/decks'">Card Decks</button>
+            <a href="/decks"><button>Card Decks</button></a>
         </div>
         <div>
-            <button onclick="window.location.href='/stats'">Statistics</button>
+            <a href="/stats"><button>Statistics</button></a>
         </div>
         <div>
-            <button onclick="window.location.href='/achievements'">Achievements</button>
+            <a href="/achievements"><button>Achievements</button></a>
         </div>
         <div>
-            <button onclick="window.location.href='/account'">Account</button>
+            <a href="/account"><button>Account</button></a>
         </div>
         {{else}}
         <div>
-            <button onclick="window.location.href='/login'">Login</button>
+            <a href="/login"><button>Login</button></a>
         </div>
         {{end}}
         <div>
-            <button onclick="window.location.href='/about'">About</button>
+            <a href="/about"><button>About</button></a>
         </div>
         {{if .User.IsAdmin}}
         <div>
-            <button onclick="window.location.href='/users'">Users</button>
+            <a href="/users"><button>Users</button></a>
         </div>
         <div>
-            <button onclick="window.location.href='/review'">Review</button>
+            <a href="/review"><button>Review</button></a>
         </div>
         {{end}}
     </div>

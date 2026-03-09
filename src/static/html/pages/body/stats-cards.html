@@ -2,9 +2,7 @@
 <div style="display: grid; grid-auto-flow: column">
     <h2>Card Statistics</h2>
     <div style="text-align: right;">
-        <button onclick="window.location.href='/stats'">
-            Statistics Home
-        </button>
+        <a href="/stats"><button>Statistics Home</button></a>
     </div>
 </div>
 <form id="table-filter-form">
@@ -125,7 +123,7 @@
                 {{end}}
             </td>
             <td>
-                <button onclick="window.location.href='/stats/card/{{.Id}}'">Select</button>
+                <a href="/stats/card/{{.Id}}"><button>Select</button></a>
             </td>
         </tr>
         {{end}}

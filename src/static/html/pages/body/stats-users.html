@@ -2,9 +2,7 @@
 <div style="display: grid; grid-auto-flow: column">
     <h2>User Statistics</h2>
     <div style="text-align: right;">
-        <button onclick="window.location.href='/stats'">
-            Statistics Home
-        </button>
+        <a href="/stats"><button>Statistics Home</button></a>
     </div>
 </div>
 <form id="table-filter-form">
@@ -64,7 +62,7 @@
             <td>{{.CreatedOnDate.Format "2006-01-02"}}</td>
             <td>{{.Name}}</td>
             <td>
-                <button onclick="window.location.href='/stats/user/{{.Id}}'">Select</button>
+                <a href="/stats/user/{{.Id}}"><button>Select</button></a>
             </td>
         </tr>
         {{end}}
