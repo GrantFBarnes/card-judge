@@ -1501,6 +1501,13 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = database.FlipTable(player.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
 	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: FLIP THE TABLE!")
 	websocket.LobbyBroadcast(lobbyId, "table-flipped")
 	go func() {
