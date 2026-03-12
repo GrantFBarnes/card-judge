@@ -95,4 +95,19 @@ FROM (
             'KICK-100' AS CODE,
             'Kicked From Lobby' AS CATEGORY,
             100 AS GOAL_AMOUNT
+        UNION
+        SELECT
+            'FLIP-TABLE-1' AS CODE,
+            'Flipped Tables' AS CATEGORY,
+            1 AS GOAL_AMOUNT
+        UNION
+        SELECT
+            'FLIP-TABLE-10' AS CODE,
+            'Flipped Tables' AS CATEGORY,
+            10 AS GOAL_AMOUNT
+        UNION
+        SELECT
+            'FLIP-TABLE-100' AS CODE,
+            'Flipped Tables' AS CATEGORY,
+            100 AS GOAL_AMOUNT
     ) AS T;
