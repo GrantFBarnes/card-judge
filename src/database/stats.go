@@ -22,6 +22,7 @@ type StatUser struct {
 	CreditsSpentCount        int
 	CreditsEarnedCount       int
 	LobbyKickCount           int
+	FlipTableCount           int
 }
 
 type StatCard struct {
@@ -932,6 +933,25 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
+	case "flip-table":
+		switch subject {
+		case "player":
+			resultHeaders = append(resultHeaders, "Flipped Tables")
+			resultHeaders = append(resultHeaders, "Player")
+			sqlString = `
+				SELECT
+					COUNT(*) AS COUNT,
+					U.NAME AS NAME
+				FROM LOG_FLIP_TABLE AS LFT
+					INNER JOIN USER AS U ON U.ID = LFT.USER_ID
+				GROUP BY U.ID
+				ORDER BY COUNT DESC,
+					NAME ASC
+				LIMIT 10
+			`
+		default:
+			return resultHeaders, resultRows, errors.New("invalid subject provided")
+		}
 	default:
 		return resultHeaders, resultRows, errors.New("invalid topic provided")
 	}
@@ -1017,7 +1037,8 @@ func GetStatsUser(userId uuid.UUID) (StatUser, error) {
 				),
 				0
 			) AS CREDITS_EARNED_COUNT,
-			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT
+			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = U.ID) AS LOBBY_KICK_COUNT,
+			(SELECT COUNT(*) FROM LOG_FLIP_TABLE WHERE USER_ID = U.ID) AS FLIP_TABLE_COUNT
 		FROM USER AS U
 		WHERE U.ID = ?
 	`
@@ -1041,6 +1062,7 @@ func GetStatsUser(userId uuid.UUID) (StatUser, error) {
 			&result.CreditsSpentCount,
 			&result.CreditsEarnedCount,
 			&result.LobbyKickCount,
+			&result.FlipTableCount,
 		); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
