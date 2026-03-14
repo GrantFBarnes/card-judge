@@ -16,75 +16,97 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 	var result []Achievement
 
 	sqlString := `
+		WITH CREDITS_SPENT AS (
+				SELECT
+					CATEGORY
+				FROM LOG_CREDITS_SPENT
+				WHERE USER_ID = ?
+			)
 		SELECT
-			CASE
-				ACHIEVEMENT_CATEGORY
-				WHEN 'WIN' THEN 'Games Won'
-				WHEN 'PLAY' THEN 'Games Played'
-				WHEN 'CREDITS-SPENT' THEN (
-					CASE
-						CREDITS_SPENT_CATEGORY
-						WHEN 'WINNING-STREAK' THEN 'Winning Streaks'
-						WHEN 'LOSING-STREAK' THEN 'Losing Streaks'
-						WHEN 'SKIP-JUDGE' THEN 'Skipped Being Judge'
-						WHEN 'ALERT' THEN 'Lobby Alerts'
-						WHEN 'GAMBLE' THEN 'Gambles Made'
-						WHEN 'GAMBLE-WIN' THEN 'Gambles Won'
-						WHEN 'BET' THEN 'Bets Placed'
-						WHEN 'BET-WIN' THEN 'Bets Won'
-						WHEN 'EXTRA-RESPONSE' THEN 'Extra Responses'
-						WHEN 'BLOCK-RESPONSE' THEN 'Blocked Responses'
-						WHEN 'STEAL' THEN 'Stoken Cards Played'
-						WHEN 'SURPRISE' THEN 'Surpise Cards Played'
-						WHEN 'FIND' THEN 'Find Cards Played'
-						WHEN 'WILD' THEN 'Wild Cards Played'
-						WHEN 'PERK' THEN 'Perks Purchased'
-						ELSE ''
-					END
-				)
-				WHEN 'DISCARD' THEN 'Cards Discarded'
-				WHEN 'SKIP' THEN 'Prompts Skipped'
-				WHEN 'KICK' THEN 'Kicked From Lobby'
-				WHEN 'FLIP-TABLE' THEN 'Flipped Tables'
-				ELSE ''
-			END AS ACHIEVEMENT_NAME,
-			ACHIEVED_AMOUNT
-		FROM USER_ACHIEVEMENT
-		WHERE USER_ID = ?
-		ORDER BY
-			CASE
-				ACHIEVEMENT_CATEGORY
-				WHEN 'WIN' THEN 1
-				WHEN 'PLAY' THEN 2
-				WHEN 'CREDITS-SPENT' THEN (
-					CASE
-						CREDITS_SPENT_CATEGORY
-						WHEN 'WINNING-STREAK' THEN 3
-						WHEN 'LOSING-STREAK' THEN 4
-						WHEN 'SKIP-JUDGE' THEN 5
-						WHEN 'ALERT' THEN 6
-						WHEN 'GAMBLE' THEN 7
-						WHEN 'GAMBLE-WIN' THEN 8
-						WHEN 'BET' THEN 9
-						WHEN 'BET-WIN' THEN 10
-						WHEN 'EXTRA-RESPONSE' THEN 11
-						WHEN 'BLOCK-RESPONSE' THEN 12
-						WHEN 'STEAL' THEN 13
-						WHEN 'SURPRISE' THEN 14
-						WHEN 'FIND' THEN 15
-						WHEN 'WILD' THEN 16
-						WHEN 'PERK' THEN 17
-						ELSE 99
-					END
-				)
-				WHEN 'DISCARD' THEN 18
-				WHEN 'SKIP' THEN 19
-				WHEN 'KICK' THEN 20
-				WHEN 'FLIP-TABLE' THEN 21
-				ELSE 99
-			END
+			'Games Won',
+			(SELECT COUNT(DISTINCT LOBBY_ID) FROM V_GAME_WINNER WHERE USER_ID = ?)
+		UNION
+		SELECT
+			'Games Played',
+			(SELECT COUNT(DISTINCT LOBBY_ID) FROM LOG_RESPONSE_CARD WHERE PLAYER_USER_ID = ?)
+		UNION
+		SELECT
+			'Winning Streaks',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'WINNING-STREAK')
+		UNION
+		SELECT
+			'Losing Streaks',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'LOSING-STREAK')
+		UNION
+		SELECT
+			'Skipped Being Judge',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'SKIP-JUDGE')
+		UNION
+		SELECT
+			'Lobby Alerts',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'ALERT')
+		UNION
+		SELECT
+			'Gambles Made',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'GAMBLE')
+		UNION
+		SELECT
+			'Gambles Won',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'GAMBLE-WIN')
+		UNION
+		SELECT
+			'Bets Placed',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'BET')
+		UNION
+		SELECT
+			'Bets Won',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'BET-WIN')
+		UNION
+		SELECT
+			'Extra Responses',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'EXTRA-RESPONSE')
+		UNION
+		SELECT
+			'Blocked Responses',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'BLOCK-RESPONSE')
+		UNION
+		SELECT
+			'Stoken Cards Played',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'STEAL')
+		UNION
+		SELECT
+			'Surpise Cards Played',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'SURPRISE')
+		UNION
+		SELECT
+			'Find Cards Played',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'FIND')
+		UNION
+		SELECT
+			'Wild Cards Played',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'WILD')
+		UNION
+		SELECT
+			'Perks Purchased',
+			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'PERK')
+		UNION
+		SELECT
+			'Cards Discarded',
+			(SELECT COUNT(*) FROM LOG_DISCARD WHERE USER_ID = ?)
+		UNION
+		SELECT
+			'Prompts Skipped',
+			(SELECT COUNT(*) FROM LOG_SKIP WHERE USER_ID = ?)
+		UNION
+		SELECT
+			'Kicked From Lobby',
+			(SELECT COUNT(*) FROM LOG_KICK WHERE USER_ID = ?)
+		UNION
+		SELECT
+			'Flipped Tables',
+			(SELECT COUNT(*) FROM LOG_FLIP_TABLE WHERE USER_ID = ?)
 	`
-	rows, err := query(sqlString, userId)
+	rows, err := query(sqlString, userId, userId, userId, userId, userId, userId, userId)
 	if err != nil {
 		return result, err
 	}
