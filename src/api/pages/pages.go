@@ -213,46 +213,6 @@ func Review(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func Achievements(w http.ResponseWriter, r *http.Request) {
-	basePageData := api.GetBasePageData(r)
-	basePageData.PageTitle = "Card Judge - Achievements"
-
-	achievements, err := database.GetAchievements(basePageData.User.Id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Failed to get user achievements."))
-		return
-	}
-
-	totalProgress := 0
-	for _, a := range achievements {
-		totalProgress += a.Progress
-	}
-
-	tmpl, err := template.ParseFS(
-		static.StaticFiles,
-		"html/pages/base.html",
-		"html/pages/body/achievements.html",
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("failed to parse HTML"))
-		return
-	}
-
-	type data struct {
-		api.BasePageData
-		Progress     float32
-		Achievements []database.Achievement
-	}
-
-	_ = tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-		Progress:     float32(totalProgress) / float32(len(achievements)),
-		Achievements: achievements,
-	})
-}
-
 func Stats(w http.ResponseWriter, r *http.Request) {
 	basePageData := api.GetBasePageData(r)
 	basePageData.PageTitle = "Card Judge - Stats"
@@ -375,6 +335,18 @@ func StatsUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userAchievements, err := database.GetAchievementsUser(userId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("Failed to get user achievements."))
+		return
+	}
+
+	totalAchievementProgress := 0
+	for _, a := range userAchievements {
+		totalAchievementProgress += a.Progress
+	}
+
 	tmpl, err := template.ParseFS(
 		static.StaticFiles,
 		"html/pages/base.html",
@@ -389,11 +361,15 @@ func StatsUser(w http.ResponseWriter, r *http.Request) {
 	type data struct {
 		api.BasePageData
 		database.StatUser
+		AchievementProgress float32
+		Achievements        []database.Achievement
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
-		BasePageData: basePageData,
-		StatUser:     userStats,
+		BasePageData:        basePageData,
+		StatUser:            userStats,
+		AchievementProgress: float32(totalAchievementProgress) / float32(len(userAchievements)),
+		Achievements:        userAchievements,
 	})
 }
 
