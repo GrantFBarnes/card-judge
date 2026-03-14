@@ -247,12 +247,14 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 	type data struct {
 		api.BasePageData
 		Progress     float32
+		IsDone       bool
 		Achievements []database.Achievement
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
 		Progress:     float32(achievementsDoneCount) / float32(achievementsTotalCount) * 100.0,
+		IsDone:       achievementsDoneCount == achievementsTotalCount,
 		Achievements: achievements,
 	})
 }

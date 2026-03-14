@@ -8,35 +8,32 @@ import (
 )
 
 type Achievement struct {
-	Category   string
-	GoalAmount int
-	IsDone     bool
-	Rarity     float32
+	Name     string
+	Goal     int
+	Achieved int
+	Progress float32
+	IsDone   bool
 }
 
 func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 	var result []Achievement
 
-	userCount, err := getUserCount()
-	if err != nil {
-		return result, err
-	}
-
 	sqlString := `
 		WITH USER_ACHIEVEMENTS AS (
 				SELECT
-					ACHIEVEMENT_CODE
+					ACHIEVEMENT_CATEGORY,
+					CREDITS_SPENT_CATEGORY,
+					ACHIEVED_AMOUNT
 				FROM USER_ACHIEVEMENT
 				WHERE USER_ID = ?
 			)
 		SELECT
-			A.CATEGORY,
-			A.GOAL_AMOUNT,
-			IF(UA.ACHIEVEMENT_CODE IS NOT NULL, 1, 0) AS IS_DONE,
-			(SELECT COUNT(*) FROM USER_ACHIEVEMENT WHERE ACHIEVEMENT_CODE = A.CODE) AS DONE_COUNT
+			A.ACHIEVEMENT_NAME,
+			A.ACHIEVEMENT_AMOUNT,
+			COALESCE(UA.ACHIEVED_AMOUNT, 0)
 		FROM V_ACHIEVEMENT AS A
-			LEFT JOIN USER_ACHIEVEMENTS AS UA ON UA.ACHIEVEMENT_CODE = A.CODE
-		ORDER BY A.LIST_ORDER
+			LEFT JOIN USER_ACHIEVEMENTS AS UA ON UA.ACHIEVEMENT_CATEGORY = A.ACHIEVEMENT_CATEGORY
+			AND UA.CREDITS_SPENT_CATEGORY = A.CREDITS_SPENT_CATEGORY
 	`
 	rows, err := query(sqlString, userId)
 	if err != nil {
@@ -46,44 +43,22 @@ func GetAchievements(userId uuid.UUID) ([]Achievement, error) {
 
 	for rows.Next() {
 		var achievement Achievement
-		var doneCount int
 		if err := rows.Scan(
-			&achievement.Category,
-			&achievement.GoalAmount,
-			&achievement.IsDone,
-			&doneCount,
+			&achievement.Name,
+			&achievement.Goal,
+			&achievement.Achieved,
 		); err != nil {
 			log.Println(err)
 			return result, errors.New("failed to scan row in query results")
 		}
 
-		achievement.Rarity = float32(doneCount) / float32(userCount) * 100.0
+		achievement.Progress = float32(achievement.Achieved) / float32(achievement.Goal) * 100.0
+		if achievement.Progress >= 100.0 {
+			achievement.Progress = 100.0
+			achievement.IsDone = true
+		}
 
 		result = append(result, achievement)
-	}
-
-	return result, nil
-}
-
-func getUserCount() (int, error) {
-	var result int
-
-	sqlString := `
-		SELECT
-			COUNT(*)
-		FROM USER
-	`
-	rows, err := query(sqlString)
-	if err != nil {
-		return result, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(&result); err != nil {
-			log.Println(err)
-			return result, errors.New("failed to scan row in query results")
-		}
 	}
 
 	return result, nil

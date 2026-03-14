@@ -1,46 +1,40 @@
 {{define "body"}}
 <h2>Achievements</h2>
 <div>
-    <label>
-        Progress: <progress
-            value="{{.Progress}}"
-            max="100"
-        >{{printf "%.1f" .Progress}}%</progress>
-    </label>
+    Total Progress: <progress
+        {{if .IsDone}}
+        class="done"
+        {{end}}
+        value="{{.Progress}}"
+        max="100"
+    >{{printf "%.1f" .Progress}}%</progress>
     <span>{{printf "%.1f" .Progress}}%</span>
 </div>
 <br />
 <table>
     <thead>
         <tr>
-            <th>Category</th>
-            <th>Goal Amount</th>
-            <th>Done</th>
-            <th>Rarity</th>
+            <th>Achievement</th>
+            <th>Goal</th>
+            <th>Achieved</th>
+            <th>Progress</th>
         </tr>
     </thead>
     <tbody>
         {{range .Achievements}}
-        <tr
-            {{if not .IsDone}}
-            class="disabled"
-            {{end}}
-        >
-            <td>{{.Category}}</td>
-            <td style="text-align: right;">{{.GoalAmount}}</td>
-            <td style="text-align: center;">
-                {{if .IsDone}}
-                <i class="bi bi-check-square"></i>
-                {{else}}
-                <i class="bi bi-square"></i>
-                {{end}}
-            </td>
+        <tr>
+            <td>{{.Name}}</td>
+            <td style="text-align: right;">{{.Goal}}</td>
+            <td style="text-align: right;">{{.Achieved}}</td>
             <td>
                 <progress
-                    value="{{.Rarity}}"
+                    {{if .IsDone}}
+                    class="done"
+                    {{end}}
+                    value="{{.Progress}}"
                     max="100"
-                >{{printf "%.1f" .Rarity}}%</progress>
-                <span>{{printf "%.1f" .Rarity}}%</span>
+                >{{printf "%.1f" .Progress}}%</progress>
+                <span>{{printf "%.1f" .Progress}}%</span>
             </td>
         </tr>
         {{end}}
