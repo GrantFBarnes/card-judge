@@ -1,22 +1,22 @@
 {{define "body"}}
 <h2>Achievements</h2>
-<div>
-    Total Progress: <progress
-        {{if .IsDone}}
-        class="done"
-        {{end}}
-        value="{{.Progress}}"
-        max="100"
-    >{{printf "%.1f" .Progress}}%</progress>
-    <span>{{printf "%.1f" .Progress}}%</span>
-</div>
-<br />
 <table>
     <thead>
         <tr>
+            <td>Overall</td>
+            <td>
+                <progress
+                    {{if ge .Progress 100.0}}
+                    class="progress-full"
+                    {{end}}
+                    value="{{.Progress}}"
+                    max="100"
+                >{{printf "%.1f" .Progress}}%</progress>
+                <span>{{printf "%.1f" .Progress}}%</span>
+            </td>
+        </tr>
+        <tr>
             <th>Achievement</th>
-            <th>Goal</th>
-            <th>Achieved</th>
             <th>Progress</th>
         </tr>
     </thead>
@@ -24,17 +24,15 @@
         {{range .Achievements}}
         <tr>
             <td>{{.Name}}</td>
-            <td style="text-align: right;">{{.Goal}}</td>
-            <td style="text-align: right;">{{.Achieved}}</td>
             <td>
                 <progress
-                    {{if .IsDone}}
-                    class="done"
+                    {{if ge .Progress 100}}
+                    class="progress-full"
                     {{end}}
                     value="{{.Progress}}"
                     max="100"
-                >{{printf "%.1f" .Progress}}%</progress>
-                <span>{{printf "%.1f" .Progress}}%</span>
+                >{{.Progress}}%</progress>
+                <span>{{.Progress}}%</span>
             </td>
         </tr>
         {{end}}

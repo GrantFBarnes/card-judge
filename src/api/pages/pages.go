@@ -224,13 +224,9 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	achievementsDoneCount := 0
-	achievementsTotalCount := 0
+	totalProgress := 0
 	for _, a := range achievements {
-		if a.IsDone {
-			achievementsDoneCount += 1
-		}
-		achievementsTotalCount += 1
+		totalProgress += a.Progress
 	}
 
 	tmpl, err := template.ParseFS(
@@ -247,14 +243,12 @@ func Achievements(w http.ResponseWriter, r *http.Request) {
 	type data struct {
 		api.BasePageData
 		Progress     float32
-		IsDone       bool
 		Achievements []database.Achievement
 	}
 
 	_ = tmpl.ExecuteTemplate(w, "base", data{
 		BasePageData: basePageData,
-		Progress:     float32(achievementsDoneCount) / float32(achievementsTotalCount) * 100.0,
-		IsDone:       achievementsDoneCount == achievementsTotalCount,
+		Progress:     float32(totalProgress) / float32(len(achievements)),
 		Achievements: achievements,
 	})
 }
