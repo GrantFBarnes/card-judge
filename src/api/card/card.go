@@ -24,14 +24,15 @@ func Find(w http.ResponseWriter, r *http.Request) {
 	var lobbyId uuid.UUID
 	var textSearch string
 	for key, val := range r.Form {
-		if key == "lobbyId" {
+		switch key {
+		case "lobbyId":
 			lobbyId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse lobby id."))
 				return
 			}
-		} else if key == "text" {
+		case "text":
 			textSearch = val[0]
 		}
 	}
@@ -69,18 +70,19 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var text string
 	var youtube string
 	for key, val := range r.Form {
-		if key == "deckId" {
+		switch key {
+		case "deckId":
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-		} else if key == "category" {
+		case "category":
 			category = val[0]
-		} else if key == "text" {
+		case "text":
 			text = val[0]
-		} else if key == "youtube" {
+		case "youtube":
 			youtube = val[0]
 		}
 	}
@@ -169,18 +171,19 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	var text string
 	var youtube string
 	for key, val := range r.Form {
-		if key == "deckId" {
+		switch key {
+		case "deckId":
 			deckId, err = uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-		} else if key == "category" {
+		case "category":
 			category = val[0]
-		} else if key == "text" {
+		case "text":
 			text = val[0]
-		} else if key == "youtube" {
+		case "youtube":
 			youtube = val[0]
 		}
 	}

@@ -28,9 +28,10 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 	var topic string
 	var subject string
 	for key, val := range r.Form {
-		if key == "topic" {
+		switch key {
+		case "topic":
 			topic = val[0]
-		} else if key == "subject" {
+		case "subject":
 			subject = val[0]
 		}
 	}

@@ -553,14 +553,15 @@ func AlertLobby(w http.ResponseWriter, r *http.Request) {
 	var credits int
 	var text string
 	for key, val := range r.Form {
-		if key == "credits" {
+		switch key {
+		case "credits":
 			credits, err = strconv.Atoi(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse credits."))
 				return
 			}
-		} else if key == "text" {
+		case "text":
 			text = val[0]
 		}
 	}
