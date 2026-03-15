@@ -234,7 +234,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var freeCredits int
 	var winStreakThreshold int
 	var loseStreakThreshold int
-	var deckIds = make([]uuid.UUID, 0)
+	var deckIdsPrompt = make([]uuid.UUID, 0)
+	var deckIdsResponse = make([]uuid.UUID, 0)
 	for key, val := range r.Form {
 		if key == "name" {
 			name = val[0]
@@ -274,14 +275,22 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				_, _ = w.Write([]byte("Failed to parse lose streak threshold."))
 				return
 			}
-		} else if strings.HasPrefix(key, "deckId") {
+		} else if strings.HasPrefix(key, "deckIdPrompt") {
 			deckId, err := uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-			deckIds = append(deckIds, deckId)
+			deckIdsPrompt = append(deckIdsPrompt, deckId)
+		} else if strings.HasPrefix(key, "deckIdResponse") {
+			deckId, err := uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse deck id."))
+				return
+			}
+			deckIdsResponse = append(deckIdsResponse, deckId)
 		}
 	}
 
@@ -331,9 +340,15 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		loseStreakThreshold = 5
 	}
 
-	if len(deckIds) == 0 {
+	if len(deckIdsPrompt) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("At least one deck is required."))
+		_, _ = w.Write([]byte("At least one prompt deck is required."))
+		return
+	}
+
+	if len(deckIdsResponse) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("At least one response deck is required."))
 		return
 	}
 
@@ -363,7 +378,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SyncDecksInLobby(lobbyId, deckIds)
+	err = database.SyncDecksInLobby(lobbyId, deckIdsPrompt, deckIdsResponse)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1999,26 +2014,41 @@ func SetDecks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var deckIds = make([]uuid.UUID, 0)
+	var deckIdsPrompt = make([]uuid.UUID, 0)
+	var deckIdsResponse = make([]uuid.UUID, 0)
 	for key, val := range r.Form {
-		if strings.HasPrefix(key, "deckId") {
+		if strings.HasPrefix(key, "deckIdPrompt") {
 			deckId, err := uuid.Parse(val[0])
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse deck id."))
 				return
 			}
-			deckIds = append(deckIds, deckId)
+			deckIdsPrompt = append(deckIdsPrompt, deckId)
+		} else if strings.HasPrefix(key, "deckIdResponse") {
+			deckId, err := uuid.Parse(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse deck id."))
+				return
+			}
+			deckIdsResponse = append(deckIdsResponse, deckId)
 		}
 	}
 
-	if len(deckIds) == 0 {
+	if len(deckIdsPrompt) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("At least one deck is required."))
+		_, _ = w.Write([]byte("At least one prompt deck is required."))
 		return
 	}
 
-	err = database.SyncDecksInLobby(lobbyId, deckIds)
+	if len(deckIdsResponse) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("At least one response deck is required."))
+		return
+	}
+
+	err = database.SyncDecksInLobby(lobbyId, deckIdsPrompt, deckIdsResponse)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

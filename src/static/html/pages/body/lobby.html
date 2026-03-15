@@ -1,5 +1,6 @@
 {{define "body"}}
 <script src="/static/js/lobby.js"></script>
+<script src="/static/js/lobbies.js"></script>
 <link
     rel="stylesheet"
     href="/static/css/lobby.css"
@@ -381,22 +382,41 @@
         {{$deckCount := len .Decks}}
         {{if gt $deckCount 0}}
         <h3>Choose Decks</h3>
-        <table style="max-height: 200px">
+        <small><i>(Choose Prompt/Response Cards)</i></small>
+        <table style="max-height: 200px; display: block;">
+            <thead>
+                <tr>
+                    <th title="Prompt Cards">P</th>
+                    <th title="Response Cards">R</th>
+                    <th>Deck</th>
+                </tr>
+            </thead>
             <tbody>
                 {{range .Decks}}
                 <tr>
                     <td>
                         <input
-                            id="deckSelect{{.Id}}"
+                            id="deckSelectPrompt{{.Id}}"
                             type="checkbox"
-                            name="deckId{{.Id}}"
+                            name="deckIdPrompt{{.Id}}"
                             value="{{.Id}}"
                             autocomplete="off"
                         />
-                        <label
-                            for="deckSelect{{.Id}}"
+                    </td>
+                    <td>
+                        <input
+                            id="deckSelectResponse{{.Id}}"
+                            type="checkbox"
+                            name="deckIdResponse{{.Id}}"
+                            value="{{.Id}}"
+                            autocomplete="off"
+                        />
+                    </td>
+                    <td>
+                        <span
                             class="clickable"
-                        >{{.Name}}</label>
+                            onclick="selectDeck('{{.Id}}')"
+                        >{{.Name}}</span>
                     </td>
                 </tr>
                 {{end}}
