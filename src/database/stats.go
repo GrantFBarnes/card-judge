@@ -62,6 +62,13 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 							COUNT(DISTINCT LOBBY_ID) AS PLAY_COUNT
 						FROM LOG_RESPONSE_CARD
 						GROUP BY PLAYER_USER_ID
+					),
+					GAME_WINS AS (
+						SELECT
+							USER_ID,
+							COUNT(DISTINCT LOBBY_ID) AS WIN_COUNT
+						FROM V_GAME_WINNER
+						GROUP BY USER_ID
 					)
 				SELECT
 					GP.PLAY_COUNT,
@@ -70,7 +77,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 					U.NAME AS NAME
 				FROM USER AS U
 					INNER JOIN GAMES_PLAYED AS GP ON GP.USER_ID = U.ID
-					LEFT JOIN V_GAME_WINS AS GW ON GW.USER_ID = U.ID
+					LEFT JOIN GAME_WINS AS GW ON GW.USER_ID = U.ID
 				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
@@ -85,11 +92,18 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Games Won")
 			resultHeaders = append(resultHeaders, "Player")
 			sqlString = `
+				WITH GAME_WINS AS (
+						SELECT
+							USER_ID,
+							COUNT(DISTINCT LOBBY_ID) AS WIN_COUNT
+						FROM V_GAME_WINNER
+						GROUP BY USER_ID
+					)
 				SELECT
 					GW.WIN_COUNT AS COUNT,
 					U.NAME AS NAME
 				FROM USER AS U
-					INNER JOIN V_GAME_WINS AS GW ON GW.USER_ID = U.ID
+					INNER JOIN GAME_WINS AS GW ON GW.USER_ID = U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
@@ -903,7 +917,12 @@ func GetStatsUser(userId uuid.UUID) (StatUser, error) {
 				FROM LOG_RESPONSE_CARD
 				WHERE PLAYER_USER_ID = U.ID
 			) AS GAME_PLAY_COUNT,
-			(SELECT WIN_COUNT FROM V_GAME_WINS WHERE USER_ID = U.ID) AS GAME_WIN_COUNT,
+			(
+				SELECT
+					COUNT(DISTINCT LOBBY_ID) AS WIN_COUNT
+				FROM V_GAME_WINNER
+				WHERE USER_ID = U.ID
+			) AS GAME_WIN_COUNT,
 			(
 				SELECT
 					COUNT(DISTINCT ROUND_ID)
