@@ -25,10 +25,13 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var timeframe string
 	var topic string
 	var subject string
 	for key, val := range r.Form {
 		switch key {
+		case "timeframe":
+			timeframe = val[0]
 		case "topic":
 			topic = val[0]
 		case "subject":
@@ -36,7 +39,7 @@ func GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	headers, rows, err := database.GetStatsLeaderboard(userId, topic, subject)
+	headers, rows, err := database.GetStatsLeaderboard(userId, timeframe, topic, subject)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

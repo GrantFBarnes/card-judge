@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
 
@@ -41,10 +42,26 @@ type StatCard struct {
 	SkipCount    int
 }
 
-func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]string, [][]string, error) {
+func GetStatsLeaderboard(userId uuid.UUID, timeframe string, topic string, subject string) ([]string, [][]string, error) {
 	resultHeaders := make([]string, 0)
 	resultRows := make([][]string, 0)
 	params := make([]any, 0)
+
+	var timeframeDateString string
+	switch timeframe {
+	case "all":
+		timeframeDateString = "1970-01-01"
+	case "year":
+		timeframeDateString = "DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)"
+	case "quarter":
+		timeframeDateString = "DATE_SUB(CURRENT_DATE(), INTERVAL 1 QUARTER)"
+	case "month":
+		timeframeDateString = "DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)"
+	case "day":
+		timeframeDateString = "DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)"
+	default:
+		return resultHeaders, resultRows, errors.New("invalid time frame provided")
+	}
 
 	var sqlString string
 	switch topic {
@@ -55,12 +72,13 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Games Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				WITH GAMES_PLAYED AS (
 						SELECT
 							PLAYER_USER_ID AS USER_ID,
 							COUNT(DISTINCT LOBBY_ID) AS PLAY_COUNT
 						FROM LOG_RESPONSE_CARD
+						WHERE CREATED_ON_DATE >= %s
 						GROUP BY PLAYER_USER_ID
 					),
 					GAME_WINS AS (
@@ -68,6 +86,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 							USER_ID,
 							COUNT(DISTINCT LOBBY_ID) AS WIN_COUNT
 						FROM V_GAME_WINNER
+						WHERE TIMESTAMP >= %s
 						GROUP BY USER_ID
 					)
 				SELECT
@@ -82,7 +101,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -91,12 +110,13 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Games Won")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				WITH GAME_WINS AS (
 						SELECT
 							USER_ID,
 							COUNT(DISTINCT LOBBY_ID) AS WIN_COUNT
 						FROM V_GAME_WINNER
+						WHERE TIMESTAMP >= %s
 						GROUP BY USER_ID
 					)
 				SELECT
@@ -107,7 +127,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -116,44 +136,47 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Games Played")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.LOBBY_ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Games Played")
 			resultHeaders = append(resultHeaders, "Card")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.LOBBY_ID) AS COUNT,
 					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Games Played")
 			resultHeaders = append(resultHeaders, "Special Category")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.LOBBY_ID) AS COUNT,
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -164,7 +187,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
@@ -178,20 +201,21 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 							INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
+						WHERE LRC.CREATED_ON_DATE >= %s
 						GROUP BY U.ID
 					) AS T
 				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Rounds Played")
 			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
@@ -205,20 +229,21 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 							LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
-						WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+						WHERE LRC.CREATED_ON_DATE >= %s
+							AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 						GROUP BY C.ID
 					) AS T
 				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Rounds Played")
 			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Win Ratio")
 			resultHeaders = append(resultHeaders, "Special Category")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					PLAY_COUNT,
 					WIN_COUNT,
@@ -231,13 +256,14 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 							COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 						FROM LOG_RESPONSE_CARD AS LRC
 							LEFT JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+						WHERE LRC.CREATED_ON_DATE >= %s
 						GROUP BY LRC.SPECIAL_CATEGORY
 					) AS T
 				ORDER BY WIN_RATIO DESC,
 					PLAY_COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -246,48 +272,51 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT RW.ROUND_ID) AS COUNT,
 					U.NAME AS NAME
 				FROM V_ROUND_WINNER AS RW
 					INNER JOIN USER AS U ON U.ID = RW.USER_ID
+				WHERE RW.TIMESTAMP >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Rounds Won")
 			resultHeaders = append(resultHeaders, "Special Category")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -296,46 +325,49 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Rounds Played")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Rounds Played")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Rounds Played")
 			resultHeaders = append(resultHeaders, "Special Category")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -344,46 +376,49 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Played")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.PLAYER_USER_ID
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Played")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ID) AS COUNT,
 					COALESCE(C.TEXT, LRC.SPECIAL_CATEGORY, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.PLAYER_CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Cards Played")
 			resultHeaders = append(resultHeaders, "Special Category")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ID) AS COUNT,
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY LRC.SPECIAL_CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -392,33 +427,35 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Discarded")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LD.ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_DISCARD AS LD
 					INNER JOIN USER AS U ON U.ID = LD.USER_ID
+				WHERE LD.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Discarded")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LD.ID) AS COUNT,
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_DISCARD AS LD
 					LEFT JOIN CARD AS C ON C.ID = LD.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE LD.CREATED_ON_DATE >= %s
+					AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -427,33 +464,35 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Played")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN USER AS U ON U.ID = LRC.JUDGE_USER_ID
+				WHERE LRC.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Played")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LRC.ROUND_ID) AS COUNT,
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_RESPONSE_CARD AS LRC
 					LEFT JOIN CARD AS C ON C.ID = LRC.JUDGE_CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -462,33 +501,35 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Cards Skipped")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LS.ID) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_SKIP AS LS
 					INNER JOIN USER AS U ON U.ID = LS.USER_ID
+				WHERE LS.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Cards Skipped")
 			resultHeaders = append(resultHeaders, "Card")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(DISTINCT LS.ID) AS COUNT,
 					COALESCE(C.TEXT, 'Unknown') AS NAME
 				FROM LOG_SKIP AS LS
 					LEFT JOIN CARD AS C ON C.ID = LS.CARD_ID
-				WHERE FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
+				WHERE LS.CREATED_ON_DATE >= %s
+					AND FN_USER_HAS_DECK_ACCESS(?, C.DECK_ID)
 				GROUP BY C.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -499,7 +540,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Player")
 			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					UJ.NAME AS JUDGE_NAME,
 					UP.NAME AS NAME,
@@ -508,19 +549,20 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
-				WHERE UJ.ID = ?
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND UJ.ID = ?
 				GROUP BY LRC.JUDGE_USER_ID,
 					LRC.PLAYER_USER_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Judge Picking")
 			resultHeaders = append(resultHeaders, "Card")
 			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					UJ.NAME AS JUDGE_NAME,
 					CP.TEXT AS NAME,
@@ -529,19 +571,20 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 					INNER JOIN CARD AS CP ON CP.ID = LRC.PLAYER_CARD_ID
-				WHERE UJ.ID = ?
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND UJ.ID = ?
 				GROUP BY LRC.JUDGE_USER_ID,
 					LRC.PLAYER_CARD_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Judge Picking")
 			resultHeaders = append(resultHeaders, "Special Category")
 			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					UJ.NAME AS JUDGE_NAME,
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME,
@@ -549,13 +592,14 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
-				WHERE UJ.ID = ?
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND UJ.ID = ?
 				GROUP BY LRC.JUDGE_USER_ID,
 					LRC.SPECIAL_CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -566,7 +610,7 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Judge Who Picked")
 			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					UP.NAME AS PLAYER_NAME,
 					UJ.NAME AS NAME,
@@ -575,19 +619,20 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UJ ON UJ.ID = LRC.JUDGE_USER_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
-				WHERE UP.ID = ?
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND UP.ID = ?
 				GROUP BY LRC.JUDGE_USER_ID,
 					LRC.PLAYER_USER_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "card":
 			resultHeaders = append(resultHeaders, "Winner")
 			resultHeaders = append(resultHeaders, "Card Played")
 			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					UP.NAME AS PLAYER_NAME,
 					CJ.TEXT AS NAME,
@@ -596,19 +641,20 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN CARD AS CJ ON CJ.ID = LRC.PLAYER_CARD_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
-				WHERE UP.ID = ?
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND UP.ID = ?
 				GROUP BY LRC.PLAYER_CARD_ID,
 					LRC.PLAYER_USER_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		case "special-category":
 			resultHeaders = append(resultHeaders, "Winner")
 			resultHeaders = append(resultHeaders, "Special Category Played")
 			resultHeaders = append(resultHeaders, "Count")
 			params = append(params, userId)
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					UP.NAME AS PLAYER_NAME,
 					COALESCE(LRC.SPECIAL_CATEGORY, 'NONE') AS NAME,
@@ -616,13 +662,14 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 				FROM LOG_RESPONSE_CARD AS LRC
 					INNER JOIN LOG_WIN AS LW ON LW.RESPONSE_ID = LRC.RESPONSE_ID
 					INNER JOIN USER AS UP ON UP.ID = LRC.PLAYER_USER_ID
-				WHERE UP.ID = ?
+				WHERE LRC.CREATED_ON_DATE >= %s
+					AND UP.ID = ?
 				GROUP BY LRC.SPECIAL_CATEGORY,
 					LRC.PLAYER_USER_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -631,18 +678,19 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Credits Spent")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					SUM(LCS.AMOUNT) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.AMOUNT > 0
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.AMOUNT > 0
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -651,18 +699,19 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Credits Earned")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					SUM(LCS.AMOUNT) * -1 AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.AMOUNT < 0
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.AMOUNT < 0
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -672,21 +721,22 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Credits Spent")
 			resultHeaders = append(resultHeaders, "Category")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					SUM(LCS.AMOUNT) AS COUNT,
 					LCS.CATEGORY AS CATEGORY,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.AMOUNT > 0
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.AMOUNT > 0
 				GROUP BY U.ID,
 					LCS.CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC,
 					CATEGORY ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -696,21 +746,22 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 			resultHeaders = append(resultHeaders, "Credits Earned")
 			resultHeaders = append(resultHeaders, "Category")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					SUM(LCS.AMOUNT) * -1 AS COUNT,
 					LCS.CATEGORY AS CATEGORY,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.AMOUNT < 0
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.AMOUNT < 0
 				GROUP BY U.ID,
 					LCS.CATEGORY
 				ORDER BY COUNT DESC,
 					NAME ASC,
 					CATEGORY ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -719,19 +770,20 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Credits Spent in a Game")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					SUM(LCS.AMOUNT) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.AMOUNT > 0
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.AMOUNT > 0
 				GROUP BY U.ID,
 					LCS.LOBBY_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -740,19 +792,20 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Credits Earned in a Game")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					SUM(LCS.AMOUNT) * -1 AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.AMOUNT < 0
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.AMOUNT < 0
 				GROUP BY U.ID,
 					LCS.LOBBY_ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -761,18 +814,19 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Gamble")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					MAX(LCS.AMOUNT) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.CATEGORY = 'GAMBLE'
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.CATEGORY = 'GAMBLE'
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -781,18 +835,19 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Gamble Win")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					MIN(LCS.AMOUNT) * -1 AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.CATEGORY = 'GAMBLE-WIN'
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.CATEGORY = 'GAMBLE-WIN'
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -801,18 +856,19 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Bet")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					MAX(LCS.AMOUNT) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.CATEGORY = 'BET'
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.CATEGORY = 'BET'
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -821,18 +877,19 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Bet Win")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					MIN(LCS.AMOUNT) * -1 AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_CREDITS_SPENT AS LCS
 					INNER JOIN USER AS U ON U.ID = LCS.USER_ID
-				WHERE LCS.CATEGORY = 'BET-WIN'
+				WHERE LCS.CREATED_ON_DATE >= %s
+					AND LCS.CATEGORY = 'BET-WIN'
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -841,17 +898,18 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Kicked")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(*) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_KICK AS LK
 					INNER JOIN USER AS U ON U.ID = LK.USER_ID
+				WHERE LK.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
@@ -860,17 +918,18 @@ func GetStatsLeaderboard(userId uuid.UUID, topic string, subject string) ([]stri
 		case "player":
 			resultHeaders = append(resultHeaders, "Flipped Tables")
 			resultHeaders = append(resultHeaders, "Player")
-			sqlString = `
+			sqlString = fmt.Sprintf(`
 				SELECT
 					COUNT(*) AS COUNT,
 					U.NAME AS NAME
 				FROM LOG_FLIP_TABLE AS LFT
 					INNER JOIN USER AS U ON U.ID = LFT.USER_ID
+				WHERE LFT.CREATED_ON_DATE >= %s
 				GROUP BY U.ID
 				ORDER BY COUNT DESC,
 					NAME ASC
 				LIMIT 10
-			`
+			`, timeframeDateString)
 		default:
 			return resultHeaders, resultRows, errors.New("invalid subject provided")
 		}
