@@ -1117,11 +1117,11 @@ func GetAchievementsUser(userId uuid.UUID) ([]Achievement, error) {
 			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'BLOCK-RESPONSE')
 		UNION
 		SELECT
-			'Stoken Cards Played',
+			'Stolen Cards Played',
 			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'STEAL')
 		UNION
 		SELECT
-			'Surpise Cards Played',
+			'Surprise Cards Played',
 			(SELECT COUNT(*) FROM CREDITS_SPENT WHERE CATEGORY = 'SURPRISE')
 		UNION
 		SELECT
