@@ -232,6 +232,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var drawPriority string
 	var handSize int
 	var freeCredits int
+	var freeSpecialCards bool
 	var winStreakThreshold int
 	var loseStreakThreshold int
 	var deckIdsPrompt = make([]uuid.UUID, 0)
@@ -259,6 +260,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse free credits."))
+				return
+			}
+		} else if key == "freeSpecialCards" {
+			freeSpecialCards, err = strconv.ParseBool(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse free special cards."))
 				return
 			}
 		} else if key == "winStreakThreshold" {
@@ -371,7 +379,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, freeCredits, winStreakThreshold, loseStreakThreshold)
+	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, freeCredits, freeSpecialCards, winStreakThreshold, loseStreakThreshold)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1821,6 +1829,55 @@ func SetFreeCredits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free credits set to %d", player.Name, freeCredits))
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetFreeSpecialCards(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var freeSpecialCards bool
+	for key, val := range r.Form {
+		if key == "freeSpecialCards" {
+			freeSpecialCards, err = strconv.ParseBool(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse free special cards."))
+				return
+			}
+		}
+	}
+
+	err = database.SetLobbyFreeSpecialCards(lobbyId, freeSpecialCards)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free special cards set to %t", player.Name, freeSpecialCards))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)

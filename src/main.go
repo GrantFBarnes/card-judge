@@ -144,6 +144,7 @@ func main() {
 	http.Handle("PUT /api/lobby/{lobbyId}/draw-priority", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetDrawPriority)))
 	http.Handle("PUT /api/lobby/{lobbyId}/hand-size", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetHandSize)))
 	http.Handle("PUT /api/lobby/{lobbyId}/free-credits", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetFreeCredits)))
+	http.Handle("PUT /api/lobby/{lobbyId}/free-special-cards", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetFreeSpecialCards)))
 	http.Handle("PUT /api/lobby/{lobbyId}/win-streak-threshold", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetWinStreakThreshold)))
 	http.Handle("PUT /api/lobby/{lobbyId}/lose-streak-threshold", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetLoseStreakThreshold)))
 	http.Handle("PUT /api/lobby/{lobbyId}/response-count", api.MiddlewareForAPIs(http.HandlerFunc(apiLobby.SetResponseCount)))
