@@ -6,11 +6,13 @@
             <th style="width: 33%">Judge</th>
             <th style="width: 33%">
                 Draw Pile
+                {{if .PlayerIsLobbyOwner}}
                 <span
                     title="Edit Draw Pile Decks"
                     class="bi bi-pencil clickable"
                     onclick="document.getElementById('lobby-draw-pile-dialog').showModal()"
                 ></span>
+                {{end}}
             </th>
         </tr>
     </thead>
@@ -18,10 +20,12 @@
         <tr>
             <td>
                 {{.LobbyName}}
+                {{if .PlayerIsLobbyOwner}}
                 <span
                     class="bi bi-pencil clickable"
                     onclick="document.getElementById('lobby-update-dialog').showModal()"
                 ></span>
+                {{end}}
             </td>
             <td>
                 {{if .JudgeName.Valid}}

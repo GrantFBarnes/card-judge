@@ -53,7 +53,14 @@ func GetLobbyGameInfoHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := database.GetLobbyGameInfo(lobbyId)
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	data, err := database.GetLobbyGameInfo(lobbyId, player.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
