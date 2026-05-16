@@ -238,6 +238,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var passwordConfirm string
 	var drawPriority string
 	var handSize int
+	var roundTimer int
 	var freeCredits int
 	var freeSpecialCards bool
 	var winStreakThreshold int
@@ -260,6 +261,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				_, _ = w.Write([]byte("Failed to parse hand size."))
+				return
+			}
+		} else if key == "roundTimer" {
+			roundTimer, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse round timer."))
 				return
 			}
 		} else if key == "freeCredits" {
@@ -331,6 +339,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		handSize = 16
 	}
 
+	if roundTimer < 0 {
+		roundTimer = 0
+	}
+
+	if roundTimer > 60 {
+		roundTimer = 60
+	}
+
 	if freeCredits < 0 {
 		freeCredits = 0
 	}
@@ -386,7 +402,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, freeCredits, freeSpecialCards, winStreakThreshold, loseStreakThreshold)
+	lobbyId, err := database.CreateLobby(name, message, password, drawPriority, handSize, roundTimer, freeCredits, freeSpecialCards, winStreakThreshold, loseStreakThreshold)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -1779,6 +1795,67 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby hand size set to %d", player.Name, handSize))
+	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("success"))
+}
+
+func SetRoundTimer(w http.ResponseWriter, r *http.Request) {
+	lobbyIdString := r.PathValue("lobbyId")
+	lobbyId, err := uuid.Parse(lobbyIdString)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to get lobby id from path."))
+		return
+	}
+
+	player, err := getLobbyRequestPlayer(r, lobbyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("Failed to parse form."))
+		return
+	}
+
+	var roundTimer int
+	for key, val := range r.Form {
+		if key == "roundTimer" {
+			roundTimer, err = strconv.Atoi(val[0])
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("Failed to parse round timer."))
+				return
+			}
+		}
+	}
+
+	if roundTimer < 0 {
+		roundTimer = 0
+	}
+
+	if roundTimer > 60 {
+		roundTimer = 60
+	}
+
+	err = database.SetLobbyRoundTimer(lobbyId, roundTimer)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
+	if roundTimer > 0 {
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d seconds", player.Name, roundTimer))
+	} else {
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to unlimited", player.Name))
+	}
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
 
 	w.WriteHeader(http.StatusOK)
