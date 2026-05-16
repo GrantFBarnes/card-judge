@@ -1621,9 +1621,8 @@ func SkipPrompt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
-	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
-	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
+	websocket.LobbyBroadcast(lobbyId, "refresh")
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -2164,9 +2163,7 @@ func SetResponseCount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
-	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
-	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-board")
+	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
