@@ -59,6 +59,11 @@
     </div>
 </dialog>
 <dialog id="lobby-update-dialog">
+    <style>
+        .lobby-update-form-field {
+            width: 180px;
+        }
+    </style>
     <div style="display: grid; grid-auto-flow: column">
         <div>
             <h3>Edit Lobby</h3>
@@ -76,7 +81,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -88,6 +93,7 @@
                         <input
                             type="text"
                             name="name"
+                            class="lobby-update-form-field"
                             maxlength="255"
                             placeholder="Enter Name"
                             required="required"
@@ -113,7 +119,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -125,6 +131,7 @@
                         <input
                             type="text"
                             name="message"
+                            class="lobby-update-form-field"
                             maxlength="255"
                             placeholder="Enter Message"
                             autocomplete="off"
@@ -149,7 +156,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -160,6 +167,7 @@
                     <td>
                         <select
                             name="drawPriority"
+                            class="lobby-update-form-field"
                             required="required"
                             autocomplete="off"
                         >
@@ -189,7 +197,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -200,6 +208,7 @@
                     <td>
                         <select
                             name="handSize"
+                            class="lobby-update-form-field"
                             required="required"
                             autocomplete="off"
                         >
@@ -233,7 +242,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -244,6 +253,7 @@
                     <td>
                         <select
                             name="freeCredits"
+                            class="lobby-update-form-field"
                             required="required"
                             autocomplete="off"
                         >
@@ -282,7 +292,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -293,6 +303,7 @@
                     <td>
                         <select
                             name="freeSpecialCards"
+                            class="lobby-update-form-field"
                             required="required"
                             autocomplete="off"
                         >
@@ -322,7 +333,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -333,6 +344,7 @@
                     <td>
                         <select
                             name="winStreakThreshold"
+                            class="lobby-update-form-field"
                             required="required"
                             autocomplete="off"
                         >
@@ -365,7 +377,7 @@
     >
         <table>
             <colgroup>
-                <col style="width: 200px;">
+                <col style="width: 180px;">
                 <col style="width: 200px;">
                 <col style="width: 50px;">
                 <col style="width: auto;">
@@ -376,6 +388,7 @@
                     <td>
                         <select
                             name="loseStreakThreshold"
+                            class="lobby-update-form-field"
                             required="required"
                             autocomplete="off"
                         >
