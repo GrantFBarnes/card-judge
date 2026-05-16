@@ -1328,7 +1328,7 @@ func VoteToKick(w http.ResponseWriter, r *http.Request) {
 		}()
 	} else {
 		websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
-		websocket.PlayerBroadcast(player.Id, "refresh")
+		websocket.PlayerBroadcast(player.Id, "refresh-lobby-game-stats")
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -1373,7 +1373,7 @@ func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "Someone removed their vote to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
-	websocket.PlayerBroadcast(player.Id, "refresh")
+	websocket.PlayerBroadcast(player.Id, "refresh-lobby-game-stats")
 
 	w.WriteHeader(http.StatusOK)
 }
