@@ -1856,7 +1856,7 @@ func SetRoundTimer(w http.ResponseWriter, r *http.Request) {
 	} else {
 		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to unlimited", player.Name))
 	}
-	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
+	websocket.LobbyBroadcast(lobbyId, "refresh")
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))

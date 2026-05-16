@@ -2,9 +2,10 @@
 <table id="game-info-table">
     <thead>
         <tr>
-            <th style="width: 34%">Lobby</th>
-            <th style="width: 33%">Judge</th>
-            <th style="width: 33%">
+            <th style="width: 25%">Lobby</th>
+            <th style="width: 25%">Judge</th>
+            <th style="width: 25%">Timer</th>
+            <th style="width: 25%">
                 Draw Pile
                 {{if .PlayerIsLobbyOwner}}
                 <span
@@ -33,6 +34,9 @@
                 {{else}}
                 (None)
                 {{end}}
+            </td>
+            <td>
+                <span id="round-timer">{{.RoundTimer}}</span> Seconds
             </td>
             <td>
                 Prompt {{.DrawPilePromptCount}} | Response {{.DrawPileResponseCount}}
