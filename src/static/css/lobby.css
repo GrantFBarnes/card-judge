@@ -146,6 +146,11 @@ table {
     display: inline-block;
 }
 
+.pulse-fast {
+    animation: pulse 1s infinite;
+    display: inline-block;
+}
+
 @keyframes flipflop {
     0% {
         transform: rotate(0);

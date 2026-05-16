@@ -36,7 +36,9 @@
                 {{end}}
             </td>
             <td>
-                <span id="round-timer">{{.RoundTimer}}</span> Seconds
+                <span id="round-timer">
+                    <span id="round-timer-seconds">{{.RoundTimer}}</span> Seconds
+                </span>
             </td>
             <td>
                 Prompt {{.DrawPilePromptCount}} | Response {{.DrawPileResponseCount}}

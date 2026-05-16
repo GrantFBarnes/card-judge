@@ -142,9 +142,26 @@ function resetRoundTimerInterval() {
         const roundTimerElement = document.getElementById("round-timer");
         if (!roundTimerElement) return;
 
-        let secondsRemaining = parseInt(roundTimerElement.innerText) || 0;
+        const roundTimerSecondsElement = document.getElementById("round-timer-seconds");
+        if (!roundTimerSecondsElement) return;
+
+        let secondsRemaining = parseInt(roundTimerSecondsElement.innerText) || 0;
         secondsRemaining -= 1;
-        roundTimerElement.innerText = secondsRemaining < 0 ? 0 : secondsRemaining;
+
+        roundTimerSecondsElement.innerText = secondsRemaining < 0 ? 0 : secondsRemaining;
+
+        switch (true) {
+            case (secondsRemaining >= 6 && secondsRemaining < 10):
+                roundTimerElement.className = "red-text";
+                break;
+            case (secondsRemaining >= 0 && secondsRemaining < 6):
+                roundTimerElement.className = "red-text pulse-fast";
+                break;
+            default:
+                roundTimerElement.className = "";
+                break;
+        }
+
         if (secondsRemaining === 0) {
             fetch("/api" + document.location.pathname + "/card/force/play", { method: "POST" });
         }
