@@ -40,6 +40,7 @@ window.onload = () => {
                     source: "#lobby-grid-interface",
                     target: "#lobby-grid-interface"
                 });
+                resetRoundTimerInterval();
                 return;
 
             case "refresh-lobby-game-info":
@@ -132,6 +133,23 @@ window.onload = () => {
         lobbyChatMessages.scrollTop = lobbyChatMessages.scrollHeight - lobbyChatMessages.clientHeight;
     };
 };
+
+let roundTimerInterval = null;
+resetRoundTimerInterval();
+function resetRoundTimerInterval() {
+    if (roundTimerInterval) clearInterval(roundTimerInterval);
+    roundTimerInterval = setInterval(() => {
+        const roundTimerElement = document.getElementById("round-timer");
+        if (!roundTimerElement) return;
+
+        let secondsRemaining = parseInt(roundTimerElement.innerText) || 0;
+        secondsRemaining -= 1;
+        roundTimerElement.innerText = secondsRemaining < 0 ? 0 : secondsRemaining;
+        if (secondsRemaining === 0) {
+            fetch("/api" + document.location.pathname + "/card/force/play", { method: "POST" });
+        }
+    }, 1000);
+}
 
 let lobbyPlayerDataScrollTop = 0;
 let lobbyGameBoardScrollTop = 0;

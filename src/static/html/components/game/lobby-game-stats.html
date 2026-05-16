@@ -70,7 +70,7 @@
                     title="Undo Vote to Kick"
                     class="bi bi-arrow-counterclockwise clickable"
                     hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick/undo"
-                    hx-target="#lobby-grid-interface"
+                    hx-target="#lobby-game-stats"
                 >
                     Undo
                 </span>
@@ -81,7 +81,7 @@
                     title="Vote to Kick"
                     class="bi bi-door-open clickable"
                     hx-post="/api/lobby/{{$.LobbyId}}/player/{{.PlayerId}}/kick"
-                    hx-target="#lobby-grid-interface"
+                    hx-target="#lobby-game-stats"
                     hx-confirm="Are you sure you want to vote to kick {{.UserName}}?"
                 >
                     Kick

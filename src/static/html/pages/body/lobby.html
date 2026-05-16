@@ -237,6 +237,50 @@
         </table>
     </form>
     <form
+        hx-put="/api/lobby/{{.Lobby.Id}}/round-timer"
+        hx-target="find .htmx-result"
+    >
+        <table>
+            <colgroup>
+                <col style="width: 180px;">
+                <col style="width: 200px;">
+                <col style="width: 50px;">
+                <col style="width: auto;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>Round Timer:</td>
+                    <td>
+                        <select
+                            name="roundTimer"
+                            class="lobby-update-form-field"
+                            required="required"
+                            autocomplete="off"
+                        >
+                            <option
+                                value="0"
+                                selected
+                            >Unlimited</option>
+                            <option value="15">15 Seconds</option>
+                            <option value="30">30 Seconds</option>
+                            <option value="45">45 Seconds</option>
+                            <option value="60">60 Seconds</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input
+                            type="submit"
+                            value="Update"
+                        />
+                    </td>
+                    <td>
+                        <div class="htmx-result"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <form
         hx-put="/api/lobby/{{.Lobby.Id}}/free-credits"
         hx-target="find .htmx-result"
     >
