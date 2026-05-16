@@ -78,7 +78,7 @@
             <td>
                 <button
                     onclick="document.getElementById('alert-lobby-dialog').showModal()"
-                    {{if lt .PlayerCreditsRemaining 1}}
+                    {{if .CannotAffordAlert}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -98,7 +98,7 @@
             <td>
                 <button
                     onclick="document.getElementById('gamble-credits-dialog').showModal()"
-                    {{if lt .PlayerCreditsRemaining 1}}
+                    {{if .CannotAffordGamble}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -133,7 +133,7 @@
                 <button
                     onclick="document.getElementById('bet-on-win-dialog').showModal()"
                     {{$opponentCount := len .Opponents}}
-                    {{if or .BoardHasAnyRevealed (eq $opponentCount 0) (lt .PlayerCreditsRemaining 1)}}
+                    {{if or .BoardHasAnyRevealed (eq $opponentCount 0) .CannotAffordBet}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -157,7 +157,7 @@
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/skip-judge"
                     hx-confirm="Are you sure you want to skip being judge?"
-                    {{if or .BoardHasAnySpecial .BoardHasAnyRevealed (lt .PlayerCreditsRemaining .SpecialCostSkipBeingJudge)}}
+                    {{if or .BoardHasAnySpecial .BoardHasAnyRevealed .CannotAffordSkipBeingJudge}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -204,7 +204,7 @@
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/add-extra-response"
                     hx-confirm="Are you sure you want to use an extra response?"
-                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining .SpecialCostExtraResponse)}}
+                    {{if or .BoardHasAnyRevealed .CannotAffordExtraResponse}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -236,7 +236,7 @@
                 <button
                     onclick="document.getElementById('block-response-dialog').showModal()"
                     {{$opponentCount := len .Opponents}}
-                    {{if or .BoardHasAnyRevealed (lt .PlayerCreditsRemaining .SpecialCostBlockResponse) (eq $opponentCount 0)}}
+                    {{if or .BoardHasAnyRevealed .CannotAffordBlockResponse (eq $opponentCount 0)}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -259,7 +259,7 @@
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/card/surprise/play"
                     hx-confirm="Are you sure you want to use a Surprise Card?"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostSurpriseCard)}}
+                    {{if or .PlayerIsReady .CannotAffordSurpriseCard}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -282,7 +282,7 @@
                 <button
                     hx-post="/api/lobby/{{$.LobbyId}}/card/steal/play"
                     hx-confirm="Are you sure you want to use a Steal Card?"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostStealCard)}}
+                    {{if or .PlayerIsReady .CannotAffordStealCard}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -304,7 +304,7 @@
             <td>
                 <button
                     onclick="document.getElementById('find-card-dialog').showModal()"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostFindCard)}}
+                    {{if or .PlayerIsReady .CannotAffordFindCard}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -326,7 +326,7 @@
             <td>
                 <button
                     onclick="document.getElementById('wild-card-dialog').showModal()"
-                    {{if or .PlayerIsReady (lt .PlayerCreditsRemaining .SpecialCostWildCard)}}
+                    {{if or .PlayerIsReady .CannotAffordWildCard}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
@@ -347,7 +347,7 @@
             <td>
                 <button
                     onclick="document.getElementById('perks-dialog').showModal()"
-                    {{if lt .PlayerCreditsRemaining .SpecialCostPerk}}
+                    {{if .CannotAffordPerk}}
                     class="disabled non-clickable"
                     disabled
                     {{end}}
