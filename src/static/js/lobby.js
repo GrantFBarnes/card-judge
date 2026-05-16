@@ -146,7 +146,7 @@ function resetRoundTimerInterval() {
         secondsRemaining -= 1;
         roundTimerElement.innerText = secondsRemaining < 0 ? 0 : secondsRemaining;
         if (secondsRemaining === 0) {
-            // force play
+            fetch("/api" + document.location.pathname + "/card/force/play", { method: "POST" });
         }
     }, 1000);
 }
