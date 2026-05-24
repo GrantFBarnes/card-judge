@@ -119,6 +119,10 @@ table {
     border-radius: 10px;
 }
 
+#judge-settings-table {
+    width: 100%;
+}
+
 #board-responses-table {
     width: 100%;
 }

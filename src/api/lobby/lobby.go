@@ -1914,6 +1914,7 @@ func StartRoundTimer(w http.ResponseWriter, r *http.Request) {
 	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("timer;;%d", lobby.RoundTimer))
 
 	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(" Reset Timer"))
 }
 
 func SetFreeCredits(w http.ResponseWriter, r *http.Request) {
