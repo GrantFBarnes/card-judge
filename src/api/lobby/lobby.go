@@ -1882,7 +1882,9 @@ func SetRoundTimer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if roundTimer > 0 {
+	if roundTimer > 60 {
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d mintues", player.Name, roundTimer/60))
+	} else if roundTimer > 0 {
 		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d seconds", player.Name, roundTimer))
 	} else {
 		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to unlimited", player.Name))
