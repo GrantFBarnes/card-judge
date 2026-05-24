@@ -98,6 +98,14 @@ window.onload = () => {
                 return;
         }
 
+        if (messageText.startsWith("timer")) {
+            const timerData = messageText.split(";;");
+            if (timerData.length === 2) {
+                startRoundTimerInterval(timerData[1]);
+            }
+            return;
+        }
+
         if (messageText.startsWith("alert")) {
             const alertData = messageText.split(";;");
             if (alertData.length === 4) {
@@ -135,9 +143,19 @@ window.onload = () => {
 };
 
 let roundTimerInterval = null;
+
 resetRoundTimerInterval();
-function resetRoundTimerInterval() {
+
+function resetRoundTimerInterval(seconds = 0) {
     if (roundTimerInterval) clearInterval(roundTimerInterval);
+
+    const roundTimerSecondsElement = document.getElementById("round-timer-seconds");
+    if (!roundTimerSecondsElement) return;
+    roundTimerSecondsElement.innerText = seconds;
+}
+
+function startRoundTimerInterval(seconds) {
+    resetRoundTimerInterval(seconds);
     roundTimerInterval = setInterval(() => {
         const roundTimerElement = document.getElementById("round-timer");
         if (!roundTimerElement) return;
