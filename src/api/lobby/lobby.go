@@ -343,8 +343,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		roundTimer = 0
 	}
 
-	if roundTimer > 60 {
-		roundTimer = 60
+	if roundTimer > 300 {
+		roundTimer = 300
 	}
 
 	if freeCredits < 0 {
@@ -1871,8 +1871,8 @@ func SetRoundTimer(w http.ResponseWriter, r *http.Request) {
 		roundTimer = 0
 	}
 
-	if roundTimer > 60 {
-		roundTimer = 60
+	if roundTimer > 300 {
+		roundTimer = 300
 	}
 
 	err = database.SetLobbyRoundTimer(lobbyId, roundTimer)
