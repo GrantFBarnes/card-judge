@@ -18,12 +18,17 @@ function websocketConnect() {
         document.location.href = "/lobbies";
     }
 
+    // set when leaving on purpose, so we don't warn or reconnect
+    let pageClosing = false;
+
     // needed for chromium based browsers that keep websockets open on page navigation
     window.addEventListener("pagehide", () => {
+        pageClosing = true;
         ws.close(1000, "Page navigated away");
     });
 
     ws.onclose = () => {
+        if (pageClosing) return;
         displayLobbyAlert("Connection Lost", `Attempting to reconnect...`, 3);
         setTimeout(() => { location.reload(true) }, 3000);
     };
@@ -104,6 +109,7 @@ function websocketConnect() {
                 return;
 
             case "exit":
+                pageClosing = true;
                 document.location.href = "/lobbies";
                 return;
         }
