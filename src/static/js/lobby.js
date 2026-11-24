@@ -143,6 +143,8 @@ function websocketConnect() {
     };
 }
 
+let lobbyAlertTimeout = null;
+
 function displayLobbyAlert(header, body, seconds) {
     const alertHeader = document.getElementById("lobby-alert-dialog-header");
     if (!alertHeader) return;
@@ -153,8 +155,11 @@ function displayLobbyAlert(header, body, seconds) {
 
     alertHeader.innerText = header;
     alertBody.innerText = body;
-    alertDialog.showModal();
-    setTimeout(() => alertDialog.close(), seconds * 1000);
+    if (!alertDialog.open) alertDialog.showModal();
+
+    // restart the timer so an earlier alert doesn't close this one early
+    clearTimeout(lobbyAlertTimeout);
+    lobbyAlertTimeout = setTimeout(() => alertDialog.close(), seconds * 1000);
 }
 
 let roundTimerInterval = null;
