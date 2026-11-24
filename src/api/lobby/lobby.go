@@ -519,7 +519,7 @@ func PurchaseCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Attempted to purchase credits for an unfair advantage... Everyone else receives a credit as a result.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Attempted to purchase credits for an unfair advantage... Everyone else receives a credit as a result.")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
@@ -549,7 +549,7 @@ func SkipJudge(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Skipped their turn as judge.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Skipped their turn as judge.")
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
 }
@@ -577,7 +577,7 @@ func ResetResponses(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Reset responses.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Reset responses.")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
@@ -856,7 +856,7 @@ func AddExtraResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Purchased an extra response.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Purchased an extra response.")
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
@@ -887,7 +887,7 @@ func AddExtraResponseUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Undid purchase of an extra response.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Undid purchase of an extra response.")
 
 	websocket.PlayerBroadcast(player.Id, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
@@ -944,7 +944,7 @@ func BlockResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Blocked <green>"+targetPlayer.Name+"</> from responding.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Blocked <green>"+template.HTMLEscapeString(targetPlayer.Name)+"</> from responding.")
 
 	websocket.PlayerBroadcast(targetPlayerId, "refresh-player-hand")
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
@@ -1352,14 +1352,14 @@ func VoteToKick(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isKicked {
-		websocket.LobbyBroadcast(lobbyId, "<red>Player Kicked</>: <green>"+subjectPlayer.Name+"</>")
+		websocket.LobbyBroadcast(lobbyId, "<red>Player Kicked</>: <green>"+template.HTMLEscapeString(subjectPlayer.Name)+"</>")
 		websocket.LobbyBroadcast(lobbyId, "player-kicked")
 		go func() {
 			time.Sleep(2 * time.Second)
 			websocket.PlayerBroadcast(subjectPlayerId, "exit")
 		}()
 	} else {
-		websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+		websocket.LobbyBroadcast(lobbyId, "Someone voted to kick <green>"+template.HTMLEscapeString(subjectPlayer.Name)+"</> out of the lobby")
 		websocket.PlayerBroadcast(player.Id, "refresh-lobby-game-stats")
 	}
 
@@ -1404,7 +1404,7 @@ func VoteToKickUndo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "Someone removed their vote to kick <green>"+subjectPlayer.Name+"</> out of the lobby")
+	websocket.LobbyBroadcast(lobbyId, "Someone removed their vote to kick <green>"+template.HTMLEscapeString(subjectPlayer.Name)+"</> out of the lobby")
 	websocket.PlayerBroadcast(player.Id, "refresh-lobby-game-stats")
 
 	w.WriteHeader(http.StatusOK)
@@ -1512,7 +1512,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<blue>Winning Card</>: "+cardTextStart)
+	websocket.LobbyBroadcast(lobbyId, "<blue>Winning Card</>: "+template.HTMLEscapeString(cardTextStart))
 
 	winnerName, err := database.PickWinner(responseId)
 	if err != nil {
@@ -1521,7 +1521,7 @@ func PickWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<blue>Winner</>: <green>"+winnerName+"</>")
+	websocket.LobbyBroadcast(lobbyId, "<blue>Winner</>: <green>"+template.HTMLEscapeString(winnerName)+"</>")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
@@ -1543,7 +1543,7 @@ func PickRandomWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Random Winner!")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Random Winner!")
 
 	winnerName, err := database.PickRandomWinner(lobbyId)
 	if err != nil {
@@ -1558,7 +1558,7 @@ func PickRandomWinner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<blue>Winner</>: <green>"+winnerName+"</>")
+	websocket.LobbyBroadcast(lobbyId, "<blue>Winner</>: <green>"+template.HTMLEscapeString(winnerName)+"</>")
 
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 	w.WriteHeader(http.StatusOK)
@@ -1587,7 +1587,7 @@ func FlipTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: FLIP THE TABLE!")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: FLIP THE TABLE!")
 	websocket.LobbyBroadcast(lobbyId, "table-flipped")
 	go func() {
 		time.Sleep(2 * time.Second)
@@ -1682,7 +1682,7 @@ func SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Lobby name set to "+name)
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Lobby name set to "+template.HTMLEscapeString(name))
 	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-info")
 
 	w.WriteHeader(http.StatusOK)
@@ -1726,7 +1726,7 @@ func SetMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Lobby message set to "+message)
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Lobby message set to "+template.HTMLEscapeString(message))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1769,7 +1769,7 @@ func SetDrawPriority(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby draw priority set to %s", player.Name, drawPriority))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby draw priority set to %s", template.HTMLEscapeString(player.Name), template.HTMLEscapeString(drawPriority)))
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("success"))
@@ -1825,7 +1825,7 @@ func SetHandSize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby hand size set to %d", player.Name, handSize))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby hand size set to %d", template.HTMLEscapeString(player.Name), handSize))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-hand")
 
 	w.WriteHeader(http.StatusOK)
@@ -1883,11 +1883,11 @@ func SetRoundTimer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if roundTimer > 60 {
-		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d mintues", player.Name, roundTimer/60))
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d mintues", template.HTMLEscapeString(player.Name), roundTimer/60))
 	} else if roundTimer > 0 {
-		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d seconds", player.Name, roundTimer))
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to %d seconds", template.HTMLEscapeString(player.Name), roundTimer))
 	} else {
-		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to unlimited", player.Name))
+		websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby round timer set to unlimited", template.HTMLEscapeString(player.Name)))
 	}
 	websocket.LobbyBroadcast(lobbyId, "refresh")
 
@@ -1967,7 +1967,7 @@ func SetFreeCredits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free credits set to %d", player.Name, freeCredits))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free credits set to %d", template.HTMLEscapeString(player.Name), freeCredits))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
@@ -2016,7 +2016,7 @@ func SetFreeSpecialCards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free special cards set to %t", player.Name, freeSpecialCards))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby free special cards set to %t", template.HTMLEscapeString(player.Name), freeSpecialCards))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
@@ -2073,7 +2073,7 @@ func SetWinStreakThreshold(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby win streak threshold set to %d", player.Name, winStreakThreshold))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby win streak threshold set to %d", template.HTMLEscapeString(player.Name), winStreakThreshold))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
@@ -2130,7 +2130,7 @@ func SetLoseStreakThreshold(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby lose streak threshold set to %d", player.Name, loseStreakThreshold))
+	websocket.LobbyBroadcast(lobbyId, fmt.Sprintf("<green>%s</>: Lobby lose streak threshold set to %d", template.HTMLEscapeString(player.Name), loseStreakThreshold))
 	websocket.LobbyBroadcast(lobbyId, "refresh-player-specials")
 
 	w.WriteHeader(http.StatusOK)
@@ -2258,7 +2258,7 @@ func SetDecks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocket.LobbyBroadcast(lobbyId, "refresh-lobby-game-info")
-	websocket.LobbyBroadcast(lobbyId, "<green>"+player.Name+"</>: Updated draw pile decks.")
+	websocket.LobbyBroadcast(lobbyId, "<green>"+template.HTMLEscapeString(player.Name)+"</>: Updated draw pile decks.")
 	w.WriteHeader(http.StatusOK)
 }
 
