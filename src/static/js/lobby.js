@@ -35,6 +35,7 @@ function websocketConnect() {
     lobbyChatForm.onsubmit = (event) => {
         event.preventDefault();
         if (!lobbyChatInput.value) return;
+        if (ws.readyState !== WebSocket.OPEN) return;
         ws.send(lobbyChatInput.value);
         lobbyChatInput.value = "";
     };
