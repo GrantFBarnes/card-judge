@@ -45,7 +45,12 @@ BEGIN
             FROM (
                     SELECT
                         C.ID,
-                        (SELECT COUNT(*) FROM LOG_RESPONSE_CARD WHERE PLAYER_CARD_ID = C.ID) AS PLAY_COUNT,
+                        (
+                            SELECT
+                                COUNT(*)
+                            FROM LOG_RESPONSE_CARD
+                            WHERE PLAYER_CARD_ID = C.ID
+                        ) AS PLAY_COUNT,
                         (SELECT COUNT(*) FROM LOG_DISCARD WHERE CARD_ID = C.ID) AS DISCARD_COUNT
                     FROM DRAW_PILE AS DP
                         INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
