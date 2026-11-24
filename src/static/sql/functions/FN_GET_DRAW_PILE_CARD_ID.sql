@@ -16,28 +16,24 @@ BEGIN
         IF VAR_CATEGORY = 'PROMPT' THEN
             RETURN (
                 SELECT
-                    C.ID
-                FROM DRAW_PILE AS DP
-                    INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
-                    LEFT JOIN (
+                    ID
+                FROM (
                         SELECT
-                            JUDGE_CARD_ID AS CARD_ID,
-                            COUNT(*) AS PLAY_COUNT
-                        FROM LOG_RESPONSE_CARD
-                        GROUP BY JUDGE_CARD_ID,
-                            ROUND_ID
-                    ) AS CP ON CP.CARD_ID = C.ID
-                    LEFT JOIN (
-                        SELECT
-                            CARD_ID,
-                            COUNT(*) AS SKIP_COUNT
-                        FROM LOG_SKIP
-                        GROUP BY CARD_ID
-                    ) AS CS ON CS.CARD_ID = C.ID
-                WHERE C.CATEGORY = VAR_CATEGORY
-                    AND DP.LOBBY_ID = VAR_LOBBY_ID
-                ORDER BY CP.PLAY_COUNT,
-                    CS.SKIP_COUNT,
+                            C.ID,
+                            (
+                                SELECT
+                                    COUNT(DISTINCT ROUND_ID)
+                                FROM LOG_RESPONSE_CARD
+                                WHERE JUDGE_CARD_ID = C.ID
+                            ) AS PLAY_COUNT,
+                            (SELECT COUNT(*) FROM LOG_SKIP WHERE CARD_ID = C.ID) AS SKIP_COUNT
+                        FROM DRAW_PILE AS DP
+                            INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
+                        WHERE C.CATEGORY = VAR_CATEGORY
+                            AND DP.LOBBY_ID = VAR_LOBBY_ID
+                    ) AS T
+                ORDER BY PLAY_COUNT,
+                    SKIP_COUNT,
                     RAND()
                 LIMIT 1
             );
@@ -45,27 +41,19 @@ BEGIN
 
         RETURN (
             SELECT
-                C.ID
-            FROM DRAW_PILE AS DP
-                INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
-                LEFT JOIN (
+                ID
+            FROM (
                     SELECT
-                        PLAYER_CARD_ID AS CARD_ID,
-                        COUNT(*) AS PLAY_COUNT
-                    FROM LOG_RESPONSE_CARD
-                    GROUP BY PLAYER_CARD_ID
-                ) AS CP ON CP.CARD_ID = C.ID
-                LEFT JOIN (
-                    SELECT
-                        CARD_ID,
-                        COUNT(*) AS DISCARD_COUNT
-                    FROM LOG_DISCARD
-                    GROUP BY CARD_ID
-                ) AS CD ON CD.CARD_ID = C.ID
-            WHERE C.CATEGORY = VAR_CATEGORY
-                AND DP.LOBBY_ID = VAR_LOBBY_ID
-            ORDER BY CP.PLAY_COUNT,
-                CD.DISCARD_COUNT,
+                        C.ID,
+                        (SELECT COUNT(*) FROM LOG_RESPONSE_CARD WHERE PLAYER_CARD_ID = C.ID) AS PLAY_COUNT,
+                        (SELECT COUNT(*) FROM LOG_DISCARD WHERE CARD_ID = C.ID) AS DISCARD_COUNT
+                    FROM DRAW_PILE AS DP
+                        INNER JOIN CARD AS C ON C.ID = DP.CARD_ID
+                    WHERE C.CATEGORY = VAR_CATEGORY
+                        AND DP.LOBBY_ID = VAR_LOBBY_ID
+                ) AS T
+            ORDER BY PLAY_COUNT,
+                DISCARD_COUNT,
                 RAND()
             LIMIT 1
         );
