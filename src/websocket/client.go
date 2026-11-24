@@ -24,7 +24,10 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 
 	// Maximum message size allowed from peer.
-	maxMessageSize = 512
+	maxMessageSize = 2048
+
+	// Maximum chat message length in characters, matches the chat input maxlength.
+	maxChatLength = 255
 )
 
 var (
@@ -79,6 +82,9 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.ReplaceAll(message, newline, space))
+		if runes := []rune(string(message)); len(runes) > maxChatLength {
+			message = []byte(string(runes[:maxChatLength]))
+		}
 		message = []byte("<green>" + html.EscapeString(c.user.Name) + "</>: " + html.EscapeString(string(message)))
 		c.hub.broadcast <- message
 	}
