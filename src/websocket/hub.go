@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"html"
 	"uuid"
 
 	"github.com/grantfbarnes/card-judge/database"
@@ -55,7 +56,7 @@ func (h *Hub) run() {
 
 func (h *Hub) registerClient(client *Client) {
 	if !h.userInLobby(client.user.Id) {
-		h.broadcastMessage([]byte("<blue>Player Joined</>: <green>" + client.user.Name + "</>"))
+		h.broadcastMessage([]byte("<blue>Player Joined</>: <green>" + html.EscapeString(client.user.Name) + "</>"))
 		h.broadcastMessage([]byte("refresh"))
 	}
 	h.clients[client] = true
@@ -68,7 +69,7 @@ func (h *Hub) unregisterClient(client *Client) {
 	}
 	if !h.userInLobby(client.user.Id) {
 		_ = database.SetPlayerInactive(h.lobbyId, client.user.Id)
-		h.broadcastMessage([]byte("<red>Player Left</>: <green>" + client.user.Name + "</>"))
+		h.broadcastMessage([]byte("<red>Player Left</>: <green>" + html.EscapeString(client.user.Name) + "</>"))
 		h.broadcastMessage([]byte("refresh"))
 	}
 }
