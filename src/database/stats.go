@@ -49,7 +49,7 @@ func GetStatsLeaderboard(userId uuid.UUID, timeframe string, topic string, subje
 	var timeframeDateString string
 	switch timeframe {
 	case "all":
-		timeframeDateString = "1970-01-01"
+		timeframeDateString = "'1970-01-01'"
 	case "year":
 		timeframeDateString = "DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)"
 	case "quarter":
