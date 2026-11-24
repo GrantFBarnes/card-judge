@@ -6,7 +6,7 @@ import "embed"
 var StaticFiles embed.FS
 
 // SQLFiles is the ordered list of SQL files to execute for database setup.
-// Order matters: settings -> tables -> functions -> procedures -> events -> triggers
+// Order matters: settings -> tables -> indexes -> views -> functions -> procedures -> events -> triggers
 // Tables must be in dependency order (e.g., DECK before CARD).
 var SQLFiles = []string{
 	// database
@@ -40,6 +40,15 @@ var SQLFiles = []string{
 	"sql/tables/AUDIT_CARD.sql",
 	"sql/tables/AUDIT_DECK.sql",
 	"sql/tables/AUDIT_USER.sql",
+
+	// indexes
+	"sql/indexes/LOG_CREDITS_SPENT.sql",
+	"sql/indexes/LOG_DISCARD.sql",
+	"sql/indexes/LOG_SKIP.sql",
+	"sql/indexes/LOG_RESPONSE_CARD.sql",
+	"sql/indexes/LOG_WIN.sql",
+	"sql/indexes/LOG_KICK.sql",
+	"sql/indexes/LOG_FLIP_TABLE.sql",
 
 	// views
 	"sql/views/V_ROUND_WINNER.sql",
